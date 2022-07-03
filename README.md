@@ -1,6 +1,8 @@
-# ReAuthKit
+# Diversa21
 
-Uma solução *boilerplate* pronta a usar para registo, autenticação, edição de perfil e área reservada utilizando [Netuno](https://www.netuno.org/), [JWT](https://jwt.io/), [ReactJS](https://reactjs.org/) e [Ant Design](https://ant.design/).
+A rede social dedicada para pessoas com trissomia.
+
+Uma solução baseada no __boilerplate__ [ReAuthKit](https://github.com/netuno-org/reauthkit), autenticação, edição de perfil e área reservada utilizando [Netuno](https://www.netuno.org/), [JWT](https://jwt.io/), [ReactJS](https://reactjs.org/) e [Ant Design](https://ant.design/).
 
 ## Instalação
 
@@ -8,15 +10,13 @@ Uma solução *boilerplate* pronta a usar para registo, autenticação, edição
 
 [Siga os passos aqui](https://doc.netuno.org/docs/pt-PT/installation/)
 
-#### ReAuthKit App
+#### Diversa21 App
 
-Clone este projeto para `(Netuno Root directory)/apps/reauthkit/`.
+Clone este projeto para `(Netuno Root directory)/apps/diversa21/`.
 
-Depois instale as dependências NPM excutando
+Depois instale as dependências NPM no diretório `diversa21/website/` excutando:
 
-`npm install --force` 
-
-no diretório `reauthkit/website/`.
+- `npm install --force`
 
 ## Configuração
 
@@ -50,31 +50,6 @@ no diretório `reauthkit/website/`.
 
 No diretório da raiz do Netuno execute
 
-`./netuno server app=reauthkit`
+`./netuno server app=diversa21`
 
 que fará com que o servidor de backend e fronted iniciem.
-
-## Capturas de Ecrã
-
-Abaixo encontram-se algumas capturas de ecrã da aplicação.
-
-### Desktop
-
-##### Iniciar Sessão
-![Login](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/desktop/login.png)
-##### Criar Conta
-![Register](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/desktop/registration.png)
-##### Área Reservada
-![Reserved Area](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/desktop/reserved-area.png)
-##### Editar Perfil
-![Edit Profile](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/desktop/edit-profile.png)
-
-### Mobile
-
-Iniciar Sessão  |  Criar Conta
-:-------------------------:|:-------------------------:
-![Login](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/mobile/login.png)  |  ![Register](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/mobile/registration.png)
-
-Área Reservada |  Editar Perfil
-:-------------------------:|:-------------------------:
-![Reserved Area](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/mobile/reserved-area.png)  |  ![Edit Profile](https://raw.githubusercontent.com/netuno-org/reauthkit/main/docs/prinstscreens/mobile/edit-profile.png)
