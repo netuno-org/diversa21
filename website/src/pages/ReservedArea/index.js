@@ -15,7 +15,7 @@ function ReservedArea({userInfoAction}) {
     return (
       <div className="dashboard-layout-content">
         <Title level={2}>Olá,</Title>
-        <Title level={3} style={{ marginTop: 0 }}>Bem-vindo(a) à rede social dedicada para pessoas com trissomia.</Title>
+        <Title level={3} style={{ marginTop: 0 }}>Bem-vindo(a) à rede social dedicada para pessoas com trissomia 21.</Title>
         <Title level={3}>Brevemente aqui, aguarde.</Title>
       </div>
     );
