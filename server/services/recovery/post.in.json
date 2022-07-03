@@ -1,0 +1,13 @@
+{
+  "summary": "Recovery Access",
+  "description": "Send an e-mail with a link to password reset.",
+  "type": "object",
+  "properties": {
+    "mail": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "mail"
+  ]
+}
