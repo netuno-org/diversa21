@@ -24,13 +24,13 @@ if (dbPeople != null && dbPeople.getBoolean("active")) {
 
   const smtp = _smtp.init();
   smtp.to = dbPeople.getString("email");
-  smtp.subject = `ReAuthKit - Recuperação de password`;
+  smtp.subject = `Diversa21 - Recuperação de Senha`;
   smtp.text = `
     Caro ${dbPeople.getString("name")},
 
-    Para fazer a recuperação da password clique neste link: ${dbPeople.getString("recovery_link")}
+    Para fazer a recuperação da senha clique neste link: ${dbPeople.getString("recovery_link")}
     Obrigado,
-    netuno.org
+    diversa21.org
   `;
   smtp.html = _template.getOutput(
     "recovery-mail", dbPeople
