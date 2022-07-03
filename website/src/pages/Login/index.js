@@ -62,7 +62,7 @@ export default function Login(props) {
       <Layout>
         <Content className="login-container">
           <div className="content-body">
-            <p>Aqui é a rede social para pessoas com trissomia.</p>
+            <p>A rede social dedicada para pessoas com trissomia.</p>
           </div>
           <div className="content-title">
             <Title>Iniciar sessão.</Title>

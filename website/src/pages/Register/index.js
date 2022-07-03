@@ -83,7 +83,7 @@ export default function Register(props) {
       <Layout>
         <Content className="register-container">
           <div className="content-body">
-            <p>Aqui é a rede social para pessoas com trissomia.</p>
+            <p>A rede social dedicada para pessoas com trissomia.</p>
           </div>
           <div className="content-title">
             <Title>Criar conta.</Title>

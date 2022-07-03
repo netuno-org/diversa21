@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Routes as Switch, Route, useLocation, useNavigate, Link, Navigate } from "react-router-dom";
 
 import { ConfigProvider, Layout, Menu, Button } from 'antd';
-import { PieChartOutlined, UserOutlined, LogoutOutlined, MenuOutlined, EditOutlined } from '@ant-design/icons';
+import { DeploymentUnitOutlined, UserOutlined, LogoutOutlined, MenuOutlined, EditOutlined } from '@ant-design/icons';
 import antLocale_ptPT from 'antd/lib/locale/pt_PT';
 
 import { Provider } from 'react-redux';
@@ -87,8 +87,8 @@ export default function App(props) {
            >
              <div className="logo-container"><img alt="logo" src="/images/logo.svg" /></div>
              <Menu defaultSelectedKeys={['1']} mode="inline">
-               <Menu.Item key="1" icon={<PieChartOutlined />}>
-                 <Link to="/reserved-area">Área Reservada</Link>
+               <Menu.Item key="1" icon={<DeploymentUnitOutlined />}>
+                 <Link to="/reserved-area">Principal</Link>
                </Menu.Item>
              </Menu>
            </Sider>
