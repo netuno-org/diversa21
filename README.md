@@ -2,7 +2,7 @@
 
 A rede social dedicada para pessoas com trissomia.
 
-Uma solução baseada no __boilerplate__ [ReAuthKit](https://github.com/netuno-org/reauthkit), autenticação, edição de perfil e área reservada utilizando [Netuno](https://www.netuno.org/), [JWT](https://jwt.io/), [ReactJS](https://reactjs.org/) e [Ant Design](https://ant.design/).
+Uma solução baseada no boilerplate [ReAuthKit](https://github.com/netuno-org/reauthkit), autenticação, edição de perfil e área reservada utilizando [Netuno](https://www.netuno.org/), [JWT](https://jwt.io/), [ReactJS](https://reactjs.org/), [Redux](https://redux.js.org/) e [Ant Design](https://ant.design/).
 
 ## Instalação
 
