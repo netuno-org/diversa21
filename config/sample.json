@@ -16,7 +16,7 @@
             "password": "V3ryS3cur4Pa55w0rd!"
         }
     },
-    "name": "reauthkit",
+    "name": "diversa21",
     "setup": {
         "schema": {
             "execution": true,
@@ -56,7 +56,7 @@
             "engine": "pg",
             "port": "5432",
             "host": "localhost",
-            "name": "reauthkit",
+            "name": "diversa21",
             "username": "postgres"
         }
     },
