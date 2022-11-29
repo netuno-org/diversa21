@@ -145,11 +145,11 @@ function Profile({loggedUserInfo, loggedUserInfoReloadAction, history}) {
               <Input disabled={submitting} maxLength={25} />
             </Form.Item>
             <Form.Item
-              label="Nome de utilizador"
+              label="Usuário"
               name="username"
               rules={[
-                { required: true, message: 'Insira o seu nome.' },
-                { type: 'string', message: 'Nome inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
+                { required: true, message: 'Insira o seu usuário.' },
+                { type: 'string', message: 'Usuário inválido, apenas letras minúsculas e números.', pattern: '^[a-z0-9]{1,25}$' }
               ]}
             >
               <Input disabled={submitting} maxLength={25} />
