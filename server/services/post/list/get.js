@@ -1,0 +1,25 @@
+const dbPosts = _db.query(`
+    SELECT post.uid, post.moment, post.content, 
+        people.name AS "people_name", people.uid AS "people_uid", 
+        people.avatar AS "people_avatar"
+    FROM post
+        INNER JOIN people ON post.people_id = people.id
+    WHERE post.parent_id IS NULL OR post.parent_id = 0
+`);
+const posts = _val.list();
+for (const dbPost of dbPosts) {
+    posts.add(
+        _val.map()
+            .set("uid", dbPost.getString("uid"))
+            .set("moment", dbPost.getString("moment"))
+            .set("content", dbPost.getString("content"))
+            .set(
+                "people", 
+                _val.map()
+                    .set("uid", dbPost.getString("people_uid"))
+                    .set("name", dbPost.getString("people_name"))
+                    .set("avatar", dbPost.getString("people_avatar") != "")
+            )
+    )
+}
+_out.json(posts);
