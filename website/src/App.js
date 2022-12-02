@@ -175,8 +175,8 @@ export default function App(props) {
             </Content>
             <Footer>
               <Row align="middle">
-                <Col span={8} offset={8}>© diversa21.org {new Date().getFullYear()}</Col>
-                <Col className="social-icons" span={8}>
+                <Col className="info-copyright" span={12}>© diversa21.org {new Date().getFullYear()}</Col>
+                <Col className="social-icons" span={12} >
                   <a
                     target="_blank"
                     href="https://www.instagram.com/institutodiversa21/"

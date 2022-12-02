@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import _service from "@netuno/service-client";
 import _auth from "@netuno/auth-client";
-import Post from "./Post";
+import Post from "../../components/Post";
 
+import "./index.less"
+import Editor from "../../components/Post/Editor";
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -11,6 +13,10 @@ function Posts() {
   useEffect(() => {
     getPosts();
   }, []);
+
+  const onCreated = (post) => {
+    setPosts([post, ...posts]);
+  };
 
   const getPosts = () => {
     _service({
@@ -28,10 +34,11 @@ function Posts() {
     return <Navigate to="/login" />;
   }
   return (
-    <div>
-        {
-          posts.map((post) => <Post {...post}/>)
-        }
+    <div className="posts">
+      <Editor onCreated={onCreated}/>
+      {
+        posts.map((post) => <Post {...post} />)
+      }
     </div>
   );
 }
