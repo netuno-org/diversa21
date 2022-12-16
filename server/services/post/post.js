@@ -1,4 +1,5 @@
 const content = _req.getString('content')
+const parent = _req.getString('parent')
 
 const dbPeople = _db.queryFirst(`
   SELECT *
@@ -6,6 +7,11 @@ const dbPeople = _db.queryFirst(`
   WHERE people_user_id = ?::int
 `, _user.id);
 
+let dbParentPost = _val.map()
+if(parent != ''){
+    dbParentPost = _db.get(`post`, parent)
+
+}
 const peopleId = dbPeople.getInt('id')
 
 const postId = _db.insert(
@@ -14,6 +20,7 @@ const postId = _db.insert(
         .set('content', content)
         .set('moment', _db.timestamp())
         .set('people_id', peopleId)
+        .set('parent_id', dbParentPost.getInt('id', 0)) 
 )
 
 const dbPost = _db.queryFirst(`
