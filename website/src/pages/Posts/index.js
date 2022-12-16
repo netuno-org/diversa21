@@ -6,39 +6,21 @@ import Post from "../../components/Post";
 
 import "./index.less"
 import Editor from "../../components/Post/Editor";
+import PostList from "../../components/Post/List";
 
 function Posts() {
-  const [posts, setPosts] = useState([]);
-
-  useEffect(() => {
-    getPosts();
-  }, []);
-
+  
   const onCreated = (post) => {
-    setPosts([post, ...posts]);
+   // setPosts([post, ...posts]);
   };
-
-  const getPosts = () => {
-    _service({
-      url: "post/list",
-      success: (response) => {
-        setPosts(response.json);
-      },
-      fail: (e) => {
-        console.log("Service Error", e);
-      },
-    });
-  };
-
+  
   if (!_auth.isLogged()) {
     return <Navigate to="/login" />;
   }
   return (
     <div className="posts">
       <Editor onCreated={onCreated}/>
-      {
-        posts.map((post) => <Post {...post} />)
-      }
+      <PostList/>
     </div>
   );
 }
