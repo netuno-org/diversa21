@@ -1,43 +1,52 @@
 import { useState } from "react";
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Space } from "antd";
 import _service from "@netuno/service-client";
 
 const { TextArea } = Input;
 
-function Editor({onCreated}) {
-    const [submitting, setSubmitting] = useState(false);
-    const onFinish = (values) => {
-        setSubmitting(true);
-        _service({
-            url: "post",
-            method: "POST",
-            data: values,
-            success: (response) => {
-              const post = response.json;
-              console.log(post);
-              if (onCreated) {
-                onCreated(post);
-              }         
-              setSubmitting(false);
-            },
-            fail: (e) => {
-              console.error(e);
-              setSubmitting(false);
-            }
-        })
-    }
-    return (
-        <Form onFinish={onFinish} layout="vertical">
-        <Form.Item name="content" rules={[{required:true}]} label="Publicação">
-          <TextArea rows={4} />
-        </Form.Item>
-        <Form.Item>
+function Editor({ onCreated, onCancel, type, parent }) {
+  const [submitting, setSubmitting] = useState(false);
+  const onFinish = (values) => {
+    setSubmitting(true);
+    _service({
+      url: "post",
+      method: "POST",
+      data: {...values, parent},
+      success: (response) => {
+        const post = response.json;
+        console.log(post);
+        if (onCreated) {
+          onCreated(post);
+        }
+        setSubmitting(false);
+      },
+      fail: (e) => {
+        console.error(e);
+        setSubmitting(false);
+      },
+    });
+  };
+  return (
+    <Form onFinish={onFinish} layout="vertical">
+      <Form.Item
+        name="content"
+        rules={[{ required: true }]}
+        label={type === "comment" ? "Comentário" : "Publicação"}
+      >
+        <TextArea rows={4} />
+      </Form.Item>
+      <Form.Item>
+        <Space>
           <Button htmlType="submit" loading={submitting} type="primary">
-            Publicar
+            {type === "comment" ? "Comentar" : "Publicar"}
           </Button>
-        </Form.Item>
-      </Form>
-    )
+          {type === "comment" && (
+            <Button onClick={onCancel}>Cancelar</Button>
+          )}
+        </Space>
+      </Form.Item>
+    </Form>
+  );
 }
 
 export default Editor;
