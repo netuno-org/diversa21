@@ -1,17 +1,19 @@
-import { useEffect, useState } from "react";
+import { useRef } from "react";
 import { Navigate } from "react-router-dom";
 import _service from "@netuno/service-client";
 import _auth from "@netuno/auth-client";
-import Post from "../../components/Post";
-
-import "./index.less"
 import Editor from "../../components/Post/Editor";
 import PostList from "../../components/Post/List";
 
+import "./index.less";
+
 function Posts() {
+  const refPostList = useRef();
   
   const onCreated = (post) => {
-   // setPosts([post, ...posts]);
+    if (refPostList.current) {
+      refPostList.current.newPost(post);
+    }
   };
   
   if (!_auth.isLogged()) {
@@ -20,7 +22,7 @@ function Posts() {
   return (
     <div className="posts">
       <Editor onCreated={onCreated}/>
-      <PostList/>
+      <PostList ref={refPostList}/>
     </div>
   );
 }

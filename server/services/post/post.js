@@ -8,9 +8,9 @@ const dbPeople = _db.queryFirst(`
 `, _user.id);
 
 let dbParentPost = _val.map()
-if(parent != ''){
-    dbParentPost = _db.get(`post`, parent)
 
+if (parent != '') {
+    dbParentPost = _db.get(`post`, parent)
 }
 const peopleId = dbPeople.getInt('id')
 
@@ -21,7 +21,17 @@ const postId = _db.insert(
         .set('moment', _db.timestamp())
         .set('people_id', peopleId)
         .set('parent_id', dbParentPost.getInt('id', 0)) 
+        .set('comments', 0)
 )
+
+if (!dbParentPost.isEmpty()) {
+    _db.update(
+        "post",
+        dbParentPost.getInt("id"),
+        _val.map()
+            .set("comments", dbParentPost.getInt("comments", 0) + 1)
+    )
+}
 
 const dbPost = _db.queryFirst(`
     SELECT uid, content, moment

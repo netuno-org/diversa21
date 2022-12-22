@@ -34,7 +34,7 @@
       }
     }
 
-    @media screen and (max-width: @mobile-width - 1px) {
+    @media screen and (max-width: (@mobile-width - 1px)) {
       position: fixed;
       left: 0;
       top: 0;
@@ -130,6 +130,7 @@
             padding: 20px 0;
           }
         }
+        padding: 0px 40px;
       }
 
       &-has-sider {

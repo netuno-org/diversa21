@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.8.0",
     "@netuno/auth-client": "^1.0.5",
     "@netuno/service-client": "^1.0.10",
     "antd": "^4.19.5",
@@ -11,6 +12,7 @@
     "craco-less": "^2.0.0",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
+    "moment": "^2.29.4",
     "react": "^17.0.2",
     "react-avatar-editor": "^13.0.0",
     "react-dom": "^17.0.2",

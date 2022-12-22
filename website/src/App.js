@@ -23,6 +23,8 @@ import classNames from "classnames";
 import _auth from "@netuno/auth-client";
 import { FiInstagram } from "react-icons/fi";
 
+import momentjs from "moment";
+
 import "./common/Config";
 
 import { Store } from "./redux/store";
@@ -37,7 +39,11 @@ import RecoveryPage from "./pages/Recovery";
 import Profile from "./pages/Profile";
 import NotFoundPage from "./pages/NotFound";
 
+import "moment/locale/pt-br";
+
 import "./styles/App.less";
+
+momentjs.locale("pt-br");
 
 const { Header, Content, Sider, Footer } = Layout;
 const { SubMenu } = Menu;

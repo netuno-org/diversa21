@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form, Input, notification, Space } from "antd";
 import _service from "@netuno/service-client";
 
 const { TextArea } = Input;
@@ -21,7 +21,9 @@ function Editor({ onCreated, onCancel, type, parent }) {
         setSubmitting(false);
       },
       fail: (e) => {
-        console.error(e);
+        notification.error({
+          message: `Falha ao publicar ${parent ? "comentário" : "post"}`,
+        })
         setSubmitting(false);
       },
     });
