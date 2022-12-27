@@ -1,4 +1,5 @@
 const uid = _req.getString("uid");
+const content = _req.getString("content");
 
 const dbPost = _db.queryFirst(`
     SELECT post.id
@@ -15,7 +16,11 @@ if (!dbPost) {
 
 const postId = dbPost.getInt("id");
 
-// TODO: apagar cometários em cascata
-_db.delete("post", postId);
+_db.update(
+    "post",
+    postId,
+    _val.map()
+        .set("content", content)
+);
 
-_out.json({ result: true })
+_out.json({ result: true });

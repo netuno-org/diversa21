@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import _service from "@netuno/service-client";
-import { Comment, Card, Avatar, Button } from "antd";
-import { DeleteOutlined } from "@ant-design/icons"
+import { Comment, Card, Avatar, Button, Popconfirm, notification } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
 import momentjs from "moment";
 import Editor from "./Editor";
 import PostList from "./List";
@@ -12,13 +12,16 @@ function Post({
   moment,
   content,
   comments,
-  people
+  people,
+  onRemovePost,
+  onEditPost
 }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [showEditor, setShowEditor] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [countComments, setCountComments] = useState(comments);
   const [loadingComments, setLoadingComments] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const refPostList = useRef();
 
@@ -33,7 +36,7 @@ function Post({
 
   const onCreated = (post) => {
     setCountComments(countComments + 1);
-    
+
     if (refPostList.current) {
       refPostList.current.newPost(post);
     }
@@ -45,16 +48,39 @@ function Post({
     setLoadingComments(false);
   };
 
+  const onDeletePost = () => {
+    _service({
+      url: "/post",
+      method: "DELETE",
+      data: {
+        uid
+      },
+      success: (respo) => {
+        notification.success({
+          message: "Post apagado com sucesso"
+        });
+
+        onRemovePost(uid);
+      },
+      fail: (e) => {
+        notification.error({
+          message: "Falha ao deletar post"
+        });
+        console.error("Service Error", e);
+      }
+    })
+  };
+
   return (
     <Card className="post-container">
       <Comment
         actions={[
           <div>
-            {!showEditor && (
+            {!showEditor && !editMode && (
               <Button onClick={() => setShowEditor(true)}>Responder</Button>
             )}
 
-            {countComments > 0 && (
+            {!editMode && countComments > 0 && (
               <Button
                 type="link"
                 onClick={() => {
@@ -75,11 +101,11 @@ function Post({
             <Editor
               type="comment"
               onCancel={() => setShowEditor(false)}
-              onCreated={onCreated}
+              onSubmited={onCreated}
               parent={uid}
             />
           ),
-          showComments && (
+          !editMode && showComments && (
             <PostList
               ref={refPostList}
               parent={uid}
@@ -87,21 +113,55 @@ function Post({
             />
           )
         ].filter((item) => item)}
-        author={people.name}
         datetime={(
-          <span>
-            {momentjs(moment).format("lll")}
-            <Button
-              danger
-              type="link"
-              className="delete-post-button"
+          <>
+            <div
+              style={{
+                width: "100%"
+              }}
             >
-              <DeleteOutlined />
-            </Button>
-          </span>
+              <Avatar style={{ marginRight: '12px'}} src={avatarUrl} alt={people.name} />
+              {people.name}
+            </div>
+            <span>
+              {/* {momentjs(moment).startOf('hour').fromNow()} */}
+              {/* {momentjs(moment).startOf('day').fromNow()} */}
+              {momentjs(moment).format("lll")}
+              <Popconfirm
+                title="Removendo post"
+                onConfirm={onDeletePost}
+              >
+                <Button
+                  danger
+                  type="link"
+                  className="delete-post-button"
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>
+              {!editMode && (
+                <Button
+                  type="link"
+                  onClick={() => setEditMode(true)}
+                >
+                  <EditOutlined />
+                </Button>
+              )}
+            </span>
+          </>
         )}
-        avatar={<Avatar src={avatarUrl} alt={people.name} />}
-        content={content}
+        content={editMode ? (
+          <Editor
+            uid={uid}
+            type="editPost"
+            content={content}
+            onCancel={() => setEditMode(false)}
+            onSubmited={(values) => {
+              onEditPost(uid, values.content);
+              setEditMode(false);
+            }}
+          />
+        ) : content}
       >
       </Comment>
     </Card>

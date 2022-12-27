@@ -1,4 +1,10 @@
 const parent = _req.getString('parent');
+let page = _req.getInt('page', 0);
+
+if (page > 0) {
+    page *= 2;
+}
+
 let dbParent = _val.map();
 
 if (parent != '') {
@@ -13,7 +19,9 @@ const dbPosts = _db.query(`
         INNER JOIN people ON post.people_id = people.id
     WHERE post.parent_id IS NULL OR post.parent_id = ?::int
     ORDER BY post.moment DESC
-`, dbParent.getInt('id', 0));
+    LIMIT 10
+    OFFSET ?::int
+`, dbParent.getInt('id', 0), page);
 const posts = _val.list();
 for (const dbPost of dbPosts) {
     posts.add(

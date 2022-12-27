@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useImperativeHandle } from "react";
 import _service from "@netuno/service-client";
-import { Col, notification, Row, Spin } from "antd";
+import { Button, Col, notification, Row, Spin } from "antd";
 import Post from "..";
 
 function PostList({ parent, onLoaded }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [page]);
 
   const newPost = (post) => {
     setPosts([post, ...posts]);
@@ -17,11 +18,14 @@ function PostList({ parent, onLoaded }, ref) {
 
   const getPosts = () => {
     setLoadingPosts(true);
+
     const data = {};
 
     if (parent) {
       data.parent = parent;
     }
+
+    data.page = page;
 
     _service({
       url: "post/list",
@@ -32,18 +36,18 @@ function PostList({ parent, onLoaded }, ref) {
         }
 
         setLoadingPosts(false);
-        setPosts(response.json);
+        setPosts([...posts, ...response.json]);
       },
       fail: (e) => {
         if (onLoaded) {
           onLoaded();
         }
-        
+
         setLoadingPosts(false);
         notification.error({
           message: `Falha ao carregar ${parent ? "comentários" : "posts"}`,
-        })
-        console.log("Service Error", e);
+        });
+        console.error("Service Error", e);
       },
     });
   };
@@ -52,7 +56,28 @@ function PostList({ parent, onLoaded }, ref) {
     newPost
   }));
 
-  if (!parent && loadingPosts) {
+  const onLoadMorePosts = () => {
+    setPage(page + 1);
+  };
+
+  const onRemovePost = (uid) => {
+    setPosts(posts.filter((post) => post.uid !== uid));
+  };
+
+  const onEditPost = (uid, content) => {
+    setPosts(posts.map((post) => {
+      if (post.uid === uid) {
+        return {
+          ...post,
+          content
+        };
+      }
+
+      return post;
+    }));
+  }
+
+  if ((!parent && loadingPosts) && page === 0) {
     return (
       <Row justify="center">
         <Col>
@@ -65,8 +90,32 @@ function PostList({ parent, onLoaded }, ref) {
   return (
     <div>
       {
-        posts.map((post) => <Post {...post} />)
+        posts.map((post, index) => (
+          <Post
+            key={index}
+            {...post}
+            onRemovePost={onRemovePost}
+            onEditPost={onEditPost}
+          />
+        ))
       }
+
+      {!loadingPosts && parent && (
+        <Button
+          type="link"
+          onClick={onLoadMorePosts}
+        >
+          Mostrar mais
+        </Button>
+      )}
+
+      {loadingPosts && page > 0 && (
+        <Row justify="center">
+          <Col>
+            <Spin />
+          </Col>
+        </Row>
+      )}
     </div>
   );
 }

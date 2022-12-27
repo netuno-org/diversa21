@@ -21,7 +21,7 @@ function Posts() {
   }
   return (
     <div className="posts">
-      <Editor onCreated={onCreated}/>
+      <Editor type="post" onSubmited={onCreated}/>
       <PostList ref={refPostList}/>
     </div>
   );

@@ -4,9 +4,17 @@ import _service from "@netuno/service-client";
 
 const { TextArea } = Input;
 
-function Editor({ onCreated, onCancel, type, parent }) {
+function Editor({
+  onSubmited,
+  onCancel,
+  type,
+  uid,
+  parent,
+  content
+}) {
   const [submitting, setSubmitting] = useState(false);
-  const onFinish = (values) => {
+
+  const onCreatedPost = (values) => {
     setSubmitting(true);
     _service({
       url: "post",
@@ -15,8 +23,8 @@ function Editor({ onCreated, onCancel, type, parent }) {
       success: (response) => {
         const post = response.json;
         console.log(post);
-        if (onCreated) {
-          onCreated(post);
+        if (onSubmited) {
+          onSubmited(post);
         }
         setSubmitting(false);
       },
@@ -28,21 +36,78 @@ function Editor({ onCreated, onCancel, type, parent }) {
       },
     });
   };
+
+  const onEditPost = (values) => {
+    setSubmitting(true);
+    _service({
+      url: "post",
+      method: "PUT",
+      data: {
+        ...values,
+        uid
+      },
+      success: (response) => {
+        if (onSubmited) {
+          onSubmited(values);
+        }
+        notification.success({
+          message: "Sucesso ao editar"
+        })
+
+        setSubmitting(false);
+      },
+      fail: (e) => {
+        notification.error({
+          message: `Falha ao editar`,
+        });
+
+        setSubmitting(false);
+      },
+    });
+  }
+
+  const types = {
+    comment: {
+      submitButtonText: "Comentar",
+      showCancelButton: true,
+      title: "Comentário",
+      onFinish: onCreatedPost
+    },
+    post: {
+      submitButtonText: "Publicar",
+      showCancelButton: false,
+      title: "Publicação",
+      onFinish: onCreatedPost
+    },
+    editPost: {
+      submitButtonText: "Editar",
+      showCancelButton: true,
+      title: "",
+      onFinish: onEditPost
+    }
+  }
+
   return (
-    <Form onFinish={onFinish} layout="vertical">
+    <Form
+      onFinish={types[type].onFinish}
+      layout="vertical"
+      initialValues={{
+        content
+      }}
+    >
       <Form.Item
         name="content"
         rules={[{ required: true }]}
-        label={type === "comment" ? "Comentário" : "Publicação"}
+        label={types[type].title}
       >
         <TextArea rows={4} />
       </Form.Item>
       <Form.Item>
         <Space>
           <Button htmlType="submit" loading={submitting} type="primary">
-            {type === "comment" ? "Comentar" : "Publicar"}
+            {types[type].submitButtonText}
           </Button>
-          {type === "comment" && (
+          {types[type].showCancelButton && (
             <Button onClick={onCancel}>Cancelar</Button>
           )}
         </Space>
