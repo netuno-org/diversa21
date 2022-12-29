@@ -22,6 +22,7 @@ const postId = _db.insert(
         .set('people_id', peopleId)
         .set('parent_id', dbParentPost.getInt('id', 0)) 
         .set('comments', 0)
+        .set('likes', 0)
 )
 
 if (!dbParentPost.isEmpty()) {

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import _service from "@netuno/service-client";
 import { Comment, Card, Avatar, Button, Popconfirm, notification } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
+import { DeleteOutlined, EditOutlined, LikeOutlined, LikeTwoTone } from "@ant-design/icons";
 import momentjs from "moment";
 import Editor from "./Editor";
 import PostList from "./List";
@@ -12,6 +12,8 @@ function Post({
   moment,
   content,
   comments,
+  likes,
+  liked,
   people,
   onRemovePost,
   onEditPost
@@ -22,6 +24,8 @@ function Post({
   const [countComments, setCountComments] = useState(comments);
   const [loadingComments, setLoadingComments] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [isLiked, setIsLiked] = useState(liked);
+  const [likesCounter, setLikesCounter] = useState(likes);
 
   const refPostList = useRef();
 
@@ -57,25 +61,69 @@ function Post({
       },
       success: (respo) => {
         notification.success({
-          message: "Post apagado com sucesso"
+          message: "Post apagado com sucesso."
         });
 
         onRemovePost(uid);
       },
       fail: (e) => {
         notification.error({
-          message: "Falha ao deletar post"
+          message: "Falha ao deletar post."
         });
         console.error("Service Error", e);
       }
     })
   };
+  
+  const onLike= () => {
+    if (!isLiked) {
+      _service({
+        url: 'post/like',
+        method: 'POST',
+        data: {
+          uid 
+        },
+        success: (response) => {
+          setIsLiked(true);
+          setLikesCounter(likesCounter + 1);
+        },
+        fail: (e) => {
+          notification.error({
+            message: "Falha ao dar o like."
+          });
+          console.error("Service Error", e);
+        }
+      });
+    } else {
+      _service({
+        url: 'post/like',
+        method: 'DELETE',
+        data: {
+          uid 
+        },
+        success: (response) => {
+          setIsLiked(false);
+          setLikesCounter(likesCounter - 1);
+        },
+        fail: (e) => {
+          notification.error({
+            message: "Falha ao remover o like."
+          });
+          console.error("Service Error", e);
+        }
+      });
+    }
+  }
 
   return (
     <Card className="post-container">
       <Comment
         actions={[
           <div>
+            <Button type='link' onClick={onLike}>
+              { isLiked ? <LikeTwoTone/> : <LikeOutlined />}
+              &nbsp;{likesCounter}
+            </Button>
             {!showEditor && !editMode && (
               <Button onClick={() => setShowEditor(true)}>Responder</Button>
             )}
