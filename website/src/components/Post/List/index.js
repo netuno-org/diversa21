@@ -3,7 +3,7 @@ import _service from "@netuno/service-client";
 import { Button, Col, notification, Row, Spin } from "antd";
 import Post from "..";
 
-function PostList({ parent, onLoaded }, ref) {
+function PostList({ parent, onLoaded, onItemRemoved }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [page, setPage] = useState(0);
@@ -62,6 +62,9 @@ function PostList({ parent, onLoaded }, ref) {
 
   const onRemovePost = (uid) => {
     setPosts(posts.filter((post) => post.uid !== uid));
+    if (onItemRemoved) {
+      onItemRemoved();
+    }
   };
 
   const onEditPost = (uid, content) => {
@@ -100,7 +103,7 @@ function PostList({ parent, onLoaded }, ref) {
         ))
       }
 
-      {!loadingPosts && parent && (
+      {!loadingPosts && parent && posts.length >= 10 && (
         <Button
           type="link"
           onClick={onLoadMorePosts}

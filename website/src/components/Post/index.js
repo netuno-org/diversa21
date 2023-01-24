@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { connect } from 'react-redux';
 import _service from "@netuno/service-client";
 import { Comment, Card, Avatar, Button, Popconfirm, notification } from "antd";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeTwoTone } from "@ant-design/icons";
@@ -6,8 +7,10 @@ import momentjs from "moment";
 import Editor from "./Editor";
 import PostList from "./List";
 import "./index.less";
+import { Link } from "react-router-dom";
 
 function Post({
+  loggedUserInfo,
   uid,
   moment,
   content,
@@ -37,6 +40,10 @@ function Post({
       );
     }
   }, []);
+
+  const onCommentRemoved = () => {
+    setCountComments(countComments - 1);
+  }
 
   const onCreated = (post) => {
     setCountComments(countComments + 1);
@@ -74,14 +81,14 @@ function Post({
       }
     })
   };
-  
-  const onLike= () => {
+
+  const onLike = () => {
     if (!isLiked) {
       _service({
         url: 'post/like',
         method: 'POST',
         data: {
-          uid 
+          uid
         },
         success: (response) => {
           setIsLiked(true);
@@ -99,7 +106,7 @@ function Post({
         url: 'post/like',
         method: 'DELETE',
         data: {
-          uid 
+          uid
         },
         success: (response) => {
           setIsLiked(false);
@@ -121,7 +128,7 @@ function Post({
         actions={[
           <div>
             <Button type='link' onClick={onLike}>
-              { isLiked ? <LikeTwoTone/> : <LikeOutlined />}
+              {isLiked ? <LikeTwoTone /> : <LikeOutlined />}
               &nbsp;{likesCounter}
             </Button>
             {!showEditor && !editMode && (
@@ -158,6 +165,7 @@ function Post({
               ref={refPostList}
               parent={uid}
               onLoaded={onCommentsLoaded}
+              onItemRemoved={onCommentRemoved}
             />
           )
         ].filter((item) => item)}
@@ -168,52 +176,65 @@ function Post({
                 width: "100%"
               }}
             >
-              <Avatar style={{ marginRight: '12px'}} src={avatarUrl} alt={people.name} />
-              {people.name}
+              <Link to={`/u/${people.user}`}>
+                <Avatar style={{ marginRight: '12px' }} src={avatarUrl} alt={people.name} />
+                {people.name}
+              </Link>
             </div>
             <span>
               {/* {momentjs(moment).startOf('hour').fromNow()} */}
               {/* {momentjs(moment).startOf('day').fromNow()} */}
               {momentjs(moment).format("lll")}
-              <Popconfirm
-                title="Removendo post"
-                onConfirm={onDeletePost}
-              >
-                <Button
-                  danger
-                  type="link"
-                  className="delete-post-button"
+              {people.uid === loggedUserInfo.uid && <>
+                <Popconfirm
+                  title="Removendo post"
+                  onConfirm={onDeletePost}
                 >
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>
-              {!editMode && (
-                <Button
-                  type="link"
-                  onClick={() => setEditMode(true)}
-                >
-                  <EditOutlined />
-                </Button>
-              )}
+                  <Button
+                    danger
+                    type="link"
+                    className="delete-post-button"
+                  >
+                    <DeleteOutlined />
+                  </Button>
+                </Popconfirm>
+                {!editMode && (
+                  <Button
+                    type="link"
+                    onClick={() => setEditMode(true)}
+                  >
+                    <EditOutlined />
+                  </Button>
+                )}
+              </>}
             </span>
           </>
-        )}
-        content={editMode ? (
-          <Editor
-            uid={uid}
-            type="editPost"
-            content={content}
-            onCancel={() => setEditMode(false)}
-            onSubmited={(values) => {
-              onEditPost(uid, values.content);
-              setEditMode(false);
-            }}
-          />
-        ) : content}
+        )
+        }
+        content={
+          editMode ? (
+            <Editor
+              uid={uid}
+              type="editPost"
+              content={content}
+              onCancel={() => setEditMode(false)}
+              onSubmited={(values) => {
+                onEditPost(uid, values.content);
+                setEditMode(false);
+              }}
+            />
+          ) : content}
       >
-      </Comment>
-    </Card>
+      </Comment >
+    </Card >
   );
 }
 
-export default Post;
+const mapStateToProps = store => {
+  const { loggedUserInfo } = store.loggedUserInfoState;
+  return {
+    loggedUserInfo
+  };
+};
+
+export default connect(mapStateToProps, {})(Post);

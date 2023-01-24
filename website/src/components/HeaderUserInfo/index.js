@@ -56,6 +56,7 @@ function HeaderUserInfo({loggedUserInfo, loggedUserInfoReload, loggedUserInfoAct
     );
   }
   if (loggedUserInfo) {
+    console.log(loggedUserInfo)
     return (
       <div className="header__user-info">
         {avatarImageURL && <img src={avatarImageURL}/>}

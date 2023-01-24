@@ -14,10 +14,12 @@ if (parent != '') {
 const dbPosts = _db.query(`
     SELECT post.uid, post.moment, post.content, post.comments, post.likes,
         people.name AS "people_name", people.uid AS "people_uid",
+        netuno_user.user AS "people_user",
         people.avatar AS "people_avatar",
         (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id) AS "post_like_id"
     FROM post
         INNER JOIN people ON post.people_id = people.id
+        INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
     WHERE post.parent_id IS NULL OR post.parent_id = ?::int
     ORDER BY post.moment DESC
     LIMIT 10
@@ -38,6 +40,7 @@ for (const dbPost of dbPosts) {
                 _val.map()
                     .set("uid", dbPost.getString("people_uid"))
                     .set("name", dbPost.getString("people_name"))
+                    .set("user", dbPost.getString("people_user"))
                     .set("avatar", dbPost.getString("people_avatar") != "")
             )
     )

@@ -38,6 +38,7 @@ import Posts from "./pages/Posts";
 import RecoveryPage from "./pages/Recovery";
 import Profile from "./pages/Profile";
 import NotFoundPage from "./pages/NotFound";
+import User from "./pages/User";
 
 import "moment/locale/pt-br";
 
@@ -176,6 +177,7 @@ export default function App(props) {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/recovery" element={<RecoveryPage />} />
+                <Route path="/u/:user" element={<User />} />
                 <Route element={<NotFoundPage />} />
               </Switch>
             </Content>
