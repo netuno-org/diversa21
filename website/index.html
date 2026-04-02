@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="keywords" content="" />
+    <meta
+            name="description"
+            content="A rede social para pessoas com trissomia 21."
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Diversa21</title>
+    <style>
+     body {
+       background-color: #ffffff;
+     }
+     .base-loading__container {
+       padding-top: calc((100vh / 2) - 150px);
+       width: 205px;
+       margin-left: auto;
+       margin-right: auto;
+       text-align: center;
+     }
+
+     .base-loading {
+       display: inline-block;
+       position: relative;
+       width: 300px;
+       height: 300px;
+     }
+
+     .base-loading div {
+       display: inline-block;
+       position: absolute;
+       left: 20px;
+       width: 25px;
+       background: #8B6AA2;
+       border: 10px solid #FDBA3C;
+       animation: base-loading 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+     }
+
+     .base-loading div:nth-child(1) {
+       left: 20px;
+       animation-delay: -0.5s;
+     }
+
+     .base-loading div:nth-child(2) {
+       left: 80px;
+       animation-delay: -0.25s;
+     }
+
+     .base-loading div:nth-child(3) {
+       left: 140px;
+       animation-delay: 0s;
+     }
+
+     @keyframes base-loading {
+       0% {
+         top: 20px;
+         height: 80px;
+         opacity: 0;
+       }
+
+       50%,
+       100% {
+         top: 80px;
+         height: 100px;
+       }
+     }
+    </style>
+  </head>
+  <body>
+    <div class="base-loading__container">
+      <div class="base-loading">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div id="root" style="display: none;"></div>
+    <script>
+     (function () {
+       var baseLoadingContainer = document.querySelector('.base-loading__container');
+       window.addEventListener("DOMContentLoaded", function () {
+         baseLoadingContainer.remove();
+         document.querySelector('#root').style.display = 'block';
+       }, false);
+     })();
+    </script>
+    <script type="module" src="src/main.jsx"></script>
+  </body>
+</html>

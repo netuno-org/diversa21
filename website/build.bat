@@ -1,7 +1,7 @@
 
-call npm install --force
+call bun install
 
-call npm run build
+call bun run build
 
 pause
 exit

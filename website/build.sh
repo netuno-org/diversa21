@@ -1,5 +1,5 @@
 #!/bin/sh
 
-npm install --force
+bun install
 
-npm run build
+bun run build
