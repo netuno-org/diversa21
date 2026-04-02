@@ -3,6 +3,9 @@
     "jobs": []
   },
   "settings": {
+    "api": {
+      "endpoint": "http://localhost:9000/services/"
+    },
     "public": {}
   },
   "smtp": {
@@ -27,26 +30,20 @@
     },
     "enabled": true
   },
-  "language": "pt_PT",
-  "firebase": {
-    "app_name": "",
-    "database_url": "",
-    "key_file": "",
-    "listener_secret": ""
-  },
-  "locale": "pt_PT",
+  "language": "pt_BR",
+  "locale": "pt_BR",
   "remote": {},
   "commands": [
     {
       "path": "ui",
-      "command": "npm run watch",
-      "install": "npm install --force",
+      "command": "bun run watch",
+      "install": "bun install",
       "enabled": true
     },
     {
       "path": "website",
-      "command": "npm run start",
-      "install": "npm install --force",
+      "command": "bun run dev",
+      "install": "bun install",
       "enabled": true
     }
   ],
@@ -57,21 +54,24 @@
       "port": "5432",
       "host": "localhost",
       "name": "diversa21",
-      "username": "postgres"
+      "username": "diversa21"
     }
   },
-  "jwt": {
-    "enabled": true,
-    "secret": "JWTRandomSecureSecret",
-    "access_expires": 60,
-    "refresh_expires": 1440,
-    "algorithm": "HS512"
+  "auth": {
+    "jwt": {
+      "enabled": true,
+      "secret": "ThisSecretMustContains32Chars!!!",
+      "expires": {
+        "access": 1440,
+        "refresh": 1440
+      }
+    }
   },
   "cors": [
     {
       "enabled": true,
       "origins": [
-        "http://localhost:3000"
+        "*"
       ]
     }
   ],
