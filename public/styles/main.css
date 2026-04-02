@@ -4,10 +4,152 @@ HERE YOUR CUSTOM CSS
 
 **/
 
+:root {
+    --primary-color: #8B6AA2;
+    --secondary-color: #FDBA3C;
+}
+
 .navbar, .navbar-inverse {
-    background-color: #5b5ce1 !important;
+    background-color: var(--primary-color) !important;
 }
 
 .dev .navbar, .dev .navbar-inverse {
     background-color: #333333 !important;
+}
+
+.top-nav > li > a,
+.top-nav > li.dropdown > button {
+    color: #fff;
+    background-color: var(--primary-color);
+}
+
+.top-nav > li > a:hover,
+.top-nav > li.active > a:hover,
+.top-nav > li.dropdown > button:hover {
+    color: var(--primary-color);
+    background-color: var(--secondary-color);
+}
+
+.top-nav > li > a:focus,
+.top-nav > li.active > a:focus,
+.top-nav > li.dropdown.open > button:focus {
+    color: var(--secondary-color);
+    background-color: var(--primary-color);
+}
+
+.top-nav > li.active > a {
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.top-nav > li.dropdown.open > button {
+    color: #ffffff !important;
+    background-color: var(--secondary-color) !important;
+}
+
+.btn-primary,
+.dev .btn-primary {
+    color: #ffffff;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover,
+.dev .btn-primary:hover {
+    color: var(--primary-color);
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-primary.focus, .btn-primary:focus {
+    color: var(--secondary-color);
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary.active, .btn-primary:active {
+    color: #FFFFFF;
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.panel-primary > .panel-heading {
+    color: #fff;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.panel-primary {
+    border-color: var(--primary-color);
+}
+
+a, .btn-link, .btn-link:focus {
+    color: var(--primary-color);
+}
+
+.btn-link:hover {
+    color: var(--secondary-color);
+}
+
+.search-content .btn-search,
+.search-content .btn-filter,
+#netuno_user_form .btn-auth-history,
+#netuno_user_form .btn-auth-history-unlock {
+    color: #fff;
+    background-color: var(--primary-color);
+}
+
+.search-content .btn-search:hover,
+.search-content .btn-filter:hover,
+.search-content .btn-search:hover > i,
+.search-content .btn-filter:hover > i,
+#netuno_user_form .btn-auth-history:hover,
+#netuno_user_form .btn-auth-history-unlock:hover {
+    color: var(--primary-color);
+    background-color: var(--secondary-color);
+}
+
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary,
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
+    background: var(--primary-color) !important;
+}
+
+.select2-container--bootstrap .select2-results__option--highlighted[aria-selected] {
+    background: var(--primary-color);
+}
+
+.form-control:focus,
+.bootstrap-switch.bootstrap-switch-focused,
+.select2-container--bootstrap.select2-container--focus .select2-selection, .select2-container--bootstrap.select2-container--open .select2-selection,
+.select2-container--bootstrap .select2-dropdown {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 6px var(--primary-color);
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.datepicker table tr td.active.active, .datepicker table tr td.active.highlighted.active, .datepicker table tr td.active.highlighted:active, .datepicker table tr td.active:active {
+    color: #ffffff;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.clockpicker-canvas-bearing, .clockpicker-canvas-fg {
+    fill: var(--primary-color);
+}
+
+.clockpicker-canvas line {
+    stroke: var(--primary-color);
+}
+
+.clockpicker-canvas-bg,
+.clockpicker-canvas-bg-trans {
+    fill: var(--secondary-color);
+}
+
+.clockpicker-tick.active,
+.clockpicker-tick:hover {
+    background-color: var(--secondary-color);
 }
