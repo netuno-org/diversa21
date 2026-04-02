@@ -13,11 +13,11 @@ if (dashboardContainer) {
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#5b5ce1',
-          colorLink: '#5b5ce1',
+          colorPrimary: '#8B6AA2',
+          primaryColor: '#8B6AA2',
+          colorLink: '#8B6AA2',
           borderRadius: 5,
-        },
-        algorithm: theme.defaultAlgorithm
+        }
       }}
     >
       <DashboardContainer />
