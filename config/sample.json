@@ -38,13 +38,13 @@
       "path": "ui",
       "command": "bun run watch",
       "install": "bun install",
-      "enabled": true
+      "enabled": false
     },
     {
       "path": "website",
       "command": "bun run dev",
       "install": "bun install",
-      "enabled": true
+      "enabled": false
     }
   ],
   "db": {
