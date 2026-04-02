@@ -1,3 +1,6 @@
+
+import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+
 const content = _req.getString('content')
 const parent = _req.getString('parent')
 
@@ -9,7 +12,7 @@ const dbPeople = _db.queryFirst(`
 
 let dbParentPost = _val.map()
 
-if (parent != '') {
+if (parent !== '') {
     dbParentPost = _db.get(`post`, parent)
 }
 const peopleId = dbPeople.getInt('id')
@@ -49,7 +52,7 @@ const post = _val.map()
         _val.map()
             .set("uid", dbPeople.getString("uid"))
             .set("name", dbPeople.getString("name"))
-            .set("avatar", dbPeople.getString("avatar") != "")
+            .set("avatar", dbPeople.getString("avatar") !== "")
     )
 
 _out.json(post)

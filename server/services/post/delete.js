@@ -1,3 +1,5 @@
+import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
+
 const uid = _req.getString("uid");
 
 const dbPost = _db.queryFirst(`

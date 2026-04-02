@@ -1,3 +1,5 @@
+import {_req, _db, _val, _user, _header, _out} from "@netuno/server-types"
+
 const name = _req.getString("name");
 const username = _req.getString("username");
 const email = _req.getString("email");

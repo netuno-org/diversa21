@@ -1,3 +1,5 @@
+import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+
 const parent = _req.getString('parent');
 let page = _req.getInt('page', 0);
 
@@ -41,7 +43,7 @@ for (const dbPost of dbPosts) {
                     .set("uid", dbPost.getString("people_uid"))
                     .set("name", dbPost.getString("people_name"))
                     .set("user", dbPost.getString("people_user"))
-                    .set("avatar", dbPost.getString("people_avatar") != "")
+                    .set("avatar", dbPost.getString("people_avatar") !== "")
             )
     )
 }

@@ -1,3 +1,4 @@
+import {_req, _db, _header, _exec, _out} from "@netuno/server-types"
 
 let dbPeople = null
 

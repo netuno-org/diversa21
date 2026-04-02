@@ -1,3 +1,5 @@
+import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
+
 const postUid = _req.getString('uid');
 const peopleId = _user.id;
 const dbPost = _db.get('post', postUid);
