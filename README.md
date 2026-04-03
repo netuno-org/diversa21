@@ -50,7 +50,7 @@ bun install
 
 2. Vai ter de configurar obrigatoriamente uma ligação SMTP para a funcionalidade de recuperação de palavra-passe funcionar corretamente, [saiba como fazê-lo aqui.](https://doc.netuno.org/pt/docs/academy/server/services/sending-emails)
 
-3. Vai ter de configurar, também, obrigatoriamente uma ligação de base de dados do tipo PostgreSQL para esta aplicação funcionar corretamente, [saiba como fazê-lo aqui.](https://doc.netuno.org/pt/docs/academy/server/database/psql)
+3. Obrigatoriamente precisa configurar a conexão de base de dados do PostgreSQL, na configuração está na parte da `db`, [saiba como fazê-lo aqui.](https://doc.netuno.org/pt/docs/academy/server/database/psql)
 
 4. Onde se encontra a configuração `auth.jwt.secret` com o valor `ThisSecretMustContains32Chars!!!`, coloque um código secreto e aleatório por ser o que assegura a segurança das credênciais dos usuários, a chave secreta tem que ter 32 caracteres. [Geração de códigos seguros recomendado.](https://passwordsgenerator.net/)
 
