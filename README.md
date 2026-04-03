@@ -18,9 +18,11 @@ Uma solução baseada no [ReAuthKit](https://github.com/netuno-org/reauthkit), a
 
 #### Diversa21 App
 
-Clone este projeto nas `apps` do Netuno:
+Clone este projeto nas `apps` do Netuno em:
 
-- `(Raíz do Netuno)/apps/diversa21`
+- `netuno/apps/diversa21`
+
+Exemplo completo:
 
 ```shell
 cd netuno/apps
