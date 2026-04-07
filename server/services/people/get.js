@@ -1,4 +1,4 @@
-import {_db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
+import {_db, _val, _user, _group, _header, _exec, _out} from "@netuno/server-types"
 
 const dbPeople = _db.queryFirst(`
   SELECT *
@@ -17,6 +17,7 @@ const data = _val.map()
       .set("email", dbPeople.getString("email"))
       .set("username", _user.get(_user.id()).getString("user"))
       .set("avatar", dbPeople.getString("avatar") !== '')
+      .set("role", _group.get(_user.data().getInt("group_id")).getString("code"))
 
 _out.json(
   _val.map()

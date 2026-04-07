@@ -16,7 +16,7 @@ function HeaderUserInfo({loggedUserInfo, loggedUserInfoReload, loggedUserInfoAct
   const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
   const [api, contextHolder] = notification.useNotification();
   useEffect(() => {
-    if (!loggedUserInfoReload && !!loggedUserInfo) {
+    if (!loggedUserInfoReload && (!!loggedUserInfo && loggedUserInfo.uid)) {
       return;
     }
     setLoading(true);
