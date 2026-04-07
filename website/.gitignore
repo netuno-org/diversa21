@@ -32,6 +32,8 @@ pnpm-lock.yaml
 *~*
 *#*
 
+/vite.config.js
+
 /src_old/config/config.json
 
 /public/reauthkit.js
