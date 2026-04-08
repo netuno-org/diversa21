@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Typography, Form, Input, Button, Divider, notification } from 'antd';
+import { Typography, Form, Input, DatePicker, Button, Divider, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 
 import { connect } from 'react-redux';
@@ -153,6 +153,16 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
             ]}
           >
             <Input disabled={submitting} maxLength={250} />
+          </Form.Item>
+          <Form.Item
+            label="Data de Nascimento"
+            name="birth_date"
+            rules={[
+              { type: 'date', message: 'A data inserida não é válida.' },
+              { required: false, message: 'Insira a sua data de nascimento.' }
+            ]}
+          >
+            <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
           </Form.Item>
           <Form.Item
             label="Nova Palavra-passe"
