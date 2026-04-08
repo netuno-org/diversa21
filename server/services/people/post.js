@@ -15,7 +15,7 @@ if (userEmailExists || usernameExists) {
       .set("error", `${userEmailExists ? 'email' : 'user'}-already-exists`)
   );
 } else {
-  const dbNetunoGroup = _group.firstByCode("people");
+  const dbNetunoGroup = _group.firstByCode("member");
 
   const userData = _val.map()
         .set("name", name)
