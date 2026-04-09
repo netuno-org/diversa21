@@ -38,7 +38,7 @@
       "path": "ui",
       "command": "bun run watch",
       "install": "bun install",
-      "enabled": false
+      "enabled": true
     },
     {
       "path": "website",

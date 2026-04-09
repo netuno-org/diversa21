@@ -9,13 +9,14 @@ import './index.less';
 const { Title } = Typography;
 
 function Dashboard({loggedUserInfo}) {
+  console.log('loggedUserInfo', loggedUserInfo);
   let content = null;
   if (!loggedUserInfo) {
     content = <Spin/>;
   } else {
     content = (
       <>
-        <Title level={2}>Olá {loggedUserInfo.name}!</Title>
+        <Title level={2}>Olá{loggedUserInfo.name}!</Title>
         <Title level={3} style={{ marginTop: 0 }}>Bem-vindo(a) à sua Área Reservada!</Title>
         <img alt="reserved-area" src={"/images/reserved-area.png"} />
       </>
