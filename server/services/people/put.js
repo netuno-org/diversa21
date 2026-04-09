@@ -5,6 +5,7 @@ const username = _req.getString("username");
 const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
+const birthDate = _req.getString("birthDate");
 
 const dbPeople = _db.queryFirst(`
   SELECT * FROM people WHERE people_user_id = ?::int
@@ -37,6 +38,11 @@ const peopleData = _val.map()
 
 if (avatar) {
   peopleData.set("avatar", avatar)
+}
+
+// TODO: quando birth_date for colocado como obrigatório no futuro, remover isso
+if (birthDate) {
+  peopleData.set("birth_date", birthDate);
 }
 
 _db.update(

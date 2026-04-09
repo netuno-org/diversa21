@@ -35,6 +35,7 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
           name: loggedUserInfo?.name,
           username: loggedUserInfo?.username,
           email: loggedUserInfo?.email
+          // TODO: pegar a data de nascimento do usuário e colocar como value do campo data de nascimento
         });
       }
       if (loggedUserInfo.avatar) {
@@ -45,7 +46,8 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
 
   function onFinish(values) {
     setSubmitting(true);
-    const { name, username, password, email } = values;
+    const { name, username, password, email, birthDate } = values;
+    console.log(birthDate);
     _service({
       method: 'PUT',
       url: 'people',
@@ -54,7 +56,8 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
         username,
         password,
         email,
-        avatar: profileAvatar?.current?.getImage()
+        avatar: profileAvatar?.current?.getImage(),
+        birthDate: birthDate?.format('YYYY-MM-DD') ?? ''
       },
       success: (response) => {
         if (response.json.result) {
@@ -156,7 +159,7 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
           </Form.Item>
           <Form.Item
             label="Data de Nascimento"
-            name="birth_date"
+            name="birthDate"
             rules={[
               { type: 'date', message: 'A data inserida não é válida.' },
               { required: false, message: 'Insira a sua data de nascimento.' }
