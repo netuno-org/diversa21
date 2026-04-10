@@ -35,7 +35,8 @@ function Post({
   useEffect(() => {
     if (people.avatar) {
       setAvatarUrl(
-        _service.url(`/people/avatar?uid=${people.uid}`)
+        `${_service.config().prefix}/people/avatar?uid=${people.uid}`
+       + `&${new Date().getTime()}`
       );
     }
   }, []);
