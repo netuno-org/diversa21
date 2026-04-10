@@ -190,7 +190,7 @@ export default function Register(props) {
               name="birthDate"
               rules={[
                 { type: 'date', message: 'A data inserida não é válida.' },
-                { required: false, message: 'Insira a sua data de nascimento.' }
+                { required: true, message: 'Insira a sua data de nascimento.' }
               ]}
             >
               <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
@@ -200,7 +200,7 @@ export default function Register(props) {
               name="city"
               rules={[
                 { type: 'city', message: 'A cidade inserida não é válida.' },
-                { required: false, message: 'Insira a sua cidade.' }
+                { required: true, message: 'Insira a sua cidade.' }
               ]}
             >
               <Input disabled={submitting} maxLength={250} />
@@ -210,7 +210,7 @@ export default function Register(props) {
               name="state"
               rules={[
                 { type: 'state', message: 'O estado inserido não é válido.' },
-                { required: false, message: 'Insira o seu estado.' }
+                { required: true, message: 'Insira o seu estado.' }
               ]}
             >
               <Input disabled={submitting} maxLength={250} />
@@ -220,7 +220,7 @@ export default function Register(props) {
               name="country"
               rules={[
                 { type: 'country', message: 'O país inserido não é válido.' },
-                { required: false, message: 'Insira o seu país.' }
+                { required: true, message: 'Insira o seu país.' }
               ]}
             >
               <Input disabled={submitting} maxLength={250} />

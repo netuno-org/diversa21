@@ -43,23 +43,11 @@ if (avatar) {
   peopleData.set("avatar", avatar)
 }
 
-// TODO: quando esses campos forem colocados como obrigatórios no futuro, remover os `if`s
-if (birthDate) {
-  peopleData.set("birth_date", birthDate);
-}
-
-if (birthDate) {
-  peopleData.set("city", city);
-}
-
-if (birthDate) {
-  peopleData.set("state", state);
-}
-
-if (birthDate) {
-  peopleData.set("country", country);
-}
-// fim do TODO
+peopleData
+    .set("birth_date", birthDate)
+    .set("city", city)
+    .set("state", state)
+    .set("country", country);
 
 _db.update(
   "people",
