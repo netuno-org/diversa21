@@ -23,7 +23,7 @@
           "type": "string-not-empty"
         },
         "website": {
-          "type": "string-not-empty"
+          "type": "string"
         },
         "address": {
           "type": "string-not-empty"
@@ -41,13 +41,13 @@
           "type": "string-not-empty"
         },
         "cover_image": {
-          "type": "string-not-empty"
+          "type": "string"
         },
         "logo": {
-          "type": "string-not-empty"
+          "type": "string"
         },
         "active": {
-          "type": "string-not-empty"
+          "type": "string"
         }
       },
       "required": [
