@@ -6,6 +6,9 @@ const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
 const birthDate = _req.getString("birthDate");
+const city = _req.getString("city");
+const state = _req.getString("state");
+const country = _req.getString("country");
 
 const dbPeople = _db.queryFirst(`
   SELECT * FROM people WHERE people_user_id = ?::int
@@ -40,10 +43,23 @@ if (avatar) {
   peopleData.set("avatar", avatar)
 }
 
-// TODO: quando birth_date for colocado como obrigatório no futuro, remover isso
+// TODO: quando esses campos forem colocados como obrigatórios no futuro, remover os `if`s
 if (birthDate) {
   peopleData.set("birth_date", birthDate);
 }
+
+if (birthDate) {
+  peopleData.set("city", city);
+}
+
+if (birthDate) {
+  peopleData.set("state", state);
+}
+
+if (birthDate) {
+  peopleData.set("country", country);
+}
+// fim do TODO
 
 _db.update(
   "people",

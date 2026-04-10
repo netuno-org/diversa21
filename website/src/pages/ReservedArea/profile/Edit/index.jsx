@@ -50,8 +50,7 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
 
   function onFinish(values) {
     setSubmitting(true);
-    const { name, username, password, email, birthDate } = values;
-    console.log(birthDate);
+    const { name, username, password, email, birthDate, city, state, country } = values;
     _service({
       method: 'PUT',
       url: 'people',
@@ -61,7 +60,10 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
         password,
         email,
         avatar: profileAvatar?.current?.getImage(),
-        birthDate: birthDate?.format('YYYY-MM-DD') ?? ''
+        birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
+        city,
+        state,
+        country
       },
       success: (response) => {
         if (response.json.result) {
