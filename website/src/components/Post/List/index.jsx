@@ -94,7 +94,7 @@ function PostList({ parent, onLoaded, onItemRemoved }, ref) {
       {
         posts.map((post, index) => (
           <Post
-            key={index}
+            key={post.uid}
             {...post}
             onRemovePost={onRemovePost}
             onEditPost={onEditPost}
