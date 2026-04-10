@@ -30,7 +30,7 @@ function Post({
   const [isLiked, setIsLiked] = useState(liked);
   const [likesCounter, setLikesCounter] = useState(likes);
 
-  const refPostList = useRef();
+  const refPostList = useRef(null);
 
   useEffect(() => {
     if (people.avatar) {
@@ -173,6 +173,9 @@ function Post({
               onSubmitted={(values) => {
                 onEditPost(uid, values.content);
                 setEditMode(false);
+                if (refPostList.current) {
+                  refPostList.current.newPost(values);
+                }
               }}
           />
       ) : content}
