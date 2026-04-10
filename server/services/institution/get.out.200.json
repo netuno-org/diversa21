@@ -1,0 +1,75 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        },
+        "description": {
+          "type": "string-not-empty"
+        },
+        "email": {
+          "type": "string-not-empty"
+        },
+        "telephone": {
+          "type": "string-not-empty"
+        },
+        "website": {
+          "type": "string-not-empty"
+        },
+        "address": {
+          "type": "string-not-empty"
+        },
+        "post_code": {
+          "type": "string-not-empty"
+        },
+        "city": {
+          "type": "string-not-empty"
+        },
+        "state": {
+          "type": "string-not-empty"
+        },
+        "country": {
+          "type": "string-not-empty"
+        },
+        "cover_image": {
+          "type": "string-not-empty"
+        },
+        "logo": {
+          "type": "string-not-empty"
+        },
+        "active": {
+          "type": "string-not-empty"
+        }
+      },
+      "required": [
+        "uid",
+        "name",
+        "description",
+        "email",
+        "telephone",
+        "website",
+        "address",
+        "post_code",
+        "city",
+        "state",
+        "country",
+        "cover_image",
+        "logo",
+        "active"
+      ]
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

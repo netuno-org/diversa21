@@ -1,0 +1,15 @@
+{
+    "tags":[
+      "institution"
+    ],
+    "summary": "Fetch Institution Data",
+    "description": "Retrieve information from a specific institution.",
+    "properties": {
+      "uid": {
+        "type": "uid"
+      }
+    },
+    "required": [
+      "uid"
+    ]
+}
