@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navigate, useParams } from "react-router-dom";
-import { Layout, Typography, Form, Input, Button, notification } from 'antd';
+import { Layout, Typography, Form, Input, DatePicker, Button, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import _auth from '@netuno/auth-client';
 import _service from '@netuno/service-client';
@@ -52,7 +52,7 @@ export default function Register(props) {
 
   function onFinish(values) {
     setSubmitting(true);
-    const { username, password, email, name } = values;
+    const { name, username, password, email, birthDate, city, state, country } = values;
     _service({
       method: 'POST',
       url: 'people',
@@ -61,6 +61,10 @@ export default function Register(props) {
         username,
         password,
         email,
+        birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
+        city,
+        state,
+        country,
         ...(Config.authAltcha() && {altcha: altchaPayload})
       },
       success: (response) => {
@@ -177,6 +181,46 @@ export default function Register(props) {
               rules={[
                 { type: 'email', message: 'O e-mail inserido não é válido.' },
                 { required: true, message: 'Insira o e-mail.' }
+              ]}
+            >
+              <Input disabled={submitting} maxLength={250} />
+            </Form.Item>
+            <Form.Item
+              label="Data de Nascimento"
+              name="birthDate"
+              rules={[
+                { type: 'date', message: 'A data inserida não é válida.' },
+                { required: false, message: 'Insira a sua data de nascimento.' }
+              ]}
+            >
+              <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
+            </Form.Item>
+            <Form.Item
+              label="Cidade"
+              name="city"
+              rules={[
+                { type: 'city', message: 'A cidade inserida não é válida.' },
+                { required: false, message: 'Insira a sua cidade.' }
+              ]}
+            >
+              <Input disabled={submitting} maxLength={250} />
+            </Form.Item>
+            <Form.Item
+              label="Estado"
+              name="state"
+              rules={[
+                { type: 'state', message: 'O estado inserido não é válido.' },
+                { required: false, message: 'Insira o seu estado.' }
+              ]}
+            >
+              <Input disabled={submitting} maxLength={250} />
+            </Form.Item>
+            <Form.Item
+              label="País"
+              name="country"
+              rules={[
+                { type: 'country', message: 'O país inserido não é válido.' },
+                { required: false, message: 'Insira o seu país.' }
               ]}
             >
               <Input disabled={submitting} maxLength={250} />

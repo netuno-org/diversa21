@@ -4,6 +4,10 @@ const name = _req.getString("name");
 const username = _req.getString("username");
 const email = _req.getString("email");
 const password = _req.getString("password");
+const birthDate = _req.getString("birthDate");
+const city = _req.getString("city");
+const state = _req.getString("state");
+const country = _req.getString("country");
 
 const userEmailExists = _user.firstByMail(email);
 const usernameExists = _user.firstByUser(username);
@@ -33,6 +37,10 @@ if (userEmailExists || usernameExists) {
       .set("name", name)
       .set("email", email)
       .set("people_user_id", user_id)
+      .set("birth_date", birthDate)
+      .set("city", city)
+      .set("state", state)
+      .set("country", country)
   );
   
   _out.json(
