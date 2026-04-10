@@ -19,6 +19,9 @@ const data = _val.map()
       .set("avatar", dbPeople.getString("avatar") !== '')
       .set("group", _group.code)
       .set("birthDate", dbPeople.getString("birth_date"))
+      .set("city", dbPeople.getString("city"))
+      .set("state", dbPeople.getString("state"))
+      .set("country", dbPeople.getString("country"))
 
 _out.json(
   _val.map()

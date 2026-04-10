@@ -36,7 +36,10 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
           name: loggedUserInfo?.name,
           username: loggedUserInfo?.username,
           email: loggedUserInfo?.email,
-          birthDate: dayjs(loggedUserInfo?.birthDate)
+          birthDate: dayjs(loggedUserInfo?.birthDate),
+          city: loggedUserInfo?.city,
+          state: loggedUserInfo?.state,
+          country: loggedUserInfo?.country,
         });
       }
       if (loggedUserInfo.avatar) {
@@ -167,6 +170,36 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
             ]}
           >
             <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
+          </Form.Item>
+          <Form.Item
+            label="Cidade"
+            name="city"
+            rules={[
+              { type: 'city', message: 'A cidade inserida não é válida.' },
+              { required: false, message: 'Insira a sua cidade.' }
+            ]}
+          >
+            <Input disabled={submitting} maxLength={250} />
+          </Form.Item>
+          <Form.Item
+            label="Estado"
+            name="state"
+            rules={[
+              { type: 'state', message: 'O estado inserido não é válido.' },
+              { required: false, message: 'Insira o seu estado.' }
+            ]}
+          >
+            <Input disabled={submitting} maxLength={250} />
+          </Form.Item>
+          <Form.Item
+            label="País"
+            name="country"
+            rules={[
+              { type: 'country', message: 'O país inserido não é válido.' },
+              { required: false, message: 'Insira o seu país.' }
+            ]}
+          >
+            <Input disabled={submitting} maxLength={250} />
           </Form.Item>
           <Form.Item
             label="Nova Palavra-passe"
