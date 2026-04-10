@@ -56,15 +56,11 @@
         "description",
         "email",
         "telephone",
-        "website",
         "address",
         "post_code",
         "city",
         "state",
-        "country",
-        "cover_image",
-        "logo",
-        "active"
+        "country"
       ]
     }
   },
