@@ -1,0 +1,6 @@
+{
+  "description": "List with all institution's information.",
+  "type": "array",
+  "items": {
+  }
+}

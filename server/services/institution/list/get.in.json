@@ -1,0 +1,7 @@
+{
+    "tags":[
+      "institution"
+    ],
+    "summary": "Fetch All Institutions Data",
+    "description": "Retrieve information from all institutions."
+}
