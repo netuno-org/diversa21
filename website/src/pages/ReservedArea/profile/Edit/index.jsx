@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Typography, Form, Input, DatePicker, Button, Divider, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
+import dayjs from 'dayjs';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -34,8 +35,8 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
         profileForm.current.setFieldsValue({
           name: loggedUserInfo?.name,
           username: loggedUserInfo?.username,
-          email: loggedUserInfo?.email
-          // TODO: pegar a data de nascimento do usuário e colocar como value do campo data de nascimento
+          email: loggedUserInfo?.email,
+          birthDate: dayjs(loggedUserInfo?.birthDate)
         });
       }
       if (loggedUserInfo.avatar) {

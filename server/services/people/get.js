@@ -18,6 +18,7 @@ const data = _val.map()
       .set("username", _user.get(_user.id()).getString("user"))
       .set("avatar", dbPeople.getString("avatar") !== '')
       .set("group", _group.code)
+      .set("birthDate", dbPeople.getString("birth_date"))
 
 _out.json(
   _val.map()
