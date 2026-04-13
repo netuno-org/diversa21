@@ -1,10 +1,20 @@
 import {_db, _val, _user, _group, _header, _exec, _out} from "@netuno/server-types"
 
-const dbPeople = _db.queryFirst(`
-  SELECT *
-  FROM people
-  WHERE people_user_id = ?::int
-`, _user.id);
+const people_uid = _req.getUID("uid");
+
+var dbPeople;
+
+if (people_uid) {
+    dbPeople = _db.queryFirst(`
+        SELECT * FROM people WHERE uid = ?::uuid
+    `, people_uid);
+} else {
+    dbPeople = _db.queryFirst(`
+      SELECT *
+      FROM people
+      WHERE people_user_id = ?::int
+    `, _user.id);
+}
 
 if (!dbPeople) {
   _header.status(404)
