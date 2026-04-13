@@ -2,7 +2,7 @@
 /**
  *  When service need public access...
  */
-if (_env.is("dev")) {
+if (_env.is("development")) {
     _service.allow()
 }
 
