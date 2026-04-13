@@ -23,6 +23,7 @@ function Editor({
       success: (response) => {
         const post = response.json;
         post.likes = 0;
+        post.comments = 0;
         console.log(post);
         if (onSubmitted) {
           onSubmitted(post);
