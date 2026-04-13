@@ -22,6 +22,7 @@ function Editor({
       data: {...values, parent},
       success: (response) => {
         const post = response.json;
+        post.likes = 0;
         console.log(post);
         if (onSubmitted) {
           onSubmitted(post);
