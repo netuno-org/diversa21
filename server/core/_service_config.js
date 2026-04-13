@@ -4,6 +4,10 @@
  */
 if (_env.is("development")) {
     _service.allow()
+} else {
+    if (_service.path == 'people/delete') {
+        _service.deny();
+    }
 }
 
 /*
