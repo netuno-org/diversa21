@@ -1,21 +1,21 @@
 import {_db, _val, _user, _group, _header, _exec, _out} from "@netuno/server-types"
 
-const people_uid = _req.getUID("uid");
+const peopleUid = _req.getUID("uid");
 const username = _req.getString("username");
 
 var dbPeople;
 
-if (people_uid && username) {
+if (peopleUid && username) {
     _header.status(400)
     _exec.stop();
 }
 
-if (people_uid) {
+if (peopleUid) {
     dbPeople = _db.queryFirst(`
         SELECT * FROM people JOIN netuno_user
         ON people.people_user_id = netuno_user.id 
         WHERE people.uid = ?::uuid
-    `, people_uid);
+    `, peopleUid);
 } else if (username) {
     dbPeople = _db.queryFirst(`
         SELECT * FROM people JOIN netuno_user
@@ -37,7 +37,7 @@ if (!dbPeople) {
 
 var data = _val.map();
 
-if (people_uid || username) {
+if (peopleUid || username) {
     data
         .set("username", dbPeople.getString("user"))
         .set("group", _group.get(dbPeople.getInt("group_id")).getString("code"))
