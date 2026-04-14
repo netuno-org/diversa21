@@ -8,6 +8,10 @@ import Dashboard from "./Dashboard";
 import Posts from "./Posts";
 import UserProfile from "./UserProfile";
 import OtherPage from "./OtherPage";
+import InstitutionsList from "./Institutions/List";
+import InstitutionView from "./Institutions/View";
+import InstitutionCreate from "./Institutions/Create";
+import InstitutionEdit from "./Institutions/Edit";
 
 import "./index.less";
 
@@ -35,6 +39,18 @@ function ReservedArea() {
         }
         if (location.pathname === "/other-page") {
             return <OtherPage/>;
+        }
+        if (location.pathname === "/institutions") {
+            return <InstitutionsList/>;
+        }
+        if (location.pathname === "/institutions/new") {
+            return <InstitutionCreate/>;
+        }
+        if (location.pathname.match(/^\/institutions\/[\w-]+$/)) {
+            return <InstitutionView/>;
+        }
+        if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
+            return <InstitutionEdit/>;
         }
         return <NotFound />;
     }

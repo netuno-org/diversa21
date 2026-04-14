@@ -12,6 +12,7 @@ for (const dbInstitution of dbInstitutions) {
             .set('active', dbInstitution.getString('active'))
             .set('logo', dbInstitution.get('logo'))
             .set('cover_image', dbInstitution.get('cover_image'))
+            .set('uid' , dbInstitution.getString('uid'))
             .set('country', dbInstitution.getString('country'))
             .set('state', dbInstitution.getString('state'))
             .set('city', dbInstitution.getString('city'))

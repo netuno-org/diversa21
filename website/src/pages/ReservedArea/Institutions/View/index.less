@@ -1,0 +1,143 @@
+.institution-view {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .view-header {
+    margin-bottom: 16px;
+
+    .go-back-btn {
+      padding: 0;
+      font-size: 14px;
+    }
+  }
+
+  .breadcrumb {
+    margin-bottom: 24px;
+  }
+
+  .cover-image {
+    width: 100%;
+    height: 280px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    background: #f0f0f0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cover-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #8A6AA2 0%, #B8A3D4 100%);
+    }
+  }
+
+  .content-wrapper {
+    .sidebar-card {
+      position: sticky;
+      top: 24px;
+      text-align: center;
+
+      .logo-section {
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .institution-name {
+        margin: 16px 0 8px !important;
+        word-break: break-word;
+      }
+
+      .location-info {
+        text-align: center;
+      }
+
+      .ant-divider {
+        margin: 16px 0;
+      }
+    }
+
+    .details-card {
+      .ant-typography {
+        margin-bottom: 8px;
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        .anticon {
+          font-size: 18px;
+          color: #8A6AA2;
+          margin-top: 2px;
+        }
+
+        .contact-details {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          .ant-typography {
+            margin: 0;
+          }
+
+          a {
+            color: #8A6AA2;
+            font-weight: 500;
+            
+            &:hover {
+              color: #6D4F8A;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .loading-wrapper, .error-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 0;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .institution-view {
+    padding: 16px;
+
+    .cover-image {
+      height: 180px;
+    }
+
+    .content-wrapper {
+      .sidebar-card {
+        position: static;
+        margin-bottom: 24px;
+
+        .logo-section {
+          .ant-avatar {
+            width: 80px !important;
+            height: 80px !important;
+            line-height: 80px !important;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,112 @@
+.institution-edit {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .content-title {
+    margin-bottom: 16px;
+
+    .go-back-btn {
+      padding: 0;
+      font-size: 14px;
+    }
+
+    .ant-typography {
+      margin: 0;
+    }
+  }
+
+  .content-body {
+    .form-card {
+      margin-bottom: 16px;
+
+      .ant-card-head-title {
+        font-weight: 600;
+      }
+    }
+
+    .upload-container {
+      .image-preview {
+        position: relative;
+        display: inline-block;
+        
+        img {
+          width: 120px;
+          height: 120px;
+          object-fit: cover;
+          border-radius: 8px;
+          border: 1px solid #d9d9d9;
+        }
+
+        .ant-btn {
+          display: block;
+          margin-top: 8px;
+        }
+      }
+
+      .cover-preview img {
+        width: 200px;
+        height: 100px;
+      }
+
+      .upload-hint {
+        display: block;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+    }
+
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+
+    .ant-divider {
+      margin: 24px 0 16px;
+    }
+
+    .ant-btn-primary {
+      background-color: #8A6AA2;
+      border-color: #8A6AA2;
+
+      &:hover, &:focus {
+        background-color: #7A5A92;
+        border-color: #7A5A92;
+      }
+    }
+  }
+
+  .loading-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 64px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .institution-edit {
+    padding: 16px;
+
+    .content-body {
+      .ant-col-sm-6 {
+        display: none;
+      }
+
+      .ant-col-sm-18 {
+        width: 100%;
+      }
+
+      .upload-container {
+        .image-preview img {
+          width: 100px;
+          height: 100px;
+        }
+
+        .cover-preview img {
+          width: 160px;
+          height: 80px;
+        }
+      }
+    }
+  }
+}

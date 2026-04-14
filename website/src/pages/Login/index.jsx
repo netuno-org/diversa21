@@ -71,7 +71,25 @@ function Login({loggedUserInfoAction}) {
         return data;
       },
       success: (data) => {
-        loggedUserInfoAction(data.json.extra);
+        const userData = data.json.extra;
+        
+        // Buscar group do serviço people/get
+        _service({
+          url: "people/get",
+          method: 'GET',
+          success: (response) => {
+            const group = response.json?.data?.group;
+            loggedUserInfoAction({
+              ...userData,
+              group: group || 'member'
+            });
+          },
+          fail: () => {
+            // Se falhar, usar sem group
+            loggedUserInfoAction(userData);
+          }
+        });
+        
         setSubmitting(false);
       },
       fail: (data) => {
