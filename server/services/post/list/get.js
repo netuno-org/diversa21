@@ -13,6 +13,12 @@ if (parent != '') {
     dbParent = _db.get('post', parent);
 }
 
+const peopleId = _db.queryFirst(`
+    SELECT id
+    FROM people 
+    WHERE people_user_id = ?::int
+`, _user.id).getInt("id");
+
 const dbPosts = _db.query(`
     SELECT post.uid, post.moment, post.content, post.comments, post.likes,
         people.name AS "people_name", people.uid AS "people_uid",
@@ -26,7 +32,7 @@ const dbPosts = _db.query(`
     ORDER BY post.moment DESC
     LIMIT 10
     OFFSET ?::int
-`, _user.id, dbParent.getInt('id', 0), page);
+`, peopleId, dbParent.getInt('id', 0), page);
 const posts = _val.list();
 for (const dbPost of dbPosts) {
     posts.add(
