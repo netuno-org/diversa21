@@ -1,10 +1,10 @@
 import {_db, _val, _user, _exec, _out} from "@netuno/server-types"
 
-const people_uid = _req.getUID("uid");
+const peopleUid = _req.getUID("uid");
 
 const dbPeople = _db.queryFirst(`
     SELECT * FROM people WHERE uid = ?::uuid
-`, people_uid);
+`, peopleUid);
 
 if (dbPeople) {
   _db.delete(
