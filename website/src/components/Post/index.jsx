@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import _service from "@netuno/service-client";
 import { Link } from "react-router-dom";
 import { Card, Avatar, Button, Popconfirm, notification } from "antd";
-import { DeleteOutlined, EditOutlined, LikeOutlined, LikeTwoTone } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import momentjs from "moment";
 import Editor from "./Editor";
 import PostList from "./List";
@@ -181,7 +181,7 @@ function Post({
       {[
         <div>
           <Button type='link' onClick={onLike}>
-            {isLiked ? <LikeTwoTone /> : <LikeOutlined />}
+            {isLiked ? <LikeFilled /> : <LikeOutlined />}
             &nbsp;{likesCounter}
           </Button>
           {!showEditor && !editMode && (
