@@ -12,21 +12,56 @@ if (peopleUid && username) {
 
 if (peopleUid) {
     dbPeople = _db.queryFirst(`
-        SELECT * FROM people JOIN netuno_user
-        ON people.people_user_id = netuno_user.id 
+        SELECT people.uid,
+            people.name,
+            netuno_user.user,
+            people.email,
+            people.avatar,
+            people.birth_date,
+            people.city,
+            people.state,
+            people.country,
+            institution.uid AS "institution",
+            netuno_group.code AS "group"
+        FROM people 
+            INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
+            INNER join institution on people.institution_id = institution.id
+            INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
         WHERE people.uid = ?::uuid
     `, peopleUid);
 } else if (username) {
     dbPeople = _db.queryFirst(`
-        SELECT * FROM people JOIN netuno_user
-        ON people.people_user_id = netuno_user.id 
+        SELECT people.uid,
+            people.name,
+            netuno_user.user,
+            people.email,
+            people.avatar,
+            people.birth_date,
+            people.city,
+            people.state,
+            people.country,
+            institution.uid AS "institution",
+            netuno_group.code AS "group"
+        FROM people 
+            INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
+            INNER join institution on people.institution_id = institution.id
+            INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
         WHERE netuno_user."user" = ?::varchar;
     `, username);
 } else {
     dbPeople = _db.queryFirst(`
-      SELECT *
-      FROM people
-      WHERE people_user_id = ?::int
+        SELECT people.uid,
+            people.name,
+            people.email,
+            people.avatar,
+            people.birth_date,
+            people.city,
+            people.state,
+            people.country,
+            institution.uid AS "institution"
+        FROM people 
+            INNER join institution on people.institution_id = institution.id
+        WHERE people_user_id = ?::int
     `, _user.id);
 }
 
@@ -40,7 +75,7 @@ var data = _val.map();
 if (peopleUid || username) {
     data
         .set("username", dbPeople.getString("user"))
-        .set("group", _group.get(dbPeople.getInt("group_id")).getString("code"))
+        .set("group", dbPeople.getString("group"))
 } else {
     data
         .set("username", _user.get(_user.id()).getString("user"))
@@ -56,6 +91,7 @@ data
     .set("city", dbPeople.getString("city"))
     .set("state", dbPeople.getString("state"))
     .set("country", dbPeople.getString("country"))
+    .set("institution", dbPeople.getString("institution"))
 
 _out.json(
   _val.map()
