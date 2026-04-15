@@ -22,7 +22,7 @@ if (parent != '') {
 const peopleId = _db.queryFirst(`
     SELECT id
     FROM people 
-    WHERE uid = ?::uuid
+    WHERE people_user_id = ?::int
 `, _user.id).getInt("id");
 
 const dbPosts = _db.query(`
