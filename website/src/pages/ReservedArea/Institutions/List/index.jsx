@@ -37,10 +37,6 @@ function InstitutionList({
   
   const { filters } = institutionsState;
 
-  // Permissões baseadas no group
-  const canCreate = loggedUserInfo?.group === 'super-admin';
-  const canEdit = loggedUserInfo?.group === 'super-admin' || 
-                  loggedUserInfo?.group === 'management';
 
   // Fetch all institutions for filtering
   useEffect(() => {
@@ -150,7 +146,7 @@ function InstitutionList({
     <section className="institutions-list">
       <div className="list-header">
         <Title level={1}>Instituições</Title>
-        {canCreate && (
+        {(
           <Button 
             type="primary" 
             icon={<PlusOutlined />}
