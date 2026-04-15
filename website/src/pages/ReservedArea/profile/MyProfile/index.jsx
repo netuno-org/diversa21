@@ -7,11 +7,24 @@ import MyPosts from './MyPosts';
 const { Meta } = Card;
 const { Text } = Typography;
 
+function formatDatePtBr(dateValue) {
+    if (!dateValue) {
+        return '';
+    }
+
+    const [dateOnly] = (dateValue).split('T');
+    const [year, month, day] = dateOnly.split('-');
+
+    if (!year || !month || !day) {
+        return dateValue;
+    }
+
+    return `${day}/${month}/${year}`;
+}
+
 function MyProfile({ loggedUserInfo }) {
     const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-
-    const [year, mount, day] = loggedUserInfo.birthDate.split('-');
-    const birthDate = `${day}/${mount}/${year}`;
+    const birthDate = formatDatePtBr(loggedUserInfo.birthDate);
 
     useEffect(() => {
         if (loggedUserInfo.avatar) {
@@ -41,7 +54,7 @@ function MyProfile({ loggedUserInfo }) {
                     </div>
                 </div>
             </Card>
-            <MyPosts loggedUserInfo={loggedUserInfo.uid} />
+            <MyPosts loggedUserInfo={loggedUserInfo} />
         </div>
     )
 }

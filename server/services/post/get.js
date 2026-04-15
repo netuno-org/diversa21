@@ -1,14 +1,22 @@
 import {_req, _db, _val, _user, _group, _header, _exec, _out} from "@netuno/server-types"
 
 const peopleUid = _req.getUID("authorUid");
-
-var dbPeople;
-
-_log.debug(`peopleUid: ${peopleUid}`);
+const parent = _req.getString('parent');
+let page = _req.getInt('page', 0);
 
 if (!peopleUid) {
     _header.status(400)
     _exec.stop();
+}
+
+if (page > 0) {
+    page *= 2;
+}
+
+let dbParent = _val.map();
+
+if (parent != '') {
+    dbParent = _db.get('post', parent);
 }
 
 const peopleId = _db.queryFirst(`
@@ -27,11 +35,13 @@ const dbPosts = _db.query(`
         INNER JOIN people ON post.people_id = people.id
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
     WHERE 
-        people.uid = ?::uuid
+        people.uid = ?::uuid AND (post.parent_id IS NULL OR post.parent_id = ?::int)
     ORDER BY post.moment DESC
     LIMIT 10
+    OFFSET ?::int
     `
-, peopleId, peopleUid);
+, peopleId, peopleUid, dbParent.getInt('id', 0), page);
+
 const posts = _val.list();
 for (const dbPost of dbPosts) {
     posts.add(
