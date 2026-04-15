@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _group, _header, _exec, _out} from "@netuno/server-types"
+import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
 
 const peopleUid = _req.getUID("authorUid");
 const parent = _req.getString('parent');
@@ -23,7 +23,7 @@ const peopleId = _db.queryFirst(`
     SELECT id
     FROM people 
     WHERE uid = ?::uuid
-`, peopleUid).getInt("id");
+`, _user.id).getInt("id");
 
 const dbPosts = _db.query(`
     SELECT post.uid, post.moment, post.content, post.comments, post.likes,
