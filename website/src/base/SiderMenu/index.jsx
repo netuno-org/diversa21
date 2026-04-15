@@ -22,6 +22,12 @@ const menuItems = [
         link: "/posts"
     },
     {
+        key: "institutions",
+        label: "Instituições",
+        icon: <BlockOutlined />,
+        link: "/institutions"
+    },
+    {
         key: "other-page",
         label: "Outra Página",
         icon: <BlockOutlined />,
