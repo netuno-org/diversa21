@@ -33,19 +33,12 @@ function InstitutionEdit({ loggedUserInfo }) {
     wrapperCol: { xs: { span: 24 }, sm: { span: 18 } }
   };
 
-  // Check if user is super-admin or management (can edit)
+  // Load institution data
   useEffect(() => {
     if (!loggedUserInfo) {
       navigate('/login');
       return;
     }
-    if (loggedUserInfo?.group !== 'super-admin' && loggedUserInfo?.group !== 'management') {
-      message.error('Não tem permissão para editar instituições.');
-      navigate('/institutions');
-      return;
-    }
-
-    // Load institution data
     if (uid) {
       _service({
         url: `/institution/${uid}`,

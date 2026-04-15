@@ -21,10 +21,6 @@ function InstitutionView({ loggedUserInfo }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Permissões baseadas no group
-  const canEdit = loggedUserInfo?.group === 'super-admin' || 
-                  loggedUserInfo?.group === 'management';
-
   useEffect(() => {
     if (uid) {
       setLoading(true);
@@ -135,20 +131,16 @@ function InstitutionView({ loggedUserInfo }) {
                 )}
               </Space>
 
-              {canEdit && (
-                <Divider />
-              )}
+              <Divider />
 
-              {canEdit && (
-                <Button 
-                  type="primary" 
-                  icon={<EditOutlined />} 
-                  block
-                  onClick={handleEdit}
-                >
-                  Editar Instituição
-                </Button>
-              )}
+              <Button 
+                type="primary" 
+                icon={<EditOutlined />} 
+                block
+                onClick={handleEdit}
+              >
+                Editar Instituição
+              </Button>
             </Card>
           </Col>
 

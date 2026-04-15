@@ -32,15 +32,10 @@ function InstitutionCreate({ loggedUserInfo }) {
     wrapperCol: { xs: { span: 24 }, sm: { span: 18 } }
   };
 
-  // Check if user is super-admin (only super-admin can create)
+  // Check if user is logged in
   useEffect(() => {
     if (!loggedUserInfo) {
       navigate('/login');
-      return;
-    }
-    if (loggedUserInfo?.group !== 'super-admin') {
-      message.error('Apenas super-administradores podem criar instituições.');
-      navigate('/institutions');
     }
   }, [loggedUserInfo, navigate]);
 
