@@ -16,7 +16,7 @@ function MyPosts({ loggedUserInfo }) {
     useEffect(() => {
         _service({
             method: 'GET',
-            url: "/post",
+            url: "post/list",
             data: { authorUid: loggedUserInfo.uid },
             success: (response) => {
                 if (response.json) {
