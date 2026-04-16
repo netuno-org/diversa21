@@ -1,4 +1,7 @@
 {
+  "tags":[
+    "recovery"
+  ],
   "summary": "New Password",
   "description": "Save the new password.",
   "type": "object",

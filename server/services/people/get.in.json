@@ -1,4 +1,17 @@
 {
-  "summary": "Account Information",
-  "description": "Retrieve the information of the user logged."
+  "tags":[
+    "people"
+  ],
+  "summary": "User Information",
+  "description": "Retrieve a user by their UID or username; or the logged user if no parameter is passed",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "username": {
+      "type": "string",
+      "pattern": "^[a-z]+[a-z0-9]{1,24}$"
+    }
+  }
 }

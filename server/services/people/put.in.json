@@ -1,4 +1,7 @@
 {
+  "tags":[
+    "people"
+  ],
   "summary": "Update Account",
   "description": "Change the information of the logged user.",
   "type": "object",

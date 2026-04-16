@@ -1,4 +1,7 @@
 {
+  "tags":[
+    "people"
+  ],
   "summary": "Register",
   "description": "Create a new account.",
   "type": "object",

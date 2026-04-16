@@ -1,0 +1,25 @@
+{
+  "tags":[
+    "people"
+  ],
+  "summary": "List users",
+  "description": "Retrieve a list of users by name, city, state and/or country.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string",
+    },
+    "state": {
+      "type": "string",
+    },
+    "country": {
+      "type": "string",
+    },
+    "page": {
+      "type": "string",
+    }
+  }
+}

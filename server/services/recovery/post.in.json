@@ -1,4 +1,7 @@
 {
+  "tags":[
+    "recovery"
+  ],
   "summary": "Recovery Access",
   "description": "Send an e-mail with a link to password reset.",
   "type": "object",
