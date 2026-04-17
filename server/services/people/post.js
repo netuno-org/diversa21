@@ -18,6 +18,7 @@ if (userEmailExists || usernameExists) {
     _val.map()
       .set("error", `${userEmailExists ? 'email' : 'user'}-already-exists`)
   );
+  _exec.stop();
 } else {
   const dbNetunoGroup = _group.firstByCode("member");
 
@@ -31,18 +32,30 @@ if (userEmailExists || usernameExists) {
 
   const user_id = _user.create(userData);
 
-  _db.insertIfNotExists(
-    'people',
-    _val.map()
-      .set("name", name)
-      .set("email", email)
-      .set("people_user_id", user_id)
-      .set("birth_date", birthDate)
-      .set("city", city)
-      .set("state", state)
-      .set("country", country)
-  );
-  
+  if(user_id) {
+    try {
+      _db.insertIfNotExists(
+        'people',
+        _val.map()
+          .set("name", name)
+          .set("email", email)
+          .set("people_user_id", user_id)
+          .set("birth_date", birthDate)
+          .set("city", city)
+          .set("state", state)
+          .set("country", country)
+      );
+    } catch {
+      _user.remove(user_id); 
+      _header.status(400);
+      _out.json(
+        _val.map()
+          .set("error", `user not created`)
+      );
+      _exec.stop();
+    }
+  }
+    
   _out.json(
     _val.map()
       .set("result", true)
