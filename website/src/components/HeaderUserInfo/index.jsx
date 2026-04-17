@@ -22,7 +22,7 @@ function HeaderUserInfo({loggedUserInfo, loggedUserInfoReload, loggedUserInfoAct
     setLoading(true);
     _service({
       method: 'GET',
-      url: 'people',
+      url: 'people/me',
       success: (response) => {
         setLoading(false);
         if (response.json.result) {

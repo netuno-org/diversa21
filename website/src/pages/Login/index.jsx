@@ -75,7 +75,7 @@ function Login({loggedUserInfoAction}) {
         
         // Buscar group do serviço people/get
         _service({
-          url: "people/get",
+          url: "people/me",
           method: 'GET',
           success: (response) => {
             const group = response.json?.data?.group;
