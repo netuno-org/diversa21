@@ -2,8 +2,8 @@
   "tags":[
     "people"
   ],
-  "summary": "User Information",
-  "description": "Retrieve a user by their UID or username.",
+  "summary": "Account Information",
+  "description": "Retrieve the information of the logged user.",
   "type": "object",
   "properties": {
     "uid": {
