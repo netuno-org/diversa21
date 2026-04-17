@@ -12,11 +12,13 @@ function MyPosts({ loggedUserInfo }) {
     const startIndex = (currentPage - 1) * 3;
     const endIndex = startIndex + 3;
     const paginatedPosts = posts.slice(startIndex, endIndex);
+    const uid = loggedUserInfo?.uid;
 
     useEffect(() => {
+        if (!uid) return;
         _service({
             method: 'GET',
-            url: "post/list",
+            url: "post",
             data: { authorUid: loggedUserInfo.uid },
             success: (response) => {
                 if (response.json) {
@@ -29,7 +31,7 @@ function MyPosts({ loggedUserInfo }) {
             }
         });
 
-    }, [loggedUserInfo]);
+    }, [uid]);
 
     const onRemovePost = (uid) => {
         setPosts((currentPosts) => currentPosts.filter((post) => post.uid !== uid));

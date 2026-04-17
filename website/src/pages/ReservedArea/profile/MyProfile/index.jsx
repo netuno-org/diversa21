@@ -27,12 +27,13 @@ function MyProfile({ loggedUserInfo }) {
     const birthDate = formatDatePtBr(loggedUserInfo.birthDate);
 
     useEffect(() => {
+        if (!loggedUserInfo?.uid) return;
         if (loggedUserInfo.avatar) {
             setAvatarUrl(
                 _service.url(`/people/avatar?uid=${loggedUserInfo.uid}`)
             );
         }
-    }, [loggedUserInfo]);
+    }, [loggedUserInfo?.uid]);
 
     return (
 
