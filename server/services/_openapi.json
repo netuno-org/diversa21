@@ -1,7 +1,7 @@
 {
   "info": {
-    "title": "ReAuthKit",
-    "description": "REST API of a ready-to-use solution for user registration, authentication, profile, and more.",
+    "title": "Diversa21",
+    "description": "REST API of Diversa21, a social network for people with Trisomy 21.",
     "version": "1.0"
   },
   "components": {
