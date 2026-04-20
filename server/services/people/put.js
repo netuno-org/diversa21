@@ -34,20 +34,17 @@ if (password.length > 0) {
   );
 }
 
-
 const peopleData = _val.map()
-      .set("name", name)
-      .set("email", email)
+  .set("name", name)
+  .set("email", email)
+  .set("birth_date", birthDate)
+  .set("city", city)
+  .set("state", state)
+  .set("country", country);
 
 if (avatar) {
   peopleData.set("avatar", avatar)
 }
-
-peopleData
-    .set("birth_date", birthDate)
-    .set("city", city)
-    .set("state", state)
-    .set("country", country);
 
 _db.update(
   "people",
@@ -57,5 +54,5 @@ _db.update(
 
 _out.json(
   _val.map()
-    .set("result", true)
+  .set("result", true)
 );

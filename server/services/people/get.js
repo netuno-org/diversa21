@@ -6,68 +6,68 @@ const username = _req.getString("username");
 var dbPeople;
 
 if (peopleUid && username) {
-    _header.status(400)
+  _header.status(400)
   _out.json(
     _val.map()
-      .set("error", "conflicting-parameters")
+    .set("error", "conflicting-parameters")
   );
-    _exec.stop();
+  _exec.stop();
 }
 
 if (!peopleUid && !username) {
   _header.status(400)
   _out.json(
     _val.map()
-      .set("error", "missing-parameters")
+    .set("error", "missing-parameters")
   );
-    _exec.stop();
+  _exec.stop();
 }
 
 if (peopleUid) {
-    dbPeople = _db.queryFirst(`
-        SELECT people.uid,
-            people.name,
-            netuno_user.user,
-            people.email,
-            people.avatar,
-            people.birth_date,
-            people.city,
-            people.state,
-            people.country,
-            institution.uid AS "institution",
-            netuno_group.code AS "group"
-        FROM people 
-            INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
-            INNER join institution on people.institution_id = institution.id
-            INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
-        WHERE people.uid = ?::uuid
-    `, peopleUid);
+  dbPeople = _db.queryFirst(`
+    SELECT people.uid,
+      people.name,
+      netuno_user.user,
+      people.email,
+      people.avatar,
+      people.birth_date,
+      people.city,
+      people.state,
+      people.country,
+      institution.uid AS "institution",
+      netuno_group.code AS "group"
+    FROM people 
+      INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
+      INNER join institution on people.institution_id = institution.id
+      INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
+    WHERE people.uid = ?::uuid
+  `, peopleUid);
 } else if (username) {
-    dbPeople = _db.queryFirst(`
-        SELECT people.uid,
-            people.name,
-            netuno_user.user,
-            people.email,
-            people.avatar,
-            people.birth_date,
-            people.city,
-            people.state,
-            people.country,
-            institution.uid AS "institution",
-            netuno_group.code AS "group"
-        FROM people 
-            INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
-            INNER join institution on people.institution_id = institution.id
-            INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
-        WHERE netuno_user."user" = ?::varchar;
-    `, username);
+  dbPeople = _db.queryFirst(`
+    SELECT people.uid,
+      people.name,
+      netuno_user.user,
+      people.email,
+      people.avatar,
+      people.birth_date,
+      people.city,
+      people.state,
+      people.country,
+      institution.uid AS "institution",
+      netuno_group.code AS "group"
+    FROM people 
+      INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
+      INNER join institution on people.institution_id = institution.id
+      INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
+    WHERE netuno_user."user" = ?::varchar;
+  `, username);
 }
 
 if (!dbPeople) {
   _header.status(404)
   _out.json(
     _val.map()
-      .set("error", "not-exist")
+    .set("error", "not-exist")
   );
   _exec.stop()
 }
@@ -87,6 +87,6 @@ var data = _val.map()
 
 _out.json(
   _val.map()
-    .set("result", true)
-    .set("data", data)
+  .set("result", true)
+  .set("data", data)
 );
