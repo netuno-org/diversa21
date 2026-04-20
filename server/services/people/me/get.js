@@ -17,6 +17,10 @@ const dbPeople = _db.queryFirst(`
 
 if (!dbPeople) {
   _header.status(404)
+  _out.json(
+    _val.map()
+      .set("error", "not-logged-in")
+  );
   _exec.stop()
 }
 
