@@ -2,16 +2,5 @@
   "tags":[
     "people"
   ],
-  "summary": "Account Information",
-  "description": "Retrieve the information of the logged user.",
-  "type": "object",
-  "properties": {
-    "uid": {
-      "type": "uid"
-    },
-    "username": {
-      "type": "string",
-      "pattern": "^[a-z]+[a-z0-9]{1,24}$"
-    }
-  }
+  "summary": "Account Information"
 }
