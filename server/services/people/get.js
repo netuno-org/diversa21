@@ -7,6 +7,19 @@ var dbPeople;
 
 if (peopleUid && username) {
     _header.status(400)
+  _out.json(
+    _val.map()
+      .set("error", "conflicting-parameters")
+  );
+    _exec.stop();
+}
+
+if (!peopleUid && !username) {
+  _header.status(400)
+  _out.json(
+    _val.map()
+      .set("error", "missing-parameters")
+  );
     _exec.stop();
 }
 
@@ -52,6 +65,10 @@ if (peopleUid) {
 
 if (!dbPeople) {
   _header.status(404)
+  _out.json(
+    _val.map()
+      .set("error", "not-exist")
+  );
   _exec.stop()
 }
 
