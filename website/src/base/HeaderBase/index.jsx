@@ -11,66 +11,66 @@ import "./index.less";
 const { Header } = Layout;
 
 function HeaderBase({ collapsed, headerButtonMode }) {
-    const [menuKeysSelected, setMenuKeysSelected] = useState([]);
-    const location = useLocation();
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (location.pathname === '/profile/edit') {
-            setMenuKeysSelected(['profileEdit']);
-        } else {
-            setMenuKeysSelected([]);
-        }
-    }, [location]);
-    function onUserMenuClick({key}) {
-        if (key === "profileEdit") {
-            navigate("/profile/edit");
-        } else if (key === "logout") {
-            _auth.logout();
-        }
+  const [menuKeysSelected, setMenuKeysSelected] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (location.pathname === '/profile/edit') {
+      setMenuKeysSelected(['profileEdit']);
+    } else {
+      setMenuKeysSelected([]);
     }
-    return (
-        <Header className={'header-base ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
-            {!_auth.isLogged() &&
-                <Link to="/" className="logo-container"><img alt="logo" src="/images/logo.svg" /></Link>
+  }, [location]);
+  function onUserMenuClick({key}) {
+    if (key === "profileEdit") {
+      navigate("/profile/edit");
+    } else if (key === "logout") {
+      _auth.logout();
+    }
+  }
+  return (
+    <Header className={'header-base ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
+      {!_auth.isLogged() &&
+        <Link to="/" className="logo-container"><img alt="logo" src="/images/logo.svg" /></Link>
+      }
+      {headerButtonMode === '/login' ?
+        <Link to="/register">
+          <Button type="primary">Criar conta</Button>
+        </Link>
+        : headerButtonMode === '/register' ?
+        <Link to="/login">
+          <Button type="primary">Iniciar sessão</Button>
+        </Link>
+        : _auth.isLogged() &&
+        <Menu
+          mode="horizontal"
+          onClick={onUserMenuClick}
+          selectedKeys={menuKeysSelected}
+          items={[
+            {
+              key: "profile",
+              label: <HeaderUserInfo />,
+              className: "profile-menu",
+              popupClassName: "profile-menu-popup",
+              children: [
+                {
+                  key: "profileEdit",
+                  icon: <EditOutlined />,
+                  label: 'Editar Perfil'
+                },
+                {
+                  key: "logout",
+                  icon: <LogoutOutlined />,
+                  danger: true,
+                  label: 'Terminar Sessão'
+                }
+              ]
             }
-            {headerButtonMode === '/login' ?
-                <Link to="/register">
-                    <Button type="primary">Criar conta</Button>
-                </Link>
-                : headerButtonMode === '/register' ?
-                    <Link to="/login">
-                        <Button type="primary">Iniciar sessão</Button>
-                    </Link>
-                    : _auth.isLogged() &&
-                    <Menu
-                        mode="horizontal"
-                        onClick={onUserMenuClick}
-                        selectedKeys={menuKeysSelected}
-                        items={[
-                            {
-                                key: "profile",
-                                label: <HeaderUserInfo />,
-                                className: "profile-menu",
-                                popupClassName: "profile-menu-popup",
-                                children: [
-                                    {
-                                        key: "profileEdit",
-                                        icon: <EditOutlined />,
-                                        label: 'Editar Perfil'
-                                    },
-                                    {
-                                        key: "logout",
-                                        icon: <LogoutOutlined />,
-                                        danger: true,
-                                        label: 'Terminar Sessão'
-                                    }
-                                ]
-                            }
-                        ]}
-                    />
-            }
-        </Header>
-    );
+          ]}
+        />
+      }
+    </Header>
+  );
 }
 
 export default HeaderBase;

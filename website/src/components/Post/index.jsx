@@ -125,9 +125,9 @@ function Post({
     <Card className="post-container">
       <>
         <div
-            style={{
-              width: "100%"
-            }}
+          style={{
+            width: "100%"
+          }}
         >
           <Link to={`/u/${people.user}`}>
             <Avatar style={{ marginRight: '12px' }} src={avatarUrl} alt={people.name} />
@@ -140,24 +140,24 @@ function Post({
           {momentjs(moment).format("lll")}
           {loggedUserInfo && people.uid === loggedUserInfo.uid && <>
             <Popconfirm
-                title="Removendo post"
-                onConfirm={onDeletePost}
+              title="Removendo post"
+              onConfirm={onDeletePost}
             >
               <Button
-                  danger
-                  type="link"
-                  className="delete-post-button"
+                danger
+                type="link"
+                className="delete-post-button"
               >
                 <DeleteOutlined />
               </Button>
             </Popconfirm>
             {!editMode && (
-                <Button
-                    type="link"
-                    onClick={() => setEditMode(true)}
-                >
-                  <EditOutlined />
-                </Button>
+              <Button
+                type="link"
+                onClick={() => setEditMode(true)}
+              >
+                <EditOutlined />
+              </Button>
             )}
           </>}
         </span>
@@ -165,17 +165,17 @@ function Post({
       {
         editMode ? (
           <Editor
-              uid={uid}
-              type="editPost"
-              content={content}
-              onCancel={() => setEditMode(false)}
-              onSubmitted={(values) => {
-                onEditPost(uid, values.content);
-                setEditMode(false);
-                if (refPostList.current) {
-                  refPostList.current.newPost(values);
-                }
-              }}
+            uid={uid}
+            type="editPost"
+            content={content}
+            onCancel={() => setEditMode(false)}
+            onSubmitted={(values) => {
+              onEditPost(uid, values.content);
+              setEditMode(false);
+              if (refPostList.current) {
+                refPostList.current.newPost(values);
+              }
+            }}
           />
       ) : content}
       {[
@@ -189,37 +189,37 @@ function Post({
           )}
 
           {!editMode && countComments > 0 && (
-              <Button
-                  type="link"
-                  onClick={() => {
-                    setShowComments(!showComments);
+            <Button
+              type="link"
+              onClick={() => {
+                setShowComments(!showComments);
 
-                    if (!showComments) {
-                      setLoadingComments(true);
-                    }
-                  }}
-                  loading={loadingComments}
-              >
-                {showComments ? "Esconder comentários" : `Carregar comentários (${countComments})`}
-              </Button>
+                if (!showComments) {
+                  setLoadingComments(true);
+                }
+              }}
+              loading={loadingComments}
+            >
+              {showComments ? "Esconder comentários" : `Carregar comentários (${countComments})`}
+            </Button>
           )}
 
         </div>,
         showEditor && (
-            <Editor
-                type="comment"
-                onCancel={() => setShowEditor(false)}
-                onSubmitted={onCreated}
-                parent={uid}
-            />
+          <Editor
+            type="comment"
+            onCancel={() => setShowEditor(false)}
+            onSubmitted={onCreated}
+            parent={uid}
+          />
         ),
         !editMode && showComments && (
-            <PostList
-                ref={refPostList}
-                parent={uid}
-                onLoaded={onCommentsLoaded}
-                onItemRemoved={onCommentRemoved}
-            />
+          <PostList
+            ref={refPostList}
+            parent={uid}
+            onLoaded={onCommentsLoaded}
+            onItemRemoved={onCommentRemoved}
+          />
         )
       ]}
     </Card >
