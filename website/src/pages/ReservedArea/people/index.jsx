@@ -1,32 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
 import "./index.less";
-import { AutoComplete, Input, Card, Avatar } from 'antd';
+import { AutoComplete, Input, Card, Avatar, Spin } from 'antd';
 import { Typography } from "antd";
+import { EnvironmentOutlined, GlobalOutlined, CalendarOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
 function People() {
   const [people, setPeople] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [options, setOptions] = useState([]);
+  
   useEffect(() => {
     _service({
       method: 'GET',
       url: 'people/list',
       success: (response) => {
         setPeople(response.json);
+        setLoading(false);
         console.log(response.json);
+      },
+      fail: () => {
+        setLoading(false);
       }
     });
-  }, []);
+  }, [people]);
 
-  const [options, setOptions] = useState([]);
   const handleSearch = value => {
     setOptions(value ? searchResult(value) : []);
   };
   const onSelect = value => {
     console.log('onSelect', value);
   };
+
   return (
     <div className={"people-search"}>
       <Title level={1}>Digite o nome da pessoa</Title>
@@ -37,21 +44,25 @@ function People() {
         onSelect={onSelect}
         showSearch={{ onSearch: handleSearch }}
       >
-        <Input.Search size="large" placeholder="Procurar pessoas" enterButton />
+        <Input.Search size="large" placeholder="Procurar pessoas por nome, cidade, estado ou país " enterButton />
       </AutoComplete>
-      {people.length > 0 && people.map((person) => (
+      {loading && (
+        <div style={{ marginTop: 24 }}>
+          <Spin size="large" />
+        </div>
+      )}
+      {!loading && people.map((person) => (
         <Card className={"people-search-result"} key={person.uid}>
           <div className={"people-search-result-header"}>
             <Avatar size={64} src={_service.url(`/people/avatar?uid=${person.uid}`)} />
             <Title level={3}>{person.name}</Title>
           </div>
           <div className={"people-search-result-details"}>
-            <p>{person.city}, {person.state}</p>
-            <p>{person.country}</p>
-            <p>{person.birthDate}</p>
+            <p><EnvironmentOutlined /> {person.city}, {person.state}</p>
+            <p><GlobalOutlined /> {person.country}</p>
+            <p><CalendarOutlined /> {person.birthDate}</p>
           </div>
         </Card>
-
       ))}
     </div>
   );
