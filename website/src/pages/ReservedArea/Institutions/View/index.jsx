@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  Typography, Card, Spin, Breadcrumb, Button, Row, Col, 
-  Divider, Avatar, Space, Empty, message 
+import {
+  Typography, Card, Spin, Breadcrumb, Button, Row, Col,
+  Divider, Avatar, Space, Empty, message
 } from "antd";
-import { 
-  ArrowLeftOutlined, EditOutlined, MailOutlined, 
-  PhoneOutlined, EnvironmentOutlined, GlobalOutlined 
+import {
+  ArrowLeftOutlined, EditOutlined, MailOutlined,
+  PhoneOutlined, EnvironmentOutlined, GlobalOutlined
 } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import { connect } from 'react-redux';
@@ -25,7 +25,7 @@ function InstitutionView({ loggedUserInfo }) {
     if (uid) {
       setLoading(true);
       _service({
-        url: `/institution/${uid}`,
+        url: `/institution?uid=${uid}`,
         method: 'GET',
         success: ({ json }) => {
           if (json.data) {
@@ -73,9 +73,9 @@ function InstitutionView({ loggedUserInfo }) {
   return (
     <section className="institution-view">
       <div className="view-header">
-        <Button 
-          className="go-back-btn" 
-          type="link" 
+        <Button
+          className="go-back-btn"
+          type="link"
           onClick={() => navigate('/institutions')}
         >
           <ArrowLeftOutlined /> Voltar às instituições
@@ -106,21 +106,21 @@ function InstitutionView({ loggedUserInfo }) {
                 {institution.logo ? (
                   <Avatar src={institution.logo} size={120} shape="square" />
                 ) : (
-                  <Avatar 
-                    size={120} 
-                    shape="square" 
+                  <Avatar
+                    size={120}
+                    shape="square"
                     style={{ backgroundColor: '#8A6AA2', fontSize: 48 }}
                   >
                     {institution.name?.[0]}
                   </Avatar>
                 )}
               </div>
-              
+
               <Title level={2} className="institution-name">
                 {institution.name}
               </Title>
 
-              <Space direction="vertical" size={4} className="location-info">
+              <Space orientation="vertical" size={4} className="location-info">
                 {(institution.city || institution.country) && (
                   <Text type="secondary">
                     <EnvironmentOutlined /> {institution.city}{institution.city && institution.country && ', '}{institution.country}
@@ -133,9 +133,9 @@ function InstitutionView({ loggedUserInfo }) {
 
               <Divider />
 
-              <Button 
-                type="primary" 
-                icon={<EditOutlined />} 
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
                 block
                 onClick={handleEdit}
               >
@@ -151,7 +151,7 @@ function InstitutionView({ loggedUserInfo }) {
                 {institution.description || 'Sem descrição disponível.'}
               </Paragraph>
 
-              <Divider orientation="left">Informações de Contacto</Divider>
+              <Divider titlePlacement="left">Informações de Contacto</Divider>
 
               <div className="contact-info">
                 {institution.email && (
@@ -193,22 +193,26 @@ function InstitutionView({ loggedUserInfo }) {
                     <GlobalOutlined />
                     <div className="contact-details">
                       <Text type="secondary">Website</Text>
-                      <a 
-                        href={institution.website} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                      >
-                        {institution.website}
-                      </a>
+                      {institution.website ? (
+                        <a
+                          href={institution.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {institution.website}
+                        </a>
+                      ) : (
+                        <Text type="secondary">Website indisponível</Text>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
 
-              {(!institution.email && !institution.telephone && 
+              {(!institution.email && !institution.telephone &&
                 !institution.address && !institution.website) && (
-                <Text type="secondary">Sem informações de contacto disponíveis.</Text>
-              )}
+                  <Text type="secondary">Sem informações de contacto disponíveis.</Text>
+                )}
             </Card>
           </Col>
         </Row>
