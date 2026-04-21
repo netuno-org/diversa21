@@ -41,7 +41,7 @@ function InstitutionEdit({ loggedUserInfo }) {
     }
     if (uid) {
       _service({
-        url: `/institution/${uid}`,
+        url: `/institution?uid=${uid}`,
         method: 'GET',
         success: ({ json }) => {
           if (json.data) {
@@ -143,7 +143,7 @@ function InstitutionEdit({ loggedUserInfo }) {
 
     _service({
       method: 'PUT',
-      url: `/institution/${uid}`,
+      url: `/institution?uid=${uid}`,
       data: formData,
       success: (response) => {
         if (response.json.result) {
@@ -281,8 +281,6 @@ function InstitutionEdit({ loggedUserInfo }) {
                 <Form.Item
                   label="Logótipo"
                   name="logo"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e) => Array.isArray(e) ? e : e && [e]}
                 >
                   <div className="upload-container">
                     {logoPreview ? (
@@ -320,8 +318,6 @@ function InstitutionEdit({ loggedUserInfo }) {
                 <Form.Item
                   label="Imagem de Capa"
                   name="cover_image"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e) => Array.isArray(e) ? e : e && [e]}
                 >
                   <div className="upload-container">
                     {coverPreview ? (
