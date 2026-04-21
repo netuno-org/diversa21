@@ -1,20 +1,25 @@
 import {_req, _db, _exec, _header, _out, _val} from "@netuno/server-types";
 
-const uid = _req.getString('uid')
+const uid = _req.getUID('uid');
 
-const dbInstitution = _db.form('institution')
-    .where(_db.where('uid').equal(uid))
-    .first()
+const dbInstitutions = _db.query(`
+    SELECT uid, name, description, email, telephone, website,
+           address, post_code, city, state, country,
+           cover_image, logo, active
+    FROM institution
+    WHERE uid = ?::uuid
+`, uid);
 
-if (!dbInstitution) {
-    _header.status(404)
+if (!dbInstitutions || dbInstitutions.length === 0) {
+    _header.status(404);
     _out.json(
         _val.map()
-          .set('error', true)
-          .set('code', 'institution-not-found')
+            .set('error', 'institution-not-found')
     )
     _exec.stop()
 }
+
+const dbInstitution = dbInstitutions[0];
 
 _out.json(
   _val.map()
