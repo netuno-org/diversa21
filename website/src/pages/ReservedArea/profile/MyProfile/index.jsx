@@ -27,7 +27,9 @@ function MyProfile({ loggedUserInfo }) {
   const birthDate = formatDatePtBr(loggedUserInfo.birthDate);
 
   useEffect(() => {
-    if (!loggedUserInfo?.uid) return;
+    if (!loggedUserInfo?.uid) {
+        return;
+    };
     if (loggedUserInfo.avatar) {
       setAvatarUrl(
         _service.url(`/people/avatar?uid=${loggedUserInfo.uid}`)
@@ -43,7 +45,7 @@ function MyProfile({ loggedUserInfo }) {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Meta
             style={{ height: '150px', textAlign: 'center' }}
-            avatar={<Avatar src={avatarUrl} style={{ width: '100%', height: "100%" }} />}
+            avatar={<Avatar src={avatarUrl} style={{ width: '145px', height: "145px" }} />}
           />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Text><UserOutlined /> {loggedUserInfo.name}</Text>
@@ -51,7 +53,7 @@ function MyProfile({ loggedUserInfo }) {
             <Text><CalendarOutlined /> {birthDate}</Text>
           </div>
           <div style={{ display: 'flex', gap: '10px', marginLeft: 'auto' }}>
-            <Button type="primary">Instituição</Button>
+            <Button  type="primary">Nome da minha instituição</Button>
           </div>
         </div>
       </Card>

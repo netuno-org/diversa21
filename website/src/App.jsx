@@ -120,6 +120,7 @@ export default function App() {
                 <Route path="/posts" element={<ReservedArea />} />
                 <Route path="/u/:user" element={<ReservedArea />} />
                 <Route path="/other-page" element={<ReservedArea />} />
+                <Route path="/people" element={<ReservedArea />} />
                 <Route path="/institutions" element={<ReservedArea />} />
                 <Route path="/institutions/new" element={<ReservedArea />} />
                 <Route path="/institutions/:uid" element={<ReservedArea />} />

@@ -8,6 +8,7 @@ import Dashboard from "./Dashboard";
 import Posts from "./Posts";
 import UserProfile from "./UserProfile";
 import OtherPage from "./OtherPage";
+import People from "./people";
 import InstitutionsList from "./Institutions/List";
 import InstitutionView from "./Institutions/View";
 import InstitutionCreate from "./Institutions/Create";
@@ -39,6 +40,9 @@ function ReservedArea() {
     }
     if (location.pathname === "/other-page") {
       return <OtherPage/>;
+    }
+    if (location.pathname === "/people") {
+      return <People/>;
     }
     if (location.pathname === "/institutions") {
       return <InstitutionsList/>;
