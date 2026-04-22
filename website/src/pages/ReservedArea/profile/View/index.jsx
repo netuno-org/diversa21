@@ -24,7 +24,6 @@ function formatDatePtBr(dateValue) {
 }
 
 function ProfileView ({ loggedUserInfo }) {
-  console.log(loggedUserInfo);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const birthDate = formatDatePtBr(loggedUserInfo?.birthDate);
 
