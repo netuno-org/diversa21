@@ -3,6 +3,7 @@ import _service from '@netuno/service-client';
 import { UserOutlined, EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Avatar, Card, Button, Typography } from 'antd';
 import Posts from './Posts';
+import { connect } from 'react-redux';
 
 const { Meta } = Card;
 const { Text } = Typography;
@@ -23,8 +24,9 @@ function formatDatePtBr(dateValue) {
 }
 
 function ProfileView ({ loggedUserInfo }) {
+  console.log(loggedUserInfo);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-  const birthDate = formatDatePtBr(loggedUserInfo.birthDate);
+  const birthDate = formatDatePtBr(loggedUserInfo?.birthDate);
 
   useEffect(() => {
     if (!loggedUserInfo?.uid) {
@@ -48,8 +50,8 @@ function ProfileView ({ loggedUserInfo }) {
             avatar={<Avatar src={avatarUrl} style={{ width: '145px', height: "145px" }} />}
           />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Text><UserOutlined /> {loggedUserInfo.name}</Text>
-            <Text><EnvironmentOutlined /> {loggedUserInfo.city}, {loggedUserInfo.state}</Text>
+            <Text><UserOutlined /> {loggedUserInfo?.name}</Text>
+            <Text><EnvironmentOutlined /> {loggedUserInfo?.city}, {loggedUserInfo?.state}</Text>
             <Text><CalendarOutlined /> {birthDate}</Text>
           </div>
           <div style={{ display: 'flex', gap: '10px', marginLeft: 'auto' }}>
@@ -62,4 +64,11 @@ function ProfileView ({ loggedUserInfo }) {
   )
 }
 
-export default ProfileView;
+const mapStateToProps = store => {
+  const { loggedUserInfo } = store.loggedUserInfoState;
+  return {
+    loggedUserInfo
+  };
+};
+
+export default connect(mapStateToProps, {})(ProfileView);
