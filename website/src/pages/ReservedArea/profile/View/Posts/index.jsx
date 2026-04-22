@@ -4,7 +4,7 @@ import { EditOutlined, MessageOutlined } from '@ant-design/icons';
 import { Tabs,  Pagination  } from 'antd';
 import Post from '../../../../../components/Post/';
 
-function MyPosts({ loggedUserInfo }) {
+function Posts({ loggedUserInfo }) {
   const [allPosts, setAllPosts] = useState([]);
   const [paginatedPosts, setPaginatedPosts] = useState([]);
   const [pagination, setPagination] = useState({
@@ -98,4 +98,4 @@ function MyPosts({ loggedUserInfo }) {
     />
   );
 }
-export default MyPosts;
+export default Posts;

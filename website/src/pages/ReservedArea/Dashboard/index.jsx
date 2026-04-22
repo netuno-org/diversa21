@@ -1,5 +1,5 @@
 import React from 'react';
-import MyProfile from '../profile/MyProfile';
+import ProfileView from '../profile/View';
 
 import { Typography, Spin } from 'antd';
 
@@ -18,7 +18,7 @@ function Dashboard({loggedUserInfo}) {
       <>
         {/* <Title level={2}>Olá {loggedUserInfo.name}!</Title>
         <Title level={3} style={{ marginTop: 0 }}>Bem-vindo(a) à sua Área Reservada!</Title> */}
-        <MyProfile loggedUserInfo={loggedUserInfo} />
+        <ProfileView loggedUserInfo={loggedUserInfo} />
       </>
     );
   }
