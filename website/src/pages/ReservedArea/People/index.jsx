@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
+import { Link } from "react-router-dom";
 import "./index.less";
 import { AutoComplete, Input, Card, Avatar, Spin } from 'antd';
 import { Typography } from "antd";
@@ -11,7 +12,7 @@ function People() {
   const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState([]);
-  
+
   useEffect(() => {
     _service({
       method: 'GET',
@@ -26,8 +27,9 @@ function People() {
     });
   }, []);
 
-  const handleSearch = value => {
-    setOptions(value ? searchResult(value) : []);
+  const handleSearch = (e) => {
+    console.log('handleSearch', e);
+    
   };
   const onSelect = value => {
     console.log('onSelect', value);
@@ -38,7 +40,7 @@ function People() {
       <Title level={1}>Digite o nome da pessoa</Title>
       <AutoComplete
         popupMatchSelectWidth={252}
-        style={{ width: 600 }}
+        style={{ width: '60%' }}
         options={options}
         onSelect={onSelect}
         showSearch={{ onSearch: handleSearch }}
@@ -52,9 +54,11 @@ function People() {
       )}
       {!loading && people.map((person) => (
         <Card className={"people-search-result"} key={person.uid}>
-          <div className={"people-search-result-header"}>
-            <Avatar size={64} src={_service.url(`/people/avatar?uid=${person.uid}`)} />
-            <Title level={3}>{person.name}</Title>
+          <div>
+            <Link to={`/u/${person.username}`} className={"people-search-result-header"}>
+              <Avatar size={64} src={_service.url(`/people/avatar?uid=${person.uid}`)} />
+              <Title level={3}>{person.name}</Title>
+            </Link>
           </div>
           <div className={"people-search-result-details"}>
             <p><EnvironmentOutlined /> {person.city}, {person.state}</p>
