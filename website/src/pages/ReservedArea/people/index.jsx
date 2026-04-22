@@ -19,13 +19,12 @@ function People() {
       success: (response) => {
         setPeople(response.json);
         setLoading(false);
-        console.log(response.json);
       },
       fail: () => {
         setLoading(false);
       }
     });
-  }, [people]);
+  }, []);
 
   const handleSearch = value => {
     setOptions(value ? searchResult(value) : []);
