@@ -1,0 +1,63 @@
+import {_req, _db, _val, _out, _header, _exec} from "@netuno/server-types";
+
+const uid = _req.getString('uid');
+const name = _req.getString("name");
+const description = _req.getString("description");
+const email = _req.getString("email");
+const telephone = _req.getString("telephone");
+const address = _req.getString("address");
+const post_code = _req.getString("post_code");
+const city = _req.getString("city");
+const state = _req.getString("state");
+const country = _req.getString("country");
+const website = _req.getString("website");
+const logo = _req.getFile("logo");
+const cover_image = _req.getFile("cover_image");
+
+// Find institution by uid
+const dbInstitution = _db.queryFirst(`
+    SELECT id FROM institution WHERE uid = ?::uuid
+`, uid);
+
+if (!dbInstitution) {
+    _header.status(404);
+    _out.json(_val.map().set('error', 'institution-not-found'));
+    _exec.stop();
+}
+
+const institutionData = _val.map()
+  .set("name", name)
+  .set("description", description)
+  .set("email", email);
+
+if (telephone) {
+  institutionData.set("telephone", telephone);
+}
+if (address) {
+  institutionData.set("address", address);
+}
+if (post_code) {
+  institutionData.set("post_code", post_code);
+}
+if (city) {
+  institutionData.set("city", city);
+}
+if (state) {
+  institutionData.set("state", state);
+}
+if (country) {
+  institutionData.set("country", country);
+}
+if (website) {
+  institutionData.set("website", website);
+}
+if (logo) {
+  institutionData.set("logo", logo);
+}
+if (cover_image) {
+  institutionData.set("cover_image", cover_image);
+}
+
+_db.update("institution", dbInstitution.getInt("id"), institutionData);
+
+_out.json(_val.map().set("result", true));

@@ -45,7 +45,7 @@ function InstitutionList({
       url: "institution/list",
       method: 'GET',
       success: ({ json }) => {
-        const items = json || [];
+        const items = Array.isArray(json?.data) ? json.data : [];
         setAllInstitutions(items);
         
         // Extract unique countries
@@ -76,7 +76,7 @@ function InstitutionList({
 
   // Compute filtered and paginated results
   const filteredInstitutions = useMemo(() => {
-    let result = allInstitutions;
+    let result = allInstitutions || [];
     
     // Filter by search name
     if (filters.search) {

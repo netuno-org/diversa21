@@ -1,0 +1,47 @@
+{
+  "summary": "Create Institution",
+  "description": "Create a new institution.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string-not-empty"
+    },
+    "description": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string-not-empty"
+    },
+    "telephone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "post_code": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "logo": {
+      "type": "file"
+    },
+    "cover_image": {
+      "type": "file"
+    }
+  },
+  "required": [
+    "name",
+    "email"
+  ]
+}

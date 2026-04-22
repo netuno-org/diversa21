@@ -1,8 +1,20 @@
-import {_req, _db, _exec, _header, _out, _val} from "@netuno/server-types";
+import {_req, _db, _val, _user, _out} from "@netuno/server-types";
 
-const dbInstitutions = _db.form('institution')
-    .order('institution.name', 'asc')
-    .all()
+let page = _req.getInt('page', 0);
+
+if (page > 0) {
+    page *= 10;
+}
+
+const dbInstitutions = _db.query(`
+    SELECT uid, name, description, email, telephone, website, 
+           address, post_code, city, state, country, 
+           cover_image, logo, active
+    FROM institution
+    ORDER BY name ASC
+    LIMIT 10
+    OFFSET ?::int
+`, page);
 
 const institutions = _val.list()
 
@@ -26,4 +38,8 @@ for (const dbInstitution of dbInstitutions) {
     )
 }
 
-_out.json(institutions)
+_out.json(
+  _val.map()
+    .set('result', true)
+    .set('data', institutions)
+)
