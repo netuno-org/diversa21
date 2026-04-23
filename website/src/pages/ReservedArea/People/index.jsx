@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
 import { Link } from "react-router-dom";
 import "./index.less";
-import { AutoComplete, Input, Card, Avatar, Spin, Pagination } from 'antd';
+import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select } from 'antd';
 import { Typography } from "antd";
 import { EnvironmentOutlined, GlobalOutlined, CalendarOutlined } from '@ant-design/icons';
 
@@ -41,9 +41,20 @@ function People() {
     setPeopleList(peopleList);
   }, [pagination]);
 
-  const handleSearch = (e) => {
-    console.log('handleSearch', e);
-    
+  const handleSearch = (value) => {
+    const filteredPeopleByName = people.filter(person => person.name.toLowerCase().startsWith(value.toLowerCase()));
+
+    if (filteredPeopleByName.length > 0) {
+      setPeopleList(filteredPeopleByName);
+    } else {
+      setPeopleList([]);
+    }
+  };
+  const onChange = value => {
+    console.log(`selected ${value}`);
+  };
+  const onSearch = value => {
+    console.log('search:', value);
   };
   const onSelect = value => {
     console.log('onSelect', value);
@@ -51,16 +62,43 @@ function People() {
 
   return (
     <div className={"people-search"}>
-      <Title level={1}>Digite o nome da pessoa</Title>
+      <Title level={1}>Procurar pessoas</Title>
+      <div className={"people-search-input"}>
       <AutoComplete
         popupMatchSelectWidth={252}
-        style={{ width: '60%' }}
+        style={{ width: '50%' }}
         options={options}
         onSelect={onSelect}
-        showSearch={{ onSearch: handleSearch }}
+        onSearch={handleSearch}
       >
-        <Input.Search size="large" placeholder="Procurar pessoas por nome, cidade, estado ou país " enterButton />
+        <Input.Search
+          placeholder="Buscar por nome"
+          enterButton
+          onSearch={handleSearch}
+        />
       </AutoComplete>
+      <Select
+        showSearch={{ optionFilterProp: 'label', onSearch }}
+        placeholder="País"
+        onChange={onChange}
+        options={[]}
+        style={{ width: '25%' }}
+      />
+      <Select
+        showSearch={{ optionFilterProp: 'label', onSearch }}
+        placeholder="Estado"
+        onChange={onChange}
+        options={[]}
+        style={{ width: '25%' }}
+      />
+      <Select
+        showSearch={{ optionFilterProp: 'label', onSearch }}
+        placeholder="Cidade"
+        onChange={onChange}
+        options={[]}
+        style={{ width: '25%' }}
+      />
+      </div>
       {loading && (
         <div style={{ marginTop: 24 }}>
           <Spin size="large" />
@@ -81,14 +119,34 @@ function People() {
           </div>
         </Card>
       ))}
-      <Pagination
-      style={{ marginTop: '20px' }}
-      align='center'
-      total={people.length}
-      current={pagination.current}
-      pageSize={pagination.size}
-      onChange={(current) => setPagination({ ...pagination, current})}
-    />
+      {
+        peopleList.length === 0 && !loading ? (
+         <div>
+          <Pagination
+            style={{ marginTop: '20px', display: 'none' }}
+            align='center'
+            total={people.length}
+            current={pagination.current}
+            pageSize={pagination.size}
+            onChange={(current) => setPagination({ ...pagination, current})}
+          />
+          <div style={{ marginTop: '20px' }}>
+            <Empty 
+              description={"Nenhuma pessoa encontrada corresponde aos filtros aplicados." } 
+            />
+          </div>
+         </div>
+        ) : (
+          <Pagination
+          style={{ marginTop: '20px' }}
+          align='center'
+          total={people.length}
+          current={pagination.current}
+          pageSize={pagination.size}
+          onChange={(current) => setPagination({ ...pagination, current})}
+        />
+        )
+      }
     </div>
   );
 }
