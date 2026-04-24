@@ -2,15 +2,16 @@ import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types
 
 const peopleUid = _req.getUID("authorUid");
 const parent = _req.getString('parent');
-let page = _req.getInt('page', 0);
+let page = _req.getInt('page', 1);
 
 if (!peopleUid) {
   _header.status(400)
   _exec.stop();
 }
 
+let offset = 0;
 if (page > 0) {
-  page *= 2;
+  offset = (page - 1) * 10;
 }
 
 let dbParent = _val.map();
@@ -41,7 +42,7 @@ const dbPosts = _db.query(`
   LIMIT 10
   OFFSET ?::int
   `
-, peopleId, peopleUid, dbParent.getInt('id', 0), page);
+, peopleId, peopleUid, dbParent.getInt('id', 0), offset);
 
 const posts = _val.list();
 for (const dbPost of dbPosts) {

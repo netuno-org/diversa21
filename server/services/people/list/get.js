@@ -6,8 +6,9 @@ const state = _req.getString('state');
 const country = _req.getString('country');
 let page = _req.getInt('page', 1);
 
+let offset = 0;
 if (page > 0) {
-  page = (page - 1) * 10;
+  offset = (page - 1) * 10;
 }
 
 const dbPeople = _db.query(`
@@ -39,7 +40,7 @@ const dbPeople = _db.query(`
 `%${city}%`,
 `%${state}%`,
 `%${country}%`,
-page);
+offset);
 
 const people = _val.list();
 for (const dbPerson of dbPeople) {
