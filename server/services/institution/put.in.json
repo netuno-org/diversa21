@@ -1,4 +1,7 @@
 {
+  "tags": [
+    "institution"
+  ],
   "summary": "Update Institution",
   "description": "Update an existing institution.",
   "type": "object",

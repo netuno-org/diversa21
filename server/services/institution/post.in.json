@@ -1,4 +1,7 @@
 {
+  "tags": [
+    "institution"
+  ],
   "summary": "Create Institution",
   "description": "Create a new institution.",
   "type": "object",
