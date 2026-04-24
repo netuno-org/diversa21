@@ -4,10 +4,10 @@ const name = _req.getString('name');
 const city = _req.getString('city');
 const state = _req.getString('state');
 const country = _req.getString('country');
-let page = _req.getInt('page', 0);
+let page = _req.getInt('page', 1);
 
 if (page > 0) {
-    page *= 2;
+  page = (page - 1) * 10;
 }
 
 const dbPeople = _db.query(`
@@ -31,7 +31,8 @@ const dbPeople = _db.query(`
     people.city ILIKE ?::varchar AND
     people.state ILIKE ?::varchar AND
     people.country ILIKE ?::varchar
-  LIMIT 10
+  ORDER BY people.name ASC
+  LIMIT 10 
   OFFSET ?::int
 `,
 `%${name}%`,
