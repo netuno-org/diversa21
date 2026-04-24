@@ -17,8 +17,9 @@ if (!dbPost) {
 const dbLike = _db.queryFirst(`
     SELECT id 
     FROM post_like
-    WHERE post_id = ?::int
-        AND people_id = ?::int
+    WHERE 1 = 1
+      AND post_id = ?::int
+      AND people_id = ?::int
 `, dbPost.getInt('id'), peopleId);
 
 if (dbLike) {

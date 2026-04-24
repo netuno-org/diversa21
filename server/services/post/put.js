@@ -7,7 +7,8 @@ const dbPost = _db.queryFirst(`
   SELECT post.id
   FROM post
     INNER JOIN people ON post.people_id = people.id
-  WHERE post.uid = ?::uuid
+  WHERE 1 = 1
+    AND post.uid = ?::uuid
     AND people.people_user_id = ?::int 
 `, uid, _user.id);
 

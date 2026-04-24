@@ -1,7 +1,8 @@
 const dbPeople = _db.queryFirst(`
   SELECT * 
   FROM people
-  WHERE recovery_key = ?
+  WHERE 1 = 1
+    AND recovery_key = ?
     AND recovery_limit >= CURRENT_TIMESTAMP
 `, _req.getString("key"));
 

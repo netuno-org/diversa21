@@ -16,7 +16,8 @@ const peopleId = _db.queryFirst(`
 
 const deleteResults = _db.execute(`
   DELETE FROM post_like
-  WHERE post_id = ?::int
+  WHERE 1 = 1
+    AND post_id = ?::int
     AND people_id = ?::int
 `, dbPost.getInt('id'), peopleId);
 

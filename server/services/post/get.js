@@ -34,8 +34,9 @@ const dbPosts = _db.query(`
   FROM post
       INNER JOIN people ON post.people_id = people.id
       INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
-  WHERE 
-      people.uid = ?::uuid AND (post.parent_id IS NULL OR post.parent_id = ?::int)
+  WHERE 1 = 1
+      AND people.uid = ?::uuid
+      AND (post.parent_id IS NULL OR post.parent_id = ?::int)
   ORDER BY post.moment DESC
   LIMIT 10
   OFFSET ?::int

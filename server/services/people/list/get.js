@@ -26,11 +26,11 @@ const dbPeople = _db.query(`
     INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
     INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
     INNER JOIN institution on people.institution_id = institution.id
-  WHERE
-    people.name ILIKE ?::varchar AND
-    people.city ILIKE ?::varchar AND
-    people.state ILIKE ?::varchar AND
-    people.country ILIKE ?::varchar
+  WHERE 1 = 1
+    AND people.name ILIKE ?::varchar
+    AND people.city ILIKE ?::varchar
+    AND people.state ILIKE ?::varchar
+    AND people.country ILIKE ?::varchar
   ORDER BY people.name ASC
   LIMIT 10 
   OFFSET ?::int
