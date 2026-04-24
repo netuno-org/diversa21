@@ -25,7 +25,7 @@ const dbPeople = _db.query(`
   FROM people
     INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
     INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
-    INNER join institution on people.institution_id = institution.id
+    INNER JOIN institution on people.institution_id = institution.id
   WHERE
     people.name ILIKE ?::varchar AND
     people.city ILIKE ?::varchar AND

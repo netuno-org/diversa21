@@ -38,7 +38,7 @@ if (peopleUid) {
       netuno_group.code AS "group"
     FROM people 
       INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
-      INNER join institution on people.institution_id = institution.id
+      INNER JOIN institution on people.institution_id = institution.id
       INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
     WHERE people.uid = ?::uuid
   `, peopleUid);
@@ -57,7 +57,7 @@ if (peopleUid) {
       netuno_group.code AS "group"
     FROM people 
       INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
-      INNER join institution on people.institution_id = institution.id
+      INNER JOIN institution on people.institution_id = institution.id
       INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
     WHERE netuno_user."user" = ?::varchar;
   `, username);

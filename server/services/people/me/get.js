@@ -11,7 +11,7 @@ const dbPeople = _db.queryFirst(`
     people.country,
     institution.uid AS "institution"
   FROM people 
-    INNER join institution on people.institution_id = institution.id
+    INNER JOIN institution on people.institution_id = institution.id
   WHERE people_user_id = ?::int
 `, _user.id);
 
