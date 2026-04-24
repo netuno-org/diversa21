@@ -44,14 +44,14 @@ if (user_id) {
     _db.insertIfNotExists(
       'people',
       _val.map()
-      .set("name", name)
-      .set("email", email)
-      .set("people_user_id", user_id)
-      .set("birth_date", birthDate)
-      .set("city", city)
-      .set("state", state)
-      .set("country", country)
-      .set("institution_id", institutionId)
+        .set("name", name)
+        .set("email", email)
+        .set("people_user_id", user_id)
+        .set("birth_date", birthDate)
+        .set("city", city)
+        .set("state", state)
+        .set("country", country)
+        .set("institution_id", institutionId)
     );
   } catch (e) {
     _log.warn("error: user not created", e);
