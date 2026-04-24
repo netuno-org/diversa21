@@ -29,6 +29,9 @@
     },
     "country": {
       "type": "string-not-empty"
+    },
+    "institution": {
+      "type": "uid"
     }
   },
   "required": [
@@ -39,6 +42,7 @@
     "birthDate",
     "city",
     "state",
-    "country"
+    "country",
+    "institution"
   ]
 }

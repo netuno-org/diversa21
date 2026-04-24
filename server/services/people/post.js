@@ -8,6 +8,7 @@ const birthDate = _req.getString("birthDate");
 const city = _req.getString("city");
 const state = _req.getString("state");
 const country = _req.getString("country");
+const institutionUid = _req.getUID("institution");
 
 const userEmailExists = _user.firstByMail(email);
 const usernameExists = _user.firstByUser(username);
@@ -35,6 +36,11 @@ const user_id = _user.create(userData);
 
 if (user_id) {
   try {
+    const institutionId = _db.queryFirst(`
+      SELECT id FROM institution 
+      WHERE uid = ?::uuid
+    `, institutionUid).getInt("id");
+
     _db.insertIfNotExists(
       'people',
       _val.map()
@@ -45,6 +51,7 @@ if (user_id) {
       .set("city", city)
       .set("state", state)
       .set("country", country)
+      .set("institution_id", institutionId)
     );
   } catch (e) {
     _log.warn("error: user not created", e);
