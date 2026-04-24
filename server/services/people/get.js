@@ -3,7 +3,7 @@ import {_req, _db, _val, _header, _exec, _out} from "@netuno/server-types"
 const peopleUid = _req.getUID("uid");
 const username = _req.getString("username");
 
-var dbPeople;
+let dbPeople;
 
 if (peopleUid && username) {
   _header.status(400)
@@ -72,7 +72,7 @@ if (!dbPeople) {
   _exec.stop()
 }
 
-var data = _val.map()
+let data = _val.map()
   .set("uid", dbPeople.getString("uid"))
   .set("name", dbPeople.getString("name"))
   .set("email", dbPeople.getString("email"))

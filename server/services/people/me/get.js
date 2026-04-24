@@ -24,7 +24,7 @@ if (!dbPeople) {
   _exec.stop()
 }
 
-var data = _val.map()
+let data = _val.map()
   .set("uid", dbPeople.getString("uid"))
   .set("name", dbPeople.getString("name"))
   .set("email", dbPeople.getString("email"))
