@@ -1,10 +1,25 @@
 import {_db, _val, _user, _out} from "@netuno/server-types"
 
 const peopleUid = _req.getUID("uid");
+const username = _req.getString("username");
 
-const dbPeople = _db.queryFirst(`
-  SELECT * FROM people WHERE uid = ?::uuid
+let dbPeople;
+
+if (peopleUid) {
+  dbPeople = _db.queryFirst(`
+    SELECT * FROM people
+    WHERE uid = ?::uuid
   `, peopleUid);
+}
+
+if (username) {
+  dbPeople = _db.queryFirst(`
+    SELECT *, people.id as id
+    FROM people INNER JOIN netuno_user
+    ON people.people_user_id = netuno_user.id
+    WHERE netuno_user.user = ?::varchar
+  `, username);
+}
 
 if (dbPeople) {
   _db.delete(
