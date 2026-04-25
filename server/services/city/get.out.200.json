@@ -4,14 +4,17 @@
     "result": {
       "type": "boolean"
     },
-    "data": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "label": {
-          "type": "string"
+    "autocomplete": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
         }
       }
     }

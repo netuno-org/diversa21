@@ -5,11 +5,11 @@
     "summary": "Fetch City, State and Country From Search",
     "description": "Retrieve cities, states and countries from a search.",
     "properties": {
-      "searchTerm": {
+      "query": {
         "type": "string"
       }
     },
     "required": [
-      "searchTerm"
+      "query"
     ]
 }
