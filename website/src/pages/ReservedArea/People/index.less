@@ -36,8 +36,18 @@
   .people-search-result-header,
   .people-search-result-details {
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 16px;
     flex-wrap: wrap;
+    .people-search-result-details-location {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      .country-title {
+        margin-left: 20px;
+        font-size: 21px;
+        font-weight: 300;
+      }
+    }
   }
 }
