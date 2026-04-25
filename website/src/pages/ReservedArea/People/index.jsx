@@ -9,6 +9,8 @@ import { EnvironmentOutlined, GlobalOutlined, CalendarOutlined } from '@ant-desi
 const { Title } = Typography;
 
 function People() {
+  const [filters, setFilters] = useState(true)
+  const [userName, setUserName] = useState('');
   const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState([]);
@@ -19,19 +21,24 @@ function People() {
   });
 
   useEffect(() => {
+    if (userName || userName === '') {
+      const urlFinal = userName ? `people/list?name=${userName}` : 'people/list'
+      if (filters) {
     _service({
       method: 'GET',
-      url: 'people/list',
+      url: `${urlFinal}`,
       success: (response) => {
         setPeople(response.json);
+        setFilters(false);
         setLoading(false);
         setPagination({ ...pagination, current: 1 });
       },
       fail: () => {
         setLoading(false);
       }
-    });
-  }, []);
+    })
+  };
+  }}, [filters]);
 
   useEffect(() => {
     const { current } = pagination;
@@ -42,12 +49,12 @@ function People() {
   }, [pagination]);
 
   const handleSearch = (value) => {
-    const filteredPeopleByName = people.filter(person => person.name.toLowerCase().startsWith(value.toLowerCase()));
-
-    if (filteredPeopleByName.length > 0) {
-      setPeopleList(filteredPeopleByName);
+    if (value) {
+      setUserName(value);
+      setFilters(true);
     } else {
-      setPeopleList([]);
+      setUserName('');
+      setFilters(true);
     }
   };
   const onChange = value => {
@@ -69,7 +76,6 @@ function People() {
         style={{ width: '50%' }}
         options={options}
         onSelect={onSelect}
-        onSearch={handleSearch}
       >
         <Input.Search
           placeholder="Buscar por nome"
@@ -79,24 +85,10 @@ function People() {
       </AutoComplete>
       <Select
         showSearch={{ optionFilterProp: 'label', onSearch }}
-        placeholder="País"
+        placeholder="País, Cidade ou Estado"
         onChange={onChange}
         options={[]}
-        style={{ width: '25%' }}
-      />
-      <Select
-        showSearch={{ optionFilterProp: 'label', onSearch }}
-        placeholder="Estado"
-        onChange={onChange}
-        options={[]}
-        style={{ width: '25%' }}
-      />
-      <Select
-        showSearch={{ optionFilterProp: 'label', onSearch }}
-        placeholder="Cidade"
-        onChange={onChange}
-        options={[]}
-        style={{ width: '25%' }}
+        style={{ width: '20%' }}
       />
       </div>
       {loading && (
