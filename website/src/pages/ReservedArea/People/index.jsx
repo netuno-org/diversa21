@@ -8,6 +8,18 @@ import { EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 
+function formatBirthDate(dateValue) {
+  if (!dateValue) {
+    return '';
+  }
+  const [dateOnly] = dateValue.split('T');
+  const [year, month, day] = dateOnly.split('-');
+  if (!year || !month || !day) {
+    return dateValue;
+  }
+  return `${day}-${month}-${year}`;
+}
+
 function People() {
   const [stateOptions, setStateOptions] = useState([])
   const [filters, setFilters] = useState(true)
@@ -75,8 +87,8 @@ function People() {
   };
 
   return (
-    <div className={"people-search"}>
-      <Title level={1}>Procurar pessoas</Title>
+    <div className={"people-search-container"}>
+      <Title>Procurar pessoas</Title>
       <div className={"people-search-input"}>
         <AutoComplete
           popupMatchSelectWidth={252}
@@ -114,11 +126,11 @@ function People() {
               <p><EnvironmentOutlined /> {person.city}, {person.state}</p>
               <p className={"country-title"}> {person.country}</p>
             </div>
-            <p><CalendarOutlined /> {person.birthDate}</p>
+            <p><CalendarOutlined /> {formatBirthDate(person.birthDate)}</p>
           </div>
         </Card>
       ))}
-      <div>
+      <div style={{ width: '100%' }}>
         <Pagination
           style={{ ...(peopleList.length === 0 && !loading ? { marginTop: '20px', display: 'none' } : { marginTop: '20px' }) }}
           align='center'
@@ -128,7 +140,7 @@ function People() {
           onChange={(current) => setPagination({ ...pagination, current })}
         />
         {peopleList.length === 0 && !loading && (
-          <div style={{ marginTop: '20px' }}>
+          <div style={{ marginTop: '20px'}}>
             <Empty
               description={"Nenhuma pessoa encontrada corresponde aos filtros aplicados."}
             />

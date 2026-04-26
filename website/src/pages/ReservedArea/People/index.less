@@ -1,9 +1,13 @@
-.people-search {
+.people-search-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: start;
   padding: 0 20px;
+  .people-search-title {
+    width: 100%;
+    margin-bottom: 16px;
+  }
   .people-search-input {
     display: flex;
     width: 100%;
@@ -12,7 +16,6 @@
     gap: 16px;
   }
 }
-
 .people-search-result {
   margin-top: 20px;
   padding: 0 20px;
@@ -24,11 +27,9 @@
     align-items: flex-start;
     gap: 16px;
   }
-
   h3 {
     color: #1677ff;
   }
-  
   p {
     margin: 0;
   }
