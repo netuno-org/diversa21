@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import _service from '@netuno/service-client';
-import { UserOutlined, EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
-import { Avatar, Card, Button, Typography } from 'antd';
+import { UserOutlined, EnvironmentOutlined, CalendarOutlined, BankOutlined } from '@ant-design/icons';
+import { Avatar, Card, Popover, Typography } from 'antd';
 import Posts from './Posts';
 import { connect } from 'react-redux';
 
@@ -14,24 +15,22 @@ function formatDatePtBr(dateValue) {
   if (!dateValue) {
     return '';
   }
-
   const [dateOnly] = (dateValue).split('T');
   const [year, month, day] = dateOnly.split('-');
-
   if (!year || !month || !day) {
     return dateValue;
   }
-
   return `${day}/${month}/${year}`;
 }
 
-function ProfileView ({ loggedUserInfo }) {
+function ProfileView({ loggedUserInfo }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const birthDate = formatDatePtBr(loggedUserInfo?.birthDate);
+  const [institution, setInstitution] = useState(null);
 
   useEffect(() => {
     if (!loggedUserInfo?.uid) {
-        return;
+      return;
     };
     if (loggedUserInfo.avatar) {
       setAvatarUrl(
@@ -40,10 +39,21 @@ function ProfileView ({ loggedUserInfo }) {
     }
   }, [loggedUserInfo?.uid]);
 
+  useEffect(() => {
+    _service({
+      method: 'GET',
+      url: 'institution',
+      data: {
+        uid: loggedUserInfo?.institution
+      },
+      success: (response) => {
+        setInstitution(response.json.data);
+      }
+    });
+  }, [loggedUserInfo?.uid]);
+
   return (
-
-    <div className="profile-view" style={{ width: '70%' }}>
-
+    <div className="profile-view">
       <Card>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Meta
@@ -54,9 +64,17 @@ function ProfileView ({ loggedUserInfo }) {
             <Text><UserOutlined /> {loggedUserInfo?.name}</Text>
             <Text><EnvironmentOutlined /> {loggedUserInfo?.city}, {loggedUserInfo?.state}</Text>
             <Text><CalendarOutlined /> {birthDate}</Text>
-          </div>
-          <div style={{ display: 'flex', gap: '10px', marginLeft: 'auto' }}>
-            <Button  type="primary">Nome da minha instituição</Button>
+            <div>
+              <Popover
+                content={<div style={{ color: '#8B6AA2' }}>Clique para visitar a pagina da instituição!</div>}
+                placement="rightTop"
+                trigger="hover"
+              >
+                <Link to={`/institutions/${institution?.uid}`}>
+                  <Text className='institution-text'><BankOutlined /> {institution?.name}</Text>
+                </Link>
+              </Popover>
+            </div>
           </div>
         </div>
       </Card>
