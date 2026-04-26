@@ -11,7 +11,7 @@ const { Title } = Typography;
 function People() {
   const [stateOptions, setStateOptions] = useState([])
   const [filters, setFilters] = useState(true)
-  const [userName, setUserName] = useState('');
+  const [peopleName, setPeopleName] = useState('');
   const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(true);
   const [peopleList, setPeopleList] = useState([]);
@@ -21,8 +21,8 @@ function People() {
   });
 
   useEffect(() => {
-    if (userName || userName === '') {
-      const urlFinal = userName ? `people/list?name=${userName}` : 'people/list'
+    if (peopleName || peopleName === '') {
+      const urlFinal = peopleName ? `people/list?name=${peopleName}` : 'people/list'
       if (filters) {
         _service({
           method: 'GET',
@@ -57,11 +57,11 @@ function People() {
 
   const handleSearch = (value) => {
     if (value) {
-      setUserName(value);
+      setPeopleName(value);
       setFilters(true);
       setLoading(true);
     } else {
-      setUserName('');
+      setPeopleName('');
       setFilters(true);
       setLoading(true);
     }
