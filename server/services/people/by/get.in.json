@@ -1,0 +1,17 @@
+{
+  "tags":[
+    "people"
+  ],
+  "summary": "User Information",
+  "description": "Retrieve a user by their username.",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string",
+      "pattern": "^[a-z]+[a-z0-9]{1,24}$"
+    }
+  },
+  "required": [
+    "username"
+  ] 
+}

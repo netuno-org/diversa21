@@ -1,6 +1,6 @@
 import {_req, _db, _val, _header, _exec, _out} from "@netuno/server-types"
 
-const peopleUid = _req.getUID("uid");
+const username = _req.getString("username");
 
 const dbPeople = _db.queryFirst(`
   SELECT people.uid,
@@ -18,8 +18,8 @@ const dbPeople = _db.queryFirst(`
     INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
     INNER JOIN institution on people.institution_id = institution.id
     INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
-  WHERE people.uid = ?::uuid
-`, peopleUid);
+  WHERE netuno_user."user" = ?::varchar;
+`, username);
 
 if (!dbPeople) {
   _header.status(404)
