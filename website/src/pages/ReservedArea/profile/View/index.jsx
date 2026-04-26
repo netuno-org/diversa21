@@ -5,6 +5,8 @@ import { Avatar, Card, Button, Typography } from 'antd';
 import Posts from './Posts';
 import { connect } from 'react-redux';
 
+import './index.less';
+
 const { Meta } = Card;
 const { Text } = Typography;
 
