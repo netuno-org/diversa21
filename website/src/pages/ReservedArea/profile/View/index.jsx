@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import _service from '@netuno/service-client';
 import { UserOutlined, EnvironmentOutlined, CalendarOutlined, BankOutlined } from '@ant-design/icons';
 import { Avatar, Card, Popover, Typography } from 'antd';
-import Posts from './Posts';
 import { connect } from 'react-redux';
+
+import PostList from '../../../../components/Post/List'
 
 import './index.less';
 
@@ -78,11 +79,11 @@ function ProfileView({ loggedUserInfo }) {
           </div>
         </div>
       </Card>
-      <Posts loggedUserInfo={loggedUserInfo} />
+      <PostList author={loggedUserInfo?.uid} />
     </div>
   )
 }
-
+ 
 const mapStateToProps = store => {
   const { loggedUserInfo } = store.loggedUserInfoState;
   return {

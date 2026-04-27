@@ -3,7 +3,7 @@ import _service from "@netuno/service-client";
 import { Button, Col, notification, Row, Spin } from "antd";
 import Post from "..";
 
-function PostList({ parent, onLoaded, onItemRemoved }, ref) {
+function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [page, setPage] = useState(0);
@@ -23,6 +23,10 @@ function PostList({ parent, onLoaded, onItemRemoved }, ref) {
 
     if (parent) {
       data.parent = parent;
+    }
+
+    if (author) {
+      data.authorUid = author;
     }
 
     data.page = page;

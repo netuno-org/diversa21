@@ -217,6 +217,7 @@ function Post({
           <PostList
             ref={refPostList}
             parent={uid}
+            author={authorUid} 
             onLoaded={onCommentsLoaded}
             onItemRemoved={onCommentRemoved}
           />
