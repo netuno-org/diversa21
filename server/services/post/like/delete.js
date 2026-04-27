@@ -9,16 +9,16 @@ if (!dbPost) {
 }
 
 const peopleId = _db.queryFirst(`
-  SELECT id
-  FROM people 
-  WHERE people_user_id = ?::int
+    SELECT id
+    FROM people 
+    WHERE people_user_id = ?::int
 `, _user.id).getInt("id");
 
 const deleteResults = _db.execute(`
-  DELETE FROM post_like
-  WHERE 1 = 1
-    AND post_id = ?::int
-    AND people_id = ?::int
+    DELETE FROM post_like
+    WHERE 1 = 1
+        AND post_id = ?::int
+        AND people_id = ?::int
 `, dbPost.getInt('id'), peopleId);
 
 if (deleteResults > 0) {

@@ -4,9 +4,9 @@ const postUid = _req.getString('uid');
 const dbPost = _db.get('post', postUid);
 
 const peopleId = _db.queryFirst(`
-  SELECT id
-  FROM people 
-  WHERE people_user_id = ?::int
+    SELECT id
+    FROM people 
+    WHERE people_user_id = ?::int
 `, _user.id).getInt("id");
 
 if (!dbPost) {
@@ -15,11 +15,11 @@ if (!dbPost) {
 }
 
 const dbLike = _db.queryFirst(`
-  SELECT id 
-  FROM post_like
-  WHERE 1 = 1
-    AND post_id = ?::int
-    AND people_id = ?::int
+    SELECT id 
+    FROM post_like
+    WHERE 1 = 1
+        AND post_id = ?::int
+        AND people_id = ?::int
 `, dbPost.getInt('id'), peopleId);
 
 if (dbLike) {

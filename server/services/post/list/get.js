@@ -18,23 +18,23 @@ if (parent != '') {
 const params = _val.list();
 
 const loggedUserPeopleId = _db.queryFirst(`
-  SELECT id
-  FROM people 
-  WHERE people_user_id = ?::int
+    SELECT id
+    FROM people 
+    WHERE people_user_id = ?::int
 `, _user.id).getInt("id");
 
 params.add(loggedUserPeopleId);
 
 let sqlQuery = `
-  SELECT post.uid, post.moment, post.content, post.comments, post.likes,
-    people.name AS "people_name", people.uid AS "people_uid",
-    netuno_user.user AS "people_user",
-    people.avatar AS "people_avatar",
-    (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id) AS "post_like_id"
-  FROM post
-    INNER JOIN people ON post.people_id = people.id
-    INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
-  WHERE 1 = 1
+    SELECT post.uid, post.moment, post.content, post.comments, post.likes,
+        people.name AS "people_name", people.uid AS "people_uid",
+        netuno_user.user AS "people_user",
+        people.avatar AS "people_avatar",
+        (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id) AS "post_like_id"
+    FROM post
+        INNER JOIN people ON post.people_id = people.id
+        INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+    WHERE 1 = 1
 `;
 
 if (postAuthorPeopleUid) {
@@ -44,9 +44,9 @@ if (postAuthorPeopleUid) {
 
 sqlQuery += `
     AND (post.parent_id IS NULL OR post.parent_id = ?::int)
-  ORDER BY post.moment DESC
-  LIMIT 10
-  OFFSET ?::int
+    ORDER BY post.moment DESC
+    LIMIT 10
+    OFFSET ?::int
 `;
 
 params

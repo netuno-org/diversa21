@@ -4,9 +4,9 @@ const content = _req.getString('content')
 const parent = _req.getString('parent')
 
 const dbPeople = _db.queryFirst(`
-  SELECT *
-  FROM people
-  WHERE people_user_id = ?::int
+    SELECT *
+    FROM people
+    WHERE people_user_id = ?::int
 `, _user.id);
 
 let dbParentPost = _val.map()
@@ -37,9 +37,9 @@ if (!dbParentPost.isEmpty()) {
 }
 
 const dbPost = _db.queryFirst(`
-  SELECT uid, content, moment
-  FROM post 
-  WHERE id = ?
+    SELECT uid, content, moment
+    FROM post 
+    WHERE id = ?
 `, postId)
 
 const post = _val.map()

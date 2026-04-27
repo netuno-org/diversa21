@@ -11,7 +11,7 @@ const state = _req.getString("state");
 const country = _req.getString("country");
 
 const dbPeople = _db.queryFirst(`
-  SELECT * FROM people WHERE people_user_id = ?::int
+    SELECT * FROM people WHERE people_user_id = ?::int
 `, _user.id());
 
 const userData = _user.get(_user.id());
