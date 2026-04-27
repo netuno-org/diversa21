@@ -60,7 +60,7 @@ function Post({
 
   const onDeletePost = () => {
     _service({
-      url: "/post",
+      url: "/post/list",
       method: "DELETE",
       data: {
         uid

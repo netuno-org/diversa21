@@ -1,5 +1,6 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
+const postAuthorPeopleUid = _req.getUID("authorUid");
 const parent = _req.getString('parent');
 let page = _req.getInt('page', 1);
 
@@ -14,13 +15,17 @@ if (parent != '') {
   dbParent = _db.get('post', parent);
 }
 
-const peopleId = _db.queryFirst(`
+const params = _val.list();
+
+const loggedUserPeopleId = _db.queryFirst(`
   SELECT id
   FROM people 
   WHERE people_user_id = ?::int
 `, _user.id).getInt("id");
 
-const dbPosts = _db.query(`
+params.add(loggedUserPeopleId);
+
+let sqlQuery = `
   SELECT post.uid, post.moment, post.content, post.comments, post.likes,
     people.name AS "people_name", people.uid AS "people_uid",
     netuno_user.user AS "people_user",
@@ -29,11 +34,27 @@ const dbPosts = _db.query(`
   FROM post
     INNER JOIN people ON post.people_id = people.id
     INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
-  WHERE post.parent_id IS NULL OR post.parent_id = ?::int
+  WHERE 1 = 1
+`;
+
+if (postAuthorPeopleUid) {
+  sqlQuery += ` AND (people.uid = ?::uuid) `;
+  params.add(postAuthorPeopleUid);
+}
+
+sqlQuery += `
+    AND (post.parent_id IS NULL OR post.parent_id = ?::int)
   ORDER BY post.moment DESC
   LIMIT 10
   OFFSET ?::int
-`, peopleId, dbParent.getInt('id', 0), offset);
+`;
+
+params
+  .add(dbParent.getInt('id', 0))
+  .add(offset)
+
+const dbPosts = _db.query(sqlQuery, params);
+
 const posts = _val.list();
 for (const dbPost of dbPosts) {
   posts.add(
