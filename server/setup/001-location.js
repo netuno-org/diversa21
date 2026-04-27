@@ -42,6 +42,7 @@ _db.insertIfNotExists(
 _db.insertIfNotExists(
     "city",
     _val.map()
+        .set("uid", "2692c307-b5ed-4913-99f7-e2ad20d00131")
         .set("name", "São Paulo")
         .set("state_id", "ec752771-3c16-4887-a496-076b3e82745e")
 )
@@ -49,6 +50,7 @@ _db.insertIfNotExists(
 _db.insertIfNotExists(
     "city",
     _val.map()
+        .set("uid", "562a9f12-5a90-4c67-94cb-6459df7e3434")
         .set("name", "São Gonçalo")
         .set("state_id", "b3c80fe8-a27b-48b8-ab79-74e3a5d12158")
 )
