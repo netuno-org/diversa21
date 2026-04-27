@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Routes as Switch, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
 
 import {ConfigProvider, Layout, theme} from 'antd';
-import antLocale_ptPT from 'antd/lib/locale/pt_PT';
-
-import { Provider } from 'react-redux';
-import { Store } from './redux/store';
+import antLocale_ptBR from 'antd/lib/locale/pt_BR';
+import dayjs from 'dayjs';
+import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 
 import classNames from 'classnames';
 
 import _auth from '@netuno/auth-client';
-import './common/Config';
+
+import { Provider } from 'react-redux';
+import { Store } from './redux/store';
 
 import HeaderBase from './base/HeaderBase';
 import SiderMenu from "./base/SiderMenu";
@@ -24,7 +25,13 @@ import Recovery from './pages/Recovery';
 import NotFound from './pages/NotFound';
 import ReservedArea from "./pages/ReservedArea";
 
+import 'dayjs/locale/pt-br';
+
+import './common/Config';
 import './styles/App.less';
+
+dayjs.locale('pt-br');
+dayjs.extend(LocalizedFormat);
 
 const { Content } = Layout;
 
@@ -64,16 +71,17 @@ export default function App() {
 
   return (
     <ConfigProvider
-      locale={antLocale_ptPT}
+      locale={antLocale_ptBR}
       theme={{
         token: {
           colorPrimary: '#8B6AA2',
+          colorLink: '#8B6AA2',
           fontSize: 16,
           borderRadius: 20,
           primaryColor: '#8B6AA2',
           colorBgBase: '#eff8ff',
           colorBgLayout: '#ffffff',
-          colorBgMask: 'rgba(0, 33, 64, 0.75)'
+          colorBgMask: 'rgba(0, 33, 64, 0.75)',
         },
         components: {
           Layout: {

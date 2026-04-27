@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
 import { Link } from "react-router-dom";
-import "./index.less";
 import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select } from 'antd';
 import { Typography } from "antd";
-import { EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
+import UserProfileDisplay from '../../../components/UserProfileDisplay';
+
+import "./index.less";
 
 const { Title } = Typography;
-
-function formatBirthDate(dateValue) {
-  if (!dateValue) {
-    return '';
-  }
-  const [dateOnly] = dateValue.split('T');
-  const [year, month, day] = dateOnly.split('-');
-  if (!year || !month || !day) {
-    return dateValue;
-  }
-  return `${day}-${month}-${year}`;
-}
 
 function People() {
   const [stateOptions, setStateOptions] = useState([])
@@ -114,21 +103,15 @@ function People() {
         </div>
       )}
       {!loading && peopleList.map((person) => (
-        <Card className={"people-search-result"} key={person.uid}>
-          <div>
-            <Link to={`/u/${person.username}`} className={"people-search-result-header"}>
-              <Avatar size={64} src={_service.url(`/people/avatar?uid=${person.uid}`)} />
-              <Title level={3}>{person.name}</Title>
+        <div style={{ width: '100%' }}>
+          <Card className={"people-search-result"} key={person.uid}>
+            <Link to={`/u/${person.username}`}>
+              <UserProfileDisplay user={person} avatarSize={86}>
+                <div className={"country-title"}> {person.country}</div>
+              </UserProfileDisplay>
             </Link>
-          </div>
-          <div className={"people-search-result-details"}>
-            <div className={"people-search-result-details-location"}>
-              <p><EnvironmentOutlined /> {person.city}, {person.state}</p>
-              <p className={"country-title"}> {person.country}</p>
-            </div>
-            <p><CalendarOutlined /> {formatBirthDate(person.birthDate)}</p>
-          </div>
-        </Card>
+          </Card>
+        </div>
       ))}
       <div style={{ width: '100%' }}>
         <Pagination
@@ -140,14 +123,13 @@ function People() {
           onChange={(current) => setPagination({ ...pagination, current })}
         />
         {peopleList.length === 0 && !loading && (
-          <div style={{ marginTop: '20px'}}>
+          <div style={{ marginTop: '20px' }}>
             <Empty
               description={"Nenhuma pessoa encontrada corresponde aos filtros aplicados."}
             />
           </div>
         )}
       </div>
-
     </div>
   );
 }

@@ -1,32 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import _service from '@netuno/service-client';
-import { UserOutlined, EnvironmentOutlined, CalendarOutlined, BankOutlined } from '@ant-design/icons';
-import { Avatar, Card, Popover, Typography } from 'antd';
+import { BankOutlined } from '@ant-design/icons';
+import { Card, Popover } from 'antd';
 import { connect } from 'react-redux';
-
+import UserProfileDisplay from '../../../../components/UserProfileDisplay';
 import PostList from '../../../../components/Post/List'
 
 import './index.less';
 
-const { Meta } = Card;
-const { Text } = Typography;
-
-function formatDatePtBr(dateValue) {
-  if (!dateValue) {
-    return '';
-  }
-  const [dateOnly] = (dateValue).split('T');
-  const [year, month, day] = dateOnly.split('-');
-  if (!year || !month || !day) {
-    return dateValue;
-  }
-  return `${day}/${month}/${year}`;
-}
-
 function ProfileView({ loggedUserInfo }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-  const birthDate = formatDatePtBr(loggedUserInfo?.birthDate);
   const [institution, setInstitution] = useState(null);
 
   useEffect(() => {
@@ -56,28 +40,21 @@ function ProfileView({ loggedUserInfo }) {
   return (
     <div className="profile-view">
       <Card>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Meta
-            style={{ height: '150px', textAlign: 'center' }}
-            avatar={<Avatar src={avatarUrl} style={{ width: '145px', height: "145px" }} />}
-          />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Text><UserOutlined /> {loggedUserInfo?.name}</Text>
-            <Text><EnvironmentOutlined /> {loggedUserInfo?.city}, {loggedUserInfo?.state}</Text>
-            <Text><CalendarOutlined /> {birthDate}</Text>
-            <div>
+        <UserProfileDisplay user={loggedUserInfo} avatarSize={145}>
+        <div>
               <Popover
                 content={<div style={{ color: '#8B6AA2' }}>Clique para visitar a pagina da instituição!</div>}
                 placement="rightTop"
                 trigger="hover"
               >
                 <Link to={`/institutions/${institution?.uid}`}>
-                  <Text className='institution-text'><BankOutlined /> {institution?.name}</Text>
+                  <div className="institution-text">
+                    <BankOutlined /> {institution?.name}
+                  </div>
                 </Link>
               </Popover>
             </div>
-          </div>
-        </div>
+        </UserProfileDisplay>
       </Card>
       <PostList author={loggedUserInfo?.uid} />
     </div>
