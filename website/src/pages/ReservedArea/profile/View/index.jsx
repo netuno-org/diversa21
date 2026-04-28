@@ -10,19 +10,7 @@ import PostList from '../../../../components/Post/List'
 import './index.less';
 
 function ProfileView({ loggedUserInfo }) {
-  const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [institution, setInstitution] = useState(null);
-
-  useEffect(() => {
-    if (!loggedUserInfo?.uid) {
-      return;
-    };
-    if (loggedUserInfo.avatar) {
-      setAvatarUrl(
-        _service.url(`/people/avatar?uid=${loggedUserInfo.uid}`)
-      );
-    }
-  }, [loggedUserInfo?.uid]);
 
   useEffect(() => {
     _service({
