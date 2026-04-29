@@ -11,7 +11,7 @@ const { Sider } = Layout;
 const menuItems = [
   {
     key: "dashboard",
-    label: "Principal",
+    label: "Meu perfil",
     icon: <DashboardOutlined/>,
     link: "/dashboard"
   },

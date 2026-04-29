@@ -76,9 +76,9 @@ function InstitutionView({ loggedUserInfo }) {
         <Button
           className="go-back-btn"
           type="link"
-          onClick={() => navigate('/institutions')}
+          onClick={() => navigate(-1)}
         >
-          <ArrowLeftOutlined /> Voltar às instituições
+          <ArrowLeftOutlined /> Voltar
         </Button>
       </div>
 
