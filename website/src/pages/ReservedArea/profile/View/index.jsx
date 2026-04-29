@@ -29,22 +29,24 @@ function ProfileView({ loggedUserInfo }) {
     <div className="profile-view">
       <Card>
         <UserProfileDisplay user={loggedUserInfo} avatarSize={145}>
-        <div>
-              <Popover
-                content={<div style={{ color: '#8B6AA2' }}>Clique para visitar a pagina da instituição!</div>}
-                placement="rightTop"
-                trigger="hover"
+          <div>
+            <Popover
+              content={<div style={{ color: '#8B6AA2' }}>Clique para visitar a pagina da instituição!</div>}
+              placement="rightTop"
+              trigger="hover"
               >
-                <Link to={`/institutions/${institution?.uid}`}>
-                  <div className="institution-text">
-                    <BankOutlined /> {institution?.name}
-                  </div>
-                </Link>
-              </Popover>
-            </div>
+              <Link to={`/institutions/${institution?.uid}`}>
+                <div className="institution-text">
+                  <BankOutlined /> {institution?.name}
+                </div>
+              </Link>
+            </Popover>
+          </div>
         </UserProfileDisplay>
       </Card>
-      <PostList author={loggedUserInfo?.uid} />
+      { loggedUserInfo?.uid  && (
+        <PostList author={loggedUserInfo?.uid} />
+      )}
     </div>
   )
 }
