@@ -17,7 +17,7 @@ export default function NotFound(props) {
           <Title level={2}>Página não encontrada</Title>
         </div>
         <div className="content-body">
-          <Link className="go-back-btn" to="/"><ArrowLeftOutlined /> Voltar para o início</Link>
+          <Link className="go-back-btn" to="/posts"><ArrowLeftOutlined /> Voltar para o início</Link>
         </div>
       </div>
     </div>
