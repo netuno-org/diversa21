@@ -13,18 +13,26 @@ function ProfileView({ loggedUserInfo }) {
   const [institution, setInstitution] = useState(null);
 
   useEffect(() => {
+    if (!loggedUserInfo) {
+      return;
+    } 
+
     _service({
       method: 'GET',
       url: 'institution',
       data: {
-        uid: loggedUserInfo?.institution
+        uid: loggedUserInfo.institution
       },
       success: (response) => {
         setInstitution(response.json.data);
       }
     });
-  }, [loggedUserInfo?.uid]);
+  }, [loggedUserInfo]);
 
+  if (!loggedUserInfo)  {
+    return null;
+  }
+  
   return (
     <div className="profile-view">
       <Card>
@@ -44,9 +52,7 @@ function ProfileView({ loggedUserInfo }) {
           </div>
         </UserProfileDisplay>
       </Card>
-      { loggedUserInfo?.uid  && (
-        <PostList author={loggedUserInfo?.uid} />
-      )}
+      <PostList author={loggedUserInfo.uid} />
     </div>
   )
 }
