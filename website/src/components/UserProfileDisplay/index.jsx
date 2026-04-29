@@ -8,10 +8,14 @@ function UserProfileDisplay({ user, avatarSize, children }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
   useEffect(() => {
-    if (user.avatar) {
+    if (user && user.avatar) {
       setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}`));
     }
-  }, []);
+  }, [user]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
