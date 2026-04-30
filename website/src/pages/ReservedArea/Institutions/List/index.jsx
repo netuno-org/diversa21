@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Typography, Card, Spin, Row, Col, Pagination, Empty, 
-  Input, Select, Space, Avatar, Button 
+  Typography, Spin, Pagination, Empty, 
+  Input, Select, Space, Avatar, Button, List, Row 
 } from "antd";
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
@@ -230,52 +230,47 @@ function InstitutionList({
             </Text>
           </div>
 
-          <Row gutter={[16, 16]}>
-            {paginatedInstitutions.map((institution) => (
-              <Col xs={24} sm={12} lg={8} xl={6} key={institution.uid}>
-                <Card
-                  className="institution-card"
-                  hoverable
-                  cover={
-                    institution.cover_image && (
-                      <div className="card-cover">
-                        <img
-                          alt="Cover"
-                          src={institution.cover_image}
-                        />
-                      </div>
-                    )
-                  }
+          <List
+              className="institution-list"
+              itemLayout="horizontal"
+              dataSource={paginatedInstitutions}
+              renderItem={(institution) => (
+                <List.Item
+                  className="institution-list-item"
                   onClick={() => handleCardClick(institution.uid)}
+                  style={{ cursor: 'pointer' }}
                 >
-                  <Card.Meta
+                  <List.Item.Meta
                     avatar={
                       institution.logo ? (
-                        <Avatar src={institution.logo} size={48} />
+                        <Avatar src={institution.logo} size={48} shape="square" />
                       ) : (
-                        <Avatar size={48} style={{ backgroundColor: '#8A6AA2' }}>
+                        <Avatar size={48} shape="square" style={{ backgroundColor: '#8A6AA2' }}>
                           {institution.name?.[0]}
                         </Avatar>
                       )
                     }
-                    title={<span className="institution-name">{institution.name}</span>}
+                    title={
+                      <div className="institution-list-title">
+                        <Text strong>{institution.name}</Text>
+                      </div>
+                    }
                     description={
-                      <div className="institution-meta">
-                        {institution.city && <Text type="secondary">{institution.city}</Text>}
-                        {institution.city && institution.country && <Text type="secondary"></Text>}
-                        {institution.country && <Text type="secondary">{institution.country}</Text>}
-                        <div className="institution-description">
-                          <Text ellipsis={{ tooltip: true }}>
-                            {institution.description || '—'}
+                      <div className="institution-list-description">
+                        <Text type="secondary" ellipsis>
+                          {institution.description || 'Sem descrição'}
+                        </Text>
+                        {(institution.city || institution.country) && (
+                          <Text type="secondary" className="institution-location">
+                            {institution.city}{institution.city && institution.country && ', '}{institution.country}
                           </Text>
-                        </div>
+                        )}
                       </div>
                     }
                   />
-                </Card>
-              </Col>
-            ))}
-          </Row>
+                </List.Item>
+              )}
+            />
 
           <div className="pagination-wrapper">
             <Pagination
