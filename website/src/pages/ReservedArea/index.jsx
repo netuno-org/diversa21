@@ -4,7 +4,6 @@ import {useNavigate, useLocation, useParams} from "react-router-dom";
 import NotFound from "../NotFound";
 import ProfileEdit from "./profile/Edit";
 import ProfileView from "./profile/View";
-import Dashboard from "./Dashboard";
 import Posts from "./Posts";
 import UserProfile from "./UserProfile";
 import OtherPage from "./OtherPage";
@@ -27,9 +26,6 @@ function ReservedArea() {
     }
     if (location.pathname === "/profile/view") {
       return <ProfileView/>;
-    }
-    if (location.pathname === "/dashboard") {
-      return <Dashboard/>;
     }
     if (location.pathname === "/posts") {
       return <Posts/>;

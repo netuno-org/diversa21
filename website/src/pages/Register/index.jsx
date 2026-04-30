@@ -113,7 +113,7 @@ export default function Register(props) {
   }
 
   if (_auth.isLogged()) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/profile/view" />;
   }
   if (ready) {
     return <Navigate to="/login" />;

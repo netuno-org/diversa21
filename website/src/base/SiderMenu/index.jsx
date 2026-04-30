@@ -10,10 +10,10 @@ const { Sider } = Layout;
 
 const menuItems = [
   {
-    key: "dashboard",
+    key: "profile-view",
     label: "Meu perfil",
-    icon: <DashboardOutlined/>,
-    link: "/dashboard"
+    icon: <UserOutlined/>,
+    link: "/profile/view"
   },
   {
     key: "posts",
@@ -42,7 +42,7 @@ const menuItems = [
 ];
 
 function SiderMenu({collapsed, onCollapse}) {
-  const [selectedMenuKeys, setSelectedMenuKeys] = useState(["dashboard"]);
+  const [selectedMenuKeys, setSelectedMenuKeys] = useState(["profile-view"]);
   const [sideMenuMobileMode, setSideMenuMobileMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();

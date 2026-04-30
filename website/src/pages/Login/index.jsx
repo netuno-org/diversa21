@@ -138,7 +138,7 @@ function Login({loggedUserInfoAction}) {
     initialValues = JSON.parse(localStorage.getItem("login"));
   }
   if (_auth.isLogged()) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/profile/view" />;
   } else {
     return (
       <Layout>
