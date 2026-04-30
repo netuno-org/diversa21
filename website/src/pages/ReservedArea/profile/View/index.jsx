@@ -33,7 +33,6 @@ function ProfileView({ loggedUserInfo }) {
 
   if (!loggedUserInfo) {
     content = <Spin />;
-    return null;
   } else {
     content = (
       <div className="profile-view">
