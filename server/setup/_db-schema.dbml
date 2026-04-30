@@ -1,0 +1,74 @@
+Table city {
+  id int [pk, increment]
+  name varchar(250) [not null, unique, note: 'Nome']
+  state_id int [not null, ref: > state.id, note: 'Estado']
+  Note: 'Cidade'
+}
+
+Table country {
+  id int [pk, increment]
+  code varchar(250) [not null, unique, note: 'Codigo']
+  name varchar(250) [not null, unique, note: 'Nome']
+  Note: 'Pais'
+}
+
+Table institution {
+  id int [pk, increment]
+  address text [not null, unique, note: 'Endereço']
+  city varchar(250) [not null, note: 'Cidade']
+  country varchar(250) [not null, note: 'País']
+  cover_image text [note: 'Imagem de capa']
+  description text [not null, note: 'Descrição']
+  email varchar(250) [not null, note: 'E-mail']
+  logo text [note: 'Logotipo']
+  name varchar(250) [not null, note: 'Nome']
+  post_code varchar(250) [not null, unique, note: 'Código Postal']
+  state varchar(250) [not null, note: 'Estado']
+  telephone int [not null, note: 'Telefone']
+  website varchar(250) [note: 'Website']
+  Note: 'Instituição'
+}
+
+Table people {
+  id int [pk, increment]
+  avatar text [note: 'Avatar']
+  birth_date date [note: 'Data de Nascimento']
+  city varchar(250) [note: 'Cidade']
+  country varchar(250) [note: 'País']
+  email varchar(250) [unique, note: 'Email']
+  institution_id int [ref: > institution.id, note: 'Institution']
+  name varchar(250) [not null, note: 'Nome']
+  people_user_id int [not null, unique, note: 'Utilizador']
+  recovery_key varchar(250) [note: 'Chave de Recuperação']
+  recovery_limit timestamp [note: 'Limite de Recuperação']
+  state varchar(250) [note: 'Estado']
+  Note: 'Pessoa'
+}
+
+Table post {
+  id int [pk, increment]
+  comments int [note: 'Comentários']
+  content text [not null, note: 'Conteúdo']
+  likes int [note: 'Likes']
+  moment timestamp [not null, note: 'Momento']
+  parent_id int [ref: > post.id, note: 'Pai']
+  people_id int [not null, ref: > people.id, note: 'Pessoa']
+  Note: 'Publicação'
+}
+
+Table post_like {
+  id int [pk, increment]
+  moment timestamp [not null, note: 'Momento']
+  people_id int [not null, ref: > people.id, note: 'Pessoa']
+  post_id int [not null, ref: > post.id, note: 'Publicação']
+  Note: 'Like'
+}
+
+Table state {
+  id int [pk, increment]
+  code varchar(250) [not null, unique, note: 'Codigo']
+  country_id int [not null, ref: > country.id, note: 'Pais']
+  name varchar(250) [not null, unique, note: 'Nome']
+  Note: 'Estado'
+}
+
