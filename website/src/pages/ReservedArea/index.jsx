@@ -11,8 +11,7 @@ import OtherPage from "./OtherPage";
 import People from "./People";
 import InstitutionsList from "./Institutions/List";
 import InstitutionView from "./Institutions/View";
-import InstitutionCreate from "./Institutions/Create";
-import InstitutionEdit from "./Institutions/Edit";
+import InstitutionForm from "../../components/InstitutionForm";
 
 import "./index.less";
 
@@ -48,13 +47,14 @@ function ReservedArea() {
       return <InstitutionsList/>;
     }
     if (location.pathname === "/institutions/new") {
-      return <InstitutionCreate/>;
+      return <InstitutionForm onSuccess={() => navigate('/institutions')} onCancel={() => navigate('/institutions')} />;
     }
     if (location.pathname.match(/^\/institutions\/[\w-]+$/)) {
       return <InstitutionView/>;
     }
     if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
-      return <InstitutionEdit/>;
+      const uid = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
+      return <InstitutionForm uid={uid} onSuccess={() => navigate(`/institutions/${uid}`)} onCancel={() => navigate(`/institutions/${uid}`)} />;
     }
     return <NotFound />;
   }
