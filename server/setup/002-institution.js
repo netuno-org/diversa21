@@ -11,7 +11,5 @@ _db.insertIfNotExists(
         .set("website", "https://tests.org")
         .set("address", "Rua de Testes")
         .set("post_code", "HT1009")
-        .set("city", "Paris")
-        .set("state", "Roma")
-        .set("country", "Jamaica")
+        .set("city_id", "2692c307-b5ed-4913-99f7-e2ad20d00131")
 )

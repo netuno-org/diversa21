@@ -15,15 +15,13 @@ Table country {
 Table institution {
   id int [pk, increment]
   address text [not null, unique, note: 'Endereço']
-  city varchar(250) [not null, note: 'Cidade']
-  country varchar(250) [not null, note: 'País']
+  city_id int [ref: > city.id, note: 'Cidade']
   cover_image text [note: 'Imagem de capa']
   description text [not null, note: 'Descrição']
   email varchar(250) [not null, note: 'E-mail']
   logo text [note: 'Logotipo']
   name varchar(250) [not null, note: 'Nome']
   post_code varchar(250) [not null, unique, note: 'Código Postal']
-  state varchar(250) [not null, note: 'Estado']
   telephone int [not null, note: 'Telefone']
   website varchar(250) [note: 'Website']
   Note: 'Instituição'
@@ -33,15 +31,13 @@ Table people {
   id int [pk, increment]
   avatar text [note: 'Avatar']
   birth_date date [note: 'Data de Nascimento']
-  city varchar(250) [note: 'Cidade']
-  country varchar(250) [note: 'País']
+  city_id int [ref: > city.id, note: 'Cidade']
   email varchar(250) [unique, note: 'Email']
-  institution_id int [ref: > institution.id, note: 'Institution']
+  institution_id int [ref: > institution.id, note: 'Instituição']
   name varchar(250) [not null, note: 'Nome']
   people_user_id int [not null, unique, note: 'Utilizador']
   recovery_key varchar(250) [note: 'Chave de Recuperação']
   recovery_limit timestamp [note: 'Limite de Recuperação']
-  state varchar(250) [note: 'Estado']
   Note: 'Pessoa'
 }
 
