@@ -6,12 +6,15 @@ const dbPeople = _db.queryFirst(`
     people.email,
     people.avatar,
     people.birth_date,
-    people.city,
-    people.state,
-    people.country,
+    city.uid AS "city",
+    state.uid AS "state",
+    country.uid AS "country",
     institution.uid AS "institution"
   FROM people 
-    INNER JOIN institution on people.institution_id = institution.id
+    INNER JOIN institution ON people.institution_id = institution.id
+    INNER JOIN city ON people.city_id = city.id
+    INNER JOIN state ON city.state_id = state.id
+    INNER JOIN country ON state.country_id = country.id
   WHERE people_user_id = ?::int
 `, _user.id);
 

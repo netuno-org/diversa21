@@ -29,20 +29,14 @@
           "format": "date"
         },
         "city": {
-          "type": "string-not-empty"
-        },
-        "state": {
-          "type": "string-not-empty"
-        },
-        "country": {
-          "type": "string-not-empty"
+          "type": "uid"
         },
         "group": {
           "type": "string-not-empty"
         },
         "institution": {
           "type": "uid"
-        },
+        }
       },
       "required": [
         "uid",
@@ -52,8 +46,6 @@
         "avatar",
         "birthDate",
         "city",
-        "state",
-        "country",
         "group",
         "institution"
       ]

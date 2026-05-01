@@ -6,9 +6,7 @@ const email = _req.getString("email");
 const telephone = _req.getString("telephone");
 const address = _req.getString("address");
 const post_code = _req.getString("post_code");
-const city = _req.getString("city");
-const state = _req.getString("state");
-const country = _req.getString("country");
+const city = _req.getUID("city");
 const website = _req.getString("website");
 const logo = _req.getFile("logo");
 const cover_image = _req.getFile("cover_image");
@@ -29,13 +27,7 @@ if (post_code) {
   institutionData.set("post_code", post_code);
 }
 if (city) {
-  institutionData.set("city", city);
-}
-if (state) {
-  institutionData.set("state", state);
-}
-if (country) {
-  institutionData.set("country", country);
+  institutionData.set("city_id", city);
 }
 if (website) {
   institutionData.set("website", website);

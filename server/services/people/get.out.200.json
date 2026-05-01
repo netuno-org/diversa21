@@ -29,20 +29,20 @@
           "format": "date"
         },
         "city": {
-          "type": "string-not-empty"
+          "type": "uid"
         },
         "state": {
-          "type": "string-not-empty"
+          "type": "uid"
         },
         "country": {
-          "type": "string-not-empty"
+          "type": "uid"
         },
         "group": {
           "type": "string-not-empty"
         },
         "institution": {
           "type": "uid"
-        },
+        }
       },
       "required": [
         "uid",

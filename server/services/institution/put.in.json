@@ -28,13 +28,7 @@
       "type": "string"
     },
     "city": {
-      "type": "string"
-    },
-    "state": {
-      "type": "string"
-    },
-    "country": {
-      "type": "string"
+      "type": "uid"
     },
     "website": {
       "type": "string"

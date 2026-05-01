@@ -3,10 +3,25 @@ import {_req, _db, _exec, _header, _out, _val} from "@netuno/server-types";
 const uid = _req.getUID('uid');
 
 const dbInstitutions = _db.query(`
-    SELECT uid, name, description, email, telephone, website,
-           address, post_code, city, state, country,
-           cover_image, logo, active
+    SELECT
+        institution.uid,
+        institution.name,
+        institution.description,
+        institution.email,
+        institution.telephone,
+        institution.website,
+        institution.address,
+        institution.post_code,
+        city.uid AS "city",
+        state.uid AS "state",
+        country.uid AS "country",
+        institution.cover_image,
+        institution.logo,
+        institution.active
     FROM institution
+    INNER JOIN city ON institution.city_id = city.id
+    INNER JOIN state ON city.state_id = state.id
+    INNER JOIN country ON state.country_id = country.id
     WHERE uid = ?::uuid
 `, uid);
 

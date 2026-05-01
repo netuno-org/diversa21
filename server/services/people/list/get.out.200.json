@@ -44,7 +44,7 @@
           },
           "institution": {
             "type": "uid"
-          },
+          }
         },
         "required": [
           "uid",

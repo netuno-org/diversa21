@@ -10,16 +10,16 @@
       "type": "string"
     },
     "city": {
-      "type": "string",
+      "type": "string"
     },
     "state": {
-      "type": "string",
+      "type": "string"
     },
     "country": {
-      "type": "string",
+      "type": "string"
     },
     "page": {
-      "type": "string",
+      "type": "string"
     }
   }
 }

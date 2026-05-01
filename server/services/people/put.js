@@ -6,9 +6,8 @@ const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
 const birthDate = _req.getString("birthDate");
-const city = _req.getString("city");
-const state = _req.getString("state");
-const country = _req.getString("country");
+const city = _req.getUID("city_id");
+const institution = _req.getUID("institution_id")
 
 const dbPeople = _db.queryFirst(`
     SELECT * FROM people WHERE people_user_id = ?::int
@@ -38,9 +37,8 @@ const peopleData = _val.map()
   .set("name", name)
   .set("email", email)
   .set("birth_date", birthDate)
-  .set("city", city)
-  .set("state", state)
-  .set("country", country);
+  .set("city_id", city)
+  .set("institution_id", institution)
 
 if (avatar) {
   peopleData.set("avatar", avatar)

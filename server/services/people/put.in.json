@@ -22,13 +22,10 @@
       "type": "string-not-empty"
     },
     "city": {
-      "type": "string-not-empty"
+      "type": "uid"
     },
-    "state": {
-      "type": "string-not-empty"
-    },
-    "country": {
-      "type": "string-not-empty"
+    "institution": {
+      "type": "uid"
     }
   },
   "required": [
@@ -37,7 +34,6 @@
     "email",
     "birthDate",
     "city",
-    "state",
-    "country"
+    "institution"
   ]
 }

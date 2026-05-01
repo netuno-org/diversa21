@@ -9,14 +9,17 @@ const dbPeople = _db.queryFirst(`
         people.email,
         people.avatar,
         people.birth_date,
-        people.city,
-        people.state,
-        people.country,
+        city.uid AS "city",
+        state.uid AS "state",
+        country.uid AS "country",
         institution.uid AS "institution",
         netuno_group.code AS "group"
     FROM people 
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
-        INNER JOIN institution on people.institution_id = institution.id
+        INNER JOIN institution ON people.institution_id = institution.id
+        INNER JOIN city ON people.city_id = city.id
+        INNER JOIN state ON city.state_id = state.id
+        INNER JOIN country ON state.country_id = country.id
         INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
     WHERE people.uid = ?::uuid
 `, peopleUid);

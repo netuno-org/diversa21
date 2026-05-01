@@ -9,14 +9,13 @@ const dbPeople = _db.queryFirst(`
         people.email,
         people.avatar,
         people.birth_date,
-        people.city,
-        people.state,
-        people.country,
+        city.uid AS "city"
         institution.uid AS "institution",
         netuno_group.code AS "group"
     FROM people 
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
         INNER JOIN institution on people.institution_id = institution.id
+        INNER JOIN city ON people.city_id = city.id
         INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
     WHERE netuno_user."user" = ?::varchar;
 `, username);
@@ -37,8 +36,6 @@ const data = _val.map()
   .set("avatar", dbPeople.getString("avatar") !== '')
   .set("birthDate", dbPeople.getString("birth_date"))
   .set("city", dbPeople.getString("city"))
-  .set("state", dbPeople.getString("state"))
-  .set("country", dbPeople.getString("country"))
   .set("institution", dbPeople.getString("institution"))
   .set("username", dbPeople.getString("user"))
   .set("group", dbPeople.getString("group"))

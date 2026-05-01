@@ -11,35 +11,44 @@ if (page > 0) {
   offset = (page - 1) * 10;
 }
 
+const nameParam = `%${name}%`;
+const cityParam = `%${city}%`;
+const stateParam = `%${state}%`;
+const countryParam = `%${country}%`;
+
 const dbPeople = _db.query(`
-  SELECT people.uid,
+  SELECT
+    people.uid,
     people.name,
     netuno_user.user,
     people.email,
     people.avatar,
     people.birth_date,
-    people.city,
-    people.state,
-    people.country,
+    city.name AS "city",
+    state.name AS "state",
+    country.name AS "country",
     institution.uid AS "institution",
     netuno_group.code AS "group"
   FROM people
     INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
     INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
     INNER JOIN institution on people.institution_id = institution.id
+    INNER JOIN city ON people.city_id = city.id
+    INNER JOIN state ON city.state_id = state.id
+    INNER JOIN country ON state.country_id = country.id
   WHERE 1 = 1
     AND people.name ILIKE ?::varchar
-    AND people.city ILIKE ?::varchar
-    AND people.state ILIKE ?::varchar
-    AND people.country ILIKE ?::varchar
+    AND ( ? = '%%' OR city.name ILIKE ?::varchar )
+    AND ( ? = '%%' OR state.name ILIKE ?::varchar )
+    AND ( ? = '%%' OR country.name ILIKE ?::varchar )
   ORDER BY people.name ASC
   LIMIT 10 
   OFFSET ?::int
 `,
-`%${name}%`,
-`%${city}%`,
-`%${state}%`,
-`%${country}%`,
+nameParam,
+cityParam, cityParam,
+stateParam, stateParam,
+countryParam, countryParam,
 offset);
 
 const people = _val.list();

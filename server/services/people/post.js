@@ -5,9 +5,7 @@ const username = _req.getString("username");
 const email = _req.getString("email");
 const password = _req.getString("password");
 const birthDate = _req.getString("birthDate");
-const city = _req.getString("city");
-const state = _req.getString("state");
-const country = _req.getString("country");
+const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 
 const userEmailExists = _user.firstByMail(email);
@@ -41,6 +39,11 @@ if (user_id) {
       WHERE uid = ?::uuid
     `, institutionUid).getInt("id");
 
+    const cityId = _db.queryFirst(`
+      SELECT id FROM city
+      WHERE uid =?::uuid
+    `, cityUid).getInt("id");
+
     _db.insertIfNotExists(
       'people',
       _val.map()
@@ -48,9 +51,7 @@ if (user_id) {
         .set("email", email)
         .set("people_user_id", user_id)
         .set("birth_date", birthDate)
-        .set("city", city)
-        .set("state", state)
-        .set("country", country)
+        .set("city", cityId)
         .set("institution_id", institutionId)
     );
   } catch (e) {
