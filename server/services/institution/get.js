@@ -22,7 +22,7 @@ const dbInstitutions = _db.query(`
     INNER JOIN city ON institution.city_id = city.id
     INNER JOIN state ON city.state_id = state.id
     INNER JOIN country ON state.country_id = country.id
-    WHERE uid = ?::uuid
+    WHERE institution.uid = ?::uuid
 `, uid);
 
 if (!dbInstitutions || dbInstitutions.length === 0) {
