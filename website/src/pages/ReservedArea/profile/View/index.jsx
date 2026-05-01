@@ -2,12 +2,10 @@ import { connect } from 'react-redux';
 
 import Profile from '../../../../components/Profile'
 
-import './index.less';
-
 function ProfileView({ loggedUserInfo }) {
 
   return (
-      <div className="profile-view">
+      <div>
         <Profile user={loggedUserInfo} />
       </div>
   );

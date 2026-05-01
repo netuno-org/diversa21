@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react';
-import {Typography} from "antd";
 
 import _service from '@netuno/service-client';
 
 import Profile from '../../../components/Profile'
 
-import "./index.less";
-
-const { Title } = Typography;
-
 function User({username}) {
   const [user, setUser] = useState(null);
-  
-  //console.log(username);
-  
+
   useEffect(() => {
     if (!username) {
       return;
@@ -24,15 +17,12 @@ function User({username}) {
       url: `/people/by?username=${username}`,
       success: (response) => {
         setUser(response.json.data);
-        //console.log(response.json);
       }
     });
   }, [username]);
 
-
-      //<p> Hello {username} </p>
   return (
-    <section className="user-profile">
+    <section>
       <Profile user={user} />
     </section>
   )

@@ -46,7 +46,13 @@ function Profile({ user }) {
               >
                 <Link to={`/institutions/${institution?.uid}`}>
                   <div className="institution-text">
-                    <BankOutlined /> {institution?.name}
+                    {
+                      institution?.uid ? (
+                        <>
+                          <BankOutlined /> {institution?.name}
+                        </>
+                      ) : (<Spin size="small" />)
+                    }
                   </div>
                 </Link>
               </Popover>
