@@ -33,6 +33,7 @@ _form.createComponentIfNotExists(
 	"18142bd1-c84d-4963-a4e0-665deb83a79d",
 	_val.map()
 	.set("colspan", 0)
+	.set("description", "")
 	.set("firebase", "")
 	.set("group_id", 0)
 	.set("height", 0)
@@ -94,6 +95,7 @@ _form.createComponentIfNotExists(
 	"18142bd1-c84d-4963-a4e0-665deb83a79d",
 	_val.map()
 	.set("colspan", 0)
+	.set("description", "")
 	.set("firebase", "")
 	.set("group_id", 0)
 	.set("height", 0)

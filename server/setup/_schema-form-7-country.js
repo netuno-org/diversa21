@@ -64,6 +64,7 @@ _form.createComponentIfNotExists(
 	"dd154e3e-ebcc-4294-b5a6-9b4e3a6399c7",
 	_val.map()
 	.set("colspan", 0)
+	.set("description", "")
 	.set("firebase", "")
 	.set("group_id", 0)
 	.set("height", 0)
