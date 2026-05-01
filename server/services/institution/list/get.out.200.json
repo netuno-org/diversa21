@@ -1,6 +1,79 @@
 {
-  "description": "List with all institution's information.",
-  "type": "array",
-  "items": {
-  }
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string-not-empty"
+          },
+          "name": {
+            "type": "string-not-empty"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string-not-empty",
+            "format": "email"
+          },
+          "telephone": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "post_code": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "cover_image": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "active": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uid",
+          "name",
+          "description",
+          "email",
+          "telephone",
+          "website",
+          "address",
+          "post_code",
+          "city",
+          "state",
+          "country",
+          "cover_image",
+          "logo",
+          "active"
+        ]
+      }
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
 }

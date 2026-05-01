@@ -16,9 +16,9 @@ const dbInstitutions = _db.query(`
         institution.website,
         institution.address,
         institution.post_code,
-        city.uid AS "city",
-        state.uid AS "state",
-        country.uid AS "country",
+        city.name AS "city",
+        state.name AS "state",
+        country.name AS "country",
         institution.cover_image,
         institution.logo,
         institution.active
@@ -39,7 +39,7 @@ for (const dbInstitution of dbInstitutions) {
             .set('active', dbInstitution.getString('active'))
             .set('logo', dbInstitution.get('logo'))
             .set('cover_image', dbInstitution.get('cover_image'))
-            .set('uid' , dbInstitution.getString('uid'))
+            .set('uid' , dbInstitution.getUID('uid'))
             .set('country', dbInstitution.getString('country'))
             .set('state', dbInstitution.getString('state'))
             .set('city', dbInstitution.getString('city'))
