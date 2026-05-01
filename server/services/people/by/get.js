@@ -9,7 +9,7 @@ const dbPeople = _db.queryFirst(`
         people.email,
         people.avatar,
         people.birth_date,
-        city.uid AS "city"
+        city.uid AS "city",
         institution.uid AS "institution",
         netuno_group.code AS "group"
     FROM people 
