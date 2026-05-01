@@ -6,9 +6,9 @@ const dbPeople = _db.queryFirst(`
     people.email,
     people.avatar,
     people.birth_date,
-    city.uid AS "city",
-    state.uid AS "state",
-    country.uid AS "country",
+    city.name AS "city",
+    state.name AS "state",
+    country.name AS "country",
     institution.uid AS "institution"
   FROM people 
     INNER JOIN institution ON people.institution_id = institution.id

@@ -29,13 +29,13 @@
           "format": "date"
         },
         "city": {
-          "type": "uid"
+          "type": "string-not-empty"
         },
         "state": {
-          "type": "uid"
+          "type": "string-not-empty"
         },
         "country": {
-          "type": "uid"
+          "type": "string-not-empty"
         },
         "group": {
           "type": "string-not-empty"
