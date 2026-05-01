@@ -31,7 +31,7 @@ function ReservedArea() {
       return <Posts/>;
     }
     if (location.pathname.startsWith("/u/")) {
-      return <UserProfile user={params.user}/>;
+      return <UserProfile username={params.username}/>;
     }
     if (location.pathname === "/other-page") {
       return <OtherPage/>;

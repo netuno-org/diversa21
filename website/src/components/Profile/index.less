@@ -1,0 +1,25 @@
+.profile-view {
+  width: 100%;
+  padding: 0 20px;
+  > h1 {
+    margin-top: 0;
+  }
+  .institution-popover-trigger {
+    width: fit-content;
+    align-self: flex-start;
+  }
+  .institution-text {
+    display: inline-flex;
+    gap: 5px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    &:hover {
+      color: #b79ad1;
+      transform: translateY(-1px);
+      svg {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
