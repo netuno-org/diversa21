@@ -51,7 +51,7 @@ if (user_id) {
         .set("email", email)
         .set("people_user_id", user_id)
         .set("birth_date", birthDate)
-        .set("city", cityId)
+        .set("city_id", cityId)
         .set("institution_id", institutionId)
     );
   } catch (e) {
