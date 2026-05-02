@@ -15,7 +15,7 @@ Table country {
 Table institution {
   id int [pk, increment]
   address text [not null, unique, note: 'Endereço']
-  city_id int [ref: > city.id, note: 'Cidade']
+  city_id int [not null, ref: > city.id, note: 'Cidade']
   cover_image text [note: 'Imagem de capa']
   description text [not null, note: 'Descrição']
   email varchar(250) [not null, note: 'E-mail']
@@ -23,17 +23,17 @@ Table institution {
   name varchar(250) [not null, note: 'Nome']
   post_code varchar(250) [not null, unique, note: 'Código Postal']
   telephone int [not null, note: 'Telefone']
-  website varchar(250) [note: 'Website']
+  website varchar(250) [unique, note: 'Website']
   Note: 'Instituição'
 }
 
 Table people {
   id int [pk, increment]
   avatar text [note: 'Avatar']
-  birth_date date [note: 'Data de Nascimento']
-  city_id int [ref: > city.id, note: 'Cidade']
-  email varchar(250) [unique, note: 'Email']
-  institution_id int [ref: > institution.id, note: 'Instituição']
+  birth_date date [not null, note: 'Data de Nascimento']
+  city_id int [not null, ref: > city.id, note: 'Cidade']
+  email varchar(250) [not null, unique, note: 'Email']
+  institution_id int [not null, ref: > institution.id, note: 'Instituição']
   name varchar(250) [not null, note: 'Nome']
   people_user_id int [not null, unique, note: 'Utilizador']
   recovery_key varchar(250) [note: 'Chave de Recuperação']
