@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Typography, Form, Input, DatePicker, Button, Divider, notification } from 'antd';
+import { Typography, Form, Input, DatePicker, Button, Divider } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -100,7 +100,6 @@ function ProfileEdit() {
 
   return (
     <div>
-      {contextHolder}
       <div className="content-title">
         <Button className="go-back-btn" type="link" onClick={() => navigate(-1)}><ArrowLeftOutlined /> Voltar atrás</Button>
       </div>
