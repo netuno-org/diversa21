@@ -9,8 +9,5 @@
     "uid": {
       "type": "uid"
     }
-  },
-  "required": [
-    "uid"
-  ] 
+  }
 }
