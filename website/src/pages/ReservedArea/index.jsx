@@ -1,6 +1,10 @@
+import {useEffect, useState} from "react";
 import _auth from "@netuno/auth-client";
-import {Button, Typography} from "antd";
+import {Button, Spin, Typography} from "antd";
 import {useNavigate, useLocation, useParams} from "react-router-dom";
+
+import usePeople from "../../common/usePeople.js";
+
 import NotFound from "../NotFound";
 import ProfileEdit from "./profile/Edit";
 import ProfileView from "./profile/View";
@@ -21,6 +25,29 @@ function ReservedArea() {
   const location = useLocation();
   const params = useParams();
   if (_auth.isLogged()) {
+    const [loading, setLoading] = useState(true);
+    const people = usePeople();
+
+    useEffect(() => {
+      if (people.data == null) {
+        people.load((result)=> {
+          if (result) {
+            setLoading(false);
+          } else {
+            navigate("/login");
+          }
+        });
+      } else {
+        setLoading(false);
+      }
+    }, [people.data]);
+    if (loading) {
+      return (
+        <section className="reserved-area">
+          <Spin spinning={loading}></Spin>
+        </section>
+      );
+    }
     if (location.pathname === "/profile/edit") {
       return <ProfileEdit/>;
     }
