@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Routes as Switch, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
 
-import {ConfigProvider, Layout, theme} from 'antd';
+import {ConfigProvider, Layout, notification} from 'antd';
 import antLocale_ptBR from 'antd/lib/locale/pt_BR';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
@@ -11,11 +11,13 @@ import classNames from 'classnames';
 import _auth from '@netuno/auth-client';
 
 import { Provider } from 'react-redux';
-import { Store } from './redux/store';
+import { store } from './redux/store';
 
 import HeaderBase from './base/HeaderBase';
 import SiderMenu from "./base/SiderMenu";
 import FooterBase from "./base/FooterBase";
+
+import globalNotification from "./common/globalNotification.js";
 
 import LoginPage from './pages/Login';
 import Register from './pages/Register';
@@ -52,6 +54,7 @@ export default function App() {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     _auth.config({
@@ -64,6 +67,10 @@ export default function App() {
   useEffect(() => {
     setHeaderButtonMode(location.pathname);
   }, [location]);
+
+  useEffect(() => {
+    globalNotification.api(api);
+  }, [api]);
 
   function onCollapse() {
     setCollapsed(!collapsed);
@@ -106,7 +113,7 @@ export default function App() {
         },
       }}
     >
-      <Provider store={Store}>
+      <Provider store={store}>
         <Layout className={'page ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
           <SiderMenu collapsed={collapsed} onCollapse={onCollapse} />
           <Layout>
