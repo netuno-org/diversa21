@@ -13,24 +13,23 @@ import {
 
 import isNetworkError from "is-network-error";
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { loggedUserInfoAction } from '../../redux/actions';
-
 import 'altcha';
+
+import usePeople from "../../common/usePeople.js";
 
 import './index.less';
 
 const { Title } = Typography;
 const { Content, Sider } = Layout;
 
-function Login({loggedUserInfoAction}) {
+function Login() {
   const servicePrefix = _service.config().prefix;
   const [submitting, setSubmitting] = useState(false);
   const [visible, setVisible] = useState(false);
   const [altchaPayload, setAltchaPayload] = useState(null);
   const [api, contextHolder] = notification.useNotification();
   const altcha = useRef(null);
+  const people = usePeople();
 
   useEffect(() => {
     if (_auth.isLogged()) {
@@ -70,26 +69,8 @@ function Login({loggedUserInfoAction}) {
         }
         return data;
       },
-      success: (data) => {
-        const userData = data.json.extra;
-        
-        // Buscar group do serviço people/get
-        _service({
-          url: "people/me",
-          method: 'GET',
-          success: (response) => {
-            const group = response.json?.data?.group;
-            loggedUserInfoAction({
-              ...userData,
-              group: group || 'member'
-            });
-          },
-          fail: () => {
-            // Se falhar, usar sem group
-            loggedUserInfoAction(userData);
-          }
-        });
-        
+      success: ({json}) => {
+        people.set(json.extra);
         setSubmitting(false);
       },
       fail: (data) => {
@@ -240,12 +221,4 @@ function Login({loggedUserInfoAction}) {
   }
 }
 
-const mapStateToProps = store => {
-  return { };
-};
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-  loggedUserInfoAction
-}, dispatch);
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+export default Login;
