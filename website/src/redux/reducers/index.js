@@ -1,9 +1,9 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from '@reduxjs/toolkit';
 
-import { loggedUserInfoReducer } from './loggedUserInfo';
+import { peopleReducer } from './people';
 import { institutionsReducer } from './institutions';
 
-export const Reducers = combineReducers({
-  loggedUserInfoState: loggedUserInfoReducer,
+export const rootReducer = combineReducers({
+  people: peopleReducer,
   institutionsState: institutionsReducer,
 });
