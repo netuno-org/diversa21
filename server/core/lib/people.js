@@ -9,9 +9,9 @@ export default {
              people.email,
              people.avatar,
              people.birth_date,
-             city.uid AS "city",
-             state.uid AS "state",
-             country.uid AS "country",
+             city.name AS "city",
+             state.name AS "state",
+             country.name AS "country",
              institution.uid AS "institution",
              netuno_group.code AS "group"
       FROM people
