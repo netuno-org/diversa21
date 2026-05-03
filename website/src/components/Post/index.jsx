@@ -8,9 +8,9 @@ import momentjs from "moment";
 import Editor from "./Editor";
 import PostList from "./List";
 import "./index.less";
+import usePeople from "../../common/usePeople.js";
 
 function Post({
-  loggedUserInfo,
   uid,
   moment,
   content,
@@ -31,6 +31,8 @@ function Post({
   const [likesCounter, setLikesCounter] = useState(likes);
 
   const refPostList = useRef(null);
+
+  const userPeople = usePeople();
 
   useEffect(() => {
     if (people.avatar) {
@@ -138,7 +140,7 @@ function Post({
           {/* {momentjs(moment).startOf('hour').fromNow()} */}
           {/* {momentjs(moment).startOf('day').fromNow()} */}
           {momentjs(moment).format("lll")}
-          {loggedUserInfo && people.uid === loggedUserInfo.uid && <>
+          {people.uid === userPeople.data.uid && <>
             <Popconfirm
               title="Removendo post"
               onConfirm={onDeletePost}
@@ -226,11 +228,4 @@ function Post({
   );
 }
 
-const mapStateToProps = store => {
-  const { loggedUserInfo } = store.loggedUserInfoState;
-  return {
-    loggedUserInfo
-  };
-};
-
-export default connect(mapStateToProps, {})(Post);
+export default Post;
