@@ -1,52 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Typography, Form, Input, DatePicker, Button, Divider, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { loggedUserInfoReloadAction } from '../../../../redux/actions';
-
 import _service from '@netuno/service-client';
+
+import globalNotification from "../../../../common/globalNotification.js";
+
+import usePeople from "../../../../common/usePeople.js";
 
 import Avatar from './Avatar';
 
 const { Title } = Typography;
 
-function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
+function ProfileEdit() {
   const [submitting, setSubmitting] = useState(false);
   const [passwordRequired, setPasswordRequired] = useState(false);
   const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
   const profileAvatar = useRef(null);
   const profileForm = useRef(null);
-  const location = useLocation();
   const navigate = useNavigate();
-  const [api, contextHolder] = notification.useNotification();
+
+  const people = usePeople();
 
   const layout = {
     wrapperCol: { xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 12 } }
   };
 
   useEffect(() => {
-    if (loggedUserInfo) {
-      if (profileForm.current) {
-        profileForm.current.setFieldsValue({
-          name: loggedUserInfo?.name,
-          username: loggedUserInfo?.username,
-          email: loggedUserInfo?.email,
-          birthDate: dayjs(loggedUserInfo?.birthDate),
-          city: loggedUserInfo?.city,
-          state: loggedUserInfo?.state,
-          country: loggedUserInfo?.country,
-        });
-      }
-      if (loggedUserInfo.avatar) {
-        setAvatarImageURL(_service.url(`/people/avatar?uid=${loggedUserInfo.uid}`));
-      }
+    if (people.data.avatar) {
+      setAvatarImageURL(_service.url(`/people/avatar?uid=${people.data.uid}`));
     }
-  }, [location, loggedUserInfo]);
+  }, []);
 
   function onFinish(values) {
     setSubmitting(true);
@@ -67,7 +54,7 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
       },
       success: (response) => {
         if (response.json.result) {
-          api.success({
+          globalNotification.success({
             message: 'Edição do Perfil',
             description: 'Os dados do seu perfil foram alterados com sucesso.',
           });
@@ -76,9 +63,9 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
             password: "",
             password_confirm: ""
           });
-          loggedUserInfoReloadAction();
+          people.reload();
         } else {
-          api.warning({
+          globalNotification.warning({
             message: 'Utilizador existente',
             description: response.json.error,
           });
@@ -91,7 +78,7 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
       },
       fail: () => {
         setSubmitting(false);
-        api.error({
+        globalNotification.serviceFail({
           message: 'Erro na Edição do Perfil',
           description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
         });
@@ -105,7 +92,7 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
     } else {
       setPasswordRequired(false);
     }
-  };
+  }
 
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
@@ -129,7 +116,15 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
           ref={profileForm}
           layout="vertical"
           name="basic"
-          initialValues={{ remember: true }}
+          initialValues={{
+            name: people.data.name,
+            username: people.data.username,
+            email: people.data.email,
+            birthDate: dayjs(people.data.birthDate),
+            city: people.data.city,
+            state: people.data.state,
+            country: people.data.country,
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
@@ -241,15 +236,4 @@ function ProfileEdit({loggedUserInfo, loggedUserInfoReloadAction}) {
   );
 }
 
-const mapStateToProps = store => {
-  const { loggedUserInfo } = store.loggedUserInfoState;
-  return {
-    loggedUserInfo
-  };
-};
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-  loggedUserInfoReloadAction
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileEdit);
+export default ProfileEdit;

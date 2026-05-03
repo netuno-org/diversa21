@@ -1,21 +1,15 @@
-import { connect } from 'react-redux';
+import usePeople from "../../../../common/usePeople.js";
 
 import Profile from '../../../../components/Profile'
 
-function ProfileView({ loggedUserInfo }) {
+function ProfileView() {
+  const people = usePeople();
 
   return (
       <div>
-        <Profile user={loggedUserInfo} />
+        <Profile user={people.data} />
       </div>
   );
 }
 
-const mapStateToProps = store => {
-  const { loggedUserInfo } = store.loggedUserInfoState;
-  return {
-    loggedUserInfo
-  };
-};
-
-export default connect(mapStateToProps, {})(ProfileView);
+export default ProfileView;
