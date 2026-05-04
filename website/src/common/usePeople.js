@@ -10,7 +10,7 @@ function usePeople() {
     const load = (onFinish) => {
         _service({
             method: 'GET',
-            url: 'people',
+            url: 'people/me',
             success: (response) => {
                 if (response.json.result) {
                     dispatch(peopleLoadAction(response.json.data));

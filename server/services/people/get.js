@@ -2,12 +2,7 @@ import {_req, _val, _header, _exec, _out} from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
 
-let peopleUid = _req.getUID("uid");
-
-if (!peopleUid) {
-  const dbPeople = people.getLogged();
-  peopleUid = dbPeople.getUID("uid");
-}
+const peopleUid = _req.getUID("uid");
 
 const data = people.getData(peopleUid);
 
