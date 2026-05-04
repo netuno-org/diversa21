@@ -72,7 +72,7 @@ for (const dbPost of dbPosts) {
           .set("name", dbPost.getString("people_name"))
           .set("user", dbPost.getString("people_user"))
           .set("avatar", dbPost.getString("people_avatar") !== "")
-    )
+      )
   )
 }
 _out.json(posts);
