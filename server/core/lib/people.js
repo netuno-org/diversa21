@@ -48,5 +48,13 @@ export default {
     return _db.form("people")
       .where(_db.where("uid").equal(uid))
       .first();
+  },
+  getByUsername: (username) => {
+    return _db.queryFirst(`
+      SELECT people.*
+      FROM people 
+          INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
+      WHERE netuno_user."user" = ?::varchar;
+    `, username);
   }
 }
