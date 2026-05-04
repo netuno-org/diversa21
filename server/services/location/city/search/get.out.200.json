@@ -1,10 +1,10 @@
 {
   "type": "object",
   "properties": {
-    "success": {
+    "result": {
       "type": "boolean"
     },
-    "result": {
+    "data": {
       "type": "array",
       "items": {
         "type": "object",

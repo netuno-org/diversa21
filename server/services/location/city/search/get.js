@@ -15,12 +15,12 @@ SELECT * FROM (
 LIMIT 10
 `;
 
-const result = _db.query(
+const data = _db.query(
   query,
   "%" + input + "%"
 );
 
 _out.json({
-  result,
-  success: true
+  data,
+  result: true
 })

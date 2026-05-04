@@ -4,7 +4,7 @@
     "result": {
       "type": "boolean"
     },
-    "autocomplete": {
+    "data": {
       "type": "array",
       "items": {
         "type": "object",
@@ -13,6 +13,9 @@
             "type": "string"
           },
           "label": {
+            "type": "string"
+          },
+          "type": {
             "type": "string"
           }
         }

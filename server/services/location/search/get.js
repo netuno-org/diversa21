@@ -28,14 +28,14 @@ SELECT * FROM (
 LIMIT 10
 `;
 
-const autocomplete = _db.query(
+const data = _db.query(
   multiQuery,
   "%" + query + "%",
   "%" + query + "%",
   "%" + query + "%"
 );
 
-for (element of autocomplete) {
+for (element of data) {
   const separators = element.getString("label").match(/>/g) || [];
   const numOfSeparators = separators.length;
   if (numOfSeparators == 0) {
@@ -50,6 +50,6 @@ for (element of autocomplete) {
 }
 
 _out.json({
-  autocomplete,
+  data,
   result: true
 })
