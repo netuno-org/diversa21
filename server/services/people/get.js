@@ -1,4 +1,4 @@
-import {_req, _db, _val, _header, _exec, _out} from "@netuno/server-types"
+import {_req, _val, _header, _exec, _out} from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
 
