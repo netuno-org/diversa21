@@ -6,13 +6,6 @@ import {
 } from "antd";
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { 
-  institutionsSetList, 
-  institutionsSetFilters, 
-  institutionsSetLoading 
-} from '../../../../redux/actions/institutionsActions';
 
 import "./index.less";
 
@@ -21,21 +14,16 @@ const { Option } = Select;
 
 const PAGE_SIZE = 10;
 
-function InstitutionList({ 
-  institutionsState, 
-  institutionsSetList, 
-  institutionsSetFilters, 
-  institutionsSetLoading,
-  loggedUserInfo
-}) {
+function InstitutionList() {
   const navigate = useNavigate();
   const [allInstitutions, setAllInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  
-  const { filters } = institutionsState;
+
+  const institutionsSetFilters = () => {};
+  const filters = {};
 
 
   // Fetch all institutions for filtering
@@ -288,18 +276,4 @@ function InstitutionList({
   );
 }
 
-const mapStateToProps = store => {
-  const { institutionsState, loggedUserInfoState } = store;
-  return {
-    institutionsState,
-    loggedUserInfo: loggedUserInfoState.loggedUserInfo
-  };
-};
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-  institutionsSetList,
-  institutionsSetFilters,
-  institutionsSetLoading
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(InstitutionList);
+export default InstitutionList;
