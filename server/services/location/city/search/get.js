@@ -5,7 +5,7 @@ const input = _req.getString('city') || "";
 const query = `
 SELECT * FROM (
    SELECT
-       city.uid AS id,
+       city.uid AS uid,
        country.name || ' > ' || state.name || ' > ' || city.name AS label
    FROM city
    INNER JOIN state ON city.state_id = state.id

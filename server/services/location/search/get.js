@@ -5,7 +5,7 @@ const query = _req.getString('query') || "";
 const multiQuery = `
 SELECT * FROM (
    SELECT
-       uid AS id,
+       uid AS uid,
        name AS label
    FROM country
    WHERE name ILIKE ?::text
@@ -34,6 +34,20 @@ const autocomplete = _db.query(
   "%" + query + "%",
   "%" + query + "%"
 );
+
+for (element of autocomplete) {
+  const separators = element.getString("label").match(/>/g) || [];
+  const numOfSeparators = separators.length;
+  if (numOfSeparators == 0) {
+    element.set("type", "country");
+  }
+  if (numOfSeparators == 1) {
+    element.set("type", "state");
+  }
+  if (numOfSeparators == 2) {
+    element.set("type", "city");
+  }
+}
 
 _out.json({
   autocomplete,
