@@ -10,7 +10,7 @@ import "./index.less";
 const { Title } = Typography;
 
 function People() {
-  const [stateOptions, setStateOptions] = useState([])
+  const [locationOptions, setLocationOptions] = useState([])
   const [filters, setFilters] = useState(true)
   const [peopleName, setPeopleName] = useState('');
   const [people, setPeople] = useState([]);
@@ -33,7 +33,6 @@ function People() {
               label: state,
               value: state
             }))
-            setStateOptions(options)
             setPeople(response.json);
             setFilters(false);
             setLoading(false);
@@ -68,7 +67,19 @@ function People() {
   };
 
   const onSearch = value => {
-    //console.log('search:', value);
+    _service({
+      url: `location/search?query=${value}`,
+      success: (response) => {
+        const options = response.json.data.map(location => ({
+          label: location.label,
+          value: location.label 
+        }))
+        setLocationOptions(options);
+      },
+      fail: () => {
+        setLocationOptions([]);
+      }
+    })
   };
   const onSelect = value => {
     console.log('onSelect', value);
@@ -91,9 +102,9 @@ function People() {
         </AutoComplete>
         <Select
           showSearch={{ optionFilterProp: 'label', onSearch }}
-          placeholder="País, Cidade ou Estado"
-          options={stateOptions}
-          style={{ width: '20%' }}
+          placeholder="Cidade, Estado ou País"
+          options={locationOptions}
+          style={{ width: '50%' }}
         />
       </div>
       {loading && (
