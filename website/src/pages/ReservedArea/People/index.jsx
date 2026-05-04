@@ -23,11 +23,10 @@ function People() {
 
   useEffect(() => {
     if (peopleName || peopleName === '') {
-      const urlFinal = peopleName ? `people/list?name=${peopleName}` : 'people/list'
+      const url = peopleName ? `people/list?name=${peopleName}` : 'people/list'
       if (filters) {
         _service({
-          method: 'GET',
-          url: `${urlFinal}`,
+          url,
           success: (response) => {
             const uniqueStates = [...new Set(response.json.map(p => p.state))].filter(Boolean)
             const options = uniqueStates.map(state => ({
@@ -106,9 +105,7 @@ function People() {
         <div style={{ width: '100%' }}>
           <Card className={"people-search-result"} key={person.uid}>
             <Link to={`/u/${person.username}`}>
-              <UserProfileDisplay user={person} avatarSize={86}>
-                <div className={"country-title"}> {person.country}</div>
-              </UserProfileDisplay>
+              <UserProfileDisplay user={person} avatarSize={86}/>
             </Link>
           </Card>
         </div>

@@ -120,9 +120,9 @@ function ProfileEdit() {
             username: people.data.username,
             email: people.data.email,
             birthDate: dayjs(people.data.birthDate),
-            city: people.data.city,
-            state: people.data.state,
-            country: people.data.country,
+            city: people.data.city.name,
+            state: people.data.state.name,
+            country: people.data.country.name,
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}

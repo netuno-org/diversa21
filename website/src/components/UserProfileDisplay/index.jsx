@@ -22,7 +22,7 @@ function UserProfileDisplay({ user, avatarSize, children }) {
       <Avatar size={avatarSize} src={avatarUrl} />
       <div>
         <div><UserOutlined /> {user.name}</div>
-        <div><EnvironmentOutlined /> {user.city}, {user.state}</div>
+        <div><EnvironmentOutlined /> {user.city.name}, {user.state.name}, {user.country.name}</div>
         <div><CalendarOutlined /> {dayjs(user.birthDate).format('LL')}</div>
         {children}
       </div>

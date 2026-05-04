@@ -9,10 +9,14 @@ export default {
              people.email,
              people.avatar,
              people.birth_date,
-             city.name AS "city",
-             state.name AS "state",
-             country.name AS "country",
-             institution.uid AS "institution",
+             city.uid AS "city_uid",
+             state.uid AS "state_uid",
+             country.uid AS "country_uid",
+             city.name AS "city_name",
+             state.name AS "state_name",
+             country.name AS "country_name",
+             institution.uid AS "institution_uid",
+             institution.name AS "institution_name",
              netuno_group.code AS "group"
       FROM people
              INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
@@ -27,15 +31,31 @@ export default {
       return _val.map()
         .set("uid", dbPeople.getString("uid"))
         .set("name", dbPeople.getString("name"))
+        .set("username", dbPeople.getString("user"))
+        .set("group", dbPeople.getString("group"))
         .set("email", dbPeople.getString("email"))
         .set("avatar", dbPeople.getString("avatar") !== '')
         .set("birthDate", dbPeople.getString("birth_date"))
-        .set("city", dbPeople.getString("city"))
-        .set("state", dbPeople.getString("state"))
-        .set("country", dbPeople.getString("country"))
-        .set("institution", dbPeople.getString("institution"))
-        .set("username", dbPeople.getString("user"))
-        .set("group", dbPeople.getString("group"));
+        .set("city",
+          _val.map()
+            .set("uid", dbPeople.getString("city_uid"))
+            .set("name", dbPeople.getString("city_name"))
+        )
+        .set("state",
+          _val.map()
+            .set("uid", dbPeople.getString("state_uid"))
+            .set("name", dbPeople.getString("state_name"))
+        )
+        .set("country",
+          _val.map()
+            .set("uid", dbPeople.getString("country_uid"))
+            .set("name", dbPeople.getString("country_name"))
+        )
+        .set("institution",
+          _val.map()
+            .set("uid", dbPeople.getString("institution_uid"))
+            .set("name", dbPeople.getString("institution_name"))
+        )
     }
     return null;
   },
