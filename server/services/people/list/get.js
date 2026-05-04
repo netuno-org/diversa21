@@ -3,9 +3,9 @@ import {_req, _db, _val, _out} from "@netuno/server-types"
 import people from "#core/lib/people.js";
 
 const name = _req.getString('name');
-const city = _req.getString('city');
-const state = _req.getString('state');
-const country = _req.getString('country');
+const cityUid = _req.getUID('cityUid');
+const stateUid = _req.getUID('stateUid');
+const countryUid = _req.getUID('countryUid');
 let page = _req.getInt('page', 1);
 
 let offset = 0;
@@ -13,12 +13,7 @@ if (page > 0) {
   offset = (page - 1) * 10;
 }
 
-const nameParam = `%${name}%`;
-const cityParam = `%${city}%`;
-const stateParam = `%${state}%`;
-const countryParam = `%${country}%`;
-
-const dbPeople = _db.query(`
+let sqlQuery = `
     SELECT
       people.*
     FROM people
@@ -28,20 +23,38 @@ const dbPeople = _db.query(`
     WHERE 1 = 1
       AND people.name ILIKE ?::varchar
       AND (1 = 2
-        OR city.name ILIKE ?::varchar 
-        OR state.name ILIKE ?::varchar 
-        OR country.name ILIKE ?::varchar
+`;
+
+const params = _val.list();
+params.add(`%${name}%`);
+
+if (cityUid) {
+  sqlQuery += ` OR city.uid = ?::uuid `;
+  params.add(cityUid);
+} else if (stateUid) {
+  sqlQuery += ` OR state.uid = ?::uuid `;
+  params.add(stateUid);
+} else if (countryUid) {
+  sqlQuery += ` OR country.uid = ?::uuid `;
+  params.add(countryUid);
+} else if (countryUid) {
+  sqlQuery += ` OR country.uid = ?::uuid `;
+  params.add(countryUid);
+} else {
+  sqlQuery += ` OR 1 = 1 `;
+}
+
+params.add(offset);
+
+sqlQuery +=
+`
       )
     ORDER BY people.name ASC
     LIMIT 10 
     OFFSET ?::int
-  `,
-  nameParam,
-  cityParam,
-  stateParam,
-  countryParam,
-  offset
-);
+`;
+
+const dbPeople = _db.query(sqlQuery, params);
 
 const list = _val.list();
 for (const dbPerson of dbPeople) {
