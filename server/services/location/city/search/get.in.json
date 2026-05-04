@@ -1,0 +1,15 @@
+{
+    "tags":[
+      "city"
+    ],
+    "summary": "Fetch City",
+    "description": "Retrieve cities from a search.",
+    "properties": {
+      "query": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "query"
+    ]
+}
