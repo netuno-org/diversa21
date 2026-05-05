@@ -11,6 +11,7 @@ const { Title } = Typography;
 
 function People() {
   const [locationOptions, setLocationOptions] = useState([])
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [filters, setFilters] = useState(true)
   const [peopleName, setPeopleName] = useState('');
   const [people, setPeople] = useState([]);
@@ -22,17 +23,14 @@ function People() {
   });
 
   useEffect(() => {
-    if (peopleName || peopleName === '') {
-      const url = peopleName ? `people/list?name=${peopleName}` : 'people/list'
+      let url = `people/list?name=${peopleName}`
+      if (selectedLocation) {
+        url += `&${selectedLocation.type}Uid=${selectedLocation.uid}`
+      }
       if (filters) {
         _service({
           url,
           success: (response) => {
-            const uniqueStates = [...new Set(response.json.map(p => p.state))].filter(Boolean)
-            const options = uniqueStates.map(state => ({
-              label: state,
-              value: state
-            }))
             setPeople(response.json);
             setFilters(false);
             setLoading(false);
@@ -43,7 +41,6 @@ function People() {
           }
         })
       };
-    }
   }, [filters]);
 
   useEffect(() => {
@@ -66,13 +63,15 @@ function People() {
     }
   };
 
-  const onSearch = value => {
+  const handleLocationSearch = value => {
     _service({
       url: `location/search?query=${value}`,
       success: (response) => {
         const options = response.json.data.map(location => ({
+          value: location.label,
           label: location.label,
-          value: location.label 
+          uid: location.uid,
+          type: location.type
         }))
         setLocationOptions(options);
       },
@@ -81,6 +80,16 @@ function People() {
       }
     })
   };
+
+  const handleChange = (value, option) => {
+    setSelectedLocation(option);
+  };
+
+  const handleLocationClear = () => {
+    setLocationOptions([]);
+    setSelectedLocation('');
+  }
+
   const onSelect = value => {
     console.log('onSelect', value);
   };
@@ -101,9 +110,14 @@ function People() {
           />
         </AutoComplete>
         <Select
-          showSearch={{ optionFilterProp: 'label', onSearch }}
+          showSearch
+          filterOption={false}
+          onSearch={handleLocationSearch}
           placeholder="Cidade, Estado ou País"
           options={locationOptions}
+          onChange={handleChange}
+          allowClear
+          onClear={handleLocationClear}
           style={{ width: '50%' }}
         />
       </div>
