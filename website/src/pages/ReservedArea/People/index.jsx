@@ -122,7 +122,7 @@ function People() {
         />
       </div>
       {loading && (
-        <div style={{ marginTop: 24 }}>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 24 }}>
           <Spin size="large" />
         </div>
       )}
