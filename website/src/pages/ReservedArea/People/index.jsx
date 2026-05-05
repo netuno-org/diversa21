@@ -130,7 +130,7 @@ function People() {
         <div style={{ width: '100%' }}>
           <Card className={"people-search-result"} key={person.uid}>
             <Link to={`/u/${person.username}`}>
-              <UserProfileDisplay user={person} avatarSize={86}/>
+              <UserProfileDisplay user={person} avatarStyle={{ width: '86px', height: '86px' }}/>
             </Link>
           </Card>
         </div>

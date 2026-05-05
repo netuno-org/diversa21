@@ -4,7 +4,7 @@ import { UserOutlined, EnvironmentOutlined, CalendarOutlined } from '@ant-design
 import _service from '@netuno/service-client';
 import dayjs from 'dayjs';
 
-function UserProfileDisplay({ user, avatarSize, children }) {
+function UserProfileDisplay({ user, avatarStyle, children }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
   useEffect(() => {
@@ -19,7 +19,7 @@ function UserProfileDisplay({ user, avatarSize, children }) {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-      <Avatar size={avatarSize} src={avatarUrl} />
+      <Avatar style={avatarStyle} src={avatarUrl} />
       <div>
         <div><UserOutlined /> {user.name}</div>
         <div><EnvironmentOutlined /> {user.city.name}, {user.state.name}, {user.country.name}</div>

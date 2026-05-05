@@ -2,6 +2,9 @@
   width: 100%;
   padding: 0 20px;
   .institution-text {
+    p {
+      margin: 0;
+    }
     display: inline-flex;
     gap: 5px;
     transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
@@ -15,3 +18,30 @@
   }
 }
 
+.institution-text-popover {
+  color: #8B6AA2;
+  width: 100%;
+  font-size: 14px;
+}
+
+@media (max-width: 576px) {
+  .institution-text-popover {
+    font-size: 12px;
+  }
+  .institution-text, div {
+    font-size: 12px;
+    margin: 0;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .institution-text-popover {
+    font-size: 10px;
+  }
+  .institution-text, div {
+    font-size: 10px;
+    margin: 0;
+    gap: 16px;
+  }
+}
