@@ -75,6 +75,10 @@ function People() {
   };
 
   const handleLocationSearch = value => {
+    if(!value || value.trim().length < 3) {
+      setLocationOptions([]);
+      return;
+    }
     _service({
       url: `location/search?query=${value}`,
       success: (response) => {
@@ -124,6 +128,7 @@ function People() {
         <Select
           className={"people-search-select"}
           showSearch
+          notFoundContent={null}
           filterOption={false}
           onSearch={handleLocationSearch}
           placeholder="Cidade, Estado ou País"
