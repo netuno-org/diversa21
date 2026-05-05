@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
 import { Link } from "react-router-dom";
 import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select } from 'antd';
-import { Typography } from "antd";
+import { Typography, Grid } from "antd";
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
 
 import "./index.less";
 
 const { Title } = Typography;
-
+const { useBreakpoint } = Grid;
 function People() {
   const [locationOptions, setLocationOptions] = useState([])
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -22,25 +22,36 @@ function People() {
     size: 3
   });
 
+  const screens = useBreakpoint();
+  const screenSize = screens.xl
+    ? 100
+    : screens.lg
+      ? 100
+      : screens.md
+        ? 100
+        : screens.sm
+          ? 110
+          : 60
+
   useEffect(() => {
-      let url = `people/list?name=${peopleName}`
-      if (selectedLocation) {
-        url += `&${selectedLocation.type}Uid=${selectedLocation.uid}`
-      }
-      if (filters) {
-        _service({
-          url,
-          success: (response) => {
-            setPeople(response.json);
-            setFilters(false);
-            setLoading(false);
-            setPagination({ ...pagination, current: 1 });
-          },
-          fail: () => {
-            setLoading(false);
-          }
-        })
-      };
+    let url = `people/list?name=${peopleName}`
+    if (selectedLocation) {
+      url += `&${selectedLocation.type}Uid=${selectedLocation.uid}`
+    }
+    if (filters) {
+      _service({
+        url,
+        success: (response) => {
+          setPeople(response.json);
+          setFilters(false);
+          setLoading(false);
+          setPagination({ ...pagination, current: 1 });
+        },
+        fail: () => {
+          setLoading(false);
+        }
+      })
+    };
   }, [filters]);
 
   useEffect(() => {
@@ -100,16 +111,18 @@ function People() {
       <div className={"people-search-input"}>
         <AutoComplete
           popupMatchSelectWidth={252}
-          style={{ width: '50%' }}
+          style={{ width: '60%' }}
           onSelect={onSelect}
         >
           <Input.Search
+            style={{ width: '100%' }}
             placeholder="Buscar por nome"
             enterButton
             onSearch={handleSearch}
           />
         </AutoComplete>
         <Select
+          className={"people-search-select"}
           showSearch
           filterOption={false}
           onSearch={handleLocationSearch}
@@ -118,7 +131,6 @@ function People() {
           onChange={handleChange}
           allowClear
           onClear={handleLocationClear}
-          style={{ width: '50%' }}
         />
       </div>
       {loading && (
@@ -130,7 +142,7 @@ function People() {
         <div style={{ width: '100%' }}>
           <Card className={"people-search-result"} key={person.uid}>
             <Link to={`/u/${person.username}`}>
-              <UserProfileDisplay user={person} avatarStyle={{ width: '86px', height: '86px' }}/>
+              <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
             </Link>
           </Card>
         </div>
