@@ -131,6 +131,7 @@ function People() {
           onChange={handleChange}
           allowClear
           onClear={handleLocationClear}
+          style={{ width: '40%'}}
         />
       </div>
       {loading && (
