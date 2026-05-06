@@ -214,7 +214,7 @@ function InstitutionList() {
         <>
           <div className="results-info">
             <Text type="secondary">
-              {filteredInstitutions.length} instituição{filteredInstitutions.length !== 1 ? 's' : ''} encontrada{filteredInstitutions.length !== 1 ? 's' : ''}
+              {filteredInstitutions.length} {filteredInstitutions.length !== 1 ? 'instituições' : 'instituição'} encontrada{filteredInstitutions.length !== 1 ? 's' : ''}
             </Text>
           </div>
 
@@ -266,7 +266,7 @@ function InstitutionList() {
               pageSize={PAGE_SIZE}
               total={filteredInstitutions.length}
               onChange={handlePageChange}
-              showTotal={(total) => `${total} instituição${total !== 1 ? 's' : ''}`}
+              showTotal={(total) => `${total} ${total !== 1 ? 'instituições' : 'instituição'}`}
               showSizeChanger={false}
             />
           </div>
