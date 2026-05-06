@@ -85,7 +85,7 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
 
   if ((!parent && loadingPosts) && page === 0) {
     return (
-      <Row justify="center">
+      <Row style={{ marginTop: 20 }} justify="center">
         <Col>
           <Spin size="large" />
         </Col>

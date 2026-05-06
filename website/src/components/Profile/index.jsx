@@ -20,6 +20,7 @@ function Profile({ user }) {
         : screens.sm
           ? 110
           : 70
+          
   let content = null;
 
   if (!user) {

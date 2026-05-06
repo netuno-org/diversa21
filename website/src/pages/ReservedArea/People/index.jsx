@@ -124,7 +124,7 @@ function People() {
           <Input.Search
             style={{ width: '100%' }}
             placeholder="Buscar por nome"
-            enterButton
+            enterButton={true}
             onSearch={handlePeopleSearch}
             onChange={handlePeopleChange}
           />
@@ -140,7 +140,7 @@ function People() {
           onChange={handleLocationChange}
           allowClear
           onClear={handleLocationClear}
-          style={{ width: '40%' }}
+          style={{ width: '40%', height: '32px' }}
         />
       </div>
       {loading && (
@@ -148,15 +148,11 @@ function People() {
           <Spin size="large" />
         </div>
       )}
-
       <div className="results-info">
         <Text type="secondary">
           {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
         </Text>
       </div>
-
-
-
       {!loading && peopleList.map((person) => (
         <div style={{ width: '100%' }}>
           <Link to={`/u/${person.username}`}>
