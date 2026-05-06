@@ -78,6 +78,10 @@ function People() {
   };
 
   const handleLocationSearch = value => {
+    if (value.trim() === '') {
+      setLocationOptions([]);
+      return;
+    }
     _service({
       url: `location/search?query=${value}`,
       success: (response) => {
