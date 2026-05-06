@@ -87,7 +87,7 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
     return (
       <Row justify="center">
         <Col>
-          <Spin />
+          <Spin size="large" />
         </Col>
       </Row>
     );
@@ -118,7 +118,7 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
       {loadingPosts && page > 0 && (
         <Row justify="center">
           <Col>
-            <Spin />
+            <Spin size="large" />
           </Col>
         </Row>
       )}

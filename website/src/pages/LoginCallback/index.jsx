@@ -56,7 +56,7 @@ export default function LoginCallback(props) {
   return (
     <div className="login-callback">
       {contextHolder}
-      <Spin />
+      <Spin size="large" />
     </div>
   );
 }

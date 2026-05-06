@@ -23,7 +23,11 @@ function Profile({ user }) {
   let content = null;
 
   if (!user) {
-    content = <Spin />;
+    content = <div
+      style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 20 }}
+    >
+      <Spin size="large" />
+    </div>;
   } else {
     content = (
       <div className="profile">
@@ -40,13 +44,7 @@ function Profile({ user }) {
               >
                 <div className="institution-text">
                   <Link to={`/institutions/${user.institution.uid}`}>
-                    {
-                      user.institution.uid ? (
-                        <>
-                          <p><BankOutlined /> {user.institution.name}</p>
-                        </>
-                      ) : (<Spin size="small" />)
-                    }
+                    <p><BankOutlined /> {user.institution.name}</p>
                   </Link>
                 </div>
               </Popover>
