@@ -1,6 +1,6 @@
 import { _req, _db, _out } from "@netuno/server-types";
 
-const input = _req.getString('city') || "";
+const input = _req.getString('name') || "";
 
 const query = `
 SELECT * FROM (

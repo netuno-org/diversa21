@@ -5,11 +5,11 @@
     "summary": "Fetch City",
     "description": "Retrieve cities from a search.",
     "properties": {
-      "query": {
+      "name": {
         "type": "string"
       }
     },
     "required": [
-      "city"
+      "name"
     ]
 }

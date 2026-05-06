@@ -9,8 +9,8 @@
       "items": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
+          "uid": {
+            "type": "uid"
           },
           "label": {
             "type": "string"
