@@ -7,7 +7,7 @@ import UserProfileDisplay from '../../../components/UserProfileDisplay';
 
 import "./index.less";
 
-const { Title } = Typography;
+const { Text, Title } = Typography;
 const { useBreakpoint } = Grid;
 
 function People() {
@@ -148,6 +148,15 @@ function People() {
           <Spin size="large" />
         </div>
       )}
+
+          <div className="results-info">
+            <Text type="secondary">
+              {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
+            </Text>
+          </div>
+
+
+
       {!loading && peopleList.map((person) => (
         <div style={{ width: '100%' }}>
           <Card className={"people-search-result"} key={person.uid}>
