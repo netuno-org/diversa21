@@ -49,11 +49,11 @@ function People() {
       success: (response) => {
         const { items, totalCount, pageSize } = response.json;
         setPeopleList(items);
-        setPagination(prev => ({ 
-              ...prev, 
-              total: totalCount,
-              size: pageSize 
-          }));
+        setPagination(prev => ({
+          ...prev,
+          total: totalCount,
+          size: pageSize
+        }));
         setLoading(false);
       },
       fail: () => {
@@ -140,7 +140,7 @@ function People() {
           onChange={handleLocationChange}
           allowClear
           onClear={handleLocationClear}
-          style={{ width: '40%'}}
+          style={{ width: '40%' }}
         />
       </div>
       {loading && (
@@ -149,21 +149,21 @@ function People() {
         </div>
       )}
 
-          <div className="results-info">
-            <Text type="secondary">
-              {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
-            </Text>
-          </div>
+      <div className="results-info">
+        <Text type="secondary">
+          {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
+        </Text>
+      </div>
 
 
 
       {!loading && peopleList.map((person) => (
         <div style={{ width: '100%' }}>
-          <Card className={"people-search-result"} key={person.uid}>
-            <Link to={`/u/${person.username}`}>
+          <Link to={`/u/${person.username}`}>
+            <Card className={"people-search-result"} key={person.uid}>
               <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
-            </Link>
-          </Card>
+            </Card>
+          </Link>
         </div>
       ))}
       <div style={{ width: '100%' }}>
