@@ -47,11 +47,12 @@ function People() {
     _service({
       url,
       success: (response) => {
-        const { items, totalCount } = response.json;
+        const { items, totalCount, pageSize } = response.json;
         setPeopleList(items);
         setPagination(prev => ({ 
               ...prev, 
-              total: totalCount 
+              total: totalCount,
+              size: pageSize 
           }));
         setLoading(false);
       },

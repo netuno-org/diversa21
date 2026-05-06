@@ -8,9 +8,11 @@ const stateUid = _req.getUID('stateUid');
 const countryUid = _req.getUID('countryUid');
 let page = _req.getInt('page', 1);
 
+const pageSize = 10;
+
 let offset = 0;
 if (page > 0) {
-  offset = (page - 1) * 10;
+  offset = (page - 1) * pageSize;
 }
 
 let sqlQuery = `
@@ -51,7 +53,7 @@ sqlQuery +=
 `
       )
     ORDER BY people.name ASC
-    LIMIT 10 
+    LIMIT ${pageSize} 
     OFFSET ?::int
 `;
 
@@ -70,4 +72,6 @@ if (dbPeople.length == 0) {
   result.set("totalCount", dbPeople[0].getInt("total_count"));
 }
 result.set("items", list);
+result.set("pageSize", pageSize);
+
 _out.json(result);

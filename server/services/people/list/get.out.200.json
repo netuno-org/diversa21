@@ -15,6 +15,9 @@
         }
       }
     },
+    "pageSize": {
+      "type": "number"
+    },
     "totalCount": {
       "type": "number"
     }
