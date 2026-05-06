@@ -9,6 +9,7 @@ import "./index.less";
 
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
+
 function People() {
   const [locationOptions, setLocationOptions] = useState([])
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -76,10 +77,6 @@ function People() {
   };
 
   const handleLocationSearch = value => {
-    if(!value || value.trim().length < 3) {
-      setLocationOptions([]);
-      return;
-    }
     _service({
       url: `location/search?query=${value}`,
       success: (response) => {
