@@ -67,7 +67,7 @@ for (const dbPerson of dbPeople) {
 if (dbPeople.length == 0) {
   result.set("totalCount", 0);
 } else {
-  result.set("totalCount", dbPeople[0].getString("total_count"));
+  result.set("totalCount", dbPeople[0].getInt("total_count"));
 }
 result.set("items", list);
 _out.json(result);

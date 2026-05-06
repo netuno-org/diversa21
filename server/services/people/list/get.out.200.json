@@ -1,14 +1,22 @@
 {
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "result": {
-        "type": "boolean"
-      },
-      "data": { 
-        "_schema": "response/people-data"
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean"
+          },
+          "data": { 
+            "_schema": "response/people-data"
+          }
+        }
       }
+    },
+    "totalCount": {
+      "type": "number"
     }
   }
 }
