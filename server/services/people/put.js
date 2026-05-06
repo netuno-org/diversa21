@@ -6,8 +6,8 @@ const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
 const birthDate = _req.getString("birthDate");
-const city = _req.getUID("city_id");
-const institution = _req.getUID("institution_id")
+const cityUid = _req.getUID("city");
+const institutionUid = _req.getUID("institution");
 
 const dbPeople = _db.queryFirst(`
     SELECT * FROM people WHERE people_user_id = ?::int
@@ -33,12 +33,23 @@ if (password.length > 0) {
   );
 }
 
+// TODO: error handling de institution e city
+const institutionId = _db.queryFirst(`
+  SELECT id FROM institution 
+  WHERE uid = ?::uuid
+`, institutionUid).getInt("id");
+
+const cityId = _db.queryFirst(`
+  SELECT id FROM city
+  WHERE uid =?::uuid
+`, cityUid).getInt("id");
+
 const peopleData = _val.map()
   .set("name", name)
   .set("email", email)
   .set("birth_date", birthDate)
-  .set("city_id", city)
-  .set("institution_id", institution)
+  .set("city_id", cityId)
+  .set("institution_id", institutionId)
 
 if (avatar) {
   peopleData.set("avatar", avatar)

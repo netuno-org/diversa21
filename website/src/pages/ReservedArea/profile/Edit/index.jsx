@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Typography, Form, Input, DatePicker, Button, Divider } from 'antd';
+import { Typography, Form, Input, Select, DatePicker, Button, Divider } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -16,6 +16,8 @@ import Avatar from './Avatar';
 const { Title } = Typography;
 
 function ProfileEdit() {
+  const [cityOptions, setCityOptions] = useState([])
+  const [selectedCity, setSelectedCity] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [passwordRequired, setPasswordRequired] = useState(false);
   const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
@@ -37,7 +39,7 @@ function ProfileEdit() {
 
   function onFinish(values) {
     setSubmitting(true);
-    const { name, username, password, email, birthDate, city, state, country } = values;
+    const { name, username, password, email, birthDate } = values;
     _service({
       method: 'PUT',
       url: 'people',
@@ -48,9 +50,8 @@ function ProfileEdit() {
         email,
         avatar: profileAvatar?.current?.getImage(),
         birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
-        city,
-        state,
-        country
+        city: selectedCity.uid,
+        institution: people.data.institution.uid
       },
       success: (response) => {
         if (response.json.result) {
@@ -98,6 +99,32 @@ function ProfileEdit() {
     console.log('Failed:', errorInfo);
   }
 
+  const handleCitySearch = value => {
+    _service({
+      url: `location/city/search?name=${value}`,
+      success: (response) => {
+        const options = response.json.data.map(city => ({
+          value: city.label,
+          label: city.label,
+          uid: city.uid,
+        }))
+        setCityOptions(options);
+      },
+      fail: () => {
+        setCityOptions([]);
+      }
+    })
+  };
+
+  const handleCityChange = (value, option) => {
+    setSelectedCity(option);
+  };
+
+  const handleCityClear = () => {
+    setCityOptions([]);
+    setSelectedCity('');
+  }
+
   return (
     <div>
       <div className="content-title">
@@ -120,9 +147,7 @@ function ProfileEdit() {
             username: people.data.username,
             email: people.data.email,
             birthDate: dayjs(people.data.birthDate),
-            city: people.data.city.name,
-            state: people.data.state.name,
-            country: people.data.country.name,
+            city: people.data.country.name + " > " + people.data.state.name + " > " + people.data.city.name
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -175,27 +200,17 @@ function ProfileEdit() {
               { required: true, message: 'Insira a sua cidade.' }
             ]}
           >
-            <Input disabled={submitting} maxLength={250} />
-          </Form.Item>
-          <Form.Item
-            label="Estado"
-            name="state"
-            rules={[
-              { type: 'state', message: 'O estado inserido não é válido.' },
-              { required: true, message: 'Insira o seu estado.' }
-            ]}
-          >
-            <Input disabled={submitting} maxLength={250} />
-          </Form.Item>
-          <Form.Item
-            label="País"
-            name="country"
-            rules={[
-              { type: 'country', message: 'O país inserido não é válido.' },
-              { required: true, message: 'Insira o seu país.' }
-            ]}
-          >
-            <Input disabled={submitting} maxLength={250} />
+            <Select
+              showSearch
+              notFoundContent={null}
+              filterOption={false}
+              onSearch={handleCitySearch}
+              placeholder="Cidade"
+              options={cityOptions}
+              onChange={handleCityChange}
+              allowClear
+              onClear={handleCityClear}
+            />
           </Form.Item>
           <Form.Item
             label="Nova Palavra-passe"

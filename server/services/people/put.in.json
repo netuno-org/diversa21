@@ -16,7 +16,7 @@
       "type": "string-not-empty"
     },
     "password": {
-      "type": "string-not-empty"
+      "type": "string"
     },
     "birthDate": {
       "type": "string-not-empty"
