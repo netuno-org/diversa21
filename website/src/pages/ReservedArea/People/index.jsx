@@ -12,14 +12,13 @@ const { useBreakpoint } = Grid;
 function People() {
   const [locationOptions, setLocationOptions] = useState([])
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [filters, setFilters] = useState(true)
-  const [peopleName, setPeopleName] = useState('');
-  const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [peopleTerm, setPeopleTerm] = useState('');
   const [peopleList, setPeopleList] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
-    size: 3
+    size: 10,
+    total: 0
   });
 
   const screens = useBreakpoint();
@@ -34,44 +33,46 @@ function People() {
           : 60
 
   useEffect(() => {
-    let url = `people/list?name=${peopleName}`
-    if (selectedLocation) {
-      url += `&${selectedLocation.type}Uid=${selectedLocation.uid}`
-    }
-    if (filters) {
-      _service({
-        url,
-        success: (response) => {
-          setPeople(response.json);
-          setFilters(false);
-          setLoading(false);
-          setPagination({ ...pagination, current: 1 });
-        },
-        fail: () => {
-          setLoading(false);
-        }
-      })
-    };
-  }, [filters]);
+    fetchPeopleList('', null, 1);
+  }, []);
 
-  useEffect(() => {
-    const { current } = pagination;
-    const startIndex = (current - 1) * 3;
-    const endIndex = startIndex + 3;
-    const peopleList = people.slice(startIndex, endIndex);
-    setPeopleList(peopleList);
-  }, [pagination]);
-
-  const handleSearch = (value) => {
-    if (value) {
-      setPeopleName(value);
-      setFilters(true);
-      setLoading(true);
-    } else {
-      setPeopleName('');
-      setFilters(true);
-      setLoading(true);
+  const fetchPeopleList = (term, location, page) => {
+    setLoading(true);
+    let url = `people/list?name=${term}`
+    if (location) {
+      url += `&${location.type}Uid=${location.uid}`
     }
+    url += `&page=${page}`
+    _service({
+      url,
+      success: (response) => {
+        const { items, totalCount } = response.json;
+        setPeopleList(items);
+        setPagination(prev => ({ 
+              ...prev, 
+              total: totalCount 
+          }));
+        setLoading(false);
+      },
+      fail: () => {
+        setLoading(false);
+      }
+    })
+  };
+
+  const handlePaginationChange = (page, pageSize) => {
+    setPagination(prev => ({ ...prev, current: page, size: pageSize }));
+    fetchPeopleList(peopleTerm, selectedLocation, page);
+  }
+
+  const handlePeopleSearch = (value) => {
+    setPeopleTerm(value);
+    setPagination({ ...pagination, current: 1 });
+    fetchPeopleList(value, selectedLocation, 1);
+  };
+
+  const handlePeopleChange = (value) => {
+    setPeopleTerm(value.target.value);
   };
 
   const handleLocationSearch = value => {
@@ -96,13 +97,17 @@ function People() {
     })
   };
 
-  const handleChange = (value, option) => {
+  const handleLocationChange = (value, option) => {
     setSelectedLocation(option);
+    setPagination({ ...pagination, current: 1 });
+    fetchPeopleList(peopleTerm, option, 1);
   };
 
   const handleLocationClear = () => {
     setLocationOptions([]);
+    setPagination({ ...pagination, current: 1 });
     setSelectedLocation('');
+    fetchPeopleList(peopleTerm, locationOptions, 1);
   }
 
   const onSelect = value => {
@@ -111,7 +116,7 @@ function People() {
 
   return (
     <div className={"people-search-container"}>
-      <Title>Procurar pessoas</Title>
+      <Title>Pessoas</Title>
       <div className={"people-search-input"}>
         <AutoComplete
           popupMatchSelectWidth={252}
@@ -122,7 +127,8 @@ function People() {
             style={{ width: '100%' }}
             placeholder="Buscar por nome"
             enterButton
-            onSearch={handleSearch}
+            onSearch={handlePeopleSearch}
+            onChange={handlePeopleChange}
           />
         </AutoComplete>
         <Select
@@ -133,7 +139,7 @@ function People() {
           onSearch={handleLocationSearch}
           placeholder="Cidade, Estado ou País"
           options={locationOptions}
-          onChange={handleChange}
+          onChange={handleLocationChange}
           allowClear
           onClear={handleLocationClear}
           style={{ width: '40%'}}
@@ -157,10 +163,10 @@ function People() {
         <Pagination
           style={{ ...(peopleList.length === 0 && !loading ? { marginTop: '20px', display: 'none' } : { marginTop: '20px' }) }}
           align='center'
-          total={people.length}
+          total={pagination.total}
           current={pagination.current}
           pageSize={pagination.size}
-          onChange={(current) => setPagination({ ...pagination, current })}
+          onChange={handlePaginationChange}
         />
         {peopleList.length === 0 && !loading && (
           <div style={{ marginTop: '20px' }}>

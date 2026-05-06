@@ -15,6 +15,7 @@ if (page > 0) {
 
 let sqlQuery = `
     SELECT
+      count(*) over() as total_count,
       people.*
     FROM people
       INNER JOIN city ON people.city_id = city.id
@@ -56,8 +57,17 @@ sqlQuery +=
 
 const dbPeople = _db.query(sqlQuery, params);
 
+const result = _val.map();
+
 const list = _val.list();
 for (const dbPerson of dbPeople) {
   list.add(people.getData(dbPerson.getUID("uid")));
 }
-_out.json(list);
+
+if (dbPeople.length == 0) {
+  result.set("totalCount", 0);
+} else {
+  result.set("totalCount", dbPeople[0].getString("total_count"));
+}
+result.set("items", list);
+_out.json(result);
