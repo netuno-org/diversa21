@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
-import { Link } from "react-router-dom";
-import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select } from 'antd';
-import { Typography, Grid } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select, Button, Typography, Grid  } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
-
 import "./index.less";
 
 const { Text, Title } = Typography;
@@ -21,7 +20,7 @@ function People() {
     size: 10,
     total: 0
   });
-
+  const navigate = useNavigate();
   const screens = useBreakpoint();
   const screenSize = screens.xl
     ? 100
@@ -118,7 +117,10 @@ function People() {
 
   return (
     <div className={"people-search-container"}>
-      <Title>Pessoas</Title>
+      <div className="people-search-header">
+        <Title>Pessoas</Title>
+        <Button type="primary" icon={<PlusOutlined />}> Criar Usuário </Button>
+      </div>
       <div className={"people-search-input"}>
         <AutoComplete
           popupMatchSelectWidth={252}
