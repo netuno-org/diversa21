@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
 import { Link, useNavigate } from "react-router-dom";
-import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select, Button, Typography, Grid  } from 'antd';
+import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select, Button, Typography, Grid } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
 import "./index.less";
@@ -119,7 +119,12 @@ function People() {
     <div className={"people-search-container"}>
       <div className="people-search-header">
         <Title>Pessoas</Title>
-        <Button type="primary" icon={<PlusOutlined />}> Criar Usuário </Button>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => navigate('/people/create/user')}
+        >Criar Usuário
+        </Button>
       </div>
       <div className={"people-search-input"}>
         <AutoComplete

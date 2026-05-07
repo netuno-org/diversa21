@@ -20,12 +20,13 @@ import FooterBase from "./base/FooterBase";
 import globalNotification from "./common/globalNotification.js";
 
 import LoginPage from './pages/Login';
-import Register from './pages/Register';
+import Register from './pages/Register/index.jsx';
 import LoginCallback from './pages/LoginCallback';
 import RegisterCallback from './pages/RegisterCallback';
 import Recovery from './pages/Recovery';
 import NotFound from './pages/NotFound';
 import ReservedArea from "./pages/ReservedArea";
+import CreateUser from './pages/CreateUser';
 
 import 'dayjs/locale/pt-br';
 
@@ -135,6 +136,7 @@ export default function App() {
                 <Route path="/u/:username" element={<ReservedArea />} />
                 <Route path="/e/:username" element={<ReservedArea />} />
                 <Route path="/other-page" element={<ReservedArea />} />
+                <Route path="/people/create/user" element={<CreateUser />} />
                 <Route path="/people" element={<ReservedArea />} />
                 <Route path="/institutions" element={<ReservedArea />} />
                 <Route path="/institutions/new" element={<ReservedArea />} />
