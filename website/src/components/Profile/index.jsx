@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import _service from '@netuno/service-client';
 import { BankOutlined } from '@ant-design/icons';
-import { Card, Popover, Spin, Grid } from 'antd';
+import { Card, Button, Popover, Spin, Grid } from 'antd';
 import UserProfileDisplay from '../UserProfileDisplay';
 import PostList from '../Post/List'
 
@@ -10,7 +10,14 @@ import './index.less';
 const { useBreakpoint } = Grid;
 
 function Profile({ user }) {
+
+  const navigate = useNavigate();
   const screens = useBreakpoint();
+
+  const handleClick = () => {
+    navigate(`/e/${user.username}`);
+  }
+
   const screenSize = screens.xl
     ? 170
     : screens.lg
@@ -51,6 +58,9 @@ function Profile({ user }) {
               </Popover>
             </div>
           </UserProfileDisplay>
+          <Button type="primary" onClick={handleClick}>
+            Editar Perfil
+          </Button>
         </Card>
         <PostList author={user.uid} />
       </div>

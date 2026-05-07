@@ -6,9 +6,6 @@
   "description": "Change the information of the logged user.",
   "type": "object",
   "properties": {
-    "uid": {
-      "type": "uuid"
-    },
     "name": {
       "type": "string-not-empty"
     },
@@ -32,7 +29,6 @@
     }
   },
   "required": [
-    "uid",
     "name",
     "username",
     "email",

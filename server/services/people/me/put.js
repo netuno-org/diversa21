@@ -1,6 +1,5 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
-const uid = _req.getUID("uid");
 const name = _req.getString("name");
 const username = _req.getString("username");
 const email = _req.getString("email");
@@ -11,13 +10,10 @@ const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 
 const dbPeople = _db.queryFirst(`
-    SELECT * FROM people WHERE uid = ?::uuid
-`, uid);
+    SELECT * FROM people WHERE people_user_id = ?::int
+`, _user.id());
 
-const peopleUserId = dbPeople.getInt("people_user_id");
-
-const userData = _user.get(peopleUserId);
-
+const userData = _user.get(_user.id());
 userData
   .set("name", name)
   .set("user", username)
@@ -26,13 +22,13 @@ userData
 if (password.length > 0) {
   userData.set("pass", password);
   _user.update(
-    peopleUserId,
+    _user.id(),
     userData,
     true
   );
 } else {
   _user.update(
-    peopleUserId,
+    _user.id(),
     userData
   );
 }

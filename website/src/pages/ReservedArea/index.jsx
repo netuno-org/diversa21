@@ -10,6 +10,7 @@ import ProfileEdit from "./profile/Edit";
 import ProfileView from "./profile/View";
 import Posts from "./Posts";
 import UserProfile from "./UserProfile";
+import UserProfileEdit from "./UserProfileEdit";
 import OtherPage from "./OtherPage";
 import People from "./People";
 import InstitutionsList from "./Institutions/List";
@@ -59,6 +60,9 @@ function ReservedArea() {
     }
     if (location.pathname.startsWith("/u/")) {
       return <UserProfile username={params.username}/>;
+    }
+    if (location.pathname.startsWith("/e/")) {
+      return <UserProfileEdit username={params.username}/>;
     }
     if (location.pathname === "/other-page") {
       return <OtherPage/>;
