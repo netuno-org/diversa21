@@ -35,6 +35,7 @@ function ProfileEdit() {
     if (people.data.avatar) {
       setAvatarImageURL(_service.url(`/people/avatar?uid=${people.data.uid}`));
     }
+    setSelectedCity(people.data.city);
   }, []);
 
   function onFinish(values) {
