@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Spin } from 'antd';
 
@@ -26,20 +26,20 @@ function HeaderUserInfo() {
   if (loading) {
     return (
       <div>
-        <Spin/>
+        <Spin />
       </div>
     );
   }
   if (people.data) {
     return (
       <div className="header__user-info">
-        {avatarImageURL && <img src={avatarImageURL}/>}
+        {avatarImageURL && <img src={avatarImageURL} />}
         <span>{people.data.name}</span>
       </div>
     );
   }
   return (
-      <div></div>
+    <div></div>
   );
 }
 

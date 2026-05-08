@@ -14,13 +14,12 @@ const { Content, Sider } = Layout;
 
 import 'altcha';
 
-export default function RegisterCreateUser(props) {
+export default function CreateUser() {
   const [ready, setReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [altchaPayload, setAltchaPayload] = useState(null);
   const registerForm = useRef(null);
   const altcha = useRef(null);
-  const { provider } = useParams(null);
   const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
@@ -90,11 +89,8 @@ export default function RegisterCreateUser(props) {
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
   }
-  if (_auth.isLogged()) {
-    return <Navigate to="/profile/view" />;
-  }
   if (ready) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/people" />;
   }
   return (
     <Layout>
@@ -115,9 +111,6 @@ export default function RegisterCreateUser(props) {
           />
         </div>
       </Content>
-      <Sider width={'50%'}>
-        <span className="helper" /><img alt="sider-register" src={"/images/sider-register.png"} />
-      </Sider>
     </Layout>
   );
 }
