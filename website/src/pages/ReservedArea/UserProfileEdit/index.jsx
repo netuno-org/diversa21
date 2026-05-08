@@ -28,7 +28,7 @@ function UserProfileEdit({username}) {
  
   return (
     <section>
-      <ProfileForm people={user} reload={null} me={false}/>
+      <ProfileForm people={user} />
     </section>
   )
 }

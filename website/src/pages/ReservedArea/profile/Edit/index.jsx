@@ -6,7 +6,7 @@ function ProfileEdit() {
   const people = usePeople();
 
   return (
-    <ProfileForm people={people.data} reload={people.reload} me={true}/>
+    <ProfileForm people={people.data} />
   );
 }
 

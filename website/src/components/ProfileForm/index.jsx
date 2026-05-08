@@ -15,7 +15,7 @@ import Avatar from './Avatar';
 
 const { Title } = Typography;
 
-function ProfileForm({ people, reload, me }) {
+function ProfileForm({ people }) {
   const [cityOptions, setCityOptions] = useState([])
   const [selectedCity, setSelectedCity] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -24,7 +24,8 @@ function ProfileForm({ people, reload, me }) {
   const profileAvatar = useRef(null);
   const profileForm = useRef(null);
   const navigate = useNavigate();
-
+  const loggedUser = usePeople();
+  
   const layout = {
     wrapperCol: { xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 12 } }
   };
@@ -37,6 +38,8 @@ function ProfileForm({ people, reload, me }) {
   }, []);
 
   function onFinish(values) {
+    const me = people.username == loggedUser.data.username;
+
     setSubmitting(true);
 
     let url = 'people';
@@ -75,11 +78,10 @@ function ProfileForm({ people, reload, me }) {
             password: "",
             password_confirm: ""
           });
-          if (reload) {
-            reload();
-          } else {
-            navigate(-1);
-          }
+          if (me) {
+            loggedUser.reload();
+          } 
+          navigate(-1);
         } else {
           globalNotification.warning({
             message: 'Utilizador existente',
