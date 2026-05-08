@@ -4,6 +4,6 @@ import {
 
 export const peopleLoadAction = (data) => ({
   type: PEOPLE_LOAD,
-  payload: { ...data }
+  payload: data ? { ...data } : null
 });
 

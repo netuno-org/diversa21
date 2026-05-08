@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Typography, Form, Input, Select, DatePicker, Button, Divider } from 'antd';
+import { Typography, Form, Input, Select, DatePicker, Button, Divider, Spin } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -138,6 +138,10 @@ function ProfileForm({ people, reload, me }) {
   const handleCityClear = () => {
     setCityOptions([]);
     setSelectedCity('');
+  }
+
+  if (!people) {
+    return <Spin />
   }
 
   return (
