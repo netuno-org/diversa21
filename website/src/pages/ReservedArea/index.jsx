@@ -13,6 +13,7 @@ import UserProfile from "./UserProfile";
 import UserProfileEdit from "./UserProfileEdit";
 import OtherPage from "./OtherPage";
 import People from "./People";
+import CreateUser from "../CreateUser";
 import InstitutionsList from "./Institutions/List";
 import InstitutionView from "./Institutions/View";
 import InstitutionForm from "../../components/InstitutionForm";
@@ -69,6 +70,9 @@ function ReservedArea() {
     }
     if (location.pathname === "/people") {
       return <People/>;
+    }
+    if (location.pathname === "/people/create/user") {
+      return <CreateUser/>;
     }
     if (location.pathname === "/institutions") {
       return <InstitutionsList/>;

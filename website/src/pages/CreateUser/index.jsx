@@ -13,7 +13,6 @@ const { Title } = Typography;
 const { Content, Sider } = Layout;
 
 import 'altcha';
-import './index.less';
 
 export default function CreateUser() {
   const [ready, setReady] = useState(false);
