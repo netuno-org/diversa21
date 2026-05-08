@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Form, Input, DatePicker, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, DatePicker, Button, Select } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import _service from '@netuno/service-client';
 
@@ -17,7 +17,12 @@ function CreateUserForm({
   onFinish,
   onFinishFailed,
   altcha,
-  setAltchaPayload
+  setAltchaPayload,
+  selectedCity,
+  cityOptions,
+  onCityClear,
+  onCityChange,
+  onCitySearch
 }) {
 
   const servicePrefix = _service.config().prefix;
@@ -118,27 +123,17 @@ function CreateUserForm({
             { required: true, message: 'Insira a sua cidade.' }
           ]}
         >
-          <Input disabled={submitting} maxLength={250} />
-        </Form.Item>
-        <Form.Item
-          label="Estado"
-          name="state"
-          rules={[
-            { type: 'state', message: 'O estado inserido não é válido.' },
-            { required: true, message: 'Insira o seu estado.' }
-          ]}
-        >
-          <Input disabled={submitting} maxLength={250} />
-        </Form.Item>
-        <Form.Item
-          label="País"
-          name="country"
-          rules={[
-            { type: 'country', message: 'O país inserido não é válido.' },
-            { required: true, message: 'Insira o seu país.' }
-          ]}
-        >
-          <Input disabled={submitting} maxLength={250} />
+          <Select
+            showSearch
+            notFoundContent={null}
+            filterOption={false}
+            onSearch={onCitySearch}
+            placeholder="Cidade"
+            options={cityOptions}
+            onChange={onCityChange}
+            allowClear
+            onClear={onCityClear}
+          />
         </Form.Item>
         <Form.Item
           label="Palavra-passe"
