@@ -1,21 +1,32 @@
 .profile {
   width: 100%;
   padding: 0 20px;
+
   .institution-text {
     p {
       margin: 0;
     }
+
     display: inline-flex;
     gap: 5px;
-    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    transition: color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
     &:hover {
       color: #b79ad1;
       transform: translateY(-1px);
+
       svg {
         transform: scale(1.05);
       }
     }
   }
+}
+
+.edit-profile-button {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .institution-text-popover {
@@ -28,7 +39,9 @@
   .institution-text-popover {
     font-size: 12px;
   }
-  .institution-text, div {
+
+  .institution-text,
+  div {
     font-size: 12px;
     margin: 0;
   }
@@ -38,8 +51,18 @@
   .institution-text-popover {
     font-size: 10px;
   }
-  .institution-text, div {
+
+  .institution-text,
+  div {
     font-size: 10px;
     margin: 0;
+  }
+}
+
+@media (max-width: 515px) {
+  .edit-profile-button {
+    button {
+      font-size: 12px;
+    }
   }
 }

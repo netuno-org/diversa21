@@ -1,7 +1,7 @@
 import { useNavigate, Link } from 'react-router-dom';
 import _service from '@netuno/service-client';
 import { BankOutlined } from '@ant-design/icons';
-import { Card, Button, Popover, Spin, Grid } from 'antd';
+import { Card, Button, Popover, Spin, Grid, Col } from 'antd';
 import UserProfileDisplay from '../UserProfileDisplay';
 import PostList from '../Post/List'
 
@@ -27,7 +27,7 @@ function Profile({ user }) {
         : screens.sm
           ? 110
           : 70
-          
+
   let content = null;
 
   if (!user) {
@@ -40,6 +40,13 @@ function Profile({ user }) {
     content = (
       <div className="profile">
         <Card>
+          <div className="edit-profile-button">
+            <Col xs={6} sm={6} md={5} lg={4} xl={3}>
+              <Button block type="primary" onClick={handleClick}>
+                Editar Perfil
+              </Button>
+            </Col>
+          </div>
           <UserProfileDisplay user={user} avatarStyle={{
             width: `${screenSize}px`,
             height: `${screenSize}px`,
@@ -58,9 +65,6 @@ function Profile({ user }) {
               </Popover>
             </div>
           </UserProfileDisplay>
-          <Button type="primary" onClick={handleClick}>
-            Editar Perfil
-          </Button>
         </Card>
         <PostList author={user.uid} />
       </div>
