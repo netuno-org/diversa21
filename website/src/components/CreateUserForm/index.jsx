@@ -48,7 +48,7 @@ function CreateUserForm({
 
   function onFinish(values) {
     setSubmitting(true);
-    const { name, username, password, email, birthDate, city } = values;
+    const { name, username, password, email, birthDate } = values;
     _service({
       method: 'POST',
       url: 'people',
