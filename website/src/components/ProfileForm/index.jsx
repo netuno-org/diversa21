@@ -158,6 +158,7 @@ function ProfileForm({ people }) {
         <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
         <Divider orientation="left" plain>Informações Gerais</Divider>
         <Form
+          style={{ width: '100%' }}
           {...layout}
           onValuesChange={onValuesChange}
           ref={profileForm}
