@@ -60,44 +60,44 @@ export default function RegisterCreateUser(props) {
         </div>
         <div className="content-body">
           <p>Crie uma conta para poder aceder à sua área reservada.</p>
-            <CreateUserForm
-              redirectTo={"/login"}
-              configProvider={<>
-                {Config.authProviders().google &&
-                  <Form.Item>
-                    <Button href={`${servicePrefix}/_auth_provider/register/google`} icon={<FaGoogle />}>Registrar com o Google</Button>
-                  </Form.Item>}
-                {Config.authProviders().microsoft &&
-                  <Form.Item>
-                    <Button href={`${servicePrefix}/_auth_provider/login/microsoft`} icon={<FaWindows />}>Entrar com o Microsoft</Button>
-                  </Form.Item>}
-                {Config.authProviders().facebook &&
-                  <Form.Item>
-                    <Button href={`${servicePrefix}/_auth_provider/register/facebook`} icon={<FaFacebook />}>Registrar com o Facebook</Button>
-                  </Form.Item>}
-                {Config.authProviders().github &&
-                  <Form.Item>
-                    <Button href={`${servicePrefix}/_auth_provider/register/github`} icon={<FaGithub />}>Registrar com o GitHub</Button>
-                  </Form.Item>}
-                {Config.authProviders().discord &&
-                  <Form.Item>
-                    <Button href={`${servicePrefix}/_auth_provider/register/discord`} icon={<FaDiscord />}>Registrar com o Discord</Button>
-                  </Form.Item>}
-              </>}
-              altchaPayload={altchaPayload}
-              configAltcha={Config.authAltcha() &&
+          <CreateUserForm
+            redirectTo={"/login"}
+            configProvider={<>
+              {Config.authProviders().google &&
                 <Form.Item>
-                  <altcha-widget
-                    ref={altcha}
-                    challengeurl={_service.url('/_altcha')}
-                    delay={1}
-                    hidelogo={true}
-                    hidefooter={true}
-                  ></altcha-widget>
-                </Form.Item>
-              }
-              
-            />
+                  <Button href={`${servicePrefix}/_auth_provider/register/google`} icon={<FaGoogle />}>Registrar com o Google</Button>
+                </Form.Item>}
+              {Config.authProviders().microsoft &&
+                <Form.Item>
+                  <Button href={`${servicePrefix}/_auth_provider/login/microsoft`} icon={<FaWindows />}>Entrar com o Microsoft</Button>
+                </Form.Item>}
+              {Config.authProviders().facebook &&
+                <Form.Item>
+                  <Button href={`${servicePrefix}/_auth_provider/register/facebook`} icon={<FaFacebook />}>Registrar com o Facebook</Button>
+                </Form.Item>}
+              {Config.authProviders().github &&
+                <Form.Item>
+                  <Button href={`${servicePrefix}/_auth_provider/register/github`} icon={<FaGithub />}>Registrar com o GitHub</Button>
+                </Form.Item>}
+              {Config.authProviders().discord &&
+                <Form.Item>
+                  <Button href={`${servicePrefix}/_auth_provider/register/discord`} icon={<FaDiscord />}>Registrar com o Discord</Button>
+                </Form.Item>}
+            </>}
+            altchaPayload={altchaPayload}
+            configAltcha={Config.authAltcha() &&
+              <Form.Item>
+                <altcha-widget
+                  ref={altcha}
+                  challengeurl={_service.url('/_altcha')}
+                  delay={1}
+                  hidelogo={true}
+                  hidefooter={true}
+                >
+                </altcha-widget>
+              </Form.Item>
+            }
+          />
         </div>
       </Content>
       <Sider width={'50%'}>
