@@ -1,80 +1,129 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, DatePicker, Button, Select } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from "react-router-dom";
+import { Form, Input, DatePicker, Button, Select, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import _service from '@netuno/service-client';
 
-import {
-  FaGoogle, FaWindows, FaFacebook, FaDiscord, FaGithub
-} from "react-icons/fa";
-
-import Config from '../../common/Config';
-
-import 'altcha';
+import isNetworkError from "is-network-error";
 
 function CreateUserForm({
-  submitting,
-  registerForm,
-  onFinish,
-  onFinishFailed,
-  altcha,
-  setAltchaPayload,
-  selectedCity,
-  cityOptions,
-  onCityClear,
-  onCityChange,
-  onCitySearch
+  redirectTo,
+  configProvider,
+  configAltcha,
+  altchaPayload
 }) {
 
-  const servicePrefix = _service.config().prefix;
+  const userForm = useRef(null);
+  const [api, contextHolder] = notification.useNotification();
+  const [submitting, setSubmitting] = useState(false);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [cityOptions, setCityOptions] = useState([])
+  const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    if (Config.authAltcha() && altcha && altcha.current) {
-      function altchaVerified(ev) {
-        console.log('Altcha verified', ev.detail);
-        if (ev.detail.state === "verified") {
-          setAltchaPayload(ev.detail.payload);
-        }
+  const handleCitySearch = value => {
+    _service({
+      url: `location/city/search?name=${value}`,
+      success: (response) => {
+        const options = response.json.data.map(city => ({
+          value: city.label,
+          label: city.label,
+          uid: city.uid,
+        }))
+        setCityOptions(options);
+      },
+      fail: () => {
+        setCityOptions([]);
       }
-      altcha.current.addEventListener("statechange", altchaVerified, false);
-      return () => {
-        console.log(ev.detail);
-        if (altcha.current != null) {
-          altcha.current.removeEventListener("statechange", altchaVerified, false);
+    })
+  };
+
+  const handleCityChange = (value, option) => {
+    setSelectedCity(option);
+  };
+
+  const handleCityClear = () => {
+    setCityOptions([]);
+    setSelectedCity('');
+  }
+
+  function onFinish(values) {
+    setSubmitting(true);
+    const { name, username, password, email, birthDate, city } = values;
+    _service({
+      method: 'POST',
+      url: 'people',
+      data: {
+        name,
+        username,
+        password,
+        email,
+        birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
+        city: selectedCity.uid,
+        // TODO: usuário selecionar a instituição
+        institution: 'fbe8724d-1184-49f6-a700-c06ce3f8a338',
+        ...(configAltcha && { altcha: altchaPayload })
+      },
+      success: (response) => {
+        if (response.json.result) {
+          api.success({
+            message: 'Conta Criada',
+            description: 'A conta foi criada com sucesso, pode iniciar sessão.',
+          });
+          setSubmitting(false);
+          setReady(true);
         }
+      },
+      fail: (e) => {
+        setSubmitting(false);
+        if (e.error && isNetworkError(e.error)) {
+          return api.error({
+            message: 'Conexão',
+            description:
+              'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+          });
+        }
+        if (e && e.status === 409 && e.json && e.json.error) {
+          if (e.json.error === 'email-already-exists') {
+            return api.warning({
+              message: 'E-mail Existente',
+              description: 'Este e-mail já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
+            });
+          }
+          if (e.json.error === 'user-already-exists') {
+            return api.warning({
+              message: 'Utilizador Existente',
+              description: 'Este utilizador já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
+            });
+          }
+        }
+        return api.error({
+          message: 'Erro na Criação de Conta',
+          description: 'Não foi possível criar a conta, contacte-nos através do chat de suporte.',
+        });
       }
-    }
-  }, []);
+    });
+  }
+
+  function onFinishFailed(errorInfo) {
+    console.log('Failed:', errorInfo);
+  }
+
+  if (ready) {
+    return <Navigate to={redirectTo} />;
+  }
 
   return (
     <div>
+      {contextHolder}
       <Form
-        ref={registerForm}
+        ref={userForm}
         layout="vertical"
         name="basic"
         initialValues={{ remember: true }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
-        {Config.authProviders().google &&
-          <Form.Item>
-            <Button href={`${servicePrefix}/_auth_provider/register/google`} icon={<FaGoogle />}>Registrar com o Google</Button>
-          </Form.Item>}
-        {Config.authProviders().microsoft &&
-          <Form.Item>
-            <Button href={`${servicePrefix}/_auth_provider/login/microsoft`} icon={<FaWindows />}>Entrar com o Microsoft</Button>
-          </Form.Item>}
-        {Config.authProviders().facebook &&
-          <Form.Item>
-            <Button href={`${servicePrefix}/_auth_provider/register/facebook`} icon={<FaFacebook />}>Registrar com o Facebook</Button>
-          </Form.Item>}
-        {Config.authProviders().github &&
-          <Form.Item>
-            <Button href={`${servicePrefix}/_auth_provider/register/github`} icon={<FaGithub />}>Registrar com o GitHub</Button>
-          </Form.Item>}
-        {Config.authProviders().discord &&
-          <Form.Item>
-            <Button href={`${servicePrefix}/_auth_provider/register/discord`} icon={<FaDiscord />}>Registrar com o Discord</Button>
-          </Form.Item>}
+        {configProvider}
         <Form.Item
           label="Nome"
           name="name"
@@ -127,12 +176,12 @@ function CreateUserForm({
             showSearch
             notFoundContent={null}
             filterOption={false}
-            onSearch={onCitySearch}
             placeholder="Cidade"
             options={cityOptions}
-            onChange={onCityChange}
             allowClear
-            onClear={onCityClear}
+            onClear={handleCityClear}
+            onChange={handleCityChange}
+            onSearch={handleCitySearch}
           />
         </Form.Item>
         <Form.Item
@@ -163,21 +212,13 @@ function CreateUserForm({
         >
           <Input.Password disabled={submitting} maxLength={25} />
         </Form.Item>
-        {Config.authAltcha() && <Form.Item>
-          <altcha-widget
-            ref={altcha}
-            challengeurl={_service.url('/_altcha')}
-            delay={1}
-            hidelogo={true}
-            hidefooter={true}
-          ></altcha-widget>
-        </Form.Item>}
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={submitting}>
             Criar Conta
           </Button>
         </Form.Item>
-      </Form>
+        {configAltcha}
+    </Form>
     </div>
   );
 }
