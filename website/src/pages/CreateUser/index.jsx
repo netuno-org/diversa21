@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Typography, Layout } from 'antd';
-
+import { useNavigate } from "react-router-dom";
+import { Typography, Layout, Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import CreateUserForm from '../../components/CreateUserForm';
 
 const { Content } = Layout;
@@ -8,10 +9,13 @@ const { Title } = Typography;
 
 export default function CreateUser() {
 
+  const navigate = useNavigate();
+
   return (
     <Layout>
       <Content>
         <div className="content-title">
+          <Button className="go-back-btn" type="link" onClick={() => navigate(-1)}><ArrowLeftOutlined />Voltar atrás</Button>
           <Title>Criar Usuário</Title>
         </div>
         <div className="content-body">
