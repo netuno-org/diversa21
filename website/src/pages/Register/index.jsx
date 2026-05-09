@@ -101,7 +101,7 @@ export default function RegisterCreateUser(props) {
       <Content className="register-container">
         {contextHolder}
         <div className="content-title">
-          <Title>Criar conta.</Title>
+          <Title>Criar Conta</Title>
         </div>
         <div className="content-body">
           <p>Crie uma conta para poder aceder à sua área reservada.</p>

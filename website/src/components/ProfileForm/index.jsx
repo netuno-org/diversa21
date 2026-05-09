@@ -177,18 +177,18 @@ function ProfileForm({ people }) {
             label="Nome"
             name="name"
             rules={[
-              { required: true, message: 'Insira o seu nome.' },
+              { required: true, message: 'Insira o nome.' },
               { type: 'string', message: 'Nome inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
             ]}
           >
             <Input disabled={submitting} maxLength={25} />
           </Form.Item>
           <Form.Item
-            label="Nome de utilizador"
+            label="Utilizador"
             name="username"
             rules={[
-              { required: true, message: 'Insira o seu nome.' },
-              { type: 'string', message: 'Nome inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
+              { required: true, message: 'Insira o usuário.' },
+              { type: 'string', message: 'Usuário inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
             ]}
           >
             <Input disabled={submitting} maxLength={25} />
@@ -208,7 +208,7 @@ function ProfileForm({ people }) {
             name="birthDate"
             rules={[
               { type: 'date', message: 'A data inserida não é válida.' },
-              { required: true, message: 'Insira a sua data de nascimento.' }
+              { required: true, message: 'Insira a data de nascimento.' }
             ]}
           >
             <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
@@ -218,7 +218,7 @@ function ProfileForm({ people }) {
             name="city"
             rules={[
               { type: 'city', message: 'A cidade inserida não é válida.' },
-              { required: true, message: 'Insira a sua cidade.' }
+              { required: true, message: 'Insira a cidade.' }
             ]}
           >
             <Select

@@ -79,7 +79,7 @@ function CreateUserForm({
           label="Nome"
           name="name"
           rules={[
-            { required: true, message: 'Insira o seu nome.' },
+            { required: true, message: 'Insira o nome.' },
             { type: 'string', message: 'Nome inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
           ]}
         >
@@ -89,7 +89,7 @@ function CreateUserForm({
           label="Utilizador"
           name="username"
           rules={[
-            { required: true, message: 'Insira o seu usuário.' },
+            { required: true, message: 'Insira o usuário.' },
             { type: 'string', message: 'Usuário inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
           ]}
         >
@@ -110,7 +110,7 @@ function CreateUserForm({
           name="birthDate"
           rules={[
             { type: 'date', message: 'A data inserida não é válida.' },
-            { required: true, message: 'Insira a sua data de nascimento.' }
+            { required: true, message: 'Insira a data de nascimento.' }
           ]}
         >
           <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
@@ -120,7 +120,7 @@ function CreateUserForm({
           name="city"
           rules={[
             { type: 'city', message: 'A cidade inserida não é válida.' },
-            { required: true, message: 'Insira a sua cidade.' }
+            { required: true, message: 'Insira a cidade.' }
           ]}
         >
           <Select

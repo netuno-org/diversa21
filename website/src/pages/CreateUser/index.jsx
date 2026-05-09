@@ -126,10 +126,9 @@ export default function CreateUser() {
       <Content className="register-container">
         {contextHolder}
         <div className="content-title">
-          <Title>Criar conta.</Title>
+          <Title>Criar Usuário</Title>
         </div>
         <div className="content-body">
-          <p>Crie uma conta para poder aceder à sua área reservada.</p>
           <CreateUserForm
             submitting={submitting}
             registerForm={registerForm}
