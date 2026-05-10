@@ -20,19 +20,25 @@ function ProfileForm({
   configAltcha,
   altchaPayload
 }) {
-  const [cityOptions, setCityOptions] = useState([])
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [passwordRequired, setPasswordRequired] = useState(false);
-  const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
-  const profileAvatar = useRef(null);
+  const loggedUser = usePeople();
 
   const profileForm = useRef(null);
 
-  const navigate = useNavigate();
-  const loggedUser = usePeople();
-  const [api, contextHolder] = notification.useNotification();
+  const [cityOptions, setCityOptions] = useState([])
+  const [institutionOptions, setInstitutionOptions] = useState([])
+
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedInstitution, setSelectedInstitution] = useState(null);
+
+  const [passwordRequired, setPasswordRequired] = useState(false);
+
+  const profileAvatar = useRef(null);
+  const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
+
   const [ready, setReady] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
+  const navigate = useNavigate();
 
   const layout = operation == "edit" ? {
     wrapperCol: { xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 12 } }
@@ -44,6 +50,7 @@ function ProfileForm({
         setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
       }
       setSelectedCity(people.city);
+      setSelectedInstitution(people.institution);
     }
   }, []);
 
@@ -64,6 +71,23 @@ function ProfileForm({
     })
   };
 
+  const handleInstitutionSearch = value => {
+    _service({
+      url: `institution/search?name=${value}`,
+      success: (response) => {
+        const options = response.json.data.map(institution => ({
+          value: institution.name,
+          label: institution.name,
+          uid: institution.uid,
+        }))
+        setInstitutionOptions(options);
+      },
+      fail: () => {
+        setInstitutionOptions([]);
+      }
+    })
+  };
+
   const handleCityChange = (value, option) => {
     setSelectedCity(option);
   };
@@ -71,6 +95,15 @@ function ProfileForm({
   const handleCityClear = () => {
     setCityOptions([]);
     setSelectedCity('');
+  }
+
+  const handleInstitutionChange = (value, option) => {
+    setSelectedInstitution(option);
+  };
+
+  const handleInstitutionClear = () => {
+    setInstitutionOptions([]);
+    setSelectedInstitution('');
   }
 
   function onFinish(values) {
@@ -88,8 +121,7 @@ function ProfileForm({
       email,
       birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
       city: selectedCity.uid,
-      // TODO: usuário selecionar a instituição
-      institution: people ? people.institution.uid : 'fbe8724d-1184-49f6-a700-c06ce3f8a338'
+      institution: selectedInstitution.uid
     }
 
     if (operation == "create" && configAltcha && altchaPayload) {
@@ -228,7 +260,8 @@ function ProfileForm({
             username: people.username,
             email: people.email,
             birthDate: dayjs(people.birthDate),
-            city: people.country.name + " > " + people.state.name + " > " + people.city.name
+            city: people.country.name + " > " + people.state.name + " > " + people.city.name,
+            institution: people.institution.name 
           } : { remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -279,7 +312,6 @@ function ProfileForm({
             name="city"
             rules={[
               { type: 'string', message: 'A cidade inserida não é válida.' },
-              { type: 'city', message: 'A cidade inserida não é válida.' },
               { required: true, message: 'Insira a cidade.' }
             ]}
           >
@@ -293,6 +325,26 @@ function ProfileForm({
               onClear={handleCityClear}
               onSearch={handleCitySearch}
               onChange={handleCityChange}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Instituição"
+            name="institution"
+            rules={[
+              { type: 'string', message: 'A instituição inserida não válida.' },
+              { required: true, message: 'Insira a instituição.' }
+            ]}
+          >
+            <Select
+              showSearch
+              notFoundContent={null}
+              filterOption={false}
+              placeholder="Instituição"
+              options={institutionOptions}
+              allowClear
+              onClear={handleInstitutionClear}
+              onSearch={handleInstitutionSearch}
+              onChange={handleInstitutionChange}
             />
           </Form.Item>
           <Form.Item

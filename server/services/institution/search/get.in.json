@@ -1,0 +1,15 @@
+{
+    "tags":[
+      "institution"
+    ],
+    "summary": "Search for institutions",
+    "description": "Retrieve institutions from a search.",
+    "properties": {
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name"
+    ]
+}
