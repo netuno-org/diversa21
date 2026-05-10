@@ -20,7 +20,6 @@ function UserProfileEdit({username}) {
       return;
     }
 
-    console.log("no return");
     _service({
       method: 'GET',
       url: `/people/by?username=${username}`,
