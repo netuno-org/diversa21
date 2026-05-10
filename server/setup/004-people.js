@@ -9,6 +9,7 @@ const people = [
     email: "test@membro.com",
     birthDate: "2000-01-01",
     institution: "fbe8724d-1184-49f6-a700-c06ce3f8a338",
+    group: "member",
     city: "2692c307-b5ed-4913-99f7-e2ad20d00131"
   },
   {
@@ -18,6 +19,7 @@ const people = [
     email: "alice1@membro.com",
     birthDate: "2000-01-01",
     institution: "cd7446a2-4052-4400-be66-656a6e458d4c",
+    group: "member",
     city: "562a9f12-5a90-4c67-94cb-6459df7e3434"
 
   },
@@ -28,6 +30,7 @@ const people = [
     email: "bob2@membro.com",
     birthDate: "2000-01-01",
     institution: "8661840b-73d4-415c-bf87-984f1b4a6c42",
+    group: "member",
     city: "f6a7b8c9-d0e1-4321-abcd-5f6a7b8c9d0e"
 
   },
@@ -38,6 +41,7 @@ const people = [
     email: "charlie3@membro.com",
     birthDate: "2000-01-01",
     institution: "6cfbd98f-8412-4241-87d5-49e2728ed130",
+    group: "member",
     city: "0a1b2c3d-4e5f-6789-abcd-6a7b8c9d0e1f"
 
   },
@@ -48,6 +52,7 @@ const people = [
     email: "noah4@membro.com",
     birthDate: "2000-01-01",
     institution: "fbe8724d-1184-49f6-a700-c06ce3f8a338",
+    group: "member",
     city: "1b2c3d4e-5f6a-7890-bcde-7b8c9d0e1f2a"
 
   },
@@ -58,6 +63,7 @@ const people = [
     email: "oliver5@membro.com",
     birthDate: "2000-01-01",
     institution: "cd7446a2-4052-4400-be66-656a6e458d4c",
+    group: "member",
     city: "2c3d4e5f-6a7b-8901-cdef-8c9d0e1f2a3b"
 
   },
@@ -68,6 +74,7 @@ const people = [
     email: "elijah6@membro.com",
     birthDate: "2000-01-01",
     institution: "8661840b-73d4-415c-bf87-984f1b4a6c42",
+    group: "member",
     city: "3d4e5f6a-7b8c-9012-def0-9d0e1f2a3b4c"
 
   },
@@ -78,6 +85,7 @@ const people = [
     email: "isabela7@membro.com",
     birthDate: "2000-01-01",
     institution: "6cfbd98f-8412-4241-87d5-49e2728ed130",
+    group: "member",
     city: "c7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f"
 
   },
@@ -88,6 +96,7 @@ const people = [
     email: "lucas8@membro.com",
     birthDate: "2000-01-01",
     institution: "fbe8724d-1184-49f6-a700-c06ce3f8a338",
+    group: "member",
     city: "4e5f6a7b-8c9d-0123-ef01-0e1f2a3b4c5d"
 
   },
@@ -98,6 +107,7 @@ const people = [
     email: "jack9@membro.com",
     birthDate: "2000-01-01",
     institution: "cd7446a2-4052-4400-be66-656a6e458d4c",
+    group: "member",
     city: "5f6a7b8c-9d0e-1234-f012-1f2a3b4c5d6e"
 
   },
@@ -108,16 +118,50 @@ const people = [
     email: "ben10@membro.com",
     birthDate: "2000-01-01",
     institution: "8661840b-73d4-415c-bf87-984f1b4a6c42",
+    group: "member",
     city: "d3e4f5a6-b7c8-4567-6543-3d4e5f6a7b8c"
+
+  },
+  {
+    uid: "25312758-5689-4362-a7b5-d877eb94644a",
+    name: "Revisor1",
+    username: "review",
+    email: "review@membro.com",
+    birthDate: "2000-01-01",
+    institution: "cd7446a2-4052-4400-be66-656a6e458d4c",
+    group: "review",
+    city: "5f6a7b8c-9d0e-1234-f012-1f2a3b4c5d6e"
+
+  },
+  {
+    uid: "6f909f82-f51c-489b-933d-876846b0a7c4",
+    name: "Gestor1",
+    username: "manager",
+    email: "manager@membro.com",
+    birthDate: "2000-01-01",
+    institution: "cd7446a2-4052-4400-be66-656a6e458d4c",
+    group: "management", 
+    city: "5f6a7b8c-9d0e-1234-f012-1f2a3b4c5d6e"
+
+  },
+  {
+    uid: "e7ab1ade-d464-4602-bd61-f0f7eb7c880e",
+    name: "Superadmin1",
+    username: "super",
+    email: "super@membro.com",
+    birthDate: "2000-01-01",
+    institution: "cd7446a2-4052-4400-be66-656a6e458d4c",
+    group: "super-admin", 
+    city: "5f6a7b8c-9d0e-1234-f012-1f2a3b4c5d6e"
 
   }
 ];
 
-const dbNetunoGroup = _group.firstByCode("member");
-
 people.forEach((person, index) => {
 
   let user_id = null;
+
+  const group = _group.firstByCode(person.group).getInt("id");
 
   try {
     //Insert User data to users
@@ -127,7 +171,7 @@ people.forEach((person, index) => {
       .set("pass", "12345678")
       .set("mail", person.email)
       .set("active", true)
-      .set("group_id", dbNetunoGroup.getInt("id"));
+      .set("group_id", group);
 
     user_id = _user.create(userData);
 
