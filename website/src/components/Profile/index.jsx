@@ -1,6 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom';
-import _service from '@netuno/service-client';
-import { BankOutlined } from '@ant-design/icons';
+import { BankOutlined, EditOutlined } from '@ant-design/icons';
 import { Card, Button, Popover, Spin, Grid, Col } from 'antd';
 import UserProfileDisplay from '../UserProfileDisplay';
 import PostList from '../Post/List'
@@ -41,9 +40,9 @@ function Profile({ user }) {
       <div className="profile">
         <Card>
           <div className="edit-profile-button">
-            <Col xs={6} sm={6} md={5} lg={4} xl={3}>
+            <Col>
               <Button block type="primary" onClick={handleClick}>
-                Editar Perfil
+                {screens.lg ? 'Editar Perfil' : <EditOutlined />}
               </Button>
             </Col>
           </div>
