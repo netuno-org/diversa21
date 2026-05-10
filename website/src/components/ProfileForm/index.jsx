@@ -331,7 +331,7 @@ function ProfileForm({
             label="Instituição"
             name="institution"
             rules={[
-              { type: 'string', message: 'A instituição inserida não válida.' },
+              { type: 'string', message: 'A instituição inserida não é válida.' },
               { required: true, message: 'Insira a instituição.' }
             ]}
           >
