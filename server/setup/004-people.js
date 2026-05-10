@@ -3,6 +3,7 @@ import {_log, _val, _db, _user, _group } from "@netuno/server-types";
 // Example names
 const people = [
   {
+    uid: "f0c206fc-923d-40b6-8b2b-6570f698d855",
     name: "Test",
     username: "test",
     email: "test@membro.com",
@@ -11,6 +12,7 @@ const people = [
     city: "2692c307-b5ed-4913-99f7-e2ad20d00131"
   },
   {
+    uid: "2a86a611-2ab1-472d-a7fe-c41c4aeef36b",
     name: "Alice",
     username: "alice1",
     email: "alice1@membro.com",
@@ -20,6 +22,7 @@ const people = [
 
   },
   {
+    uid: "0abd451a-b951-4c95-adc9-96332ad6c772",
     name: "Bob",
     username: "bob2",
     email: "bob2@membro.com",
@@ -29,6 +32,7 @@ const people = [
 
   },
   {
+    uid: "36c8b6a8-eeb7-4477-ade8-f6a8dbceba41",
     name: "Charlie",
     username: "charlie3",
     email: "charlie3@membro.com",
@@ -38,6 +42,7 @@ const people = [
 
   },
   {
+    uid: "b271af58-2fad-473f-b706-a87bbb60b634",
     name: "Noah",
     username: "noah4",
     email: "noah4@membro.com",
@@ -47,6 +52,7 @@ const people = [
 
   },
   {
+    uid: "b1e812a2-9898-4fd3-930f-14f6315c65d5",
     name: "Oliver",
     username: "oliver5",
     email: "oliver5@membro.com",
@@ -56,6 +62,7 @@ const people = [
 
   },
   {
+    uid: "29bd1755-a1f6-4d64-adf0-2039f306091b",
     name: "Elijah",
     username: "elijah6",
     email: "elijah6@membro.com",
@@ -65,6 +72,7 @@ const people = [
 
   },
   {
+    uid: "7205c3b9-9660-46fa-bd07-2ec922ebcfd2",
     name: "Isabela",
     username: "isabela7",
     email: "isabela7@membro.com",
@@ -74,6 +82,7 @@ const people = [
 
   },
   {
+    uid: "c1ef85bb-d427-4d05-a899-f092be7d05f4",
     name: "Lucas",
     username: "lucas8",
     email: "lucas8@membro.com",
@@ -83,6 +92,7 @@ const people = [
 
   },
   {
+    uid: "c61caa3f-98bc-4e7d-8098-d64a1562bd03",
     name: "Jack",
     username: "jack9",
     email: "jack9@membro.com",
@@ -92,6 +102,7 @@ const people = [
 
   },
   {
+    uid: "ceb1b82e-21ee-44cc-828e-fe1ea7ffb06d",
     name: "Ben",
     username: "ben10",
     email: "ben10@membro.com",
@@ -113,7 +124,7 @@ people.forEach((person, index) => {
     const userData = _val.map()
       .set("name", person.name)
       .set("user", person.username)
-      .set("pass", "1234567890")
+      .set("pass", "12345678")
       .set("mail", person.email)
       .set("active", true)
       .set("group_id", dbNetunoGroup.getInt("id"));
@@ -124,6 +135,7 @@ people.forEach((person, index) => {
       _db.insertIfNotExists(
         "people",
         _val.map()
+        .set("uid", person.uid)
         .set("name", person.name)
         .set("people_user_id", user_id)
         .set("email", person.email)
