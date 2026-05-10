@@ -1,120 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Typography, Form, Input, Select, DatePicker, Button, Divider, Spin } from 'antd';
+import { useNavigate, Navigate } from "react-router-dom";
+import { Form, Input, Select, DatePicker, Button, Divider, Spin, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
 import _service from '@netuno/service-client';
 
+import isNetworkError from "is-network-error";
+
 import globalNotification from "../../common/globalNotification.js";
-
 import usePeople from "../../common/usePeople.js";
-
 import Avatar from './Avatar';
 
-const { Title } = Typography;
-
-function ProfileForm({ people }) {
+function ProfileForm({ 
+  operation,
+  people,
+  redirectTo,
+  configProvider,
+  configAltcha,
+  altchaPayload
+}) {
   const [cityOptions, setCityOptions] = useState([])
   const [selectedCity, setSelectedCity] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [passwordRequired, setPasswordRequired] = useState(false);
   const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
   const profileAvatar = useRef(null);
+
   const profileForm = useRef(null);
+
   const navigate = useNavigate();
   const loggedUser = usePeople();
-  
-  const layout = {
+  const [api, contextHolder] = notification.useNotification();
+  const [ready, setReady] = useState(false);
+
+  const layout = operation == "edit" ? {
     wrapperCol: { xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 12 } }
-  };
+  } : null;
 
   useEffect(() => {
-    if (people.avatar) {
-      setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
-    }
-    setSelectedCity(people.city);
-  }, []);
-
-  function onFinish(values) {
-    const me = people.username == loggedUser.data.username;
-
-    setSubmitting(true);
-
-    let url = 'people';
-
-    const { name, username, password, email, birthDate } = values;
-
-    const data = {
-      name,
-      username,
-      password,
-      email,
-      avatar: profileAvatar?.current?.getImage(),
-      birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
-      city: selectedCity.uid,
-      institution: people.institution.uid
-    }
-    let uid;
-    if (!me) {
-      data.uid = people.uid
-    } else {
-      url += '/me';
-    }
-
-    _service({
-      method: 'PUT',
-      url,
-      data,
-      success: (response) => {
-        if (response.json.result) {
-          globalNotification.success({
-            message: 'Edição do Perfil',
-            description: 'Os dados do seu perfil foram alterados com sucesso.',
-          });
-          setSubmitting(false);
-          profileForm.current.setFieldsValue({
-            password: "",
-            password_confirm: ""
-          });
-          if (me) {
-            loggedUser.reload();
-          } 
-          navigate(-1);
-        } else {
-          globalNotification.warning({
-            message: 'Utilizador existente',
-            description: response.json.error,
-          });
-          setSubmitting(false);
-          profileForm.current.setFieldsValue({
-            password: "",
-            password_confirm: ""
-          });
-        }
-      },
-      fail: () => {
-        setSubmitting(false);
-        globalNotification.serviceFail({
-          message: 'Erro na Edição do Perfil',
-          description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
-        });
+    if (people && operation == "edit") {
+      if (people.avatar) {
+        setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
       }
-    });
-  }
-
-  function onValuesChange(changedValues, allValues) {
-    if (allValues.password && allValues.password.length > 0) {
-      setPasswordRequired(true);
-    } else {
-      setPasswordRequired(false);
+      setSelectedCity(people.city);
     }
-  }
-
-  function onFinishFailed(errorInfo) {
-    console.log('Failed:', errorInfo);
-  }
+  }, []);
 
   const handleCitySearch = value => {
     _service({
@@ -142,21 +73,149 @@ function ProfileForm({ people }) {
     setSelectedCity('');
   }
 
-  if (!people) {
+  function onFinish(values) {
+    setSubmitting(true);
+
+    let itsMe = false;
+
+    let url = 'people';
+    const { name, username, password, email, birthDate } = values;
+
+    const data = {
+      name,
+      username,
+      password,
+      email,
+      birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
+      city: selectedCity.uid,
+      // TODO: usuário selecionar a instituição
+      institution: people ? people.institution.uid : 'fbe8724d-1184-49f6-a700-c06ce3f8a338'
+    }
+
+    if (operation == "create" && configAltcha && altchaPayload) {
+      data.altcha = altchaPayload
+    }
+
+    if (operation == "edit" && people && loggedUser) {
+      data.avatar = profileAvatar?.current?.getImage();
+
+      itsMe = people.username == loggedUser.data.username;
+      if (itsMe) {
+        url += '/me';
+      } else {
+        data.uid = people.uid
+      }
+    }
+
+    const method = operation == "edit" ? "PUT" : "POST"
+
+    _service({
+      method,
+      url,
+      data,
+      success: (response) => {
+        if (response.json.result) {
+          if (operation == "edit") {
+            globalNotification.success({
+              message: 'Edição do Perfil',
+              description: 'Os dados do seu perfil foram alterados com sucesso.',
+            });
+            setSubmitting(false);
+          } else if (operation == "create") {
+            api.success({
+              message: 'Conta Criada',
+              description: 'A conta foi criada com sucesso, pode iniciar sessão.',
+            });
+            setSubmitting(false);
+            profileForm.current.setFieldsValue({
+              password: "",
+              password_confirm: ""
+            });
+          }
+          setReady(true);
+          if (itsMe) {
+            loggedUser.reload();
+          } 
+        } else if (operation == "edit") {
+          globalNotification.warning({
+            message: 'Utilizador existente',
+            description: response.json.error,
+          });
+          setSubmitting(false);
+          profileForm.current.setFieldsValue({
+            password: "",
+            password_confirm: ""
+          });
+        }
+      },
+      fail: (e) => {
+        setSubmitting(false);
+        if (e.error && isNetworkError(e.error)) {
+          return api.error({
+            message: 'Conexão',
+            description:
+              'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+          });
+        }
+        if (e && e.status === 409 && e.json && e.json.error) {
+          if (e.json.error === 'email-already-exists') {
+            return api.warning({
+              message: 'E-mail Existente',
+              description: 'Este e-mail já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
+            });
+          }
+          if (e.json.error === 'user-already-exists') {
+            return api.warning({
+              message: 'Utilizador Existente',
+              description: 'Este utilizador já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
+            });
+          }
+        }
+        if (operation == "edit") {
+          globalNotification.serviceFail({
+            message: 'Erro na Edição do Perfil',
+            description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
+          });
+        } else if (operation == "create") {
+          return api.error({
+            message: 'Erro na Criação de Conta',
+            description: 'Não foi possível criar a conta, contacte-nos através do chat de suporte.',
+          });
+        }
+      }
+    });
+  }
+
+  function onValuesChange(changedValues, allValues) {
+    if (allValues.password && allValues.password.length > 0) {
+      setPasswordRequired(true);
+    } else {
+      setPasswordRequired(false);
+    }
+  }
+
+  function onFinishFailed(errorInfo) {
+    console.log('Failed:', errorInfo);
+  }
+
+  if (operation == "edit" && !people) {
     return <Spin />
+  }
+
+  if (ready) {
+    return <Navigate to={redirectTo} />;
   }
 
   return (
     <div>
-      <div className="content-title">
-        <Button className="go-back-btn" type="link" onClick={() => navigate(-1)}><ArrowLeftOutlined /> Voltar atrás</Button>
-      </div>
-      <div className="content-title">
-        <Title level={2}>Editar Perfil</Title>
-      </div>
+      {contextHolder}
       <div className="content-body">
-        <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
-        <Divider orientation="left" plain>Informações Gerais</Divider>
+        { operation == "edit" &&
+          <>
+            <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
+            <Divider orientation="left" plain>Informações Gerais</Divider>
+          </>
+        }
         <Form
           style={{ width: '100%' }}
           {...layout}
@@ -164,16 +223,17 @@ function ProfileForm({ people }) {
           ref={profileForm}
           layout="vertical"
           name="basic"
-          initialValues={{
+          initialValues={operation == "edit" ? {
             name: people.name,
             username: people.username,
             email: people.email,
             birthDate: dayjs(people.birthDate),
             city: people.country.name + " > " + people.state.name + " > " + people.city.name
-          }}
+          } : { remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
+          {configProvider}
           <Form.Item
             label="Nome"
             name="name"
@@ -226,28 +286,33 @@ function ProfileForm({ people }) {
               showSearch
               notFoundContent={null}
               filterOption={false}
-              onSearch={handleCitySearch}
               placeholder="Cidade"
               options={cityOptions}
-              onChange={handleCityChange}
               allowClear
               onClear={handleCityClear}
+              onSearch={handleCitySearch}
+              onChange={handleCityChange}
             />
           </Form.Item>
           <Form.Item
             label="Nova Palavra-passe"
             name="password"
             rules={[
+              (operation == "create" && { required: true, message: 'Insira a palavra-passe.' }),
               { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
             ]}
           >
+          { operation == "create" ?
+            <PasswordInput disabled={submitting} maxLength={25} /> :
             <PasswordInput />
+          }
           </Form.Item>
           <Form.Item
             label="Confirmar nova Palavra-passe"
             name="password_confirm"
-            rules={[
-              { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' },
+            rules={[ (operation == "create" ?
+              { required: true, message: `Insira a confirmação da palavra-passe.` } :
+              { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
               { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
               ({ getFieldValue }) => ({
                 validator(_, value) {
@@ -259,12 +324,20 @@ function ProfileForm({ people }) {
               })
             ]}
           >
-            <Input.Password maxLength={25} />
+            { operation == "create" ?
+              <Input.Password disabled={submitting} maxLength={25} /> :
+              <Input.Password maxLength={25} />
+            }
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={submitting}>
-              Atualizar Perfil
-            </Button>
+            { operation == "create" ?
+              <Button type="primary" htmlType="submit" loading={submitting}>
+                Criar Usuário
+              </Button> :
+              <Button type="primary" htmlType="submit" loading={submitting}>
+                Atualizar Perfil
+              </Button>
+            }
           </Form.Item>
         </Form>
       </div>

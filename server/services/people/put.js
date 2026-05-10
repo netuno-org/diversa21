@@ -10,6 +10,32 @@ const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 
+const userEmailExists = _db.queryFirst(`
+    SELECT email from people
+    WHERE 1 = 1
+      AND email = ?::varchar
+      AND uid <> ?::uuid
+`, email, uid);
+console.log(userEmailExists);
+
+const usernameExists = _db.queryFirst(`
+    SELECT netuno_user.user from netuno_user 
+    INNER JOIN people 
+    ON netuno_user.id = people_user_id
+    WHERE 1 = 1
+      AND netuno_user.user = ?::varchar
+      AND people.uid <> ?::uuid
+`, username, uid);
+
+if (userEmailExists || usernameExists) {
+  _header.status(409);
+  _out.json(
+    _val.map()
+      .set("error", `${userEmailExists ? 'email' : 'user'}-already-exists`)
+  );
+  _exec.stop();
+} 
+
 const dbPeople = _db.queryFirst(`
     SELECT * FROM people WHERE uid = ?::uuid
 `, uid);

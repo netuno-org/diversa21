@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navigate, useParams } from "react-router-dom";
-import { Layout, Typography } from 'antd';
+import { Typography, Layout, Button } from 'antd';
+
 import _auth from '@netuno/auth-client';
 import _service from '@netuno/service-client';
 
-import CreateUserForm from '../../components/CreateUserForm';
+import ProfileForm from '../../components/ProfileForm';
 
 const { Content, Sider } = Layout;
 const { Title } = Typography;
@@ -60,7 +61,9 @@ export default function RegisterCreateUser(props) {
         </div>
         <div className="content-body">
           <p>Crie uma conta para poder aceder à sua área reservada.</p>
-          <CreateUserForm
+          <ProfileForm
+            operation={"create"}
+            people={null}
             redirectTo={"/login"}
             configProvider={<>
               {Config.authProviders().google &&
