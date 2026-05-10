@@ -278,6 +278,7 @@ function ProfileForm({
             label="Cidade"
             name="city"
             rules={[
+              { type: 'string', message: 'A cidade inserida não é válida.' },
               { type: 'city', message: 'A cidade inserida não é válida.' },
               { required: true, message: 'Insira a cidade.' }
             ]}
