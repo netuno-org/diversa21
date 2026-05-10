@@ -16,7 +16,6 @@ const userEmailExists = _db.queryFirst(`
       AND email = ?::varchar
       AND uid <> ?::uuid
 `, email, uid);
-console.log(userEmailExists);
 
 const usernameExists = _db.queryFirst(`
     SELECT netuno_user.user from netuno_user 
