@@ -27,6 +27,9 @@
     "city": {
       "type": "uid"
     },
+    "group": {
+      "type": "string-not-empty"
+    },
     "institution": {
       "type": "uid"
     }

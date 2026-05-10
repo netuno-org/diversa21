@@ -29,6 +29,7 @@ function ProfileForm({
 
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedInstitution, setSelectedInstitution] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const [passwordRequired, setPasswordRequired] = useState(false);
 
@@ -51,6 +52,10 @@ function ProfileForm({
       }
       setSelectedCity(people.city);
       setSelectedInstitution(people.institution);
+      setSelectedGroup({ 
+        label: people.group.name, 
+        value: people.group.code 
+      });
     }
   }, []);
 
@@ -88,8 +93,35 @@ function ProfileForm({
     })
   };
 
+  const groupOptions = [
+    {
+      label: "Membro",
+      value: "member"
+    },
+    {
+      label: "Revisão",
+      value: "review"
+    },
+    {
+      label: "Gestão",
+      value: "management"
+    },
+    {
+      label: "Super Administrador",
+      value: "super-admin"
+    },
+  ];
+
   const handleCityChange = (value, option) => {
     setSelectedCity(option);
+  };
+
+  const handleInstitutionChange = (value, option) => {
+    setSelectedInstitution(option);
+  };
+
+  const handleGroupChange = (value, option) => {
+    setSelectedGroup(option);
   };
 
   const handleCityClear = () => {
@@ -97,13 +129,13 @@ function ProfileForm({
     setSelectedCity('');
   }
 
-  const handleInstitutionChange = (value, option) => {
-    setSelectedInstitution(option);
-  };
-
   const handleInstitutionClear = () => {
     setInstitutionOptions([]);
     setSelectedInstitution('');
+  }
+
+  const handleGroupClear = () => {
+    setSelectedGroup('');
   }
 
   function onFinish(values) {
@@ -121,7 +153,8 @@ function ProfileForm({
       email,
       birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
       city: selectedCity.uid,
-      institution: selectedInstitution.uid
+      institution: selectedInstitution.uid,
+      group: selectedGroup.value
     }
 
     if (operation == "create" && configAltcha && altchaPayload) {
@@ -261,7 +294,8 @@ function ProfileForm({
             email: people.email,
             birthDate: dayjs(people.birthDate),
             city: people.country.name + " > " + people.state.name + " > " + people.city.name,
-            institution: people.institution.name 
+            institution: people.institution.name,
+            group: people.group.name 
           } : { remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -345,6 +379,25 @@ function ProfileForm({
               onClear={handleInstitutionClear}
               onSearch={handleInstitutionSearch}
               onChange={handleInstitutionChange}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Grupo"
+            name="group"
+            rules={[
+              { type: 'string', message: 'O grupo inserido não é válido.' },
+              { required: true, message: 'Insira o grupo.' }
+            ]}
+          >
+            <Select
+              showSearch
+              notFoundContent={null}
+              filterOption={false}
+              placeholder="Grupo"
+              options={groupOptions}
+              allowClear
+              onClear={handleGroupClear}
+              onChange={handleGroupChange}
             />
           </Form.Item>
           <Form.Item

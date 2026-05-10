@@ -62,7 +62,15 @@
           }
         },
         "group": {
-          "type": "string-not-empty"
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string-not-empty"
+            },
+            "code": {
+              "type": "string-not-empty"
+            }
+          }
         },
         "institution": {
           "type": "object",

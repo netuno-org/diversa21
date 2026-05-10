@@ -17,7 +17,8 @@ export default {
              country.name AS "country_name",
              institution.uid AS "institution_uid",
              institution.name AS "institution_name",
-             netuno_group.code AS "group"
+             netuno_group.code AS "group_code",
+             netuno_group.name AS "group_name"
       FROM people
              INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
              INNER JOIN institution ON people.institution_id = institution.id
@@ -32,7 +33,11 @@ export default {
         .set("uid", dbPeople.getString("uid"))
         .set("name", dbPeople.getString("name"))
         .set("username", dbPeople.getString("user"))
-        .set("group", dbPeople.getString("group"))
+        .set("group",
+          _val.map()
+            .set("code", dbPeople.getString("group_code"))
+            .set("name", dbPeople.getString("group_name"))
+        )
         .set("email", dbPeople.getString("email"))
         .set("avatar", dbPeople.getString("avatar") !== '')
         .set("birthDate", dbPeople.getString("birth_date"))

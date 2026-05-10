@@ -7,6 +7,7 @@ const password = _req.getString("password");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
+const group = _req.getString("group");
 
 const userEmailExists = _user.firstByMail(email);
 const usernameExists = _user.firstByUser(username);
@@ -20,7 +21,18 @@ if (userEmailExists || usernameExists) {
   _exec.stop();
 } 
 
-const dbNetunoGroup = _group.firstByCode("member");
+const groups = ["member", "review", "management", "super-admin"];
+
+if (!groups.includes(group)) {
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "group-not-found")
+  );
+  _exec.stop();
+}
+
+const dbNetunoGroup = _group.firstByCode(group);
 
 const userData = _val.map()
   .set("name", name)
