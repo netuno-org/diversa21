@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import _service from '@netuno/service-client';
 import { Link, useNavigate } from "react-router-dom";
 import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select, Button, Typography, Grid } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import _service from '@netuno/service-client';
+
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
+
+import usePeople from "../../../common/usePeople.js";
+
 import "./index.less";
 
 const { Text, Title } = Typography;
 const { useBreakpoint } = Grid;
 
 function People() {
+  const loggedUser = usePeople();
   const [locationOptions, setLocationOptions] = useState([])
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -119,12 +124,15 @@ function People() {
     <div className={"people-search-container"}>
       <div className="people-search-header">
         <Title>Pessoas</Title>
+        {/* { console.log(loggedUser.data) } */}
+        { ["super-admin", "management"].includes(loggedUser.data.group.code) &&
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => navigate('/people/create/user')}
         >Criar Usuário
         </Button>
+        }
       </div>
       <div className={"people-search-input"}>
         <AutoComplete
