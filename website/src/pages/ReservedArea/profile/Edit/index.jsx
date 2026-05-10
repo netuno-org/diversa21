@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Button, Typography } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
@@ -10,6 +11,7 @@ const { Title } = Typography;
 
 function ProfileEdit() {
   const people = usePeople();
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
