@@ -124,7 +124,6 @@ function People() {
     <div className={"people-search-container"}>
       <div className="people-search-header">
         <Title>Pessoas</Title>
-        {/* { console.log(loggedUser.data) } */}
         { ["super-admin", "management"].includes(loggedUser?.data?.group?.code) &&
         <Button
           type="primary"
