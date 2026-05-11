@@ -120,7 +120,7 @@ function InstitutionView({ loggedUserInfo }) {
                 {institution.name}
               </Title>
 
-              <Space orientation="vertical" size={4} className="location-info">
+              <Space titlePlacement="vertical" size={4} className="location-info">
                 {(institution.city || institution.country) && (
                   <Text type="secondary">
                     <EnvironmentOutlined /> {institution.city}{institution.city && institution.country && ', '}{institution.country}

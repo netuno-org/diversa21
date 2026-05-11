@@ -173,7 +173,7 @@ function People() {
         </Text>
       </div>
       {!loading && peopleList.map((person) => (
-        <div style={{ width: '100%' }}>
+        <div key={person.uid} style={{ width: '100%' }}>
           <Link to={`/u/${person.username}`}>
             <Card className={"people-search-result"} key={person.uid}>
               <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />

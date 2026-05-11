@@ -278,7 +278,7 @@ function ProfileForm({
         { operation == "edit" &&
           <>
             <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
-            <Divider orientation="left" plain>Informações Gerais</Divider>
+            <Divider titlePlacement="left" plain>Informações Gerais</Divider>
           </>
         }
         <Form
