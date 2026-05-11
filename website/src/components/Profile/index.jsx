@@ -51,17 +51,27 @@ function Profile({ user }) {
             height: `${screenSize}px`,
           }}>
             <div className="info-user-container">
-              <Popover
-                content={<div className="institution-text-popover">Clique para visitar a pagina da instituição</div>}
-                placement="bottom"
-                trigger="hover"
-              >
-                <div className="institution-text">
-                  <Link to={`/institutions/${user.institution.uid}`}>
-                    <p><BankOutlined /> {user.institution.name}</p>
-                  </Link>
-                </div>
-              </Popover>
+              {
+                screens.lg ? (
+                  <Popover
+                    content={<div className="institution-text-popover">Clique para visitar a pagina da instituição</div>}
+                    placement="bottom"
+                    trigger="hover"
+                  >
+                    <div className="institution-text">
+                      <Link to={`/institutions/${user.institution.uid}`}>
+                        <p><BankOutlined /> {user.institution.name}</p>
+                      </Link>
+                    </div>
+                  </Popover>
+                ) : (
+                  <div className="institution-text">
+                    <Link to={`/institutions/${user.institution.uid}`}>
+                      <p><BankOutlined /> {user.institution.name}</p>
+                    </Link>
+                  </div>
+                )
+              }
             </div>
           </UserProfileDisplay>
         </Card>
