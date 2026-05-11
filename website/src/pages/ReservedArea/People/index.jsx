@@ -125,7 +125,7 @@ function People() {
       <div className="people-search-header">
         <Title>Pessoas</Title>
         {/* { console.log(loggedUser.data) } */}
-        { ["super-admin", "management"].includes(loggedUser.data.group.code) &&
+        { ["super-admin", "management"].includes(loggedUser?.data?.group?.code) &&
         <Button
           type="primary"
           icon={<PlusOutlined />}
