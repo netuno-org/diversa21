@@ -22,6 +22,12 @@ function ProfileForm({
 }) {
   const loggedUser = usePeople();
 
+  // not sure if this should be a state
+  // cause it never changes
+  // but we need a kind of global variable to tell us if the logged user is
+  // trying to modify his own profile
+  const [itsLoggedUserProfile, setItsLoggedUserProfile] = useState(false);
+
   const profileForm = useRef(null);
 
   const [cityOptions, setCityOptions] = useState([])
@@ -56,6 +62,7 @@ function ProfileForm({
         label: people.group.name, 
         value: people.group.code 
       });
+      setItsLoggedUserProfile(people.username == loggedUser.data.username);
     }
   }, []);
 
@@ -141,8 +148,6 @@ function ProfileForm({
   function onFinish(values) {
     setSubmitting(true);
 
-    let itsMe = false;
-
     let url = 'people';
     const { name, username, password, email, birthDate } = values;
 
@@ -164,8 +169,7 @@ function ProfileForm({
     if (operation == "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
 
-      itsMe = people.username == loggedUser.data.username;
-      if (itsMe) {
+      if (itsLoggedUserProfile) {
         url += '/me';
       } else {
         data.uid = people.uid
@@ -198,7 +202,7 @@ function ProfileForm({
             });
           }
           setReady(true);
-          if (itsMe) {
+          if (itsLoggedUserProfile) {
             loggedUser.reload();
           } 
         } else if (operation == "edit") {
@@ -288,7 +292,8 @@ function ProfileForm({
           ref={profileForm}
           layout="vertical"
           name="basic"
-          initialValues={operation == "edit" ? {
+          initialValues={operation == "edit" ?
+          {
             name: people.name,
             username: people.username,
             email: people.email,
@@ -296,7 +301,13 @@ function ProfileForm({
             city: people.country.name + " > " + people.state.name + " > " + people.city.name,
             institution: people.institution.name,
             group: people.group.name 
-          } : { remember: true }}
+          } :  operation == "create" && !loggedUser.canCreateAnyUser() ?
+          { 
+            group: { value: "member", label: "Membro" },
+            institution: loggedUser.data.institution.name,
+          } :
+          { 
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
@@ -306,7 +317,7 @@ function ProfileForm({
             name="name"
             rules={[
               { required: true, message: 'Insira o nome.' },
-              { type: 'string', message: 'Nome inválido.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
+              { type: 'string', message: 'Nome inválido,.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
             ]}
           >
             <Input disabled={submitting} maxLength={25} />
@@ -370,6 +381,17 @@ function ProfileForm({
             ]}
           >
             <Select
+              disabled={
+                (
+                  operation == "edit" &&
+                  (
+                    !itsLoggedUserProfile && !loggedUser.canChangeUserInstitution() ||
+                    itsLoggedUserProfile && !loggedUser.canChangeOwnInstitution()
+                  )
+                ) || (
+                  operation == "create" && !loggedUser.canCreateAnyUser()
+                )
+              }
               showSearch
               notFoundContent={null}
               filterOption={false}
@@ -390,6 +412,16 @@ function ProfileForm({
             ]}
           >
             <Select
+              disabled={
+                (
+                  operation == "edit" && 
+                  (
+                    itsLoggedUserProfile || !itsLoggedUserProfile && !loggedUser.canChangeUserInstitution(people)
+                  )
+                ) || (
+                  operation == "create" && !loggedUser.canCreateAnyUser()
+                )
+              }
               showSearch
               notFoundContent={null}
               filterOption={false}

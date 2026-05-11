@@ -124,7 +124,7 @@ function People() {
     <div className={"people-search-container"}>
       <div className="people-search-header">
         <Title>Pessoas</Title>
-        { ["super-admin", "management"].includes(loggedUser?.data?.group?.code) &&
+        { loggedUser.canCreateAnyUser() &&
         <Button
           type="primary"
           icon={<PlusOutlined />}
