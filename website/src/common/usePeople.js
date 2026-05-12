@@ -49,53 +49,53 @@ function usePeople() {
       load();
     },
     canCreateAnyUser: () => {
-      return data.group.code == "super-admin"; 
+      return data.group.code === "super-admin"; 
     },
     canManageUser: (people) => {
       return (
         (
-          data.group.code == "management" && 
-          people.group.code == "member" &&
-          data.institution.uid == people.institution.uid
+          data.group.code === "management" && 
+          people.group.code === "member" &&
+          data.institution.uid === people.institution.uid
         ) || (
-          data.group.code == "super-admin"
+          data.group.code === "super-admin"
         )
       );
     },
     canChangeUserGroup: () => {
-      return data.group.code == "super-admin"; 
+      return data.group.code === "super-admin"; 
     },
     canChangeUserInstitution: () => {
-      return data.group.code == "super-admin"; 
+      return data.group.code === "super-admin"; 
     },
     canChangeOwnInstitution: () => {
-      return data.group.code == "super-admin"; 
+      return data.group.code === "super-admin"; 
     },
     canCreateMember: (institution) => {
       return (
         (
-          data.group.code == "super-admin"
+          data.group.code === "super-admin"
         ) || (
-          data.group.code == "management" && 
-          data.institution.uid == institution.uid
+          data.group.code === "management" && 
+          data.institution.uid === institution.uid
         )
       );
     },
     canManageInstitution: (institution) => {
       return (
         (
-          data.group.code == "super-admin"
+          data.group.code === "super-admin"
         ) || (
-          data.group.code == "management" && 
-          data.institution.uid == institution.uid
+          data.group.code === "management" && 
+          data.institution.uid === institution.uid
         )
       );
     },
     canCreateInstitutions: () => {
-      return data.group.code == "super-admin"; 
+      return data.group.code === "super-admin"; 
     },
     canManagePosts: () => {
-      return data.group.code == "review"; 
+      return data.group.code === "review"; 
     },
   };
 }
