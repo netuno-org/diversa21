@@ -4,29 +4,22 @@
   justify-content: center;
   align-items: start;
   padding: 0 20px;
+  width: 100%;
+
+  .people-search {
+    width: 100%;
+  }
+
+  .search-input-container {
+    width: 100%;
+    gap: 16px;
+    display: flex;
+    align-items: center;
+  }
 
   .results-info {
     margin-left: 10px;
   }
-  .people-search-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 24px;
-  }
-}
-
-.people-search-input {
-  display: flex;
-  width: 100%;
-  justify-content: start;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  background-color: #fafafa;
-  padding: 16px;
-  border-radius: 16px;
 }
 
 .people-search-result {
@@ -51,25 +44,31 @@
       border-color: #8A6AA2;
     }
   }
+
   .people-search-select {
     width: 40%;
     height: 32px;
   }
 }
+
 @media (max-width: 440px) {
   .people-search-container {
     align-items: center;
+
     .ant-typography {
       font-size: 28px;
       text-align: center;
     }
   }
+
   .people-search-input {
     width: 100%;
   }
+
   .people-search-select {
     height: 32px;
   }
+
   .results-info {
     .ant-typography {
       font-size: 12px;
