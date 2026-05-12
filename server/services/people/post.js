@@ -1,4 +1,5 @@
 import {_req, _db, _val, _user, _header, _out} from "@netuno/server-types"
+import permissions from "#core/lib/permissions.js";
 
 const name = _req.getString("name");
 const username = _req.getString("username");
@@ -8,6 +9,15 @@ const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const group = _req.getString("group");
+
+if (!permissions.canCreateAnyUser() && !permissions.canCreateMember(group, institutionUid)) {
+    _header.status(403);
+    _out.json(
+      _val.map()
+        .set("error", "permission denied")
+    );
+    _exec.stop();
+}
 
 const userEmailExists = _user.firstByMail(email);
 const usernameExists = _user.firstByUser(username);
@@ -72,7 +82,7 @@ if (user_id) {
     _header.status(400);
     _out.json(
       _val.map()
-      .set("error", `user not created`)
+        .set("error", `user not created`)
     );
     _exec.stop();
   }
@@ -80,5 +90,5 @@ if (user_id) {
 
 _out.json(
   _val.map()
-  .set("result", true)
+    .set("result", true)
 );
