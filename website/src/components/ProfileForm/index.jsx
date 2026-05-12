@@ -416,7 +416,7 @@ function ProfileForm({
                 (
                   operation == "edit" && 
                   (
-                    itsLoggedUserProfile || !itsLoggedUserProfile && !loggedUser.canChangeUserInstitution(people)
+                    itsLoggedUserProfile || !itsLoggedUserProfile && !loggedUser.canChangeUserGroup(people)
                   )
                 ) || (
                   operation == "create" && !loggedUser.canCreateAnyUser()
