@@ -30,6 +30,17 @@ function ProfileForm({
 
   const profileForm = useRef(null);
 
+  const canViewGroupFormField = 
+    (operation === "create" && loggedUser.canCreateAnyUser()) ||
+    (operation === "edit" && !itsLoggedUserProfile && loggedUser.canChangeUserGroup(people));
+  const canViewPasswordFields = operation === "create" || (operation === "edit" && itsLoggedUserProfile);
+  const canViewInstitutionFormField =
+    (operation === "create" && loggedUser.canCreateAnyUser()) ||
+    (operation === "edit" && (
+       !itsLoggedUserProfile && loggedUser.canChangeUserInstitution() ||
+       itsLoggedUserProfile && loggedUser.canChangeOwnInstitution()
+    )); 
+
   const [cityOptions, setCityOptions] = useState([])
   const [institutionOptions, setInstitutionOptions] = useState([])
 
@@ -47,12 +58,12 @@ function ProfileForm({
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
 
-  const layout = operation == "edit" ? {
+  const layout = operation === "edit" ? {
     wrapperCol: { xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 12 } }
   } : null;
 
   useEffect(() => {
-    if (people && operation == "edit") {
+    if (people && operation === "edit") {
       if (people.avatar) {
         setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
       }
@@ -62,7 +73,7 @@ function ProfileForm({
         label: people.group.name, 
         value: people.group.code 
       });
-      setItsLoggedUserProfile(people.username == loggedUser.data.username);
+      setItsLoggedUserProfile(people.username === loggedUser.data.username);
     }
   }, []);
 
@@ -162,11 +173,11 @@ function ProfileForm({
       group: selectedGroup.value
     }
 
-    if (operation == "create" && configAltcha && altchaPayload) {
+    if (operation === "create" && configAltcha && altchaPayload) {
       data.altcha = altchaPayload
     }
 
-    if (operation == "edit" && people && loggedUser) {
+    if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
 
       if (itsLoggedUserProfile) {
@@ -176,7 +187,7 @@ function ProfileForm({
       }
     }
 
-    const method = operation == "edit" ? "PUT" : "POST"
+    const method = operation === "edit" ? "PUT" : "POST"
 
     _service({
       method,
@@ -184,13 +195,13 @@ function ProfileForm({
       data,
       success: (response) => {
         if (response.json.result) {
-          if (operation == "edit") {
+          if (operation === "edit") {
             globalNotification.success({
               message: 'Edição do Perfil',
               description: 'Os dados do seu perfil foram alterados com sucesso.',
             });
             setSubmitting(false);
-          } else if (operation == "create") {
+          } else if (operation === "create") {
             api.success({
               message: 'Conta Criada',
               description: 'A conta foi criada com sucesso, pode iniciar sessão.',
@@ -205,7 +216,7 @@ function ProfileForm({
           if (itsLoggedUserProfile) {
             loggedUser.reload();
           } 
-        } else if (operation == "edit") {
+        } else if (operation === "edit") {
           globalNotification.warning({
             message: 'Utilizador existente',
             description: response.json.error,
@@ -240,12 +251,12 @@ function ProfileForm({
             });
           }
         }
-        if (operation == "edit") {
+        if (operation === "edit") {
           globalNotification.serviceFail({
             message: 'Erro na Edição do Perfil',
             description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
           });
-        } else if (operation == "create") {
+        } else if (operation === "create") {
           return api.error({
             message: 'Erro na Criação de Conta',
             description: 'Não foi possível criar a conta, contacte-nos através do chat de suporte.',
@@ -267,7 +278,7 @@ function ProfileForm({
     console.log('Failed:', errorInfo);
   }
 
-  if (operation == "edit" && !people) {
+  if (operation === "edit" && !people) {
     return <Spin />
   }
 
@@ -279,7 +290,7 @@ function ProfileForm({
     <div>
       {contextHolder}
       <div className="content-body">
-        { operation == "edit" &&
+        { operation === "edit" &&
           <>
             <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
             <Divider titlePlacement="left" plain>Informações Gerais</Divider>
@@ -292,22 +303,24 @@ function ProfileForm({
           ref={profileForm}
           layout="vertical"
           name="basic"
-          initialValues={operation == "edit" ?
-          {
-            name: people.name,
-            username: people.username,
-            email: people.email,
-            birthDate: dayjs(people.birthDate),
-            city: people.country.name + " > " + people.state.name + " > " + people.city.name,
-            institution: people.institution.name,
-            group: people.group.name 
-          } :  operation == "create" && !loggedUser.canCreateAnyUser() ?
-          { 
-            group: { value: "member", label: "Membro" },
-            institution: loggedUser.data.institution.name,
-          } :
-          { 
-          }}
+          initialValues={
+            operation === "edit" ?
+            {
+              name: people.name,
+              username: people.username,
+              email: people.email,
+              birthDate: dayjs(people.birthDate),
+              city: people.country.name + " > " + people.state.name + " > " + people.city.name,
+              institution: people.institution.name,
+              group: people.group.name 
+            }
+            : operation === "create" && !loggedUser.canCreateAnyUser() ?
+            { 
+              group: { value: "member", label: "Membro" },
+              institution: loggedUser.data.institution.name,
+            }
+            : {}
+          }
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
@@ -372,6 +385,7 @@ function ProfileForm({
               onChange={handleCityChange}
             />
           </Form.Item>
+          { canViewInstitutionFormField &&
           <Form.Item
             label="Instituição"
             name="institution"
@@ -381,17 +395,6 @@ function ProfileForm({
             ]}
           >
             <Select
-              disabled={
-                (
-                  operation == "edit" &&
-                  (
-                    !itsLoggedUserProfile && !loggedUser.canChangeUserInstitution() ||
-                    itsLoggedUserProfile && !loggedUser.canChangeOwnInstitution()
-                  )
-                ) || (
-                  operation == "create" && !loggedUser.canCreateAnyUser()
-                )
-              }
               showSearch
               notFoundContent={null}
               filterOption={false}
@@ -403,52 +406,46 @@ function ProfileForm({
               onChange={handleInstitutionChange}
             />
           </Form.Item>
+          }
+          { canViewGroupFormField &&
+            <Form.Item
+              label="Grupo"
+              name="group"
+              rules={[
+                { type: 'string', message: 'O grupo inserido não é válido.' },
+                { required: true, message: 'Insira o grupo.' }
+              ]}
+            >
+              <Select
+                showSearch
+                notFoundContent={null}
+                filterOption={false}
+                placeholder="Grupo"
+                options={groupOptions}
+                allowClear
+                onClear={handleGroupClear}
+                onChange={handleGroupChange}
+              />
+            </Form.Item>
+          }
+          { canViewPasswordFields && <>
           <Form.Item
-            label="Grupo"
-            name="group"
-            rules={[
-              { type: 'string', message: 'O grupo inserido não é válido.' },
-              { required: true, message: 'Insira o grupo.' }
-            ]}
-          >
-            <Select
-              disabled={
-                (
-                  operation == "edit" && 
-                  (
-                    itsLoggedUserProfile || !itsLoggedUserProfile && !loggedUser.canChangeUserGroup(people)
-                  )
-                ) || (
-                  operation == "create" && !loggedUser.canCreateAnyUser()
-                )
-              }
-              showSearch
-              notFoundContent={null}
-              filterOption={false}
-              placeholder="Grupo"
-              options={groupOptions}
-              allowClear
-              onClear={handleGroupClear}
-              onChange={handleGroupChange}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Nova Palavra-passe"
+            label={(operation === "edit" ? "Nova" : "") + " Palavra-passe"}
             name="password"
             rules={[
-              (operation == "create" && { required: true, message: 'Insira a palavra-passe.' }),
+              (operation === "create" && { required: true, message: 'Insira a palavra-passe.' }),
               { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
             ]}
           >
-          { operation == "create" ?
+          { operation === "create" ?
             <PasswordInput disabled={submitting} maxLength={25} /> :
             <PasswordInput />
           }
           </Form.Item>
           <Form.Item
-            label="Confirmar nova Palavra-passe"
+            label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Palavra-passe"}
             name="password_confirm"
-            rules={[ (operation == "create" ?
+            rules={[ (operation === "create" ?
               { required: true, message: `Insira a confirmação da palavra-passe.` } :
               { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
               { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
@@ -462,13 +459,14 @@ function ProfileForm({
               })
             ]}
           >
-            { operation == "create" ?
+            { operation === "create" ?
               <Input.Password disabled={submitting} maxLength={25} /> :
               <Input.Password maxLength={25} />
             }
           </Form.Item>
+          </>}
           <Form.Item>
-            { operation == "create" ?
+            { operation === "create" ?
               <Button type="primary" htmlType="submit" loading={submitting}>
                 Criar Usuário
               </Button> :
