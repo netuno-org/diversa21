@@ -22,7 +22,24 @@ function ProfileForm({
 }) {
   const loggedUser = usePeople();
 
+  // not sure if this should be a state
+  // cause it never changes
+  // but we need a kind of global variable to tell us if the logged user is
+  // trying to modify his own profile
+  const [itsLoggedUserProfile, setItsLoggedUserProfile] = useState(false);
+
   const profileForm = useRef(null);
+
+  const canViewGroupFormField = 
+    (operation === "create" && loggedUser.canCreateAnyUser()) ||
+    (operation === "edit" && !itsLoggedUserProfile && loggedUser.canChangeUserGroup(people));
+  const canViewPasswordFields = operation === "create" || (operation === "edit" && itsLoggedUserProfile);
+  const canViewInstitutionFormField =
+    (operation === "create" && loggedUser.canCreateAnyUser()) ||
+    (operation === "edit" && (
+       !itsLoggedUserProfile && loggedUser.canChangeUserInstitution() ||
+       itsLoggedUserProfile && loggedUser.canChangeOwnInstitution()
+    )); 
 
   const [cityOptions, setCityOptions] = useState([])
   const [institutionOptions, setInstitutionOptions] = useState([])
@@ -41,12 +58,12 @@ function ProfileForm({
   const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
 
-  const layout = operation == "edit" ? {
+  const layout = operation === "edit" ? {
     wrapperCol: { xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 12 } }
   } : null;
 
   useEffect(() => {
-    if (people && operation == "edit") {
+    if (people && operation === "edit") {
       if (people.avatar) {
         setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
       }
@@ -56,6 +73,7 @@ function ProfileForm({
         label: people.group.name, 
         value: people.group.code 
       });
+      setItsLoggedUserProfile(people.username === loggedUser.data.username);
     }
   }, []);
 
@@ -141,8 +159,6 @@ function ProfileForm({
   function onFinish(values) {
     setSubmitting(true);
 
-    let itsMe = false;
-
     let url = 'people';
     const { name, username, password, email, birthDate } = values;
 
@@ -157,22 +173,21 @@ function ProfileForm({
       group: selectedGroup.value
     }
 
-    if (operation == "create" && configAltcha && altchaPayload) {
+    if (operation === "create" && configAltcha && altchaPayload) {
       data.altcha = altchaPayload
     }
 
-    if (operation == "edit" && people && loggedUser) {
+    if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
 
-      itsMe = people.username == loggedUser.data.username;
-      if (itsMe) {
+      if (itsLoggedUserProfile) {
         url += '/me';
       } else {
         data.uid = people.uid
       }
     }
 
-    const method = operation == "edit" ? "PUT" : "POST"
+    const method = operation === "edit" ? "PUT" : "POST"
 
     _service({
       method,
@@ -180,13 +195,13 @@ function ProfileForm({
       data,
       success: (response) => {
         if (response.json.result) {
-          if (operation == "edit") {
+          if (operation === "edit") {
             globalNotification.success({
               message: 'Edição do Perfil',
               description: 'Os dados do seu perfil foram alterados com sucesso.',
             });
             setSubmitting(false);
-          } else if (operation == "create") {
+          } else if (operation === "create") {
             api.success({
               message: 'Conta Criada',
               description: 'A conta foi criada com sucesso, pode iniciar sessão.',
@@ -198,10 +213,10 @@ function ProfileForm({
             });
           }
           setReady(true);
-          if (itsMe) {
+          if (itsLoggedUserProfile) {
             loggedUser.reload();
           } 
-        } else if (operation == "edit") {
+        } else if (operation === "edit") {
           globalNotification.warning({
             message: 'Utilizador existente',
             description: response.json.error,
@@ -236,12 +251,12 @@ function ProfileForm({
             });
           }
         }
-        if (operation == "edit") {
+        if (operation === "edit") {
           globalNotification.serviceFail({
             message: 'Erro na Edição do Perfil',
             description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
           });
-        } else if (operation == "create") {
+        } else if (operation === "create") {
           return api.error({
             message: 'Erro na Criação de Conta',
             description: 'Não foi possível criar a conta, contacte-nos através do chat de suporte.',
@@ -263,7 +278,7 @@ function ProfileForm({
     console.log('Failed:', errorInfo);
   }
 
-  if (operation == "edit" && !people) {
+  if (operation === "edit" && !people) {
     return <Spin />
   }
 
@@ -275,10 +290,10 @@ function ProfileForm({
     <div>
       {contextHolder}
       <div className="content-body">
-        { operation == "edit" &&
+        { operation === "edit" &&
           <>
             <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
-            <Divider orientation="left" plain>Informações Gerais</Divider>
+            <Divider titlePlacement="left" plain>Informações Gerais</Divider>
           </>
         }
         <Form
@@ -288,15 +303,24 @@ function ProfileForm({
           ref={profileForm}
           layout="vertical"
           name="basic"
-          initialValues={operation == "edit" ? {
-            name: people.name,
-            username: people.username,
-            email: people.email,
-            birthDate: dayjs(people.birthDate),
-            city: people.country.name + " > " + people.state.name + " > " + people.city.name,
-            institution: people.institution.name,
-            group: people.group.name 
-          } : { remember: true }}
+          initialValues={
+            operation === "edit" ?
+            {
+              name: people.name,
+              username: people.username,
+              email: people.email,
+              birthDate: dayjs(people.birthDate),
+              city: people.country.name + " > " + people.state.name + " > " + people.city.name,
+              institution: people.institution.name,
+              group: people.group.name 
+            }
+            : operation === "create" && !loggedUser.canCreateAnyUser() ?
+            { 
+              group: { value: "member", label: "Membro" },
+              institution: loggedUser.data.institution.name,
+            }
+            : {}
+          }
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
@@ -306,7 +330,7 @@ function ProfileForm({
             name="name"
             rules={[
               { required: true, message: 'Insira o nome.' },
-              { type: 'string', message: 'Nome inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
+              { type: 'string', message: 'Nome inválido,.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
             ]}
           >
             <Input disabled={submitting} maxLength={25} />
@@ -316,7 +340,7 @@ function ProfileForm({
             name="username"
             rules={[
               { required: true, message: 'Insira o usuário.' },
-              { type: 'string', message: 'Usuário inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
+              { type: 'string', message: 'Usuário inválido.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
             ]}
           >
             <Input disabled={submitting} maxLength={25} />
@@ -361,6 +385,7 @@ function ProfileForm({
               onChange={handleCityChange}
             />
           </Form.Item>
+          { canViewInstitutionFormField &&
           <Form.Item
             label="Instituição"
             name="institution"
@@ -381,42 +406,46 @@ function ProfileForm({
               onChange={handleInstitutionChange}
             />
           </Form.Item>
+          }
+          { canViewGroupFormField &&
+            <Form.Item
+              label="Grupo"
+              name="group"
+              rules={[
+                { type: 'string', message: 'O grupo inserido não é válido.' },
+                { required: true, message: 'Insira o grupo.' }
+              ]}
+            >
+              <Select
+                showSearch
+                notFoundContent={null}
+                filterOption={false}
+                placeholder="Grupo"
+                options={groupOptions}
+                allowClear
+                onClear={handleGroupClear}
+                onChange={handleGroupChange}
+              />
+            </Form.Item>
+          }
+          { canViewPasswordFields && <>
           <Form.Item
-            label="Grupo"
-            name="group"
-            rules={[
-              { type: 'string', message: 'O grupo inserido não é válido.' },
-              { required: true, message: 'Insira o grupo.' }
-            ]}
-          >
-            <Select
-              showSearch
-              notFoundContent={null}
-              filterOption={false}
-              placeholder="Grupo"
-              options={groupOptions}
-              allowClear
-              onClear={handleGroupClear}
-              onChange={handleGroupChange}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Nova Palavra-passe"
+            label={(operation === "edit" ? "Nova" : "") + " Palavra-passe"}
             name="password"
             rules={[
-              (operation == "create" && { required: true, message: 'Insira a palavra-passe.' }),
+              (operation === "create" && { required: true, message: 'Insira a palavra-passe.' }),
               { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
             ]}
           >
-          { operation == "create" ?
+          { operation === "create" ?
             <PasswordInput disabled={submitting} maxLength={25} /> :
             <PasswordInput />
           }
           </Form.Item>
           <Form.Item
-            label="Confirmar nova Palavra-passe"
+            label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Palavra-passe"}
             name="password_confirm"
-            rules={[ (operation == "create" ?
+            rules={[ (operation === "create" ?
               { required: true, message: `Insira a confirmação da palavra-passe.` } :
               { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
               { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
@@ -430,13 +459,14 @@ function ProfileForm({
               })
             ]}
           >
-            { operation == "create" ?
+            { operation === "create" ?
               <Input.Password disabled={submitting} maxLength={25} /> :
               <Input.Password maxLength={25} />
             }
           </Form.Item>
+          </>}
           <Form.Item>
-            { operation == "create" ?
+            { operation === "create" ?
               <Button type="primary" htmlType="submit" loading={submitting}>
                 Criar Usuário
               </Button> :

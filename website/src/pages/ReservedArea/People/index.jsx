@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { AutoComplete, Input, Card, Avatar, Spin, Pagination, Empty, Select, Button, Typography, Grid } from 'antd';
+import { Card, Avatar, Spin, Pagination, Empty, Typography, Grid } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
@@ -9,6 +9,7 @@ import UserProfileDisplay from '../../../components/UserProfileDisplay';
 import usePeople from "../../../common/usePeople.js";
 
 import "./index.less";
+import ListHeader from '../../../components/ListHeader/index.jsx';
 
 const { Text, Title } = Typography;
 const { useBreakpoint } = Grid;
@@ -121,46 +122,46 @@ function People() {
   };
 
   return (
-    <div className={"people-search-container"}>
-      <div className="people-search-header">
-        <Title>Pessoas</Title>
-        {/* { console.log(loggedUser.data) } */}
-        { ["super-admin", "management"].includes(loggedUser.data.group.code) &&
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate('/people/create/user')}
-        >Criar Usuário
-        </Button>
-        }
-      </div>
-      <div className={"people-search-input"}>
-        <AutoComplete
-          popupMatchSelectWidth={252}
-          style={{ width: '60%' }}
-          onSelect={onSelect}
+    <div className="people-search-container">
+      <div className="people-search">
+        <ListHeader
+          title='Pessoas'
+          createButton={
+            loggedUser.canCreateAnyUser() && (
+              <ListHeader.Button
+                icon={<PlusOutlined />}
+                text="Criar usuário"
+                onClick={() => navigate('/people/create/user')}
+              />
+            )
+          }
         >
-          <Input.Search
-            style={{ width: '100%' }}
-            placeholder="Buscar por nome"
-            enterButton={true}
-            onSearch={handlePeopleSearch}
-            onChange={handlePeopleChange}
-          />
-        </AutoComplete>
-        <Select
-          className={"people-search-select"}
-          showSearch
-          notFoundContent={null}
-          filterOption={false}
-          onSearch={handleLocationSearch}
-          placeholder="Cidade, Estado ou País"
-          options={locationOptions}
-          onChange={handleLocationChange}
-          allowClear
-          onClear={handleLocationClear}
-          style={{ width: '40%', height: '32px' }}
-        />
+          <div className='search-input-container'>
+            <ListHeader.Input
+              autoCompleteProps={{
+                placeholder: 'Buscar por nome',
+                popupMatchSelectWidth: 252,
+                onSelect: onSelect
+              }}
+              inputProps={{
+                onSearch: handlePeopleSearch,
+                onChange: handlePeopleChange,
+                enterButton: true,
+                value: peopleTerm,
+
+              }}
+            />
+            <ListHeader.Select
+              notFoundContent={null}
+              placeholder="Cidade, estado ou país"
+              options={locationOptions}
+              showSearch={true}
+              onSearch={handleLocationSearch}
+              onChange={handleLocationChange}
+              onClear={handleLocationClear}
+            />
+          </div>
+        </ListHeader>
       </div>
       {loading && (
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 24 }}>
@@ -173,7 +174,7 @@ function People() {
         </Text>
       </div>
       {!loading && peopleList.map((person) => (
-        <div style={{ width: '100%' }}>
+        <div key={person.uid} style={{ width: '100%' }}>
           <Link to={`/u/${person.username}`}>
             <Card className={"people-search-result"} key={person.uid}>
               <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />

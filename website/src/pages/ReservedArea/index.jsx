@@ -73,6 +73,10 @@ function ReservedArea() {
       return <People/>;
     }
     if (location.pathname === "/people/create/user") {
+      if (!people.canCreateAnyUser()) {
+        navigate('/people');  
+        return;
+      }
       return <CreateUser/>;
     }
     if (location.pathname === "/institutions") {

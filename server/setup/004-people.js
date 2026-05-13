@@ -124,7 +124,7 @@ const people = [
   },
   {
     uid: "25312758-5689-4362-a7b5-d877eb94644a",
-    name: "Revisor1",
+    name: "Revisor",
     username: "review",
     email: "review@membro.com",
     birthDate: "2000-01-01",
@@ -135,7 +135,7 @@ const people = [
   },
   {
     uid: "6f909f82-f51c-489b-933d-876846b0a7c4",
-    name: "Gestor1",
+    name: "Gestor",
     username: "manager",
     email: "manager@membro.com",
     birthDate: "2000-01-01",
@@ -146,7 +146,7 @@ const people = [
   },
   {
     uid: "e7ab1ade-d464-4602-bd61-f0f7eb7c880e",
-    name: "Superadmin1",
+    name: "Superadmin",
     username: "super",
     email: "super@membro.com",
     birthDate: "2000-01-01",

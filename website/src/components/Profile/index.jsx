@@ -4,12 +4,14 @@ import { Card, Button, Popover, Spin, Grid, Col } from 'antd';
 import UserProfileDisplay from '../UserProfileDisplay';
 import PostList from '../Post/List'
 
+import usePeople from "../../common/usePeople.js";
+
 import './index.less';
 
 const { useBreakpoint } = Grid;
 
 function Profile({ user }) {
-
+  const loggedUser = usePeople();
   const navigate = useNavigate();
   const screens = useBreakpoint();
 
@@ -39,6 +41,7 @@ function Profile({ user }) {
     content = (
       <div className="profile">
         <Card>
+          { loggedUser.canManageUser(user) &&
           <div className="edit-profile-button">
             <Col>
               <Button block type="primary" onClick={handleClick}>
@@ -46,22 +49,33 @@ function Profile({ user }) {
               </Button>
             </Col>
           </div>
+          }
           <UserProfileDisplay user={user} avatarStyle={{
             width: `${screenSize}px`,
             height: `${screenSize}px`,
           }}>
             <div className="info-user-container">
-              <Popover
-                content={<div className="institution-text-popover">Clique para visitar a pagina da instituição</div>}
-                placement="bottom"
-                trigger="hover"
-              >
-                <div className="institution-text">
-                  <Link to={`/institutions/${user.institution.uid}`}>
-                    <p><BankOutlined /> {user.institution.name}</p>
-                  </Link>
-                </div>
-              </Popover>
+              {
+                screens.lg ? (
+                  <Popover
+                    content={<div className="institution-text-popover">Clique para visitar a pagina da instituição</div>}
+                    placement="bottom"
+                    trigger="hover"
+                  >
+                    <div className="institution-text">
+                      <Link to={`/institutions/${user.institution.uid}`}>
+                        <p><BankOutlined /> {user.institution.name}</p>
+                      </Link>
+                    </div>
+                  </Popover>
+                ) : (
+                  <div className="institution-text">
+                    <Link to={`/institutions/${user.institution.uid}`}>
+                      <p><BankOutlined /> {user.institution.name}</p>
+                    </Link>
+                  </div>
+                )
+              }
             </div>
           </UserProfileDisplay>
         </Card>

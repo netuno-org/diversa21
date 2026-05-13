@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Typography, Form, Button } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import _service from '@netuno/service-client';
+
+import usePeople from "../../../common/usePeople.js";
 
 import ProfileForm from "../../../components/ProfileForm"
 
 const { Title } = Typography;
 
 function UserProfileEdit({username}) {
+  const loggedUser = usePeople();
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -35,6 +38,10 @@ function UserProfileEdit({username}) {
     return;
   }
  
+  if (!loggedUser.canManageUser(user)) {
+    return <Navigate to="/people" />;
+  }
+
   return (
     <section>
       <div className="content-title">

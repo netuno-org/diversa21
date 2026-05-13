@@ -9,12 +9,15 @@ import _service from '@netuno/service-client';
 
 import "./index.less";
 
+import usePeople from "../../../../common/usePeople.js";
+
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const PAGE_SIZE = 10;
 
 function InstitutionList() {
+  const loggedUser = usePeople();
   const navigate = useNavigate();
   const [allInstitutions, setAllInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -134,7 +137,7 @@ function InstitutionList() {
     <section className="institutions-list">
       <div className="list-header">
         <Title level={1}>Instituições</Title>
-        {(
+        { loggedUser.canCreateInstitutions() &&
           <Button 
             type="primary" 
             icon={<PlusOutlined />}
@@ -142,7 +145,7 @@ function InstitutionList() {
           >
             Nova Instituição
           </Button>
-        )}
+        }
       </div>
 
       <div className="filters-section">
