@@ -6,12 +6,12 @@ const { Title } = Typography;
 function ListHeader({ title, createButton, children }) {
 
   return (
-    <div className='section-search-container'>
+    <div>
       <div className='title-header'>
         <Title>{title}</Title>
         {createButton}
       </div>
-      <div className='search-input'>
+      <div className='input-container'>
         {children}
       </div>
     </div>
@@ -36,7 +36,7 @@ ListHeader.Button = function ListHeaderButton({
 
 ListHeader.Input = function ListHeaderInput({ autoCompleteProps, inputProps }) {
   return (
-    <AutoComplete className='search-people-input' {...autoCompleteProps}>
+    <AutoComplete className='search-input' {...autoCompleteProps}>
       <Input.Search  {...inputProps} />
     </AutoComplete>
   );
