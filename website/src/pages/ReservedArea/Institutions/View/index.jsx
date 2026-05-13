@@ -14,19 +14,20 @@ import "./index.less";
 
 const { Title, Text, Paragraph } = Typography;
 
-function InstitutionView({ loggedUserInfo }) {
+function InstitutionView() {
   const navigate = useNavigate();
-  const { uid } = useParams();
+  const { slug } = useParams();
   const [institution, setInstitution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (uid) {
+    if (slug) {
       setLoading(true);
       _service({
-        url: `/institution?uid=${uid}`,
         method: 'GET',
+        url: `/institution`,
+        data: {slug},
         success: ({ json }) => {
           if (json.data) {
             setInstitution(json.data);
@@ -41,10 +42,10 @@ function InstitutionView({ loggedUserInfo }) {
         }
       });
     }
-  }, [uid]);
+  }, [slug]);
 
   const handleEdit = () => {
-    navigate(`/institutions/${uid}/edit`);
+    navigate(`/institutions/${slug}/edit`);
   };
 
   if (loading) {
@@ -221,11 +222,4 @@ function InstitutionView({ loggedUserInfo }) {
   );
 }
 
-const mapStateToProps = store => {
-  const { loggedUserInfoState } = store;
-  return {
-    loggedUserInfo: loggedUserInfoState.loggedUserInfo
-  };
-};
-
-export default connect(mapStateToProps)(InstitutionView);
+export default InstitutionView;

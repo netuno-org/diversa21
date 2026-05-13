@@ -12,6 +12,9 @@
           "uid": {
             "type": "string-not-empty"
           },
+          "slug": {
+            "type": "string"
+          },
           "name": {
             "type": "string-not-empty"
           },
@@ -55,6 +58,7 @@
         },
         "required": [
           "uid",
+          "slug",
           "name",
           "description",
           "email",

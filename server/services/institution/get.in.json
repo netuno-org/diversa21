@@ -7,9 +7,9 @@
     "properties": {
       "uid": {
         "type": "uid"
+      },
+      "slug": {
+        "type": "string-not-empty"
       }
-    },
-    "required": [
-      "uid"
-    ]
+    }
 }

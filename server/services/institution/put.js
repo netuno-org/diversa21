@@ -1,6 +1,7 @@
 import {_req, _db, _val, _out, _header, _exec} from "@netuno/server-types";
 
-const uid = _req.getString('uid');
+const uid = _req.getUID('uid');
+const slug = _req.getString('slug');
 const name = _req.getString("name");
 const description = _req.getString("description");
 const email = _req.getString("email");
@@ -12,10 +13,22 @@ const website = _req.getString("website");
 const logo = _req.getFile("logo");
 const cover_image = _req.getFile("cover_image");
 
-// Find institution by uid
-const dbInstitution = _db.queryFirst(`
-    SELECT id FROM institution WHERE uid = ?::uuid
-`, uid);
+// Find institution by uid OR slug
+let dbInstitution = null;
+
+if (slug) {
+    dbInstitution = _db.queryFirst(`
+        SELECT id, slug FROM institution WHERE slug = ?::text
+    `, slug);
+} else if (uid) {
+    dbInstitution = _db.queryFirst(`
+        SELECT id, slug FROM institution WHERE uid = ?::uuid
+    `, uid);
+} else {
+    _header.status(400);
+    _out.json(_val.map().set('error', 'uid-or-slug-required'));
+    _exec.stop();
+}
 
 if (!dbInstitution) {
     _header.status(404);

@@ -1,4 +1,4 @@
-import {_req, _db, _val, _out} from "@netuno/server-types"
+import {_req, _db, _val, _out, _header, _exec} from "@netuno/server-types"
 
 const name = _req.getString("name");
 const description = _req.getString("description");
@@ -41,8 +41,22 @@ if (cover_image) {
 
 const uid = _db.insert("institution", institutionData);
 
+// Get the slug that was generated automatically by the database
+const dbInstitution = _db.queryFirst(`
+    SELECT uid, slug FROM institution WHERE id = ?
+`, uid);
+
+if (!dbInstitution) {
+    _header.status(500);
+    _out.json(_val.map().set("error", "failed-to-retrieve-institution"));
+    _exec.stop();
+}
+
 _out.json(
   _val.map()
     .set("result", true)
-    .set("data", _val.map().set("uid", uid))
+    .set("data", _val.map()
+        .set("uid", dbInstitution.getString("uid"))
+        .set("slug", dbInstitution.getString("slug"))
+    )
 );

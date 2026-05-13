@@ -5,6 +5,7 @@ const input = _req.getString('name') || "";
 const data = _db.query(`
     SELECT
         institution.uid AS uid,
+        institution.slug AS slug,
         institution.name AS name 
     FROM institution 
     WHERE institution.name ILIKE ?::text

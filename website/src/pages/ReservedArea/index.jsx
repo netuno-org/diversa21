@@ -84,8 +84,8 @@ function ReservedArea() {
       return <InstitutionView/>;
     }
     if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
-      const uid = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
-      return <InstitutionForm uid={uid} onSuccess={() => navigate(`/institutions/${uid}`)} onCancel={() => navigate(`/institutions/${uid}`)} />;
+      const slug = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
+      return <InstitutionForm slug={slug} onSuccess={() => navigate(`/institutions/${slug}`)} onCancel={() => navigate(`/institutions/${slug}`)} />;
     }
     return <NotFound />;
   }

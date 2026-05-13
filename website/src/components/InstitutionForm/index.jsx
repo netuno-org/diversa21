@@ -13,6 +13,7 @@ const { TextArea } = Input;
 
 export default function InstitutionForm({ 
   uid = null,
+  slug = null,
   initialData = null,
   onSuccess = () => {},
   onCancel = () => {},
@@ -22,7 +23,7 @@ export default function InstitutionForm({
   onBack = () => {}
 }) {
   const [submitting, setSubmitting] = useState(false);
-  const [loading, setLoading] = useState(!!uid && !initialData);
+  const [loading, setLoading] = useState((!!uid || !!slug) && !initialData);
   const [form] = Form.useForm();
   
   const [logoPreview, setLogoPreview] = useState(null);
@@ -32,13 +33,17 @@ export default function InstitutionForm({
   const [initialLogo, setInitialLogo] = useState(null);
   const [initialCover, setInitialCover] = useState(null);
 
-  const isEditMode = !!uid;
+  // Use slug for edit mode if available, otherwise fallback to uid
+  const editIdentifier = slug || uid;
+  const isEditMode = !!editIdentifier;
 
   // Load institution data if in edit mode and no initialData provided
   useEffect(() => {
-    if (uid && !initialData) {
+    if (editIdentifier && !initialData) {
+      // Use slug if available, otherwise fallback to uid
+      const identifierParam = slug ? `slug=${slug}` : `uid=${uid}`;
       _service({
-        url: `/institution?uid=${uid}`,
+        url: `/institution?${identifierParam}`,
         method: 'GET',
         success: ({ json }) => {
           if (json.data) {
@@ -90,7 +95,7 @@ export default function InstitutionForm({
         website: initialData.website
       });
     }
-  }, [uid, initialData, form]);
+  }, [uid, slug, initialData, form]);
 
   const handleLogoChange = (info) => {
     const file = info.file.originFileObj || info.file;
@@ -156,8 +161,8 @@ export default function InstitutionForm({
       formData.append('cover_image', coverFile);
     }
 
-    const apiUrl = uid ? `/institution?uid=${uid}` : '/institution';
-    const apiMethod = uid ? 'PUT' : 'POST';
+    const apiUrl = editIdentifier ? `/institution?${slug ? `slug=${slug}` : `uid=${uid}`}` : '/institution';
+    const apiMethod = editIdentifier ? 'PUT' : 'POST';
 
     _service({
       method: apiMethod,
@@ -165,8 +170,9 @@ export default function InstitutionForm({
       data: formData,
       success: (response) => {
         if (response.json.result) {
+          const successSlug = slug || response.json.data?.slug;
           const successUid = uid || response.json.data?.uid;
-          onSuccess(successSlug, response.json.data);
+          onSuccess(successSlug || successUid, response.json.data);
         } else {
           message.error(response.json.error || 'Erro ao guardar.');
           setSubmitting(false);

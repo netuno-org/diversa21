@@ -33,8 +33,8 @@ function InstitutionList() {
   useEffect(() => {
     setLoading(true);
     _service({
-      url: "institution/list",
       method: 'GET',
+      url: "institution/list",
       success: ({ json }) => {
         const items = Array.isArray(json?.data) ? json.data : [];
         setAllInstitutions(items);
@@ -129,8 +129,8 @@ function InstitutionList() {
 
   const hasFilters = filters.search || filters.country || filters.state || filters.city;
 
-  const handleCardClick = (uid) => {
-    navigate(`/institutions/${uid}`);
+  const handleCardClick = (slug) => {
+    navigate(`/institutions/${slug}`);
   };
 
   return (
@@ -228,7 +228,7 @@ function InstitutionList() {
               renderItem={(institution) => (
                 <List.Item
                   className="institution-list-item"
-                  onClick={() => handleCardClick(institution.uid)}
+                  onClick={() => handleCardClick(institution.slug)}
                   style={{ cursor: 'pointer' }}
                 >
                   <List.Item.Meta

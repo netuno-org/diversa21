@@ -1,6 +1,7 @@
 {
   "result": true,
   "data": {
-    "uid": "string"
+    "uid": "string-not-empty",
+    "slug": "string"
   }
 }

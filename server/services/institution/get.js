@@ -1,29 +1,73 @@
 import {_req, _db, _exec, _header, _out, _val} from "@netuno/server-types";
 
 const uid = _req.getUID('uid');
+const slug = _req.getString('slug');
 
-const dbInstitutions = _db.query(`
-    SELECT
-        institution.uid,
-        institution.name,
-        institution.description,
-        institution.email,
-        institution.telephone,
-        institution.website,
-        institution.address,
-        institution.post_code,
-        city.name AS "city",
-        state.name AS "state",
-        country.name AS "country",
-        institution.cover_image,
-        institution.logo,
-        institution.active
-    FROM institution
-    INNER JOIN city ON institution.city_id = city.id
-    INNER JOIN state ON city.state_id = state.id
-    INNER JOIN country ON state.country_id = country.id
-    WHERE institution.uid = ?::uuid
-`, uid);
+let dbInstitution = null;
+let query = '';
+let param = null;
+
+// Prioritize slug if provided, otherwise use uid
+if (slug) {
+    query = `
+        SELECT
+            institution.uid,
+            institution.slug,
+            institution.name,
+            institution.description,
+            institution.email,
+            institution.telephone,
+            institution.website,
+            institution.address,
+            institution.post_code,
+            city.name AS "city",
+            state.name AS "state",
+            country.name AS "country",
+            institution.cover_image,
+            institution.logo,
+            institution.active
+        FROM institution
+        INNER JOIN city ON institution.city_id = city.id
+        INNER JOIN state ON city.state_id = state.id
+        INNER JOIN country ON state.country_id = country.id
+        WHERE institution.slug = ?::text
+    `;
+    param = slug;
+} else if (uid) {
+    query = `
+        SELECT
+            institution.uid,
+            institution.slug,
+            institution.name,
+            institution.description,
+            institution.email,
+            institution.telephone,
+            institution.website,
+            institution.address,
+            institution.post_code,
+            city.name AS "city",
+            state.name AS "state",
+            country.name AS "country",
+            institution.cover_image,
+            institution.logo,
+            institution.active
+        FROM institution
+        INNER JOIN city ON institution.city_id = city.id
+        INNER JOIN state ON city.state_id = state.id
+        INNER JOIN country ON state.country_id = country.id
+        WHERE institution.uid = ?::uuid
+    `;
+    param = uid;
+} else {
+    _header.status(400);
+    _out.json(
+        _val.map()
+            .set('error', 'uid-or-slug-required')
+    )
+    _exec.stop()
+}
+
+const dbInstitutions = _db.query(query, param);
 
 if (!dbInstitutions || dbInstitutions.length === 0) {
     _header.status(404);
@@ -34,7 +78,7 @@ if (!dbInstitutions || dbInstitutions.length === 0) {
     _exec.stop()
 }
 
-const dbInstitution = dbInstitutions[0];
+dbInstitution = dbInstitutions[0];
 
 _out.json(
   _val.map()
@@ -42,6 +86,7 @@ _out.json(
   .set('data',
     _val.map()
     .set('uid', dbInstitution.getString('uid'))
+    .set('slug', dbInstitution.getString('slug'))
     .set('name', dbInstitution.getString('name'))
     .set('description', dbInstitution.getString('description'))
     .set('email', dbInstitution.getString('email'))
