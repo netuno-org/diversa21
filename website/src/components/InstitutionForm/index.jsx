@@ -366,7 +366,7 @@ export default function InstitutionForm({
 
           <Card title="Localização" className="form-card">
             <Form.Item
-              label="Morada"
+              label="Endereço"
               name="address"
             >
               <TextArea rows={2} disabled={submitting} />

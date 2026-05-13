@@ -179,7 +179,7 @@ function InstitutionView() {
                   <div className="contact-item">
                     <EnvironmentOutlined />
                     <div className="contact-details">
-                      <Text type="secondary">Morada</Text>
+                      <Text type="secondary">Endereço</Text>
                       <Text>
                         {institution.address}
                         {institution.address && institution.post_code && ', '}
