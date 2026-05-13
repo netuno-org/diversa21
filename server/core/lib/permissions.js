@@ -1,11 +1,5 @@
 import people from "#core/lib/people.js";
 
-const peopleUid = people.getLogged().getUID("uid");
-const data = people.getData(peopleUid);
-
-const loggedUserGroupCode = data.getValues("group").getString("code");
-const loggedUserInstitutionUid = data.getValues("institution").getUID("uid");
-
 const SUPER_ADMIN = "super-admin";
 const REVIEW = "review";
 const MANAGEMENT = "management";
