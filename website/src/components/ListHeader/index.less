@@ -3,9 +3,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .ant-typography {
-   margin: 0 !important;
- }
+    margin: 0 !important;
+  }
 }
 
 .input-container {
@@ -15,11 +16,33 @@
   margin-top: 20px;
 
   .search-input {
-    width: 70%;
+    width: 100%;
   }
 
   .local-select {
     width: 30%;
     height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    .ant-btn {
+      width: 100%
+    }
+  }
+
+  .input-container {
+    .search-input {
+      width: 100%;
+    }
+
+    .local-select {
+      width: 100%;
+    }
   }
 }
