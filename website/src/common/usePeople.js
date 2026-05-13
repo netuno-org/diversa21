@@ -4,9 +4,33 @@ import _service from "@netuno/service-client";
 import globalNotification from "./globalNotification.js";
 import _auth from "@netuno/auth-client";
 
+const SUPER_ADMIN = "super-admin";
+const REVIEW = "review";
+const MANAGEMENT = "management";
+const MEMBER = "member";
+
 function usePeople() {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.people.data);
+  const isLoggedUserGroup = (groupCode) => {
+    const loggedUserGroupCode = data?.group?.code; 
+    return loggedUserGroupCode === groupCode; 
+  }
+  const isLoggedUserInstitution = (institutionUid) => {
+    const loggedUserInstitutionUid = data?.institution?.uid;
+    return loggedUserInstitutionUid === institutionUid;
+  }
+  const canManageUserOrCreateMember = (otherUserGroupCode, otherUserInstitutionUid) => {
+      return (
+        (
+          isLoggedUserGroup(SUPER_ADMIN)
+        ) || (
+          isLoggedUserGroup(MANAGEMENT) &&
+          isLoggedUserInstitution(otherUserInstitutionUid) &&
+          otherUserGroupCode === MEMBER 
+        )
+      );
+  }
   const load = (onFinish) => {
     _service({
       method: 'GET',
@@ -48,55 +72,28 @@ function usePeople() {
       dispatch(peopleLoadAction(null));
       load();
     },
-    canCreateAnyUser: () => {
-      return data?.group?.code === "super-admin"; 
-    },
-    canManageUser: (people) => {
-      return (
-        (
-          data?.group?.code === "management" && 
-          people?.group?.code === "member" &&
-          data?.institution?.uid === people?.institution?.uid
-        ) || (
-          data?.group?.code === "super-admin"
-        )
-      );
-    },
-    canChangeUserGroup: () => {
-      return data?.group?.code === "super-admin"; 
-    },
-    canChangeUserInstitution: () => {
-      return data?.group?.code === "super-admin"; 
-    },
-    canChangeOwnInstitution: () => {
-      return data?.group?.code === "super-admin"; 
-    },
+    canCreateAnyUser: () => isLoggedUserGroup(SUPER_ADMIN),
     canCreateMember: (institution) => {
+      return canManageUserOrCreateMember(MEMBER, institution?.uid);
+    },
+    canManageUser: (user) => {
+      return canManageUserOrCreateMember(user?.group?.code, user?.institution?.uid);
+    },
+    canChangeUserGroup: () => isLoggedUserGroup(SUPER_ADMIN),
+    canChangeUserInstitution: () => isLoggedUserGroup(SUPER_ADMIN),
+    canChangeOwnInstitution: () => isLoggedUserGroup(SUPER_ADMIN),
+    canCreateInstitutions: () => isLoggedUserGroup(SUPER_ADMIN),
+    canManageInstitution: (institutionUid) => {
       return (
         (
-          data?.group?.code === "super-admin"
+          isLoggedUserGroup(SUPER_ADMIN)
         ) || (
-          data?.group?.code === "management" && 
-          data?.institution?.uid === institution?.uid
+          isLoggedUserGroup(MANAGEMENT) &&
+          isLoggedUserInstitution(institutionUid)
         )
       );
     },
-    canManageInstitution: (institution) => {
-      return (
-        (
-          data?.group?.code === "super-admin"
-        ) || (
-          data?.group?.code === "management" && 
-          data?.institution?.uid === institution?.uid
-        )
-      );
-    },
-    canCreateInstitutions: () => {
-      return data?.group?.code === "super-admin"; 
-    },
-    canManagePosts: () => {
-      return data?.group?.code === "review"; 
-    },
+    canManagePosts: () => isLoggedUserGroup(REVIEW),
   };
 }
 
