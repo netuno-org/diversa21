@@ -17,9 +17,10 @@ function HeaderUserInfo() {
       setLoading(true);
     } else {
       setLoading(false);
-      setAvatarImageURL(null);
       if (people.data.avatar) {
         setTimeout(() => setAvatarImageURL(_service.url(`/people/avatar?uid=${people.data.uid}&${new Date().getTime()}`)), 250);
+      }  else {
+        setAvatarImageURL('/images/profile-default.png')
       }
     }
   }, [people.data]);
