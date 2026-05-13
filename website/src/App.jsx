@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes as Switch, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { Routes as Switch, Route, useNavigate, Navigate } from "react-router-dom";
 
 import {ConfigProvider, Layout, notification} from 'antd';
 import antLocale_ptBR from 'antd/lib/locale/pt_BR';
@@ -20,9 +20,7 @@ import FooterBase from "./base/FooterBase";
 import globalNotification from "./common/globalNotification.js";
 
 import LoginPage from './pages/Login';
-import Register from './pages/Register/index.jsx';
 import LoginCallback from './pages/LoginCallback';
-import RegisterCallback from './pages/RegisterCallback';
 import Recovery from './pages/Recovery';
 import NotFound from './pages/NotFound';
 import ReservedArea from "./pages/ReservedArea";
@@ -49,10 +47,8 @@ const NavWithAuthCheck = () => {
 };
 
 export default function App() {
-  const [headerButtonMode, setHeaderButtonMode] = useState('login');
   const [collapsed, setCollapsed] = useState(false);
 
-  const location = useLocation();
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
 
@@ -63,10 +59,6 @@ export default function App() {
       }
     });
   }, []);
-
-  useEffect(() => {
-    setHeaderButtonMode(location.pathname);
-  }, [location]);
 
   useEffect(() => {
     globalNotification.api(api);
@@ -117,15 +109,13 @@ export default function App() {
         <Layout className={'page ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
           <SiderMenu collapsed={collapsed} onCollapse={onCollapse} />
           <Layout>
-            <HeaderBase collapsed={collapsed} headerButtonMode={headerButtonMode} />
+            <HeaderBase collapsed={collapsed} />
             <Content className={classNames({ 'auth ': _auth.isLogged() })}>
               <Switch>
                 {/** PUBLIC **/}
                 <Route exact path="/" element={<NavWithAuthCheck/>}/>
                 <Route path="/login/:provider" element={<LoginCallback/>} />
-                <Route path="/register/:provider" element={<RegisterCallback/>} />
                 <Route path="/login" element={<LoginPage/>} />
-                <Route path="/register" element={<Register/>} />
                 <Route path="/recovery" element={<Recovery/>} />
                 {/** // PUBLIC **/}
                 {/** RESERVED AREA **/}
@@ -134,7 +124,6 @@ export default function App() {
                 <Route path="/posts" element={<ReservedArea />} />
                 <Route path="/u/:username" element={<ReservedArea />} />
                 <Route path="/e/:username" element={<ReservedArea />} />
-                <Route path="/other-page" element={<ReservedArea />} />
                 <Route path="/people/create/user" element={<ReservedArea />} />
                 <Route path="/people" element={<ReservedArea />} />
                 <Route path="/institutions" element={<ReservedArea />} />

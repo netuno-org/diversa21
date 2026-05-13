@@ -11,7 +11,6 @@ import ProfileView from "./profile/View";
 import Posts from "./Posts";
 import UserProfile from "./UserProfile";
 import UserProfileEdit from "./UserProfileEdit";
-import OtherPage from "./OtherPage";
 import People from "./People";
 import CreateUser from "../CreateUser";
 import InstitutionsList from "./Institutions/List";
@@ -65,9 +64,6 @@ function ReservedArea() {
     }
     if (location.pathname.startsWith("/e/")) {
       return <UserProfileEdit username={params.username}/>;
-    }
-    if (location.pathname === "/other-page") {
-      return <OtherPage/>;
     }
     if (location.pathname === "/people") {
       return <People/>;

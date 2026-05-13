@@ -34,12 +34,6 @@ const menuItems = [
     link: "/people"
   },
   {
-    key: "other-page",
-    label: "Outra Página",
-    icon: <BlockOutlined />,
-    link: "/other-page"
-  },
-  {
     key: "locations",
     label: "Localizações",
     icon: <EnvironmentOutlined />,

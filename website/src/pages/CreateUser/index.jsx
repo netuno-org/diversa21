@@ -31,9 +31,6 @@ export default function CreateUser() {
             operation={"create"}
             people={null} 
             redirectTo={"/people"}
-            configProvider={null}
-            configAltcha={null}
-            altchaPayload={null}
           />
         </div>
       </Content>

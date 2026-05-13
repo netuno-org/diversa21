@@ -10,7 +10,7 @@ import "./index.less";
 
 const { Header } = Layout;
 
-function HeaderBase({ collapsed, headerButtonMode }) {
+function HeaderBase({ collapsed }) {
   const [menuKeysSelected, setMenuKeysSelected] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,15 +33,7 @@ function HeaderBase({ collapsed, headerButtonMode }) {
       {!_auth.isLogged() &&
         <Link to="/" className="logo-container"><img alt="logo" src="/images/logo.svg" /></Link>
       }
-      {headerButtonMode === '/login' ?
-        <Link to="/register">
-          <Button type="primary">Criar conta</Button>
-        </Link>
-        : headerButtonMode === '/register' ?
-        <Link to="/login">
-          <Button type="primary">Iniciar sessão</Button>
-        </Link>
-        : _auth.isLogged() &&
+      {_auth.isLogged() &&
         <Menu
           mode="horizontal"
           onClick={onUserMenuClick}

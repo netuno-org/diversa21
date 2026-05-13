@@ -10,8 +10,7 @@ const { Title } = Typography;
 
 export default function LoginCallback(props) {
   const [logged, setLogged] = useState(false);
-  const [register, setRegister] = useState(false);
-  const { provider } = useParams(null);
+  // const { provider } = useParams(null);
   const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
@@ -19,7 +18,7 @@ export default function LoginCallback(props) {
     const code = urlParams.get('code');
     _service({
       method: 'POST',
-      url: `_auth_provider/login/${provider}`,
+      url: `_auth_provider/login`,
       data: {
         code
       },
@@ -29,12 +28,12 @@ export default function LoginCallback(props) {
             const authConfig = await _auth.config();
             authConfig.token.load(authConfig, json.token);
             setLogged(true);
-          } else if (json.provider && json.provider.new) {
-            api.warning({
-              message: 'Criar Nova Conta',
-              description: 'Não tem a sua conta criada ainda, avance com a criação da conta.',
-            });
-            setRegister(true);
+          // } else if (json.provider && json.provider.new) {
+          //   api.warning({
+          //     message: 'Criar Nova Conta',
+          //     description: 'Não tem a sua conta criada ainda, avance com a criação da conta.',
+          //   });
+          //   setRegister(true);
           }
         }
       },
@@ -47,9 +46,6 @@ export default function LoginCallback(props) {
       }
     });
   }, []);
-  if (register) {
-    return <Navigate to={`/register`} />;
-  }
   if (logged && _auth.isLogged()) {
     return <Navigate to="/profile/view" />;
   }

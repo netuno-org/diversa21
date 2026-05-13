@@ -15,10 +15,7 @@ import Avatar from './Avatar';
 function ProfileForm({ 
   operation,
   people,
-  redirectTo,
-  configProvider,
-  configAltcha,
-  altchaPayload
+  redirectTo
 }) {
   const loggedUser = usePeople();
 
@@ -173,10 +170,6 @@ function ProfileForm({
       group: selectedGroup.value
     }
 
-    if (operation === "create" && configAltcha && altchaPayload) {
-      data.altcha = altchaPayload
-    }
-
     if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
 
@@ -324,7 +317,6 @@ function ProfileForm({
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
-          {configProvider}
           <Form.Item
             label="Nome"
             name="name"

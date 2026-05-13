@@ -202,13 +202,6 @@ function Login() {
                 {visible && <RecoverModal onClose={() => { setVisible(false) }} />}
               </Form.Item>
 
-              <hr />
-              <span><p>ou</p></span>
-              <Link to="/register">
-                <Button loading={submitting} type="default" className={"register-btn"}>
-                  Criar Conta
-                </Button>
-              </Link>
             </Form>
           </div>
 

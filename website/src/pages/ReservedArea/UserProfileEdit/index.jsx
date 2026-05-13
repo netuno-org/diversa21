@@ -54,9 +54,6 @@ function UserProfileEdit({username}) {
         operation={"edit"}
         people={user} 
         redirectTo={"/people"}
-        configProvider={null}
-        configAltcha={null}
-        altchaPayload={null}
       />
     </section>
   )

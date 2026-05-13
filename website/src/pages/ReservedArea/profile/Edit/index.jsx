@@ -29,9 +29,6 @@ function ProfileEdit() {
         operation={"edit"}
         people={people.data} 
         redirectTo={"/profile/view"}
-        configProvider={null}
-        configAltcha={null}
-        altchaPayload={null}
       />
     </section>
   );
