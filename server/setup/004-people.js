@@ -157,7 +157,7 @@ const people = [
   }
 ];
 
-people.forEach((person, index) => {
+people.forEach((person) => {
 
   let user_id = null;
 
