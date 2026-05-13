@@ -125,7 +125,7 @@ function Login() {
       <Layout>
         <Content className="login-container">
           <div className="content-title">
-            <Title>Iniciar sessão.</Title>
+            <Title>Iniciar Sessão</Title>
           </div>
           {contextHolder}
           <div className="content-body">
