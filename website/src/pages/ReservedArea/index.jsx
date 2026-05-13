@@ -6,11 +6,11 @@ import {useNavigate, useLocation, useParams} from "react-router-dom";
 import usePeople from "../../common/usePeople.js";
 
 import NotFound from "../NotFound";
-import ProfileEdit from "./profile/Edit";
-import ProfileView from "./profile/View";
+import ProfileEdit from "./MyProfile/Edit";
+import ProfileView from "./MyProfile/View";
 import Posts from "./Posts";
-import UserProfile from "./UserProfile";
-import UserProfileEdit from "./UserProfileEdit";
+import UserProfile from "./UserProfile/View";
+import UserProfileEdit from "./UserProfile/Edit";
 import People from "./People";
 import CreateUser from "../CreateUser";
 import InstitutionsList from "./Institutions/List";

@@ -5,9 +5,9 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import _service from '@netuno/service-client';
 
-import usePeople from "../../../common/usePeople.js";
+import usePeople from "../../../../common/usePeople.js";
 
-import ProfileForm from "../../../components/ProfileForm"
+import ProfileForm from "../../../../components/ProfileForm"
 
 const { Title } = Typography;
 
