@@ -37,6 +37,8 @@ function LocationList() {
         const newStates = [];
         const newCities = [];
 
+        console.log("Dados que carregaram do BackEnd", items);
+
         items.forEach(item => {
           const [countryName, stateName, cityName] = (item.label || "")
             .split(' > ')
@@ -45,21 +47,24 @@ function LocationList() {
           if (item.type === 'country') {
             newCountries.push({
               uid: item.uid,
-              name: countryName
+              name: countryName,
+              code: item.code
             });
           }
           else if (item.type === 'state') {
             newStates.push({
               uid: item.uid,
               name: stateName,
-              parentName: countryName
+              countryName: countryName,
+              code: item.code
             });
           }
           else if (item.type === 'city') {
             newCities.push({
               uid: item.uid,
               name: cityName,
-              parentName: `${countryName} > ${stateName}`
+              stateName: stateName,
+              countryName: countryName
             });
           }
         });
@@ -115,12 +120,27 @@ function LocationList() {
       }
     ];
 
-    if (activeTab !== 'country') {
+    if (activeTab === 'country' || activeTab === 'state') {
       baseColumns.push({
-        title: activeTab === 'state' ? 'País' : 'País > Estado',
-        dataIndex: 'parentName',
-        key: 'parentName',
-        render: (text) => <Text type="secondary">{text}</Text>
+        title: 'Código',
+        dataIndex: 'code',
+        key: 'code',
+      });
+    }
+
+    if (activeTab === 'city') {
+      baseColumns.push({
+        title: 'Estado',
+        dataIndex: 'stateName',
+        key: 'stateName',
+      });
+    }
+
+    if (activeTab === 'state' || activeTab === 'city') {
+      baseColumns.push({
+        title: 'País',
+        dataIndex: 'countryName',
+        key: 'countryName',
       });
     }
 
@@ -213,7 +233,7 @@ function LocationList() {
             icon={<PlusOutlined />}
             onClick={() => handleOpenModal()}
           >
-            Novo {activeTab === 'country' ? 'País' : activeTab === 'state' ? 'Estado' : 'Cidade'}
+            Nov{activeTab === 'country' ? 'o País' : activeTab === 'state' ? 'o Estado' : 'a Cidade'}
           </Button>
         )}
       </div>
