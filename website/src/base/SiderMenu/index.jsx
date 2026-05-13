@@ -1,5 +1,5 @@
 import _auth from "@netuno/auth-client";
-import {MenuOutlined, DashboardOutlined, BlockOutlined, UserOutlined} from "@ant-design/icons";
+import {MenuOutlined, DashboardOutlined, BlockOutlined, UserOutlined, EnvironmentOutlined} from "@ant-design/icons";
 import {Menu, Layout} from "antd";
 import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
@@ -38,6 +38,12 @@ const menuItems = [
     label: "Outra Página",
     icon: <BlockOutlined />,
     link: "/other-page"
+  },
+  {
+    key: "locations",
+    label: "Localizações",
+    icon: <EnvironmentOutlined />,
+    link: "/locations"
   },
 ];
 

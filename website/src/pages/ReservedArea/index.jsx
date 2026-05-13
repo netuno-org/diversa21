@@ -17,6 +17,7 @@ import CreateUser from "../CreateUser";
 import InstitutionsList from "./Institutions/List";
 import InstitutionView from "./Institutions/View";
 import InstitutionForm from "../../components/InstitutionForm";
+import LocationList from "./Locations/List";
 
 import "./index.less";
 
@@ -72,6 +73,10 @@ function ReservedArea() {
       return <People/>;
     }
     if (location.pathname === "/people/create/user") {
+      if (!people.canCreateAnyUser()) {
+        navigate('/people');  
+        return;
+      }
       return <CreateUser/>;
     }
     if (location.pathname === "/institutions") {
@@ -86,6 +91,9 @@ function ReservedArea() {
     if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
       const slug = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
       return <InstitutionForm slug={slug} onSuccess={() => navigate(`/institutions/${slug}`)} onCancel={() => navigate(`/institutions/${slug}`)} />;
+    }
+    if (location.pathname === "/locations") {
+      return <LocationList />;
     }
     return <NotFound />;
   }
