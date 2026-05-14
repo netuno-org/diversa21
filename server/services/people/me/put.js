@@ -1,4 +1,5 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import permissions from "#core/lib/permissions.js";
 
 const name = _req.getString("name");
 const username = _req.getString("username");
@@ -49,7 +50,12 @@ const peopleData = _val.map()
   .set("email", email)
   .set("birth_date", birthDate)
   .set("city_id", cityId)
-  .set("institution_id", institutionId)
+
+// fail silently if not super-admin
+if (permissions.canChangeOwnInstitution()) {
+  peopleData 
+    .set("institution_id", institutionId)
+}
 
 if (avatar) {
   peopleData.set("avatar", avatar)
