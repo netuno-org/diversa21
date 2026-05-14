@@ -18,7 +18,8 @@ export default {
              institution.uid AS "institution_uid",
              institution.name AS "institution_name",
              netuno_group.code AS "group_code",
-             netuno_group.name AS "group_name"
+             netuno_group.name AS "group_name",
+             netuno_user.active as "active"
       FROM people
              INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
              INNER JOIN institution ON people.institution_id = institution.id
@@ -30,7 +31,7 @@ export default {
     `, uid);
     if (dbPeople) {
       return _val.map()
-        .set("uid", dbPeople.getString("uid"))
+        .set("uid", dbPeople.getUID("uid"))
         .set("name", dbPeople.getString("name"))
         .set("username", dbPeople.getString("user"))
         .set("group",
@@ -43,24 +44,25 @@ export default {
         .set("birthDate", dbPeople.getString("birth_date"))
         .set("city",
           _val.map()
-            .set("uid", dbPeople.getString("city_uid"))
+            .set("uid", dbPeople.getUID("city_uid"))
             .set("name", dbPeople.getString("city_name"))
         )
         .set("state",
           _val.map()
-            .set("uid", dbPeople.getString("state_uid"))
+            .set("uid", dbPeople.getUID("state_uid"))
             .set("name", dbPeople.getString("state_name"))
         )
         .set("country",
           _val.map()
-            .set("uid", dbPeople.getString("country_uid"))
+            .set("uid", dbPeople.getUID("country_uid"))
             .set("name", dbPeople.getString("country_name"))
         )
         .set("institution",
           _val.map()
-            .set("uid", dbPeople.getString("institution_uid"))
+            .set("uid", dbPeople.getUID("institution_uid"))
             .set("name", dbPeople.getString("institution_name"))
         )
+        .set("active", dbPeople.getBoolean("active"))
     }
     return null;
   },

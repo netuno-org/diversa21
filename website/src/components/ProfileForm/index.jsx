@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Navigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Button, Divider, Spin, notification } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Divider, Spin, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -37,6 +37,9 @@ function ProfileForm({
        !itsLoggedUserProfile && loggedUser.canChangeUserInstitution() ||
        itsLoggedUserProfile && loggedUser.canChangeOwnInstitution()
     )); 
+  const canViewActiveField = !itsLoggedUserProfile && operation == "edit" && 
+    loggedUser.canManageUser(people);
+
 
   const [cityOptions, setCityOptions] = useState([])
   const [institutionOptions, setInstitutionOptions] = useState([])
@@ -157,7 +160,7 @@ function ProfileForm({
     setSubmitting(true);
 
     let url = 'people';
-    const { name, username, password, email, birthDate } = values;
+    const { name, username, password, email, birthDate, active } = values;
 
     const data = {
       name,
@@ -167,7 +170,8 @@ function ProfileForm({
       birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
       city: selectedCity.uid,
       institution: selectedInstitution.uid,
-      group: selectedGroup.value
+      group: selectedGroup.value,
+      active
     }
 
     if (operation === "edit" && people && loggedUser) {
@@ -305,7 +309,8 @@ function ProfileForm({
               birthDate: dayjs(people.birthDate),
               city: people.country.name + " > " + people.state.name + " > " + people.city.name,
               institution: people.institution.name,
-              group: people.group.name 
+              group: people.group.name,
+              active: people.active 
             }
             : operation === "create" && !loggedUser.canCreateAnyUser() ?
             { 
@@ -457,6 +462,11 @@ function ProfileForm({
             }
           </Form.Item>
           </>}
+          { canViewActiveField && 
+            <Form.Item name="active">
+              <Switch checkedChildren="ativo" unCheckedChildren="inativo" />
+            </Form.Item>
+          }
           <Form.Item>
             { operation === "create" ?
               <Button type="primary" htmlType="submit" loading={submitting}>

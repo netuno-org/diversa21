@@ -13,6 +13,7 @@ const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");
+const active = _req.getBoolean("active");
 
 const groups = ["member", "review", "management", "super-admin"];
 
@@ -64,6 +65,18 @@ if (!dbCity) {
   _exec.stop();
 }
 
+const dbPeople = _db.queryFirst(`
+    SELECT * FROM people WHERE uid = ?::uuid
+`, uid);
+
+if (!dbPeople) {
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "user-uid-not-found")
+  );
+  _exec.stop();
+}
 
 const userEmailExists = _db.queryFirst(`
     SELECT email from people
@@ -105,9 +118,6 @@ if (!permissions.canManageUser(groupCode, institutionUid)) {
 
 // Update user account
 
-const dbPeople = _db.queryFirst(`
-    SELECT * FROM people WHERE uid = ?::uuid
-`, uid);
 const peopleUserId = dbPeople.getInt("people_user_id");
 const userData = _user.get(peopleUserId);
 
@@ -117,6 +127,7 @@ userData
   .set("name", name)
   .set("user", username)
   .set("mail", email)
+  .set("active", active)
 
 // redundant checking:
 // if (permissions.canChangeUserGroup()) {
@@ -140,6 +151,7 @@ const peopleData = _val.map()
   .set("email", email)
   .set("birth_date", birthDate)
   .set("city_id", cityId)
+  .set("active", active)
 
 // redundant checking:
 // if (permissions.canChangeUserInstitution()) {
