@@ -102,7 +102,7 @@ function Editor({
         rules={[{ required: true }]}
         label={types[type].title}
       >
-        <TextArea rows={4} />
+        <TextArea style={{ resize: 'none' }} rows={4} />
       </Form.Item>
       <Form.Item>
         <Space>

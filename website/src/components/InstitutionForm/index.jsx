@@ -248,6 +248,7 @@ export default function InstitutionForm({
               ]}
             >
               <TextArea 
+              style={{ resize: 'none' }}
                 rows={4} 
                 disabled={submitting} 
                 maxLength={2000}
@@ -369,7 +370,7 @@ export default function InstitutionForm({
               label="Endereço"
               name="address"
             >
-              <TextArea rows={2} disabled={submitting} />
+              <TextArea style={{ resize: 'none' }} rows={2} disabled={submitting} />
             </Form.Item>
 
             <Form.Item
