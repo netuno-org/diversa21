@@ -31,8 +31,8 @@ export default {
     return canManageUserOrCreateMember(newMemberGroupCode, newMemberInstitutionUid);
   },
   canManageUser: (userGroupCode, userInstitutionUid) => canManageUserOrCreateMember(userGroupCode, userInstitutionUid),
-  canChangeUserGroup: () => isSuperAdmin,
-  canChangeUserInstitution: () => isSuperAdmin,
+  // canChangeUserGroup: () => isSuperAdmin,
+  // canChangeUserInstitution: () => isSuperAdmin,
   canChangeOwnInstitution: () => isSuperAdmin,
   canCreateInstitutions: () => isSuperAdmin,
   canManageInstitution: (institutionUid) => (isSuperAdmin || (isManager && isLoggedUserInstitution(institutionUid))),

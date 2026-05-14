@@ -1,19 +1,22 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import permissions from "#core/lib/permissions.js";
+
+
+// Validate user input
 
 const uid = _req.getUID("uid");
 const name = _req.getString("name");
 const username = _req.getString("username");
 const email = _req.getString("email");
-const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
-const group = _req.getString("group");
+const groupCode = _req.getString("group");
 
 const groups = ["member", "review", "management", "super-admin"];
 
-if (!groups.includes(group)) {
+if (!groups.includes(groupCode)) {
   _header.status(404);
   _out.json(
     _val.map()
@@ -22,7 +25,45 @@ if (!groups.includes(group)) {
   _exec.stop();
 }
 
-const dbNetunoGroup = _group.firstByCode(group);
+const dbNetunoGroup = _group.firstByCode(groupCode);
+
+if (!dbNetunoGroup) {
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "group-not-found")
+  );
+  _exec.stop();
+}
+
+const dbInstitution = _db.queryFirst(`
+  SELECT id FROM institution 
+  WHERE uid = ?::uuid
+`, institutionUid)
+
+if (!dbInstitution) {
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "institution-not-found")
+  );
+  _exec.stop();
+}
+
+const dbCity = _db.queryFirst(`
+  SELECT id FROM city
+  WHERE uid =?::uuid
+`, cityUid)
+
+if (!dbCity) {
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "city-not-found")
+  );
+  _exec.stop();
+}
+
 
 const userEmailExists = _db.queryFirst(`
     SELECT email from people
@@ -49,51 +90,62 @@ if (userEmailExists || usernameExists) {
   _exec.stop();
 } 
 
+
+// Verify permissions
+
+if (!permissions.canManageUser(groupCode, institutionUid)) {
+    _header.status(403);
+    _out.json(
+      _val.map()
+        .set("error", "permission denied")
+    );
+    _exec.stop();
+}
+
+
+// Update user account
+
 const dbPeople = _db.queryFirst(`
     SELECT * FROM people WHERE uid = ?::uuid
 `, uid);
-
 const peopleUserId = dbPeople.getInt("people_user_id");
-
 const userData = _user.get(peopleUserId);
+
+const groupId = dbNetunoGroup.getInt("id")
 
 userData
   .set("name", name)
   .set("user", username)
   .set("mail", email)
-  .set("group_id", dbNetunoGroup.getInt("id"));
 
-if (password.length > 0) {
-  userData.set("pass", password);
-  _user.update(
-    peopleUserId,
-    userData,
-    true
-  );
-} else {
-  _user.update(
-    peopleUserId,
-    userData
-  );
-}
+// redundant checking:
+// if (permissions.canChangeUserGroup()) {
+  userData
+    .set("group_id", groupId);
+// }
 
-// TODO: error handling de institution e city
-const institutionId = _db.queryFirst(`
-  SELECT id FROM institution 
-  WHERE uid = ?::uuid
-`, institutionUid).getInt("id");
+_user.update(
+  peopleUserId,
+  userData
+);
 
-const cityId = _db.queryFirst(`
-  SELECT id FROM city
-  WHERE uid =?::uuid
-`, cityUid).getInt("id");
+
+// Update user profile
+
+const institutionId = dbInstitution.getInt("id");
+const cityId = dbCity.getInt("id");
 
 const peopleData = _val.map()
   .set("name", name)
   .set("email", email)
   .set("birth_date", birthDate)
   .set("city_id", cityId)
-  .set("institution_id", institutionId)
+
+// redundant checking:
+// if (permissions.canChangeUserInstitution()) {
+  peopleData 
+    .set("institution_id", institutionId)
+// }
 
 if (avatar) {
   peopleData.set("avatar", avatar)
@@ -105,7 +157,8 @@ _db.update(
   peopleData
 );
 
+
 _out.json(
   _val.map()
-  .set("result", true)
+    .set("result", true)
 );
