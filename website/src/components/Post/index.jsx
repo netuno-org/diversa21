@@ -37,7 +37,7 @@ function Post({
   useEffect(() => {
     if (people.avatar) {
       setAvatarUrl(
-       _service.url(`/people/avatar?uid=${people.uid}`)
+        _service.url(`/people/avatar?uid=${people.uid}`)
       );
     }
   }, []);
@@ -71,7 +71,6 @@ function Post({
         notification.success({
           title: "Post apagado com sucesso."
         });
-
         onRemovePost(uid);
       },
       fail: (e) => {
@@ -127,42 +126,52 @@ function Post({
     <Card className="post-container">
       <>
         <div
-          style={{
-            width: "100%"
-          }}
+          className="header-user-info-container"
         >
-          <Link to={`/u/${people.user}`}>
-            <Avatar style={{ marginRight: '12px' }} src={avatarUrl} alt={people.name} />
-            {people.name}
-          </Link>
+          <div style={{ display: "flex" }}>
+            <Link to={`/u/${people.user}`}>
+              <Avatar
+                size={50}
+                style={{ marginRight: '12px' }}
+                src={avatarUrl}
+                alt={people.name}
+              />
+            </Link>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <Link style={{ fontSize: '20px' }} to={`/u/${people.user}`}>
+                <p className="user-name">{people.name}</p>
+              </Link>
+              <span style={{ fontSize: '13px', color: '#8c8c8c' }}>
+                {momentjs(moment).format("lll")}
+              </span>
+            </div>
+          </div>
+          <div>
+            {people.uid === userPeople.data.uid && <>
+              <Popconfirm
+                title="Removendo post"
+                onConfirm={onDeletePost}
+              >
+                <Button
+                  danger
+                  type="link"
+                  className="delete-post-button"
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>
+              {!editMode && (
+                <Button
+                  type="link"
+                  onClick={() => setEditMode(true)}
+                  className="edit-post-button"
+                >
+                  <EditOutlined />
+                </Button>
+              )}
+            </>}
+          </div>
         </div>
-        <span>
-          {/* {momentjs(moment).startOf('hour').fromNow()} */}
-          {/* {momentjs(moment).startOf('day').fromNow()} */}
-          {momentjs(moment).format("lll")}
-          {people.uid === userPeople.data.uid && <>
-            <Popconfirm
-              title="Removendo post"
-              onConfirm={onDeletePost}
-            >
-              <Button
-                danger
-                type="link"
-                className="delete-post-button"
-              >
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm>
-            {!editMode && (
-              <Button
-                type="link"
-                onClick={() => setEditMode(true)}
-              >
-                <EditOutlined />
-              </Button>
-            )}
-          </>}
-        </span>
       </>
       {
         editMode ? (
@@ -179,7 +188,7 @@ function Post({
               }
             }}
           />
-      ) : <div className="post-text-container">{content}</div>}
+        ) : <div className="post-text-container">{content}</div>}
       {[
         <div>
           <Button type='link' onClick={onLike}>
@@ -187,7 +196,7 @@ function Post({
             &nbsp;{likesCounter}
           </Button>
           {!showEditor && !editMode && (
-              <Button onClick={() => setShowEditor(true)}>Responder</Button>
+            <Button onClick={() => setShowEditor(true)}>Responder</Button>
           )}
 
           {!editMode && countComments > 0 && (

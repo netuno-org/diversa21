@@ -1,12 +1,41 @@
 .post-container {
   margin-top: 20px;
+
+  .user-name {
+    margin: 0;
+  }
+
+  .header-user-info-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
   .post-text-container {
     width: 100%;
     word-break: break-word;
+    margin: 12px 0;
+
   }
+
+  .delete-post-button {
+    padding: 0;
+    margin-right: 10px;
+  }
+
+  .edit-post-button {
+    padding: 0;
+  }
+
   .ant-comment-actions {
     li {
       width: 100%;
     }
+  }
+}
+
+@media (max-width: 400px) {
+  .ant-card-body {
+    padding: 16px ! important
   }
 }

@@ -35,7 +35,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
                   ? "#52c41a"
                   : user.group.code === "management"
                     ? "#1677ff"
-                    : "#d4a017",
+                    : "#d0990f",
               display: "flex",
               alignItems: "center",
               gap: 4,
