@@ -10,9 +10,33 @@ const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 
-const dbPeople = _db.queryFirst(`
-    SELECT * FROM people WHERE people_user_id = ?::int
-`, _user.id());
+const dbInstitution = _db.queryFirst(`
+  SELECT id FROM institution 
+  WHERE uid = ?::uuid
+`, institutionUid)
+
+if (!dbInstitution) {
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "institution-not-found")
+  );
+  _exec.stop();
+}
+
+const dbCity = _db.queryFirst(`
+  SELECT id FROM city
+  WHERE uid =?::uuid
+`, cityUid)
+
+if (!dbCity) {
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "city-not-found")
+  );
+  _exec.stop();
+}
 
 const userData = _user.get(_user.id());
 userData
@@ -34,16 +58,8 @@ if (password.length > 0) {
   );
 }
 
-// TODO: error handling de institution e city
-const institutionId = _db.queryFirst(`
-  SELECT id FROM institution 
-  WHERE uid = ?::uuid
-`, institutionUid).getInt("id");
 
-const cityId = _db.queryFirst(`
-  SELECT id FROM city
-  WHERE uid =?::uuid
-`, cityUid).getInt("id");
+const cityId = dbCity.getInt("id");
 
 const peopleData = _val.map()
   .set("name", name)
@@ -51,6 +67,7 @@ const peopleData = _val.map()
   .set("birth_date", birthDate)
   .set("city_id", cityId)
 
+const institutionId = dbInstitution.getInt("id");
 // fail silently if not super-admin
 if (permissions.canChangeOwnInstitution()) {
   peopleData 
@@ -61,11 +78,16 @@ if (avatar) {
   peopleData.set("avatar", avatar)
 }
 
+const dbPeople = _db.queryFirst(`
+    SELECT * FROM people WHERE people_user_id = ?::int
+`, _user.id());
+
 _db.update(
   "people",
   dbPeople.getInt("id"),
   peopleData
 );
+
 
 _out.json(
   _val.map()
