@@ -4,33 +4,32 @@ import _service from "@netuno/service-client";
 import globalNotification from "./globalNotification.js";
 import _auth from "@netuno/auth-client";
 
-const SUPER_ADMIN = "super-admin";
-const REVIEW = "review";
-const MANAGEMENT = "management";
 const MEMBER = "member";
 
 function usePeople() {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.people.data);
-  const isLoggedUserGroup = (groupCode) => {
-    const loggedUserGroupCode = data?.group?.code; 
-    return loggedUserGroupCode === groupCode; 
-  }
+
+  const loggedUserGroupCode = data?.group?.code; 
+
+  const isSuperAdmin = loggedUserGroupCode === "super-admin";
+  const isManager = loggedUserGroupCode === "management"; 
+  const isReview = loggedUserGroupCode === "review"; 
+
   const isLoggedUserInstitution = (institutionUid) => {
     const loggedUserInstitutionUid = data?.institution?.uid;
     return loggedUserInstitutionUid === institutionUid;
   }
   const canManageUserOrCreateMember = (otherUserGroupCode, otherUserInstitutionUid) => {
-      return (
+      return (isSuperAdmin || 
         (
-          isLoggedUserGroup(SUPER_ADMIN)
-        ) || (
-          isLoggedUserGroup(MANAGEMENT) &&
+          isManager &&
           isLoggedUserInstitution(otherUserInstitutionUid) &&
           otherUserGroupCode === MEMBER 
         )
       );
   }
+
   const load = (onFinish) => {
     _service({
       method: 'GET',
@@ -72,28 +71,17 @@ function usePeople() {
       dispatch(peopleLoadAction(null));
       load();
     },
-    canCreateAnyUser: () => isLoggedUserGroup(SUPER_ADMIN),
-    canCreateMember: (institution) => {
-      return canManageUserOrCreateMember(MEMBER, institution?.uid);
-    },
-    canManageUser: (user) => {
-      return canManageUserOrCreateMember(user?.group?.code, user?.institution?.uid);
-    },
-    canChangeUserGroup: () => isLoggedUserGroup(SUPER_ADMIN),
-    canChangeUserInstitution: () => isLoggedUserGroup(SUPER_ADMIN),
-    canChangeOwnInstitution: () => isLoggedUserGroup(SUPER_ADMIN),
-    canCreateInstitutions: () => isLoggedUserGroup(SUPER_ADMIN),
-    canManageInstitution: (institutionUid) => {
-      return (
-        (
-          isLoggedUserGroup(SUPER_ADMIN)
-        ) || (
-          isLoggedUserGroup(MANAGEMENT) &&
-          isLoggedUserInstitution(institutionUid)
-        )
-      );
-    },
-    canManagePosts: () => isLoggedUserGroup(REVIEW),
+    canCreateAnyUser: () => isSuperAdmin,
+    canCreateMember: (institution) => canManageUserOrCreateMember(MEMBER, institution?.uid),
+    canManageUser: (user) => canManageUserOrCreateMember(user?.group?.code, user?.institution?.uid),
+    // TODO: trocar essas funções que retornam apenas isSuperAdmin e isReview para variáveis?
+    // talvez não, porque como funções elas ficam mais consistentes com as outras funções
+    canChangeUserGroup: () => isSuperAdmin,
+    canChangeUserInstitution: () => isSuperAdmin,
+    canChangeOwnInstitution: () => isSuperAdmin,
+    canCreateInstitutions: () => isSuperAdmin,
+    canManageInstitution: (institutionUid) => (isSuperAdmin || (isManager && isLoggedUserInstitution(institutionUid))),
+    canManagePosts: () => isReview,
   };
 }
 

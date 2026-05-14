@@ -1,14 +1,12 @@
 import people from "#core/lib/people.js";
 
-const SUPER_ADMIN = "super-admin";
-const REVIEW = "review";
-const MANAGEMENT = "management";
 const MEMBER = "member";
 
-const isLoggedUserGroup = (groupCode) => {
-  const loggedUserGroupCode = _group.code();
-  return loggedUserGroupCode === groupCode; 
-}
+const loggedUserGroupCode = _group.code();
+
+const isSuperAdmin = loggedUserGroupCode === "super-admin";
+const isManager = loggedUserGroupCode === "management"; 
+const isReview = loggedUserGroupCode === "review"; 
 
 const isLoggedUserInstitution = (institutionUid) => {
   const peopleUid = people.getLogged().getUID("uid");
@@ -18,11 +16,9 @@ const isLoggedUserInstitution = (institutionUid) => {
 }
 
 const canManageUserOrCreateMember = (otherUserGroupCode, otherUserInstitutionUid) => {
-    return (
+    return (isSuperAdmin || 
       (
-        isLoggedUserGroup(SUPER_ADMIN)
-      ) || (
-        isLoggedUserGroup(MANAGEMENT) &&
+        isManager &&
         isLoggedUserInstitution(otherUserInstitutionUid) &&
         otherUserGroupCode === MEMBER 
       )
@@ -30,26 +26,15 @@ const canManageUserOrCreateMember = (otherUserGroupCode, otherUserInstitutionUid
 }
 
 export default {
-  canCreateAnyUser: () => isLoggedUserGroup(SUPER_ADMIN),
+  canCreateAnyUser: () => isSuperAdmin,
   canCreateMember: (newMemberGroupCode, newMemberInstitutionUid) => {
     return canManageUserOrCreateMember(newMemberGroupCode, newMemberInstitutionUid);
   },
-  canManageUser: (userGroupCode, userInstitutionUid) => {
-    return canManageUserOrCreateMember(userGroupCode, userInstitutionUid);
-  },
-  canChangeUserGroup: () => isLoggedUserGroup(SUPER_ADMIN),
-  canChangeUserInstitution: () => isLoggedUserGroup(SUPER_ADMIN),
-  canChangeOwnInstitution: () => isLoggedUserGroup(SUPER_ADMIN),
-  canCreateInstitutions: () => isLoggedUserGroup(SUPER_ADMIN),
-  canManageInstitution: (institutionUid) => {
-    return (
-      (
-        isLoggedUserGroup(SUPER_ADMIN)
-      ) || (
-        isLoggedUserGroup(MANAGEMENT) &&
-        isLoggedUserInstitution(institutionUid)
-      )
-    );
-  },
-  canManagePosts: () => isLoggedUserGroup(REVIEW),
+  canManageUser: (userGroupCode, userInstitutionUid) => canManageUserOrCreateMember(userGroupCode, userInstitutionUid),
+  canChangeUserGroup: () => isSuperAdmin,
+  canChangeUserInstitution: () => isSuperAdmin,
+  canChangeOwnInstitution: () => isSuperAdmin,
+  canCreateInstitutions: () => isSuperAdmin,
+  canManageInstitution: (institutionUid) => (isSuperAdmin || (isManager && isLoggedUserInstitution(institutionUid))),
+  canManagePosts: () => isReview,
 }
