@@ -179,7 +179,7 @@ function Post({
               }
             }}
           />
-      ) : content}
+      ) : <div className="post-text-container">{content}</div>}
       {[
         <div>
           <Button type='link' onClick={onLike}>
