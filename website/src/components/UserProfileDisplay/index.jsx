@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Avatar } from 'antd';
-import { UserOutlined, TeamOutlined, EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
+import { UserOutlined, EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
+import { BsFillHouseGearFill } from "react-icons/bs";
+import { GoShieldCheck } from "react-icons/go";
+import { RiFileEditLine } from "react-icons/ri";
+
 import _service from '@netuno/service-client';
 import dayjs from 'dayjs';
 
 function UserProfileDisplay({ user, avatarStyle, children }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
+  const iconSize = 16
 
   useEffect(() => {
     if (user && user.avatar) {
@@ -22,14 +27,30 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
       <Avatar style={avatarStyle} src={avatarUrl} />
       <div>
         <div><UserOutlined /> {user.name}</div>
-        { user.group.code !== "member" &&
+        {user.group.code !== "member" && (
           <div
-            style={{ color:
-              user.group.code == "review" ? "green" :
-              user.group.code == "management" ? "blue" : "red" }} > 
-            <TeamOutlined /> {user.group.name}
+            style={{
+              color:
+                user.group.code === "review"
+                  ? "#52c41a"
+                  : user.group.code === "management"
+                    ? "#1677ff"
+                    : "#d4a017",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            {user.group.code === "super-admin" ? (
+              <GoShieldCheck size={iconSize} />
+            ) : user.group.code === "management" ? (
+              <BsFillHouseGearFill size={iconSize} />
+            ) : (
+              <RiFileEditLine size={iconSize} />
+            )}
+            {user.group.name}
           </div>
-        }
+        )}
         <div><EnvironmentOutlined /> {user.city.name}, {user.state.name}, {user.country.name}</div>
         <div><CalendarOutlined /> {dayjs(user.birthDate).format('LL')}</div>
         {children}
