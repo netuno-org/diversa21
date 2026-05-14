@@ -23,8 +23,33 @@
       margin: 0;
     }
   }
+
+  .filters-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #fafafa;
+    border-radius: 8px;
+  }
+
+  .results-info {
+    margin-bottom: 16px;
+  }
 }
 
 @media (max-width: 768px) {
-  
+  .locations-list {
+    padding: 16px;
+
+    .filters-section {
+      .ant-space {
+        width: 100%;
+
+        .ant-select,
+        .ant-input-search,
+        .ant-input {
+          width: 100% !important;
+        }
+      }
+    }
+  }
 }
