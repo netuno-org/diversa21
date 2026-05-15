@@ -2,7 +2,7 @@
   "tags":[
     "people"
   ],
-  "summary": "Register",
+  "summary": "Register user",
   "description": "Create a new account.",
   "type": "object",
   "properties": {

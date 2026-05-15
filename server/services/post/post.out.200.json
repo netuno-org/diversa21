@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string-not-empty"
+    },
+    "moment": {
+      "type": "string-not-empty"
+    },
+    "people": {
+      "type": "object",
+      "properties": {
+        "avatar": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string-not-empty"
+        },
+        "uid": {
+          "type": "uid"
+        }
+      }
+    },
+    "uid": {
+      "type": "uid"
+    }
+  }
+}

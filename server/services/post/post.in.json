@@ -1,0 +1,19 @@
+{
+  "tags":[
+    "post"
+  ],
+  "summary": "Create Post",
+  "description": "Create a new post",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string-not-empty"
+    },
+    "parent": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "content"
+  ]
+}
