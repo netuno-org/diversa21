@@ -123,6 +123,13 @@ function Post({
     }
   }
 
+  const displayContent = [];
+  for (const line of content.split("\n")) {
+    displayContent.push(line);
+    displayContent.push(<br/>);
+  }
+  displayContent.pop();
+
   return (
     <Card className="post-container">
       <>
@@ -189,7 +196,9 @@ function Post({
               }
             }}
           />
-        ) : <div className="post-text-container">{content}</div>}
+        ) : <div className="post-text-container">
+              {displayContent}
+            </div>}
       {[
         <div>
           <Button type='link' onClick={onLike}>
