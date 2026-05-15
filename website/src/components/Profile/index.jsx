@@ -26,7 +26,7 @@ function Profile({ user }) {
       : screens.md
         ? 140
         : screens.sm
-          ? 110
+          ? 125
           : 70
 
   let content = null;
@@ -40,7 +40,7 @@ function Profile({ user }) {
   } else {
     content = (
       <div className="profile">
-        <Card>
+        <Card className="profile-card">
           {loggedUser.canManageUser(user) &&
             <div className="edit-profile-button">
               <Col>

@@ -23,7 +23,7 @@
   }
 }
 
-.people-search-result {
+.people-search-result-card {
   display: flex;
   margin-top: 20px;
   width: 100%;
@@ -36,7 +36,7 @@
 }
 
 @media (max-width: 576px) {
-  .people-search-result {
+  .people-search-result-card {
     margin-top: 20px;
     transition: all 0.2s ease;
 
@@ -44,26 +44,11 @@
       background: #fafafa;
       border-color: #8A6AA2;
     }
-    .ant-card-body {
-      padding: 15px;
-    }
   }
 }
 
 @media (max-width: 480px) {
   .search-input-container {
     flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .people-search-container {
-    align-items: center;
-  }
-  .results-info {
-    .ant-typography {
-      font-size: 12px;
-      text-align: center;
-    }
   }
 }
