@@ -3,6 +3,15 @@ import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 const content = _req.getString('content')
 const parent = _req.getString('parent')
 
+if (content.length > 500) {
+    _header.status(413);
+    _out.json(
+      _val.map()
+        .set("error", `text too large`)
+    );
+    _exec.stop();
+}
+
 const dbPeople = _db.queryFirst(`
     SELECT *
     FROM people
