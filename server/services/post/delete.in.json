@@ -1,0 +1,13 @@
+{
+  "tags":[
+    "post"
+  ],
+  "summary": "Remove Post",
+  "description": "Delete a post by it's UID.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  }
+}
