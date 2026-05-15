@@ -13,6 +13,7 @@ function Editor({
   content
 }) {
   const [submitting, setSubmitting] = useState(false);
+  const [form] = Form.useForm();
 
   const onCreatedPost = (values) => {
     setSubmitting(true);
@@ -24,7 +25,7 @@ function Editor({
         const post = response.json;
         post.likes = 0;
         post.comments = 0;
-        console.log(post);
+        form.setFieldsValue({ content: "" });
         if (onSubmitted) {
           onSubmitted(post);
         }
@@ -91,6 +92,7 @@ function Editor({
 
   return (
     <Form
+      form={form}
       onFinish={types[type].onFinish}
       layout="vertical"
       initialValues={{
