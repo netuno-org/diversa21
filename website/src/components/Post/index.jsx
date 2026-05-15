@@ -4,6 +4,7 @@ import _service from "@netuno/service-client";
 import { Link } from "react-router-dom";
 import { Card, Avatar, Button, Popconfirm, notification } from "antd";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
+import { RiArrowGoBackLine } from "react-icons/ri";
 import momentjs from "moment";
 import Editor from "./Editor";
 import PostList from "./List";
@@ -196,7 +197,7 @@ function Post({
             &nbsp;{likesCounter}
           </Button>
           {!showEditor && !editMode && (
-            <Button onClick={() => setShowEditor(true)}>Responder</Button>
+            <Button onClick={() => setShowEditor(true)}><RiArrowGoBackLine /> Responder</Button>
           )}
 
           {!editMode && countComments > 0 && (

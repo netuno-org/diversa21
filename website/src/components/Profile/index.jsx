@@ -41,14 +41,23 @@ function Profile({ user }) {
     content = (
       <div className="profile">
         <Card>
-          { loggedUser.canManageUser(user) &&
-          <div className="edit-profile-button">
-            <Col>
-              <Button block type="primary" onClick={handleClick}>
-                {screens.lg ? 'Editar Perfil' : <EditOutlined />}
-              </Button>
-            </Col>
-          </div>
+          {loggedUser.canManageUser(user) &&
+            <div className="edit-profile-button">
+              <Col>
+                <Button block type="primary" onClick={handleClick}>
+                  {
+                    screens.lg ? (
+                      <>
+                        <EditOutlined />
+                        {' '}Editar Perfil
+                      </>
+                    ) : (
+                      <EditOutlined />
+                    )
+                  }
+                </Button>
+              </Col>
+            </div>
           }
           <UserProfileDisplay user={user} avatarStyle={{
             width: `${screenSize}px`,

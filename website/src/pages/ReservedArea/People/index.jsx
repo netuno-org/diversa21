@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Card, Avatar, Spin, Pagination, Empty, Typography, Grid } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { UserAddOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
@@ -129,7 +129,7 @@ function People() {
           createButton={
             loggedUser.canCreateAnyUser() && (
               <ListHeader.Button
-                icon={<PlusOutlined />}
+                icon={<UserAddOutlined />}
                 text="Criar usuário"
                 onClick={() => navigate('/people/create/user')}
               />
