@@ -18,8 +18,17 @@ if (!dbPost) {
 
 const postId = dbPost.getInt("id");
 
-// TODO: apagar cometários em cascata
-_db.delete("post", postId);
+// TODO: apagar cometários e likes em cascata
+const result = _db.delete("post", postId);
+
+if (!result) {
+    _header.status(400);
+    _out.json(
+      _val.map()
+        .set("error", `post not deleted`)
+    );
+    _exec.stop();
+}
 
 const dbParentPost = _db.get('post', dbPost.getInt('parent_id'));
 
