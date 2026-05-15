@@ -52,7 +52,7 @@ params.add(offset);
 sqlQuery +=
 `
       )
-    ORDER BY people.name ASC
+    ORDER BY RANDOM() 
     LIMIT ${pageSize} 
     OFFSET ?::int
 `;
