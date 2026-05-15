@@ -1,22 +1,24 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
-  Typography, Table, Tabs, Button, Spin,
-  Empty, Space, Popconfirm, message, Form, Modal, Input, Select
+  Typography, Table, Tabs, Button,
+  Empty, Space, Popconfirm, message, Form, Modal, Input
 } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
-
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
-import './index.less';
 
-const { Title, Text } = Typography;
-const { Option } = Select;
+import './index.less';
+import ListHeader from '../../../../components/ListHeader/index.jsx';
+
+const { Text } = Typography;
 
 function LocationList() {
   const [form] = Form.useForm();
 
   const [activeTab, setActiveTab] = useState('country');
   const [loading, setLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -25,11 +27,16 @@ function LocationList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({ search: '', country: null, state: null, city: '' });
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   // Fetch all locations
-  useEffect(() => {
+  const loadLocations = () => {
+    setLoading(true);
     _service({
       url: 'location/search',
       method: 'GET',
@@ -48,27 +55,11 @@ function LocationList() {
             .map(part => part?.trim());
 
           if (item.type === 'country') {
-            newCountries.push({
-              uid: item.uid,
-              name: countryName,
-              code: item.code
-            });
-          }
-          else if (item.type === 'state') {
-            newStates.push({
-              uid: item.uid,
-              name: stateName,
-              countryName: countryName,
-              code: item.code
-            });
-          }
-          else if (item.type === 'city') {
-            newCities.push({
-              uid: item.uid,
-              name: cityName,
-              stateName: stateName,
-              countryName: countryName
-            });
+            newCountries.push({ uid: item.uid, name: countryName, code: item.code });
+          } else if (item.type === 'state') {
+            newStates.push({ uid: item.uid, name: stateName, countryName, code: item.code });
+          } else if (item.type === 'city') {
+            newCities.push({ uid: item.uid, name: cityName, stateName, countryName });
           }
         });
         setCountries(newCountries);
@@ -82,15 +73,44 @@ function LocationList() {
         setLoading(false);
       }
     });
-  }, []);
+  };
 
   useEffect(() => {
-    if (isModalVisible && editingItem) {
-      form.setFieldsValue(editingItem);
-    } else if (isModalVisible) {
-      form.resetFields();
+    loadLocations();
+  }, []);
+
+  // Sync the form with the item being edited whenever the modal opens.
+  useEffect(() => {
+    if (isModalVisible) {
+      if (editingItem) form.setFieldsValue(editingItem);
+      else form.resetFields();
     }
   }, [isModalVisible, editingItem, form]);
+
+  // TODO: validate the form, call _service, refresh state and show feedback.
+  const handleSave = () => {
+    setIsSaving(true);
+    console.log('Guardar Registo...');
+
+    // Simulated async work
+    setTimeout(() => {
+      setIsSaving(false);
+      handleCloseModal();
+    }, 500);
+  };
+
+  // TODO: call _service DELETE, remove item from local state and show feedback.
+  const handleDelete = (uid) => {
+    setIsDeleting(true);
+    setTableLoading(true);
+    console.log('Apagar Registo UID:', uid);
+
+    // Simulated async work
+    setTimeout(() => {
+      setIsDeleting(false);
+      setTableLoading(false);
+    }, 500);
+  };
 
   const handleOpenModal = (item = null) => {
     setEditingItem(item);
@@ -103,91 +123,157 @@ function LocationList() {
     form.resetFields();
   };
 
-  // TODO: validate the form, call _service, refresh state and show feedback.
-  const handleSave = () => handleCloseModal();
+  // Keeps the search input controlled and updates the filter as the user types.
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setFilters(prev => ({ ...prev, search: value }));
+    setPagination(prev => ({ ...prev, current: 1 }));
+  };
 
-  // TODO: call _service DELETE, remove item from local state and show feedback.
-  const handleDelete = (uid) => {
-    console.log('Apagar Registo UID:', uid);
+  // Triggered on submit/select: applies the search and jumps to the tab that has a match.
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+    setFilters(prev => ({ ...prev, search: value }));
+    setPagination(prev => ({ ...prev, current: 1 }));
+
+    if (value && value.trim() !== '') {
+      const searchLower = value.toLowerCase();
+
+      if (countries.some(c => c.name?.toLowerCase().includes(searchLower) || c.code?.toLowerCase().includes(searchLower))) {
+        setActiveTab('country');
+      }
+      else if (states.some(s => s.name?.toLowerCase().includes(searchLower) || s.code?.toLowerCase().includes(searchLower))) {
+        setActiveTab('state');
+      }
+      else if (cities.some(c => c.name?.toLowerCase().includes(searchLower))) {
+        setActiveTab('city');
+      }
+    }
+  };
+
+  // Fetches location suggestions for the Select dropdown as the user types.
+  const handleLocationSelectSearch = (value) => {
+    if (value.trim() === '') {
+      setLocationOptions([]);
+      return;
+    }
+    _service({
+      url: `location/search?query=${value}`,
+      success: (response) => {
+        const options = response.json.data.map(location => ({
+          value: location.label,
+          label: location.label,
+          uid: location.uid,
+          type: location.type
+        }));
+        setLocationOptions(options);
+      },
+      fail: () => {
+        setLocationOptions([]);
+      }
+    });
+  };
+
+  // Splits the "País > Estado > Cidade" label and updates filters + active tab according to the location type.
+  const handleLocationChange = (value, option) => {
+    setSelectedLocation(option);
+
+    if (option) {
+      const parts = option.label.split(' > ').map(p => p.trim());
+
+      if (option.type === 'country') {
+        setFilters(prev => ({ ...prev, country: parts[0], state: null, city: '' }));
+        setActiveTab('country');
+      }
+      else if (option.type === 'state') {
+        setFilters(prev => ({ ...prev, country: parts[0], state: parts[1], city: '' }));
+        setActiveTab('state');
+      }
+      else if (option.type === 'city') {
+        setFilters(prev => ({ ...prev, country: parts[0], state: parts[1], city: parts[2] }));
+        setActiveTab('city');
+      }
+    } else {
+      setFilters(prev => ({ ...prev, country: null, state: null, city: '' }));
+    }
+
+    setPagination(prev => ({ ...prev, current: 1 }));
+  };
+
+  // Resets the location Select and clears all related filters.
+  const handleLocationClear = () => {
+    setLocationOptions([]);
+    setSelectedLocation(null);
+    setSearchTerm('');
+    setFilters(prev => ({ ...prev, search: '', country: null, state: null, city: '' }));
+    setPagination(prev => ({ ...prev, current: 1 }));
+  };
+
+  const handleTabChange = (key) => {
+    setTableLoading(true);
+    setActiveTab(key);
+    setPagination(prev => ({ ...prev, current: 1 }));
+    setTimeout(() => setTableLoading(false), 200);
   };
 
   const filteredCountries = useMemo(() => {
-    if (!filters.search) return countries;
-
-    const q = filters.search.toLowerCase();
-
-    return countries.filter(c =>
-      c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q)
-    );
-  }, [countries, filters.search]);
+    let result = countries || [];
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      result = result.filter(c => c.name?.toLowerCase().includes(searchLower) || c.code?.toLowerCase().includes(searchLower));
+    }
+    if (filters.country) result = result.filter(c => c.name === filters.country);
+    return result;
+  }, [countries, filters]);
 
   const filteredStates = useMemo(() => {
-    let result = states;
+    let result = states || [];
 
     if (filters.search) {
-      const q = filters.search.toLowerCase();
-
-      result = result.filter(s =>
-        s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q)
-      );
+      const searchLower = filters.search.toLowerCase();
+      result = result.filter(s => s.name?.toLowerCase().includes(searchLower) || s.code?.toLowerCase().includes(searchLower));
     }
 
-    if (filters.country) {
-      result = result.filter(s => s.countryName === filters.country);
-    }
+    if (filters.country) result = result.filter(s => s.countryName === filters.country);
+
+    if (filters.state) result = result.filter(s => s.name === filters.state);
 
     return result;
-  }, [states, filters.search, filters.country]);
+  }, [states, filters]);
 
   const filteredCities = useMemo(() => {
-    let result = cities;
+    let result = cities || [];
 
     if (filters.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(q));
+      const searchLower = filters.search.toLowerCase();
+      result = result.filter(c => c.name?.toLowerCase().includes(searchLower));
     }
 
-    if (filters.country) {
-      result = result.filter(c => c.countryName === filters.country);
-    }
-
-    if (filters.state) {
-      result = result.filter(c => c.stateName === filters.state);
-    }
-
-    if (filters.city) {
-      const q = filters.city.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(q));
-    }
+    if (filters.country) result = result.filter(c => c.countryName === filters.country);
+    if (filters.state) result = result.filter(c => c.stateName === filters.state);
+    if (filters.city) result = result.filter(c => c.name === filters.city);
 
     return result;
-  }, [cities, filters.search, filters.country, filters.state, filters.city]);
+  }, [cities, filters]);
 
-  const hasFilters = !!(filters.search || filters.country || filters.state || filters.city);
-
+  // Builds the table columns dynamically based on the active tab.
   const columns = useMemo(() => {
-    const cols = [
-      {
-        title: 'Nome',
-        dataIndex: 'name',
-        key: 'name',
-        render: (text) => <Text strong>{text}</Text>
-      }
+    const baseColumns = [
+      { title: 'Nome', dataIndex: 'name', key: 'name', render: (text) => <Text>{text}</Text> }
     ];
 
-    if (activeTab !== 'city') {
-      cols.push({ title: 'Código', dataIndex: 'code', key: 'code' });
+    if (activeTab === 'country' || activeTab === 'state') {
+      baseColumns.push({ title: 'Código', dataIndex: 'code', key: 'code' });
     }
-
     if (activeTab === 'city') {
-      cols.push({ title: 'Estado', dataIndex: 'stateName', key: 'stateName' });
+      baseColumns.push({ title: 'Estado', dataIndex: 'stateName', key: 'stateName', render: (text) => <Text>{text}</Text> });
+    }
+    if (activeTab === 'state' || activeTab === 'city') {
+      baseColumns.push({ title: 'País', dataIndex: 'countryName', key: 'countryName', render: (text) => <Text>{text}</Text> });
     }
 
-    if (activeTab !== 'country') {
-      cols.push({ title: 'País', dataIndex: 'countryName', key: 'countryName' });
-    }
-
-    cols.push({
+    baseColumns.push({
       title: 'Ações',
       key: 'actions',
       width: 120,
@@ -203,6 +289,7 @@ function LocationList() {
           <Popconfirm
             title="Tem a certeza que deseja apagar?"
             onConfirm={() => handleDelete(record.uid)}
+            okButtonProps={{ loading: isDeleting }}
           >
             <Button
               type="link"
@@ -213,8 +300,9 @@ function LocationList() {
         </Space>
       ),
     });
-    return cols;
-  }, [activeTab]);
+
+    return baseColumns;
+  }, [activeTab, isDeleting]);
 
   const totalText = (total) => {
     if (activeTab === 'country') return total === 1 ? '1 país' : `${total} países`;
@@ -223,121 +311,87 @@ function LocationList() {
     return `Total: ${total}`;
   };
 
-  const renderTable = (data) => {
-    if (loading) {
-      return <div style={{ textAlign: 'center', padding: '48px 0' }}>
-        <Spin size="large" />
-      </div>;
-    }
+  // Returns the filtered dataset for the currently active tab.
+  const getCurrentData = () => {
+    if (activeTab === 'country') return filteredCountries;
+    if (activeTab === 'state') return filteredStates;
+    if (activeTab === 'city') return filteredCities;
+    return [];
+  };
 
-    if (data.length === 0) {
+  const currentData = getCurrentData();
+
+  const renderTable = (data) => {
+    if (!loading && !tableLoading && data.length === 0) {
       return <Empty description="Nenhum registo encontrado." />;
     }
 
     return (
-      <>
-        <div className="results-info" style={{ marginBottom: 16 }}>
-          <Text type="secondary">
-            {data.length} {data.length !== 1 ? 'registos encontrados' : 'registo encontrado'}
-          </Text>
-        </div>
-
-        <Table
-          dataSource={data}
-          columns={columns}
-          rowKey="uid"
-          pagination={{
-            pageSize: 10,
-            placement: ['bottomCenter'],
-            showTotal: totalText
-          }}
-        />
-      </>
+      <Table
+        dataSource={data}
+        columns={columns}
+        rowKey="uid"
+        loading={loading || tableLoading}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          onChange: (page, pageSize) => setPagination({ current: page, pageSize }),
+          placement: ['bottomCenter'],
+          showTotal: totalText
+        }}
+      />
     );
   };
 
   return (
-    <section className="locations-list">
-      <div className="list-header">
-        <div className="title-wrapper">
-          <Title level={1}>Localizações</Title>
-        </div>
-
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => handleOpenModal()}
+    <div className="locations-search-container">
+      <div className="locations-search">
+        <ListHeader
+          title='Localizações'
+          createButton={
+            <ListHeader.Button
+              icon={<PlusOutlined />}
+              text="Novo registo"
+              onClick={() => handleOpenModal()}
+            />
+          }
         >
-          Nov{activeTab === 'country' ? 'o País' : activeTab === 'state' ? 'o Estado' : 'a Cidade'}
-        </Button>
+          <div className='search-input-container'>
+            <ListHeader.Input
+              autoCompleteProps={{
+                placeholder: 'Buscar por nome',
+                popupMatchSelectWidth: 252,
+                onSelect: handleSearch
+              }}
+              inputProps={{
+                onSearch: handleSearch,
+                onChange: handleSearchChange,
+                enterButton: true,
+                value: searchTerm,
+              }}
+            />
+
+            <ListHeader.Select
+              notFoundContent={null}
+              placeholder="Cidade, Estado ou País"
+              options={locationOptions}
+              showSearch={true}
+              onSearch={handleLocationSelectSearch}
+              onChange={handleLocationChange}
+              onClear={handleLocationClear}
+              value={selectedLocation ? selectedLocation.value : undefined}
+            />
+          </div>
+        </ListHeader>
       </div>
 
-      <div className="filters-section">
-        <Space wrap size="middle">
-          <Input.Search
-            placeholder="Buscar por nome..."
-            allowClear
-            enterButton={<SearchOutlined />}
-            onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-            style={{ width: 280 }}
-            value={filters.search}
-          />
-
-          <Select
-            placeholder="País"
-            allowClear
-            style={{ width: 180 }}
-            onChange={(value) => {
-              setFilters(prev => ({ ...prev, country: value, state: null, city: '' }));
-              if (value) setActiveTab('state');
-            }}
-            value={filters.country || undefined}
-            showSearch
-            optionFilterProp="children"
-          >
-            {countries.map(c => (
-              <Option key={c.uid} value={c.name}>{c.name}</Option>
-            ))}
-          </Select>
-
-          <Select
-            placeholder="Estado"
-            allowClear
-            style={{ width: 180 }}
-            onChange={(value) => {
-              setFilters(prev => ({ ...prev, state: value, city: '' }));
-              if (value) setActiveTab('city');
-            }}
-            value={filters.state || undefined}
-            disabled={!filters.country}
-            showSearch
-            optionFilterProp="children"
-          >
-            {states.filter(s => s.countryName === filters.country).map(s => (
-              <Option key={s.uid} value={s.name}>{s.name}</Option>
-            ))}
-          </Select>
-
-          <Input
-            placeholder="Cidade"
-            allowClear
-            style={{ width: 180 }}
-            onChange={(e) => setFilters(prev => ({ ...prev, city: e.target.value }))}
-            value={filters.city}
-            disabled={!filters.state && !filters.country}
-          />
-
-          {hasFilters && (
-            <Button type="link" onClick={() => setFilters({ search: '', country: null, state: null, city: '' })}>
-              Limpar filtros
-            </Button>
-          )}
-        </Space>
+      <div className="results-info">
+        <Text>{totalText(currentData.length)}</Text>
       </div>
 
       <Tabs
         activeKey={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
         items={[
           { key: 'country', label: 'Países', children: renderTable(filteredCountries) },
           { key: 'state', label: 'Estados', children: renderTable(filteredStates) },
@@ -356,12 +410,17 @@ function LocationList() {
         destroyOnHidden
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'O nome é obrigatório!' }]}>
+          <Form.Item
+            name="name"
+            label="Nome"
+            rules={[{ required: true, message: 'O nome é obrigatório!' }]}
+          >
             <Input />
           </Form.Item>
         </Form>
       </Modal>
-    </section>
+    </div>
   );
 }
+
 export default LocationList;

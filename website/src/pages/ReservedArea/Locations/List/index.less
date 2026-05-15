@@ -1,54 +1,41 @@
-.locations-list {
+.locations-search-container {
   padding: 24px;
 
-  .list-header {
+  .locations-search {
+    width: 100%;
+  }
+
+  .search-input-container {
+    width: 100%;
+    gap: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-
-    .title-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-
-      .anticon {
-        font-size: 32px;
-      }
-    }
-
-    .ant-typography {
-      margin: 0;
-    }
-  }
-
-  .filters-section {
-    margin-bottom: 24px;
-    padding: 16px;
-    background: #fafafa;
-    border-radius: 8px;
   }
 
   .results-info {
+    margin-top: 20px;
+    margin-left: 10px;
     margin-bottom: 16px;
+  }
+
+  .ant-tabs {
+    width: 100%;
   }
 }
 
-@media (max-width: 768px) {
-  .locations-list {
-    padding: 16px;
+@media (max-width: 480px) {
+  .locations-search-container {
+    align-items: center;
 
-    .filters-section {
-      .ant-space {
-        width: 100%;
+    .search-input-container {
+      flex-direction: column;
+    }
 
-        .ant-select,
-        .ant-input-search,
-        .ant-input {
-          width: 100% !important;
-        }
+    .results-info {
+      .ant-typography {
+        font-size: 12px;
+        text-align: center;
       }
     }
   }
