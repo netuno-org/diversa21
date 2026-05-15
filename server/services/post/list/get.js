@@ -30,7 +30,7 @@ let sqlQuery = `
         people.name AS "people_name", people.uid AS "people_uid",
         netuno_user.user AS "people_user",
         people.avatar AS "people_avatar",
-        (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id) AS "post_like_id"
+        (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id"
     FROM post
         INNER JOIN people ON post.people_id = people.id
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
