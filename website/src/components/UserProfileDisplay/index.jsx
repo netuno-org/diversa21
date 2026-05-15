@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Avatar } from 'antd';
-import { UserOutlined, EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
+import { UserOutlined, EnvironmentOutlined, CalendarOutlined, SafetyOutlined } from '@ant-design/icons';
 import { BsFillHouseGearFill } from "react-icons/bs";
-import { GoShieldCheck } from "react-icons/go";
 import { RiFileEditLine } from "react-icons/ri";
 
 import _service from '@netuno/service-client';
@@ -32,9 +31,9 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
             style={{
               color:
                 user.group.code === "review"
-                  ? "#52c41a"
+                  ? "#50a063"
                   : user.group.code === "management"
-                    ? "#1677ff"
+                    ? "#4e5fa0"
                     : "#d0990f",
               display: "flex",
               alignItems: "center",
@@ -42,7 +41,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
             }}
           >
             {user.group.code === "super-admin" ? (
-              <GoShieldCheck size={iconSize} />
+              <SafetyOutlined  />
             ) : user.group.code === "management" ? (
               <BsFillHouseGearFill size={iconSize} />
             ) : (
