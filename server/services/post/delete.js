@@ -42,12 +42,12 @@ const result = _db.execute(`
 `, postId)
 
 if (!result) {
-    _header.status(400);
-    _out.json(
-      _val.map()
-        .set("error", `post not deleted`)
-    );
-    _exec.stop();
+  _header.status(400);
+  _out.json(
+    _val.map()
+      .set("error", `post not deleted`)
+  );
+  _exec.stop();
 }
 
 if (dbParentPost) {
