@@ -20,7 +20,7 @@ function Editor({
     _service({
       url: "post",
       method: "POST",
-      data: {...values, parent},
+      data: { ...values, parent },
       success: (response) => {
         const post = response.json;
         post.likes = 0;
@@ -104,7 +104,11 @@ function Editor({
         rules={[{ required: true }]}
         label={types[type].title}
       >
-        <TextArea style={{ resize: 'none' }} rows={4} />
+        <TextArea
+          style={{ resize: 'none' }}
+          maxLength={500}
+          showCount 
+          rows={4} />
       </Form.Item>
       <Form.Item>
         <Space>
