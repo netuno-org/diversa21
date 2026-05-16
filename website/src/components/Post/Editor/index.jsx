@@ -15,12 +15,29 @@ function Editor({
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm();
 
+  const clearContentForSubmit = (value) =>
+    value.replace(/\n{3,}/g, "\n\n")
+      .replace(/(\n\s*)+$/g, "")
+      .trim();
+
   const onCreatedPost = (values) => {
+    const cleanedContent = clearContentForSubmit(values.content);
+
+    if (!cleanedContent) {
+      form.setFields([
+        {
+          name: "content",
+          errors: ["Digite algum conteúdo para publicar."]
+        }
+      ]);
+      return;
+    }
+
     setSubmitting(true);
     _service({
       url: "post",
       method: "POST",
-      data: { ...values, parent },
+      data: { ...values, content: cleanedContent, parent },
       success: (response) => {
         const post = response.json;
         post.likes = 0;
@@ -41,17 +58,30 @@ function Editor({
   };
 
   const onEditPost = (values) => {
+    const cleanedContent = clearContentForSubmit(values.content);
+
+    if (!cleanedContent) {
+      form.setFields([
+        {
+          name: "content",
+          errors: ["Digite algum conteúdo para publicar."]
+        }
+      ]);
+      return;
+    }
+
     setSubmitting(true);
     _service({
       url: "post",
       method: "PUT",
       data: {
         ...values,
+        content: cleanedContent,
         uid
       },
       success: (response) => {
         if (onSubmitted) {
-          onSubmitted(values);
+          onSubmitted({ ...values, content: cleanedContent });
         }
         notification.success({
           title: "Sucesso ao editar"
@@ -107,7 +137,7 @@ function Editor({
         <TextArea
           style={{ resize: 'none' }}
           maxLength={500}
-          showCount 
+          showCount
           rows={4} />
       </Form.Item>
       <Form.Item>
