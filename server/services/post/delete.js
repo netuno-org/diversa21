@@ -12,7 +12,7 @@ const dbPost = _db.queryFirst(`
 `, uid, _user.id);
 
 if (!dbPost) {
-  _header.status(400);
+  _header.status(404);
   _exec.stop();
 }
 
