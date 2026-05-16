@@ -18,8 +18,28 @@ if (!dbPost) {
 
 const postId = dbPost.getInt("id");
 
-// TODO: apagar cometários e likes em cascata
-const result = _db.delete("post", postId);
+const dbParentPost = _db.get('post', dbPost.getInt('parent_id'));
+
+const result = _db.execute(`
+    WITH RECURSIVE post_tree AS (
+        SELECT id 
+        FROM post 
+        WHERE id = ? 
+        
+        UNION ALL
+        
+        SELECT post.id 
+        FROM post
+        JOIN post_tree ON post.parent_id = post_tree.id
+    ),
+    deleted_likes AS (
+        DELETE FROM post_like
+        WHERE post_id IN (SELECT id FROM post_tree)
+        RETURNING post_id
+    )
+    DELETE FROM post
+    WHERE id IN (SELECT id FROM post_tree);
+`, postId)
 
 if (!result) {
     _header.status(400);
@@ -29,8 +49,6 @@ if (!result) {
     );
     _exec.stop();
 }
-
-const dbParentPost = _db.get('post', dbPost.getInt('parent_id'));
 
 if (dbParentPost) {
   _db.update(
