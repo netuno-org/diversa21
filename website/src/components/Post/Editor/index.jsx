@@ -42,9 +42,12 @@ function Editor({
         const post = response.json;
         post.likes = 0;
         post.comments = 0;
-        form.setFieldsValue({ content: "" });
         if (onSubmitted) {
           onSubmitted(post);
+
+          form.setFieldsValue({
+            content: "",
+          });
         }
         setSubmitting(false);
       },
