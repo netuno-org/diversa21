@@ -16,9 +16,7 @@ function Editor({
   const [form] = Form.useForm();
 
   const clearContentForSubmit = (value) =>
-    value.replace(/\n{3,}/g, "\n\n")
-      .replace(/(\n\s*)+$/g, "")
-      .trim();
+    value.replace(/\n{3,}/g, "\n\n").trim();
 
   const onCreatedPost = (values) => {
     const cleanedContent = clearContentForSubmit(values.content);
