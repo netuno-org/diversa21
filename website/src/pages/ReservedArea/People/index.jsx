@@ -23,7 +23,9 @@ function People() {
   const [pagination, setPagination] = useState({
     current: 1,
     size: 10,
-    total: 0
+    total: 0,
+    term: '',
+    location: null
   });
   const navigate = useNavigate();
   const screens = useBreakpoint();
