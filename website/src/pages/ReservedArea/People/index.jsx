@@ -8,18 +8,17 @@ import UserProfileDisplay from '../../../components/UserProfileDisplay';
 
 import usePeople from "../../../common/usePeople.js";
 
+import ListHeaderFilters from "../../../components/ListHeaderFilters";
+
 import "./index.less";
-import ListHeader from '../../../components/ListHeader/index.jsx';
+
 
 const { Text, Title } = Typography;
 const { useBreakpoint } = Grid;
 
 function People() {
   const loggedUser = usePeople();
-  const [locationOptions, setLocationOptions] = useState([])
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [peopleTerm, setPeopleTerm] = useState('');
   const [peopleList, setPeopleList] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -44,21 +43,21 @@ function People() {
 
   const fetchPeopleList = (term, location, page) => {
     setLoading(true);
-    let url = `people/list?name=${term}`
-    if (location) {
-      url += `&${location.type}Uid=${location.uid}`
-    }
-    url += `&page=${page}`
     _service({
-      url,
+      url: 'people/list',
+      data: {
+        name: term,
+        ...(location && {[location.type + "Uid"]: location.uid}),
+        page,
+      },
       success: (response) => {
         const { items, totalCount, pageSize } = response.json;
         setPeopleList(items);
-        setPagination(prev => ({
-          ...prev,
+        setPagination({
+          ...location,
           total: totalCount,
           size: pageSize
-        }));
+        });
         setLoading(false);
       },
       fail: () => {
@@ -68,100 +67,39 @@ function People() {
   };
 
   const handlePaginationChange = (page, pageSize) => {
-    setPagination(prev => ({ ...prev, current: page, size: pageSize }));
-    fetchPeopleList(peopleTerm, selectedLocation, page);
+    setPagination({ ...pagination, current: page, size: pageSize });
+    fetchPeopleList(pagination.term, pagination.location, page);
   }
 
-  const handlePeopleSearch = (value) => {
-    setPeopleTerm(value);
-    setPagination({ ...pagination, current: 1 });
-    fetchPeopleList(value, selectedLocation, 1);
+  const handlePeopleSearch = (term) => {
+    setPagination({ ...pagination, current: 1, term });
+    fetchPeopleList(term, pagination.location, 1);
   };
 
-  const handlePeopleChange = (value) => {
-    setPeopleTerm(value.target.value);
-  };
-
-  const handleLocationSearch = value => {
-    if (value.trim() === '') {
-      setLocationOptions([]);
-      return;
-    }
-    _service({
-      url: `location/search?query=${value}`,
-      success: (response) => {
-        const options = response.json.data.map(location => ({
-          value: location.label,
-          label: location.label,
-          uid: location.uid,
-          type: location.type
-        }))
-        setLocationOptions(options);
-      },
-      fail: () => {
-        setLocationOptions([]);
-      }
-    })
-  };
-
-  const handleLocationChange = (value, option) => {
-    setSelectedLocation(option);
-    setPagination({ ...pagination, current: 1 });
-    fetchPeopleList(peopleTerm, option, 1);
+  const handleLocationChange = (option) => {
+    setPagination({ ...pagination, current: 1, location: option });
+    fetchPeopleList(pagination.term, option, 1);
   };
 
   const handleLocationClear = () => {
-    setLocationOptions([]);
-    setPagination({ ...pagination, current: 1 });
-    setSelectedLocation('');
-    fetchPeopleList(peopleTerm, locationOptions, 1);
+    setPagination({ ...pagination, current: 1, location: null });
+    fetchPeopleList(pagination.term, null, 1);
   }
-
-  const onSelect = value => {
-    console.log('onSelect', value);
-  };
 
   return (
     <div className="people-search-container">
       <div className="people-search">
-        <ListHeader
-          title='Pessoas'
-          createButton={
-            loggedUser.canCreateAnyUser() && (
-              <ListHeader.Button
-                icon={<UserAddOutlined />}
-                text="Criar usuário"
-                onClick={() => navigate('/people/create/user')}
-              />
-            )
-          }
-        >
-          <div className='search-input-container'>
-            <ListHeader.Input
-              autoCompleteProps={{
-                placeholder: 'Buscar por nome',
-                popupMatchSelectWidth: 252,
-                onSelect: onSelect
-              }}
-              inputProps={{
-                onSearch: handlePeopleSearch,
-                onChange: handlePeopleChange,
-                enterButton: true,
-                value: peopleTerm,
-
-              }}
-            />
-            <ListHeader.Select
-              notFoundContent={null}
-              placeholder="Cidade, estado ou país"
-              options={locationOptions}
-              showSearch={true}
-              onSearch={handleLocationSearch}
-              onChange={handleLocationChange}
-              onClear={handleLocationClear}
-            />
-          </div>
-        </ListHeader>
+        <ListHeaderFilters
+          title="Pessoas"
+          createButton={loggedUser.canCreateAnyUser() && {
+            icon: <UserAddOutlined />,
+            text: "Criar usuário",
+            onClick: () => navigate('/people/create/user'),
+          }}
+          onSearch={handlePeopleSearch}
+          onLocationChange={handleLocationChange}
+          onLocationClear={handleLocationClear}
+        />
       </div>
       {loading && (
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 24 }}>

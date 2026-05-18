@@ -1,0 +1,29 @@
+@import '../../styles/variables.less';
+
+.list-header-filters {
+  &__header, &__inputs {
+    background-color: #fafafa;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  &__header {
+    > div.ant-row {
+      > div.ant-col {
+        > h1 {
+          margin: 0;
+        }
+        &:nth-child(2n) {
+          text-align: right;
+          @media only screen and (max-width: @xs) {
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+
+  &__inputs {
+    margin-top: 20px;
+  }
+}
