@@ -17,6 +17,7 @@ function ListHeaderFilters({
   onSearch /* (searchTerm) => { ... } */,
   onLocationChange /* () => { ... } */,
   onLocationClear /* () => { ... } */,
+  onSearchClear
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
@@ -82,6 +83,7 @@ function ListHeaderFilters({
               placeholder="Buscar por nome"
               onSearch={()=> onSearch && onSearch(searchTerm)}
               onChange={handleSearchChange}
+              onClear={onSearchClear}
               enterButton={true}
               allowClear
               value={searchTerm}/>

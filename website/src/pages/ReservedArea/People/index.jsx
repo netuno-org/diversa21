@@ -87,6 +87,11 @@ function People() {
     fetchPeopleList(pagination.term, null, 1);
   }
 
+  const handleSearchClear = () => {
+    setPagination({ ...pagination, current: 1, location: null, term: ''});
+    fetchPeopleList('', null, 1);
+  }
+
   return (
     <div className="people-search-container">
       <div className="people-search">
@@ -100,6 +105,7 @@ function People() {
           onSearch={handlePeopleSearch}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
+          onSearchClear={handleSearchClear}
         />
       </div>
       {loading && (
