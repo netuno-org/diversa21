@@ -12,12 +12,12 @@ import './index.less'
 const { Title } = Typography;
 
 function ListHeaderFilters({
-                            title,
-                            createButton /* {icon, onClick, text} */,
-                            onSearch /* (searchTerm) => { ... } */,
-                            onLocationChange /* () => { ... } */,
-                            onLocationClear /* () => { ... } */,
-                          }) {
+  title,
+  createButton /* {icon, onClick, text} */,
+  onSearch /* (searchTerm) => { ... } */,
+  onLocationChange /* () => { ... } */,
+  onLocationClear /* () => { ... } */,
+}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
   const loggedUser = usePeople();
