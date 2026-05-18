@@ -88,8 +88,8 @@ function People() {
   }
 
   const handleSearchClear = () => {
-    setPagination({ ...pagination, current: 1, location: null, term: ''});
-    fetchPeopleList('', null, 1);
+    setPagination({ ...pagination, current: 1, term: ''});
+    fetchPeopleList('', pagination.location, 1);
   }
 
   return (
