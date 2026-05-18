@@ -53,11 +53,14 @@ function People() {
       success: (response) => {
         const { items, totalCount, pageSize } = response.json;
         setPeopleList(items);
-        setPagination({
-          ...location,
+        setPagination((currentPagination) => ({
+          ...currentPagination,
+          current: page,
+          term,
+          location,
           total: totalCount,
           size: pageSize
-        });
+        }));
         setLoading(false);
       },
       fail: () => {
