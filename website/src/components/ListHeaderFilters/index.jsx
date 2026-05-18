@@ -97,6 +97,7 @@ function ListHeaderFilters({
                     }}
                     onChange={(v, option) => onLocationChange && onLocationChange(option)}
                     onClear={handleLocationClear}
+                    allowClear
             />
           </Col>
         </Row>
