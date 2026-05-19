@@ -1,0 +1,19 @@
+{
+    "tags":[
+      "city"
+    ],
+    "summary": "Create City",
+    "description": "Create a new city with name and it's state",
+    "properties": {
+      "name": {
+        "type": "string-not-empty"
+      },
+      "stateUid": {
+        "type": "uid"
+      }
+    },
+    "required": [
+      "name",
+      "stateUid"
+    ]
+}

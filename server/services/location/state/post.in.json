@@ -1,0 +1,23 @@
+{
+    "tags":[
+      "state"
+    ],
+    "summary": "Create State",
+    "description": "Create a new state with name, code and it's country",
+    "properties": {
+      "name": {
+        "type": "string-not-empty"
+      },
+      "code": {
+        "type": "string-not-empty"
+      },
+      "countryUid": {
+        "type": "uid"
+      }
+    },
+    "required": [
+      "name",
+      "code",
+      "countryUid"
+    ]
+}

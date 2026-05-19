@@ -1,28 +1,10 @@
 import { _req, _db, _val, _user, _header, _out } from "@netuno/server-types"
 import permissions from "#core/lib/permissions.js";
 
-// Validate incoming data
 const name = _req.getString("name");
-const stateUid = _req.getString("state_id");
+const stateUid = _req.getUID("stateUid");
 
-if (!name) {
-    _header.status(400);
-    _out.json(
-        _val.map()
-            .set("error", "name-required")
-    );
-    _exec.stop();
-}
-
-if (!stateUid) {
-    _header.status(400);
-    _out.json(
-        _val.map()
-            .set("error", "state-required")
-    );
-    _exec.stop();
-}
-
+// Verify state exists
 const dbState = _db.queryFirst(`
   SELECT id FROM state
   WHERE uid = ?::uuid

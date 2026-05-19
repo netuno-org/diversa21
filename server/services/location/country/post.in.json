@@ -1,0 +1,19 @@
+{
+    "tags":[
+      "country"
+    ],
+    "summary": "Create Country",
+    "description": "Create a new country with name and code",
+    "properties": {
+      "name": {
+        "type": "string-not-empty"
+      },
+      "code": {
+        "type": "string-not-empty"
+      }
+    },
+    "required": [
+      "name",
+      "code"
+    ]
+}

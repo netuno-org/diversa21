@@ -110,13 +110,13 @@ function LocationList() {
       data = {
         name: values.name,
         code: values.code,
-        country_id: values.countryUid,
+        countryUid: values.countryUid,
       };
     } else if (activeTab === 'city') {
       url = 'location/city';
       data = {
         name: values.name,
-        state_id: values.stateUid
+        stateUid: values.stateUid
       };
     }
 
