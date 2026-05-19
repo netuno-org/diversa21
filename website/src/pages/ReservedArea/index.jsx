@@ -89,6 +89,10 @@ function ReservedArea() {
       return <InstitutionForm slug={slug} onSuccess={() => navigate(`/institutions/${slug}`)} onCancel={() => navigate(`/institutions/${slug}`)} />;
     }
     if (location.pathname === "/locations") {
+      if (!people.canManageLocations()) {
+        navigate('/');  
+        return;
+      }
       return <LocationList />;
     }
     return <NotFound />;

@@ -6,6 +6,8 @@ import React, {useEffect, useState} from "react";
 
 import "./index.less";
 
+import usePeople from "../../common/usePeople";
+
 const { Sider } = Layout;
 
 const menuItems = [
@@ -38,14 +40,16 @@ const menuItems = [
     label: "Localizações",
     icon: <EnvironmentOutlined />,
     link: "/locations"
-  },
+  }
 ];
 
 function SiderMenu({collapsed, onCollapse}) {
   const [selectedMenuKeys, setSelectedMenuKeys] = useState(["profile-view"]);
   const [sideMenuMobileMode, setSideMenuMobileMode] = useState(false);
+  const loggedUser = usePeople();
   const location = useLocation();
   const navigate = useNavigate();
+  
   useEffect(() => {
     const menuItem = menuItems.find((i) => location.pathname === i.link);
     if (menuItem) {
@@ -54,6 +58,7 @@ function SiderMenu({collapsed, onCollapse}) {
       setSelectedMenuKeys([]);
     }
   }, [location]);
+
   function onMenuClick(e) {
     const menuItem = menuItems.find((i) => i.key === e.key);
     if (menuItem) {
@@ -61,6 +66,7 @@ function SiderMenu({collapsed, onCollapse}) {
       navigate(menuItem.link);
     }
   }
+
   return (
     <>
       {_auth.isLogged() &&
@@ -81,7 +87,9 @@ function SiderMenu({collapsed, onCollapse}) {
             onClick={onMenuClick}
             selectedKeys={selectedMenuKeys}
             mode="inline"
-            items={menuItems}
+            items={
+              menuItems.filter(item => item.key !== 'locations' || loggedUser.canManageInstitution())
+            }
           />
         </Sider>
       }
