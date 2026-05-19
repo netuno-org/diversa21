@@ -39,15 +39,14 @@ if (countryExists) {
     _exec.stop();
 }
 
-// TODO: Verify permissions
-// if (!permissions.canCreateLocation()) {
-//     _header.status(403);
-//     _out.json(
-//         _val.map()
-//             .set("error", "permission denied")
-//     );
-//     _exec.stop();
-// }
+if (!permissions.canManageLocations()) {
+    _header.status(403);
+    _out.json(
+        _val.map()
+            .set("error", "permission denied")
+    );
+    _exec.stop();
+}
 
 // Create country
 try {

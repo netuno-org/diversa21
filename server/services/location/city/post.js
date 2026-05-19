@@ -1,5 +1,5 @@
 import { _req, _db, _val, _user, _header, _out } from "@netuno/server-types"
-// import permissions from "#core/lib/permissions.js";
+import permissions from "#core/lib/permissions.js";
 
 // Validate incoming data
 const name = _req.getString("name");
@@ -55,15 +55,14 @@ if (cityExists) {
     _exec.stop();
 }
 
-// TODO: Verify permissions
-// if (!permissions.canCreateLocation()) {
-//     _header.status(403);
-//     _out.json(
-//         _val.map()
-//             .set("error", "permission denied")
-//     );
-//     _exec.stop();
-// }
+if (!permissions.canManageLocations()) {
+    _header.status(403);
+    _out.json(
+        _val.map()
+            .set("error", "permission denied")
+    );
+    _exec.stop();
+}
 
 // Create city
 try {
