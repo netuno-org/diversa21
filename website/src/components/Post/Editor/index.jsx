@@ -4,6 +4,8 @@ import _service from "@netuno/service-client";
 
 const { TextArea } = Input;
 
+import './index.less';
+
 function Editor({
   onSubmitted,
   onCancel,
@@ -14,6 +16,7 @@ function Editor({
 }) {
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm();
+  const contentValue = Form.useWatch("content", form) || "";
 
   const clearContentForSubmit = (value) =>
     value.replace(/\n{3,}/g, "\n\n").trim();
@@ -138,18 +141,22 @@ function Editor({
         <TextArea
           style={{ resize: 'none' }}
           maxLength={500}
-          showCount
           rows={4} />
       </Form.Item>
       <Form.Item>
-        <Space>
-          <Button htmlType="submit" loading={submitting} type="primary">
-            {types[type].submitButtonText}
-          </Button>
-          {types[type].showCancelButton && (
-            <Button onClick={onCancel}>Cancelar</Button>
-          )}
-        </Space>
+        <div className="post-actions-container">
+          <Space>
+            <Button htmlType="submit" loading={submitting} type="primary">
+              {types[type].submitButtonText}
+            </Button>
+            {types[type].showCancelButton && (
+              <Button onClick={onCancel}>Cancelar</Button>
+            )}
+          </Space>
+            <span>
+              {contentValue.length}/500
+            </span>
+        </div>
       </Form.Item>
     </Form>
   );
