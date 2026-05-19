@@ -175,14 +175,25 @@ function LocationList() {
     form.resetFields();
   };
 
-  // Triggered on submit/select: applies the search and jumps to the tab that has a match.
-  const handleSearch = (term) => {
-    setFilters(prev => ({ ...prev, search: term }));
-    setPagination(prev => ({ ...prev, current: 1 }));
-
-    // Jump to the tab that has a match.
+  // Jump to the tab that has a match.
+  const jumpToMatchTable = (term) => {
     if (term && term.trim() !== '') {
       const q = term.toLowerCase();
+
+      if (activeTab === 'country' &&
+        countries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) {
+        return;
+      }
+
+      if (activeTab === 'state' &&
+        states.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) {
+        return;
+      }
+
+      if (activeTab === 'city' &&
+        cities.some(c => c.name?.toLowerCase().includes(q))) {
+        return;
+      }
 
       if (countries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) {
         setActiveTab('country');
@@ -192,6 +203,14 @@ function LocationList() {
         setActiveTab('city');
       }
     }
+  }
+
+  // Triggered on submit/select: applies the search and jumps to the tab that has a match.
+  const handleSearch = (term) => {
+    setFilters(prev => ({ ...prev, search: term }));
+    setPagination(prev => ({ ...prev, current: 1 }));
+
+    jumpToMatchTable(term);
   };
 
   const handleSearchClear = () => {
@@ -203,10 +222,13 @@ function LocationList() {
   const handleLocationChange = (option) => {
     setFilters(prev => ({ ...prev, location: option || null }));
     setPagination(prev => ({ ...prev, current: 1 }));
+    loadLocations();
 
-    if (option?.type === 'country') setActiveTab('country');
-    else if (option?.type === 'state') setActiveTab('state');
-    else if (option?.type === 'city') setActiveTab('city');
+    const term = filters.search;
+    jumpToMatchTable(term);
+    // if (option?.type === 'country') setActiveTab('country');
+    // else if (option?.type === 'state') setActiveTab('state');
+    // else if (option?.type === 'city') setActiveTab('city');
   };
 
   const handleLocationClear = () => {
