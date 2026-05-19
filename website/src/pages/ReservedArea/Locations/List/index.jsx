@@ -1,20 +1,26 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
   Typography, Table, Tabs, Button,
-  Empty, Space, Popconfirm, message, Form, Modal, Input
+  Empty, Space, Popconfirm, message, Form, Modal, Input, Select,
+  Grid
 } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { BiSolidLocationPlus } from "react-icons/bi";
+
 import _service from '@netuno/service-client';
 
 import './index.less';
-import ListHeader from '../../../../components/ListHeader/index.jsx';
 
-const { Text } = Typography;
+import ListHeaderFilters from '../../../../components/ListHeaderFilters/index.jsx';
+
+const { Text, Title } = Typography;
+const { useBreakpoint } = Grid;
 
 function LocationList() {
   const [form] = Form.useForm();
 
   const [activeTab, setActiveTab] = useState('country');
+
   const [loading, setLoading] = useState(true);
   const [tableLoading, setTableLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -27,12 +33,8 @@ function LocationList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({ search: '', country: null, state: null, city: '' });
+  const [filters, setFilters] = useState({ search: '', location: null });
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
-
-  const [locationOptions, setLocationOptions] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
 
   // Fetch all locations
   const loadLocations = () => {
@@ -69,7 +71,7 @@ function LocationList() {
         setLoading(false);
       },
       fail: () => {
-        message.error('Falha de comunicação ao carregar as localizações.');
+        message.error('Falha de comunicação ao carregar as localidades.');
         setLoading(false);
       }
     });
@@ -87,16 +89,66 @@ function LocationList() {
     }
   }, [isModalVisible, editingItem, form]);
 
-  // TODO: validate the form, call _service, refresh state and show feedback.
-  const handleSave = () => {
-    setIsSaving(true);
-    console.log('Guardar Registo...');
+  const handleSave = async () => {
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch {
+      return;
+    }
 
-    // Simulated async work
-    setTimeout(() => {
-      setIsSaving(false);
-      handleCloseModal();
-    }, 500);
+    setIsSaving(true);
+
+    let url = '';
+    let data = {};
+
+    if (activeTab === 'country') {
+      url = 'location/country';
+      data = { name: values.name, code: values.code };
+    } else if (activeTab === 'state') {
+      url = 'location/state';
+      data = {
+        name: values.name,
+        code: values.code,
+        country_id: values.countryUid,
+      };
+    } else if (activeTab === 'city') {
+      url = 'location/city';
+      data = {
+        name: values.name,
+        state_id: values.stateUid
+      };
+    }
+
+    // if (editingItem?.uid) {
+    //   data.uid = editingItem.uid;
+    // }
+
+    console.log('Saving state with:', data);
+    _service({
+      url,
+      // method: editingItem ? 'PUT' : 'POST',
+      method: 'POST',
+      data,
+      success: ({ json }) => {
+        if (json?.result) {
+          message.success('Registo guardado com sucesso.'
+            // editingItem
+            //   ? 'Registo atualizado com sucesso.'
+            //   : 'Registo guardado com sucesso.'
+          );
+          loadLocations();
+          handleCloseModal();
+        } else {
+          message.error('Não foi possível guardar o registo.');
+        }
+        setIsSaving(false);
+      },
+      fail: () => {
+        message.error('Falha de comunicação ao guardar o registo.');
+        setIsSaving(false);
+      },
+    });
   };
 
   // TODO: call _service DELETE, remove item from local state and show feedback.
@@ -123,90 +175,42 @@ function LocationList() {
     form.resetFields();
   };
 
-  // Keeps the search input controlled and updates the filter as the user types.
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    setFilters(prev => ({ ...prev, search: value }));
-    setPagination(prev => ({ ...prev, current: 1 }));
-  };
-
   // Triggered on submit/select: applies the search and jumps to the tab that has a match.
-  const handleSearch = (value) => {
-    setSearchTerm(value);
-    setFilters(prev => ({ ...prev, search: value }));
+  const handleSearch = (term) => {
+    setFilters(prev => ({ ...prev, search: term }));
     setPagination(prev => ({ ...prev, current: 1 }));
 
-    if (value && value.trim() !== '') {
-      const searchLower = value.toLowerCase();
+    // Jump to the tab that has a match.
+    if (term && term.trim() !== '') {
+      const q = term.toLowerCase();
 
-      if (countries.some(c => c.name?.toLowerCase().includes(searchLower) || c.code?.toLowerCase().includes(searchLower))) {
+      if (countries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) {
         setActiveTab('country');
-      }
-      else if (states.some(s => s.name?.toLowerCase().includes(searchLower) || s.code?.toLowerCase().includes(searchLower))) {
+      } else if (states.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) {
         setActiveTab('state');
-      }
-      else if (cities.some(c => c.name?.toLowerCase().includes(searchLower))) {
+      } else if (cities.some(c => c.name?.toLowerCase().includes(q))) {
         setActiveTab('city');
       }
     }
   };
 
-  // Fetches location suggestions for the Select dropdown as the user types.
-  const handleLocationSelectSearch = (value) => {
-    if (value.trim() === '') {
-      setLocationOptions([]);
-      return;
-    }
-    _service({
-      url: `location/search?query=${value}`,
-      success: (response) => {
-        const options = response.json.data.map(location => ({
-          value: location.label,
-          label: location.label,
-          uid: location.uid,
-          type: location.type
-        }));
-        setLocationOptions(options);
-      },
-      fail: () => {
-        setLocationOptions([]);
-      }
-    });
-  };
-
-  // Splits the "País > Estado > Cidade" label and updates filters + active tab according to the location type.
-  const handleLocationChange = (value, option) => {
-    setSelectedLocation(option);
-
-    if (option) {
-      const parts = option.label.split(' > ').map(p => p.trim());
-
-      if (option.type === 'country') {
-        setFilters(prev => ({ ...prev, country: parts[0], state: null, city: '' }));
-        setActiveTab('country');
-      }
-      else if (option.type === 'state') {
-        setFilters(prev => ({ ...prev, country: parts[0], state: parts[1], city: '' }));
-        setActiveTab('state');
-      }
-      else if (option.type === 'city') {
-        setFilters(prev => ({ ...prev, country: parts[0], state: parts[1], city: parts[2] }));
-        setActiveTab('city');
-      }
-    } else {
-      setFilters(prev => ({ ...prev, country: null, state: null, city: '' }));
-    }
-
+  const handleSearchClear = () => {
+    setFilters(prev => ({ ...prev, search: '' }));
     setPagination(prev => ({ ...prev, current: 1 }));
   };
 
-  // Resets the location Select and clears all related filters.
+  // Keeps the search input controlled and updates the filter as the user types.
+  const handleLocationChange = (option) => {
+    setFilters(prev => ({ ...prev, location: option || null }));
+    setPagination(prev => ({ ...prev, current: 1 }));
+
+    if (option?.type === 'country') setActiveTab('country');
+    else if (option?.type === 'state') setActiveTab('state');
+    else if (option?.type === 'city') setActiveTab('city');
+  };
+
   const handleLocationClear = () => {
-    setLocationOptions([]);
-    setSelectedLocation(null);
-    setSearchTerm('');
-    setFilters(prev => ({ ...prev, search: '', country: null, state: null, city: '' }));
+    setFilters(prev => ({ ...prev, location: null }));
     setPagination(prev => ({ ...prev, current: 1 }));
   };
 
@@ -217,50 +221,64 @@ function LocationList() {
     setTimeout(() => setTableLoading(false), 200);
   };
 
+  const locationParts = useMemo(() => {
+    if (!filters.location) return { country: null, state: null, city: null };
+
+    const parts = (filters.location.label || '').split(' > ').map(p => p.trim());
+
+    if (filters.location.type === 'country') return { country: parts[0], state: null, city: null };
+    if (filters.location.type === 'state') return { country: parts[0], state: parts[1], city: null };
+    if (filters.location.type === 'city') return { country: parts[0], state: parts[1], city: parts[2] };
+
+    return { country: null, state: null, city: null };
+  }, [filters.location]);
+
   const filteredCountries = useMemo(() => {
     let result = countries || [];
+
     if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(searchLower) || c.code?.toLowerCase().includes(searchLower));
+      const q = filters.search.toLowerCase();
+      result = result.filter(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q));
     }
-    if (filters.country) result = result.filter(c => c.name === filters.country);
+
+    if (locationParts.country) result = result.filter(c => c.name === locationParts.country);
+
     return result;
-  }, [countries, filters]);
+  }, [countries, filters.search, locationParts]);
 
   const filteredStates = useMemo(() => {
     let result = states || [];
 
     if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      result = result.filter(s => s.name?.toLowerCase().includes(searchLower) || s.code?.toLowerCase().includes(searchLower));
+      const q = filters.search.toLowerCase();
+      result = result.filter(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q));
     }
 
-    if (filters.country) result = result.filter(s => s.countryName === filters.country);
-
-    if (filters.state) result = result.filter(s => s.name === filters.state);
+    if (locationParts.country) result = result.filter(s => s.countryName === locationParts.country);
+    if (locationParts.state) result = result.filter(s => s.name === locationParts.state);
 
     return result;
-  }, [states, filters]);
+  }, [states, filters.search, locationParts]);
 
   const filteredCities = useMemo(() => {
     let result = cities || [];
 
     if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(searchLower));
+      const q = filters.search.toLowerCase();
+      result = result.filter(c => c.name?.toLowerCase().includes(q));
     }
 
-    if (filters.country) result = result.filter(c => c.countryName === filters.country);
-    if (filters.state) result = result.filter(c => c.stateName === filters.state);
-    if (filters.city) result = result.filter(c => c.name === filters.city);
+    if (locationParts.country) result = result.filter(c => c.countryName === locationParts.country);
+    if (locationParts.state) result = result.filter(c => c.stateName === locationParts.state);
+    if (locationParts.city) result = result.filter(c => c.name === locationParts.city);
 
     return result;
-  }, [cities, filters]);
+  }, [cities, filters.search, locationParts]);
 
   // Builds the table columns dynamically based on the active tab.
   const columns = useMemo(() => {
     const baseColumns = [
-      { title: 'Nome', dataIndex: 'name', key: 'name', render: (text) => <Text>{text}</Text> }
+      { title: 'Nome', dataIndex: 'name', key: 'name', render: (text) => <Text>{text}</Text> },
     ];
 
     if (activeTab === 'country' || activeTab === 'state') {
@@ -285,17 +303,12 @@ function LocationList() {
             icon={<EditOutlined />}
             onClick={() => handleOpenModal(record)}
           />
-
           <Popconfirm
             title="Tem a certeza que deseja apagar?"
             onConfirm={() => handleDelete(record.uid)}
             okButtonProps={{ loading: isDeleting }}
           >
-            <Button
-              type="link"
-              danger
-              icon={<DeleteOutlined />}
-            />
+            <Button type="link" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       ),
@@ -311,7 +324,6 @@ function LocationList() {
     return `Total: ${total}`;
   };
 
-  // Returns the filtered dataset for the currently active tab.
   const getCurrentData = () => {
     if (activeTab === 'country') return filteredCountries;
     if (activeTab === 'state') return filteredStates;
@@ -337,7 +349,7 @@ function LocationList() {
           pageSize: pagination.pageSize,
           onChange: (page, pageSize) => setPagination({ current: page, pageSize }),
           placement: ['bottomCenter'],
-          showTotal: totalText
+          showTotal: totalText,
         }}
       />
     );
@@ -346,43 +358,18 @@ function LocationList() {
   return (
     <div className="locations-search-container">
       <div className="locations-search">
-        <ListHeader
-          title='Localizações'
-          createButton={
-            <ListHeader.Button
-              icon={<PlusOutlined />}
-              text="Novo registo"
-              onClick={() => handleOpenModal()}
-            />
-          }
-        >
-          <div className='search-input-container'>
-            <ListHeader.Input
-              autoCompleteProps={{
-                placeholder: 'Buscar por nome',
-                popupMatchSelectWidth: 252,
-                onSelect: handleSearch
-              }}
-              inputProps={{
-                onSearch: handleSearch,
-                onChange: handleSearchChange,
-                enterButton: true,
-                value: searchTerm,
-              }}
-            />
-
-            <ListHeader.Select
-              notFoundContent={null}
-              placeholder="Cidade, Estado ou País"
-              options={locationOptions}
-              showSearch={true}
-              onSearch={handleLocationSelectSearch}
-              onChange={handleLocationChange}
-              onClear={handleLocationClear}
-              value={selectedLocation ? selectedLocation.value : undefined}
-            />
-          </div>
-        </ListHeader>
+        <ListHeaderFilters
+          title="Localidades"
+          createButton={{
+            icon: <BiSolidLocationPlus />,
+            text: 'Novo registo',
+            onClick: () => handleOpenModal(),
+          }}
+          onSearch={handleSearch}
+          onSearchClear={handleSearchClear}
+          onLocationChange={handleLocationChange}
+          onLocationClear={handleLocationClear}
+        />
       </div>
 
       <div className="results-info">
@@ -417,6 +404,49 @@ function LocationList() {
           >
             <Input />
           </Form.Item>
+
+          {(activeTab === 'country' || activeTab === 'state') && (
+            <Form.Item
+              name="code"
+              label="Código"
+              rules={[{ required: true, message: 'O código é obrigatório!' }]}
+            >
+              <Input />
+            </Form.Item>
+          )}
+
+          {activeTab === 'state' && (
+            <Form.Item
+              name="countryUid"
+              label="País"
+              rules={[{ required: true, message: 'O país é obrigatório!' }]}
+            >
+              <Select
+                placeholder="Selecione um país"
+                options={countries.map(c => ({ value: c.uid, label: c.name }))}
+                showSearch
+                optionFilterProp="label"
+              />
+            </Form.Item>
+          )}
+
+          {activeTab === 'city' && (
+            <Form.Item
+              name="stateUid"
+              label="Estado"
+              rules={[{ required: true, message: 'O estado é obrigatório!' }]}
+            >
+              <Select
+                placeholder="Selecione um estado"
+                options={states.map(s => ({
+                  value: s.uid,
+                  label: `${s.name} | ${s.countryName}`,
+                }))}
+                showSearch
+                optionFilterProp="label"
+              />
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </div>
