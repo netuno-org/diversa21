@@ -62,10 +62,10 @@ function ListHeaderFilters({
     <div>
       <div className="list-header-filters__header">
         <Row align="middle" gutter={[16, 16]}>
-          <Col xs={24} sm={12}>
+          <Col xs={12} sm={12}>
             <Title>{title}</Title>
           </Col>
-          { loggedUser.canCreateAnyUser() && <Col xs={24} sm={12}>
+          { loggedUser.canCreateAnyUser() && <Col xs={12} sm={12}>
             <Button
               type="primary"
               icon={(createButton && createButton.icon) || <PlusOutlined />}

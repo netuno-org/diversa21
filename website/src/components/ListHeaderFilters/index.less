@@ -16,7 +16,7 @@
         &:nth-child(2n) {
           text-align: right;
           @media only screen and (max-width: @xs) {
-            text-align: left;
+            text-align: end;
           }
         }
       }
@@ -25,5 +25,22 @@
 
   &__inputs {
     margin-top: 20px;
+  }
+}
+
+@media (max-width: 552px) {
+  .list-header-filters__header {
+    > .ant-row {
+      > .ant-col {
+        flex: 0 0 100%;
+        max-width: 100%;
+        text-align: center;
+
+        .ant-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
   }
 }
