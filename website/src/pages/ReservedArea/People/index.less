@@ -48,7 +48,20 @@
 }
 
 @media (max-width: 480px) {
-  .search-input-container {
-    flex-direction: column;
+  .people-search-container {
+    padding: 0 10px;
+
+    .search-input-container {
+      flex-direction: column;
+    }
+    .ant-card-body {
+      padding: 10px;
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  .ant-avatar {
+    flex-shrink: 0;
   }
 }

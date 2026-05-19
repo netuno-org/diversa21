@@ -7,6 +7,8 @@ import { RiFileEditLine } from "react-icons/ri";
 import _service from '@netuno/service-client';
 import dayjs from 'dayjs';
 
+import './index.less';
+
 function UserProfileDisplay({ user, avatarStyle, children }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const iconSize = 16
@@ -24,7 +26,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
       <Avatar style={avatarStyle} src={avatarUrl} />
-      <div>
+      <div className="user-profile-display-content">
         <div><UserOutlined /> {user.name}</div>
         {user.group.code !== "member" && (
           <div

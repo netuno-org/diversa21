@@ -29,11 +29,15 @@ function People() {
   });
   const navigate = useNavigate();
   const screens = useBreakpoint();
-  const screenSize = 
-    screens.xl ? 100 :
-    screens.lg ? 100 :
-    screens.md ? 100 :
-    screens.sm ? 110 : 60
+  const screenSize = screens.xl
+    ? 100
+    : screens.lg
+      ? 100
+      : screens.md
+        ? 100
+        : screens.sm
+          ? 90
+          : 70
 
   useEffect(() => {
     fetchPeopleList('', null, 1);

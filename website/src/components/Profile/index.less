@@ -37,25 +37,21 @@
   font-size: 14px;
 }
 
-@media (max-width: 576px) {
-  .profile {
-    .profile-card {
-      font-size: 10px;
-    }
-  }
-}
-
-@media (max-width: 515px) {
-  .edit-profile-button {
-    button {
-      font-size: 12px;
-    }
-  }
-}
-
 @media (max-width: 480px) {
+  .profile {
+    padding: 0 10px;
+    .ant-card-body {
+      padding: 10px;
+    }
+  }
   .institution-text div {
     font-size: 10px;
     margin: 0;
+  }
+  .edit-profile-button {
+    button {
+      font-size: 12px;
+      right: -14px;
+    }
   }
 }

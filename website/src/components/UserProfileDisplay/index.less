@@ -1,0 +1,31 @@
+.user-profile-display {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  .ant-avatar {
+    flex-shrink: 0;
+  }
+}
+
+.user-profile-display-content {
+  display: flex;
+  flex-direction: column;
+  div {
+    margin: 0;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-profile-display {
+    gap: 12px;
+  }
+
+  .user-profile-display-content {
+    div {
+      font-size: 16px;
+    }
+  }
+}

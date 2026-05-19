@@ -26,7 +26,7 @@ function Profile({ user }) {
       : screens.md
         ? 140
         : screens.sm
-          ? 125
+          ? 90
           : 70
 
   let content = null;
