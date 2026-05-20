@@ -2,84 +2,43 @@ import { useState, useEffect, useMemo } from 'react';
 import {
   Typography, Table, Tabs, Button,
   Empty, Space, Popconfirm, message, Form, Modal, Input, Select,
-  Grid
 } from "antd";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { BiSolidLocationPlus } from "react-icons/bi";
 
 import _service from '@netuno/service-client';
 
-import './index.less';
+import useLocations from '../../../../common/useLocations.js';
+import usePeople from '../../../../common/usePeople.js';
 
 import ListHeaderFilters from '../../../../components/ListHeaderFilters/index.jsx';
 
-const { Text, Title } = Typography;
-const { useBreakpoint } = Grid;
+import './index.less';
+
+const { Text } = Typography;
 
 function LocationList() {
+  const {
+    allCountries, allStates,
+    filteredCountries, filteredStates, filteredCities,
+    loading, reload, filters, setFilters
+  } = useLocations();
+
+  const loggedUser = usePeople();
+
   const [form] = Form.useForm();
 
   const [activeTab, setActiveTab] = useState('country');
 
-  const [loading, setLoading] = useState(true);
   const [tableLoading, setTableLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
-  const [filters, setFilters] = useState({ search: '', location: null });
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
-  // Fetch all locations
-  const loadLocations = () => {
-    setLoading(true);
-    _service({
-      url: 'location/search',
-      method: 'GET',
-      data: { query: '' },
-      success: ({ json }) => {
-        const items = Array.isArray(json?.data) ? json.data : [];
-
-        const newCountries = [];
-        const newStates = [];
-        const newCities = [];
-
-        items.forEach(item => {
-          // Returns labels formatted as "País > Estado > Cidade".
-          const [countryName, stateName, cityName] = (item.label || "")
-            .split(' > ')
-            .map(part => part?.trim());
-
-          if (item.type === 'country') {
-            newCountries.push({ uid: item.uid, name: countryName, code: item.code });
-          } else if (item.type === 'state') {
-            newStates.push({ uid: item.uid, name: stateName, countryName, code: item.code });
-          } else if (item.type === 'city') {
-            newCities.push({ uid: item.uid, name: cityName, stateName, countryName });
-          }
-        });
-        setCountries(newCountries);
-        setStates(newStates);
-        setCities(newCities);
-
-        setLoading(false);
-      },
-      fail: () => {
-        message.error('Falha de comunicação ao carregar as localidades.');
-        setLoading(false);
-      }
-    });
-  };
-
-  useEffect(() => {
-    loadLocations();
-  }, []);
 
   // Sync the form with the item being edited whenever the modal opens.
   useEffect(() => {
@@ -124,7 +83,6 @@ function LocationList() {
     //   data.uid = editingItem.uid;
     // }
 
-    console.log('Saving state with:', data);
     _service({
       url,
       // method: editingItem ? 'PUT' : 'POST',
@@ -132,12 +90,11 @@ function LocationList() {
       data,
       success: ({ json }) => {
         if (json?.result) {
-          message.success('Registo guardado com sucesso.'
-            // editingItem
-            //   ? 'Registo atualizado com sucesso.'
-            //   : 'Registo guardado com sucesso.'
-          );
-          loadLocations();
+          message.success('Registo guardado com sucesso.');
+          // editingItem
+          //   ? 'Registo atualizado com sucesso.'
+          //   : 'Registo guardado com sucesso.'
+          reload(activeTab);
           handleCloseModal();
         } else {
           message.error('Não foi possível guardar o registo.');
@@ -157,7 +114,6 @@ function LocationList() {
     setTableLoading(true);
     console.log('Apagar Registo UID:', uid);
 
-    // Simulated async work
     setTimeout(() => {
       setIsDeleting(false);
       setTableLoading(false);
@@ -180,41 +136,24 @@ function LocationList() {
     if (term && term.trim() !== '') {
       const q = term.toLowerCase();
 
-      if (activeTab === 'country' &&
-        countries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) {
-        return;
-      }
+      if (activeTab === 'country' && allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) return;
+      if (activeTab === 'state' && allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) return;
+      if (activeTab === 'city' && filteredCities.some(c => c.name?.toLowerCase().includes(q))) return;
 
-      if (activeTab === 'state' &&
-        states.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) {
-        return;
-      }
-
-      if (activeTab === 'city' &&
-        cities.some(c => c.name?.toLowerCase().includes(q))) {
-        return;
-      }
-
-      if (countries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) {
-        setActiveTab('country');
-      } else if (states.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) {
-        setActiveTab('state');
-      } else if (cities.some(c => c.name?.toLowerCase().includes(q))) {
-        setActiveTab('city');
-      }
+      if (allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) setActiveTab('country');
+      else if (allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) setActiveTab('state');
+      else if (filteredCities.some(c => c.name?.toLowerCase().includes(q))) setActiveTab('city');
     }
   }
-
   // Triggered on submit/select: applies the search and jumps to the tab that has a match.
   const handleSearch = (term) => {
-    setFilters(prev => ({ ...prev, search: term }));
+    setFilters(prev => ({ ...prev, term }));
     setPagination(prev => ({ ...prev, current: 1 }));
-
     jumpToMatchTable(term);
   };
 
   const handleSearchClear = () => {
-    setFilters(prev => ({ ...prev, search: '' }));
+    setFilters(prev => ({ ...prev, term: '' }));
     setPagination(prev => ({ ...prev, current: 1 }));
   };
 
@@ -222,13 +161,10 @@ function LocationList() {
   const handleLocationChange = (option) => {
     setFilters(prev => ({ ...prev, location: option || null }));
     setPagination(prev => ({ ...prev, current: 1 }));
-    loadLocations();
 
-    const term = filters.search;
-    jumpToMatchTable(term);
-    // if (option?.type === 'country') setActiveTab('country');
-    // else if (option?.type === 'state') setActiveTab('state');
-    // else if (option?.type === 'city') setActiveTab('city');
+    if (option?.type === 'country') setActiveTab('country');
+    else if (option?.type === 'state') setActiveTab('state');
+    else if (option?.type === 'city') setActiveTab('city');
   };
 
   const handleLocationClear = () => {
@@ -242,60 +178,6 @@ function LocationList() {
     setPagination(prev => ({ ...prev, current: 1 }));
     setTimeout(() => setTableLoading(false), 200);
   };
-
-  const locationParts = useMemo(() => {
-    if (!filters.location) return { country: null, state: null, city: null };
-
-    const parts = (filters.location.label || '').split(' > ').map(p => p.trim());
-
-    if (filters.location.type === 'country') return { country: parts[0], state: null, city: null };
-    if (filters.location.type === 'state') return { country: parts[0], state: parts[1], city: null };
-    if (filters.location.type === 'city') return { country: parts[0], state: parts[1], city: parts[2] };
-
-    return { country: null, state: null, city: null };
-  }, [filters.location]);
-
-  const filteredCountries = useMemo(() => {
-    let result = countries || [];
-
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q));
-    }
-
-    if (locationParts.country) result = result.filter(c => c.name === locationParts.country);
-
-    return result;
-  }, [countries, filters.search, locationParts]);
-
-  const filteredStates = useMemo(() => {
-    let result = states || [];
-
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q));
-    }
-
-    if (locationParts.country) result = result.filter(s => s.countryName === locationParts.country);
-    if (locationParts.state) result = result.filter(s => s.name === locationParts.state);
-
-    return result;
-  }, [states, filters.search, locationParts]);
-
-  const filteredCities = useMemo(() => {
-    let result = cities || [];
-
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(q));
-    }
-
-    if (locationParts.country) result = result.filter(c => c.countryName === locationParts.country);
-    if (locationParts.state) result = result.filter(c => c.stateName === locationParts.state);
-    if (locationParts.city) result = result.filter(c => c.name === locationParts.city);
-
-    return result;
-  }, [cities, filters.search, locationParts]);
 
   // Builds the table columns dynamically based on the active tab.
   const columns = useMemo(() => {
@@ -346,26 +228,21 @@ function LocationList() {
     return `Total: ${total}`;
   };
 
-  const getCurrentData = () => {
-    if (activeTab === 'country') return filteredCountries;
-    if (activeTab === 'state') return filteredStates;
-    if (activeTab === 'city') return filteredCities;
-    return [];
-  };
+  const currentData = activeTab === 'country' ? filteredCountries
+    : activeTab === 'state' ? filteredStates
+      : filteredCities;
 
-  const currentData = getCurrentData();
+  const renderTable = (data, type) => {
+    const isLoading = loading[type] || tableLoading;
 
-  const renderTable = (data) => {
-    if (!loading && !tableLoading && data.length === 0) {
-      return <Empty description="Nenhum registo encontrado." />;
-    }
+    if (!isLoading && data.length === 0) return <Empty description="Nenhum registo encontrado." />;
 
     return (
       <Table
         dataSource={data}
         columns={columns}
         rowKey="uid"
-        loading={loading || tableLoading}
+        loading={isLoading}
         pagination={{
           current: pagination.current,
           pageSize: pagination.pageSize,
@@ -382,7 +259,7 @@ function LocationList() {
       <div className="locations-search">
         <ListHeaderFilters
           title="Localidades"
-          createButton={{
+          createButton={loggedUser.canManageLocations && {
             icon: <BiSolidLocationPlus />,
             text: 'Novo registo',
             onClick: () => handleOpenModal(),
@@ -395,16 +272,16 @@ function LocationList() {
       </div>
 
       <div className="results-info">
-        <Text>{totalText(currentData.length)}</Text>
+        <Text type='secondary'>{totalText(currentData.length)}</Text>
       </div>
 
       <Tabs
         activeKey={activeTab}
         onChange={handleTabChange}
         items={[
-          { key: 'country', label: 'Países', children: renderTable(filteredCountries) },
-          { key: 'state', label: 'Estados', children: renderTable(filteredStates) },
-          { key: 'city', label: 'Cidades', children: renderTable(filteredCities) },
+          { key: 'country', label: 'Países', children: renderTable(filteredCountries, 'country') },
+          { key: 'state', label: 'Estados', children: renderTable(filteredStates, 'state') },
+          { key: 'city', label: 'Cidades', children: renderTable(filteredCities, 'city') },
         ]}
       />
 
@@ -431,9 +308,13 @@ function LocationList() {
             <Form.Item
               name="code"
               label="Código"
-              rules={[{ required: true, message: 'O código é obrigatório!' }]}
+              rules={[
+                { required: true, message: 'O código é obrigatório!' },
+                { max: 3, message: 'O código não pode ter mais de 3 letras.' },
+                { pattern: /^[a-zA-Z]+$/, message: 'Apenas letras são permitidas.' }
+              ]}
             >
-              <Input />
+              <Input placeholder="Ex: PT, BR, SP" />
             </Form.Item>
           )}
 
@@ -445,7 +326,7 @@ function LocationList() {
             >
               <Select
                 placeholder="Selecione um país"
-                options={countries.map(c => ({ value: c.uid, label: c.name }))}
+                options={allCountries.map(c => ({ value: c.uid, label: c.name }))}
                 showSearch
                 optionFilterProp="label"
               />
@@ -460,7 +341,7 @@ function LocationList() {
             >
               <Select
                 placeholder="Selecione um estado"
-                options={states.map(s => ({
+                options={allStates.map(s => ({
                   value: s.uid,
                   label: `${s.name} | ${s.countryName}`,
                 }))}
