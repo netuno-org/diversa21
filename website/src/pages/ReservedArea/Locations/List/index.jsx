@@ -106,16 +106,36 @@ function LocationList() {
     }
   };
 
-  // TODO: call _service DELETE, remove item from local state and show feedback.
   const handleDelete = (uid) => {
     setIsDeleting(true);
     setTableLoading(true);
-    console.log('Apagar Registo UID:', uid);
 
-    setTimeout(() => {
-      setIsDeleting(false);
-      setTableLoading(false);
-    }, 500);
+    _service({
+      url: `location/${activeTab}`,
+      method: 'DELETE',
+      data: { uid },
+      success: ({ json }) => {
+        if (json?.result) {
+          messageApi.success('Registo apagado com sucesso.');
+          reload(activeTab);
+        } else {
+          if (json?.error === 'country-has-states') {
+            messageApi.error('Não é possível apagar: existem estados associados a este país.');
+          } else if (json?.error === 'state-has-cities') {
+            messageApi.error('Não é possível apagar: existem cidades associadas a este estado.');
+          } else {
+            messageApi.error(json?.error || 'Não foi possível apagar o registo.');
+          }
+        }
+        setIsDeleting(false);
+        setTableLoading(false);
+      },
+      fail: () => {
+        messageApi.error('Falha de comunicação ao apagar o registo.');
+        setIsDeleting(false);
+        setTableLoading(false);
+      },
+    });
   };
 
   const handleOpenModal = (item = null) => {
@@ -228,7 +248,7 @@ function LocationList() {
     });
 
     return baseColumns;
-  }, [activeTab, isDeleting]);
+  }, [activeTab]);
 
   const totalText = (total) => {
     if (activeTab === 'country') {
