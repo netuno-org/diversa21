@@ -1,20 +1,37 @@
 import request from "supertest";
 
-const NETUNO_URL = 'http://localhost:9000/services';
+const NETUNO_URL = "http://localhost:9000/services";
 
-test('login with user Test', async () => {
+test("login with user Test", async () => {
   const response = await request(NETUNO_URL)
-    .put('/_auth')
-    .set('Content-Type', 'application/json')
-    .set('Accept', '*/*')
+    .put("/_auth")
+    .set("Content-Type", "application/json")
+    .set("Accept", "*/*")
     .send({
-      username: 'test',
-      password: '12345678',
+      username: "test",
+      password: "12345678",
       jwt: true
     })
-    .expect('Content-Type', 'application/json')
+    .expect("Content-Type", "application/json")
     .expect(200);
 
   expect(response.body.result).toBe(true);
-  expect(response.body).toHaveProperty('access_token');
+  expect(response.body).toHaveProperty("access_token");
+});
+
+test("login with a user that doesn't exist", async () => {
+  const response = await request(NETUNO_URL)
+    .put("/_auth")
+    .set("Content-Type", "application/json")
+    .set("Accept", "*/*")
+    .send({
+      username: "notexist",
+      password: "12345678",
+      jwt: true
+    })
+    .expect("Content-Type", "application/json")
+    .expect(403);
+
+  expect(response.body.result).toBe(false);
+  expect(response.body).not.toHaveProperty("access_token");
 });
