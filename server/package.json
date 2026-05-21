@@ -4,6 +4,9 @@
   "description": "Server modules dependencies.",
   "author": "netuno.org",
   "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
   "imports": {
     "#actions/*": {
       "default": "./actions/*"
@@ -28,6 +31,8 @@
     }
   },
   "dependencies": {
-    "@netuno/server-types": "^1.4.0"
+    "@netuno/server-types": "^1.4.0",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
