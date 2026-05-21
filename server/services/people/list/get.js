@@ -1,6 +1,7 @@
 import {_req, _db, _val, _out} from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
+import response from "#core/lib/response.js";
 
 const name = _req.getString('name');
 const cityUid = _req.getUID('cityUid');
@@ -74,7 +75,4 @@ if (dbPeople.length == 0) {
 result.set("items", list);
 result.set("pageSize", pageSize);
 
-_out.json({
-  result: true,
-  data: result
-});
+response.successWithData(result);
