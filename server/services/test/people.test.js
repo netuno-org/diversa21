@@ -7,50 +7,48 @@ const locationTypes = ["city", "state", "country"];
 expect.extend({
   toBePeople(received) {
     let pass = true;
-    let message = '\n';
+    let message = "";
 
     for (const property of ["birthDate", "name", "username", "uid", "email"]) {
       const thisPropertyIsString = (typeof received[property] === "string");
-      pass &&= thisPropertyIsString;
       if (!thisPropertyIsString) {
-        message += `${property} should be of type string, `;
+        message += `${property} should be of type string, got ${typeof received[property]}\n`;
       }
+      pass &&= thisPropertyIsString;
     }
 
     for (const property of ["active", "avatar"]) {
-      const thisPropertyIsBoolean = (typeof received[property] === "boolean");
-      pass &&= thisPropertyIsBoolean;
-      if (!thisPropertyIsBoolean) {
+      const propertyIsBoolean = (typeof received[property] === "boolean");
+      if (!propertyIsBoolean) {
         message += `${property} should be of type boolean, got ${typeof received[property]}\n`;
       }
+      pass &&= propertyIsBoolean;
     }
 
     for (const locationType of locationTypes) {
       const nameIsString = (typeof received[locationType].name === "string");
       const uidIsString = (typeof received[locationType].uid === "string");
-      pass &&= nameIsString && uidIsString;
       if (!uidIsString) {
         message += `${locationType}.uid should be of type string, got ${typeof received[locationType].uid}\n`;
       }
       if (!nameIsString) {
         message += `${locationType}.name should be of type string, got ${typeof received[locationType].name}\n`;
       } 
+      pass &&= nameIsString && uidIsString;
     }
-
 
     for (const property of ["name", "code"]) {
       const propertyIsString = (typeof received.group[property] === "string");
+      // TODO: testar se group.code e group.name tem um dos 4 valores possíveis
       if (!propertyIsString) {
           message += `group.${property} should be of type string, got ${typeof received.group[property]}\n`;
       }
       pass &&= propertyIsString;
     }
 
-    message.replace(/\. $/, "");
-
     return {
       pass,
-      message: `Expected object to have properties: ${message}`
+      message
     };
   }
 })
