@@ -74,4 +74,7 @@ if (dbPeople.length == 0) {
 result.set("items", list);
 result.set("pageSize", pageSize);
 
-_out.json(result);
+_out.json({
+  result: true,
+  data: result
+});

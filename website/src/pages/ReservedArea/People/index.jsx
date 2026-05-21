@@ -53,7 +53,7 @@ function People() {
         page,
       },
       success: (response) => {
-        const { items, totalCount, pageSize } = response.json;
+        const { items, totalCount, pageSize } = response.json.data;
         setPeopleList(items);
         setPagination((currentPagination) => ({
           ...currentPagination,
