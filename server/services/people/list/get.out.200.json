@@ -1,25 +1,29 @@
 {
   "type": "object",
   "properties": {
-    "items": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "type": "boolean"
-          },
-          "data": { 
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
             "_schema": "response/people-data"
           }
+        },
+        "pageSize": {
+          "type": "number"
+        },
+        "totalCount": {
+          "type": "number"
         }
       }
     },
-    "pageSize": {
-      "type": "number"
-    },
-    "totalCount": {
-      "type": "number"
-    }
-  }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
 }

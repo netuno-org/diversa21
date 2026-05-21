@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "_schema": "response/people-data"
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

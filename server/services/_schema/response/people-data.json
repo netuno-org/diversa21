@@ -1,106 +1,94 @@
 {
   "type": "object",
   "properties": {
-    "result": {
+    "uid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    },
+    "username": {
+      "type": "string-not-empty",
+      "pattern": "^[a-z]+[a-z0-9]{1,24}$"
+    },
+    "email": {
+      "type": "string-not-empty",
+      "format": "email"
+    },
+    "avatar": {
       "type": "boolean"
     },
-    "data": {
+    "birthDate": {
+      "type": "string-not-empty",
+      "format": "date"
+    },
+    "city": {
       "type": "object",
       "properties": {
-        "uid": {
-          "type": "uid"
-        },
         "name": {
           "type": "string-not-empty"
         },
-        "username": {
-          "type": "string-not-empty",
-          "pattern": "^[a-z]+[a-z0-9]{1,24}$"
+        "uid": {
+          "type": "uid"
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string-not-empty"
         },
-        "email": {
-          "type": "string-not-empty",
-          "format": "email"
+        "uid": {
+          "type": "uid"
+        }
+      }
+    },
+    "country": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string-not-empty"
         },
-        "avatar": {
-          "type": "boolean"
+        "uid": {
+          "type": "uid"
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string-not-empty"
         },
-        "birthDate": {
-          "type": "string-not-empty",
-          "format": "date"
+        "code": {
+          "type": "string-not-empty"
+        }
+      }
+    },
+    "institution": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string-not-empty"
         },
-        "city": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string-not-empty"
-            },
-            "uid": {
-              "type": "uid"
-            }
-          }
-        },
-        "state": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string-not-empty"
-            },
-            "uid": {
-              "type": "uid"
-            }
-          }
-        },
-        "country": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string-not-empty"
-            },
-            "uid": {
-              "type": "uid"
-            }
-          }
-        },
-        "group": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string-not-empty"
-            },
-            "code": {
-              "type": "string-not-empty"
-            }
-          }
-        },
-        "institution": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string-not-empty"
-            },
-            "uid": {
-              "type": "uid"
-            }
-          }
-        },
-      },
-      "required": [
-        "uid",
-        "name",
-        "username",
-        "email",
-        "avatar",
-        "birthDate",
-        "city",
-        "state",
-        "country",
-        "group",
-        "institution"
-      ]
-    }
+        "uid": {
+          "type": "uid"
+        }
+      }
+    },
   },
   "required": [
-    "result",
-    "data"
+    "uid",
+    "name",
+    "username",
+    "email",
+    "avatar",
+    "birthDate",
+    "city",
+    "state",
+    "country",
+    "group",
+    "institution"
   ]
 }
