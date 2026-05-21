@@ -27,6 +27,7 @@ function LocationList() {
   const loggedUser = usePeople();
 
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [activeTab, setActiveTab] = useState('country');
 
@@ -43,69 +44,66 @@ function LocationList() {
   // Sync the form with the item being edited whenever the modal opens.
   useEffect(() => {
     if (isModalVisible) {
-      if (editingItem) form.setFieldsValue(editingItem);
-      else form.resetFields();
+      if (editingItem) {
+        form.setFieldsValue(editingItem);
+      } else {
+        form.resetFields();
+      }
     }
   }, [isModalVisible, editingItem, form]);
 
   const handleSave = async () => {
-    let values;
     try {
-      values = await form.validateFields();
+      const values = await form.validateFields();
+
+      setIsSaving(true);
+
+      const isEditing = !!editingItem?.uid;
+      let url = `location/${activeTab}`;
+
+      const data = {
+        name: values.name.trim()
+      };
+
+      if (isEditing) {
+        data.uid = editingItem.uid;
+      }
+
+      if (activeTab === 'country') {
+        data.code = values.code.trim().toUpperCase();
+      } else if (activeTab === 'state') {
+        data.code = values.code.trim().toUpperCase();
+        data.countryUid = values.countryUid;
+      } else if (activeTab === 'city') {
+        data.stateUid = values.stateUid;
+      }
+
+      _service({
+        url,
+        method: editingItem ? 'PUT' : 'POST',
+        data,
+        success: ({ json }) => {
+          if (json?.result) {
+            messageApi.success(
+              editingItem
+                ? 'Registo atualizado com sucesso.'
+                : 'Registo guardado com sucesso.');
+            reload(activeTab);
+            handleCloseModal();
+          } else {
+            const errorMsg = json?.error || 'Não foi possível guardar o registo.';
+            messageApi.error(errorMsg);
+          }
+          setIsSaving(false);
+        },
+        fail: () => {
+          messageApi.error('Falha de comunicação ao guardar o registo.');
+          setIsSaving(false);
+        },
+      });
     } catch {
       return;
     }
-
-    setIsSaving(true);
-
-    let url = '';
-    let data = {};
-
-    if (activeTab === 'country') {
-      url = 'location/country';
-      data = { name: values.name, code: values.code };
-    } else if (activeTab === 'state') {
-      url = 'location/state';
-      data = {
-        name: values.name,
-        code: values.code,
-        countryUid: values.countryUid,
-      };
-    } else if (activeTab === 'city') {
-      url = 'location/city';
-      data = {
-        name: values.name,
-        stateUid: values.stateUid
-      };
-    }
-
-    // if (editingItem?.uid) {
-    //   data.uid = editingItem.uid;
-    // }
-
-    _service({
-      url,
-      // method: editingItem ? 'PUT' : 'POST',
-      method: 'POST',
-      data,
-      success: ({ json }) => {
-        if (json?.result) {
-          message.success('Registo guardado com sucesso.');
-          // editingItem
-          //   ? 'Registo atualizado com sucesso.'
-          //   : 'Registo guardado com sucesso.'
-          reload(activeTab);
-          handleCloseModal();
-        } else {
-          message.error('Não foi possível guardar o registo.');
-        }
-        setIsSaving(false);
-      },
-      fail: () => {
-        message.error('Falha de comunicação ao guardar o registo.');
-        setIsSaving(false);
-      },
-    });
   };
 
   // TODO: call _service DELETE, remove item from local state and show feedback.
@@ -136,15 +134,22 @@ function LocationList() {
     if (term && term.trim() !== '') {
       const q = term.toLowerCase();
 
-      if (activeTab === 'country' && allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) return;
-      if (activeTab === 'state' && allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) return;
-      if (activeTab === 'city' && filteredCities.some(c => c.name?.toLowerCase().includes(q))) return;
+      if ((activeTab === 'country' && allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q)))
+        || (activeTab === 'state' && allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q)))
+        || (activeTab === 'city' && filteredCities.some(c => c.name?.toLowerCase().includes(q)))) {
+        return;
+      }
 
-      if (allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) setActiveTab('country');
-      else if (allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) setActiveTab('state');
-      else if (filteredCities.some(c => c.name?.toLowerCase().includes(q))) setActiveTab('city');
+      if (allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) {
+        setActiveTab('country');
+      } else if (allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) {
+        setActiveTab('state');
+      } else if (filteredCities.some(c => c.name?.toLowerCase().includes(q))) {
+        setActiveTab('city');
+      }
     }
   }
+
   // Triggered on submit/select: applies the search and jumps to the tab that has a match.
   const handleSearch = (term) => {
     setFilters(prev => ({ ...prev, term }));
@@ -162,9 +167,13 @@ function LocationList() {
     setFilters(prev => ({ ...prev, location: option || null }));
     setPagination(prev => ({ ...prev, current: 1 }));
 
-    if (option?.type === 'country') setActiveTab('country');
-    else if (option?.type === 'state') setActiveTab('state');
-    else if (option?.type === 'city') setActiveTab('city');
+    if (option?.type === 'country') {
+      setActiveTab('country');
+    } else if (option?.type === 'state') {
+      setActiveTab('state');
+    } else if (option?.type === 'city') {
+      setActiveTab('city');
+    }
   };
 
   const handleLocationClear = () => {
@@ -222,9 +231,15 @@ function LocationList() {
   }, [activeTab, isDeleting]);
 
   const totalText = (total) => {
-    if (activeTab === 'country') return total === 1 ? '1 país' : `${total} países`;
-    if (activeTab === 'state') return total === 1 ? '1 estado' : `${total} estados`;
-    if (activeTab === 'city') return total === 1 ? '1 cidade' : `${total} cidades`;
+    if (activeTab === 'country') {
+      return total === 1 ? '1 país' : `${total} países`;
+    }
+    if (activeTab === 'state') {
+      return total === 1 ? '1 estado' : `${total} estados`;
+    }
+    if (activeTab === 'city') {
+      return total === 1 ? '1 cidade' : `${total} cidades`;
+    }
     return `Total: ${total}`;
   };
 
@@ -235,7 +250,9 @@ function LocationList() {
   const renderTable = (data, type) => {
     const isLoading = loading[type] || tableLoading;
 
-    if (!isLoading && data.length === 0) return <Empty description="Nenhum registo encontrado." />;
+    if (!isLoading && data.length === 0) {
+      return <Empty description="Nenhum registo encontrado." />;
+    }
 
     return (
       <Table
@@ -256,6 +273,7 @@ function LocationList() {
 
   return (
     <div className="locations-search-container">
+      {contextHolder}
       <div className="locations-search">
         <ListHeaderFilters
           title="Localidades"
