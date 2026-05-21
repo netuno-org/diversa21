@@ -119,19 +119,24 @@ function LocationList() {
           messageApi.success('Registo apagado com sucesso.');
           reload(activeTab);
         } else {
-          if (json?.error === 'country-has-states') {
-            messageApi.error('Não é possível apagar: existem estados associados a este país.');
-          } else if (json?.error === 'state-has-cities') {
-            messageApi.error('Não é possível apagar: existem cidades associadas a este estado.');
-          } else {
-            messageApi.error(json?.error || 'Não foi possível apagar o registo.');
-          }
+          messageApi.error(json?.error || 'Não foi possível apagar o registo.');
         }
         setIsDeleting(false);
         setTableLoading(false);
       },
-      fail: () => {
-        messageApi.error('Falha de comunicação ao apagar o registo.');
+      fail: (response) => {
+        const json = response?.json;
+
+        if (json?.error === 'country-has-states') {
+          messageApi.error('Não é possível apagar: existem estados associados a este país.');
+        } else if (json?.error === 'state-has-cities') {
+          messageApi.error('Não é possível apagar: existem cidades associadas a este estado.');
+        } else if (json?.error) {
+          messageApi.error(json.error);
+        } else {
+          messageApi.error('Falha de comunicação ao apagar o registo.');
+        }
+
         setIsDeleting(false);
         setTableLoading(false);
       },
