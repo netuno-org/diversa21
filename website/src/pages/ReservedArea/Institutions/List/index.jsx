@@ -1,282 +1,161 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Typography, Spin, Pagination, Empty, 
-  Input, Select, Space, Avatar, Button, List, Row 
-} from "antd";
-import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { Card, Avatar, Spin, Pagination, Empty, Typography, Grid } from 'antd';
+import { UserAddOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
-import "./index.less";
+import InstitutionDisplay from "../../../../components/InstitutionDisplay";
+
 
 import usePeople from "../../../../common/usePeople.js";
 
-const { Title, Text } = Typography;
-const { Option } = Select;
+import ListHeaderFilters from "../../../../components/ListHeaderFilters";
 
-const PAGE_SIZE = 10;
+import "./index.less";
 
-function InstitutionList() {
+
+const { Text, Title } = Typography;
+const { useBreakpoint } = Grid;
+
+function ListInstitution() {
   const loggedUser = usePeople();
-  const navigate = useNavigate();
-  const [allInstitutions, setAllInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [institutionList, setInstitutionList] = useState([]);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    size: 10,
+    total: 0,
+    term: '',
+    location: null
+  });
+  const navigate = useNavigate();
+  const screens = useBreakpoint();
+  const screenSize = screens.xl
+    ? 100
+    : screens.lg
+      ? 100
+      : screens.md
+        ? 100
+        : screens.sm
+          ? 90
+          : 70
 
-  const institutionsSetFilters = () => {};
-  const filters = {};
-
-
-  // Fetch all institutions for filtering
   useEffect(() => {
+    fetchInstitutionList('', null, 1);
+  }, []);
+
+  const fetchInstitutionList = (term, location, page) => {
     setLoading(true);
     _service({
-      method: 'GET',
-      url: "institution/list",
-      success: ({ json }) => {
-        const items = Array.isArray(json?.data) ? json.data : [];
-        setAllInstitutions(items);
-        
-        // Extract unique countries
-        const uniqueCountries = [...new Set(items.map(i => i.country).filter(Boolean))].sort();
-        setCountries(uniqueCountries);
-        
+      url: 'institution/list',
+      data: {
+        name: term,
+        ...(location && { [location.type + "Uid"]: location.uid }),
+        page,
+      },
+      success: (response) => {
+        console.log(response.json)
+
+        const institutions = response.json.data;
+
+        setInstitutionList(institutions);
+        console.log('institutions', institutionList);
+
+        setPagination((currentPagination) => ({
+          ...currentPagination,
+          current: page,
+          term,
+          location,
+          total: institutions.length,
+          size: 10
+        }));
         setLoading(false);
       },
       fail: () => {
         setLoading(false);
       }
-    });
-  }, []);
-
-  // Filter states based on selected country
-  useEffect(() => {
-    if (filters.country) {
-      const filteredStates = [...new Set(
-        allInstitutions
-          .filter(i => i.country === filters.country && i.state)
-          .map(i => i.state)
-      )].sort();
-      setStates(filteredStates);
-    } else {
-      setStates([]);
-    }
-  }, [filters.country, allInstitutions]);
-
-  // Compute filtered and paginated results
-  const filteredInstitutions = useMemo(() => {
-    let result = allInstitutions || [];
-    
-    // Filter by search name
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      result = result.filter(i => 
-        i.name?.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    // Filter by country
-    if (filters.country) {
-      result = result.filter(i => i.country === filters.country);
-    }
-    
-    // Filter by state
-    if (filters.state) {
-      result = result.filter(i => i.state === filters.state);
-    }
-    
-    // Filter by city
-    if (filters.city) {
-      const cityLower = filters.city.toLowerCase();
-      result = result.filter(i => i.city?.toLowerCase().includes(cityLower));
-    }
-    
-    return result;
-  }, [allInstitutions, filters]);
-
-  // Paginate results
-  const paginatedInstitutions = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredInstitutions.slice(start, start + PAGE_SIZE);
-  }, [filteredInstitutions, currentPage]);
-
-  const handleSearchChange = (value) => {
-    institutionsSetFilters({ search: value });
+    })
   };
 
-  const handleCountryChange = (value) => {
-    institutionsSetFilters({ country: value, state: '' });
+  const handlePaginationChange = (page, pageSize) => {
+    setPagination({ ...pagination, current: page, size: pageSize });
+    fetchInstitutionList(pagination.term, pagination.location, page);
+  }
+
+  const handleInstitutionSearch = (term) => {
+    setPagination({ ...pagination, current: 1, term });
+    fetchInstitutionList(term, pagination.location, 1);
   };
 
-  const handleStateChange = (value) => {
-    institutionsSetFilters({ state: value });
+  const handleLocationChange = (option) => {
+    setPagination({ ...pagination, current: 1, location: option });
+    fetchInstitutionList(pagination.term, option, 1);
   };
 
-  const handleCityChange = (value) => {
-    institutionsSetFilters({ city: value });
-  };
+  const handleLocationClear = () => {
+    setPagination({ ...pagination, current: 1, location: null });
+    fetchInstitutionList(pagination.term, null, 1);
+  }
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const clearFilters = () => {
-    institutionsSetFilters({ search: '', country: '', state: '', city: '' });
-  };
-
-  const hasFilters = filters.search || filters.country || filters.state || filters.city;
-
-  const handleCardClick = (slug) => {
-    navigate(`/institutions/${slug}`);
-  };
+  const handleSearchClear = () => {
+    setPagination({ ...pagination, current: 1, term: '' });
+    fetchInstitutionList('', pagination.location, 1);
+  }
 
   return (
-    <section className="institutions-list">
-      <div className="list-header">
-        <Title level={1}>Instituições</Title>
-        { loggedUser.canCreateInstitutions() &&
-          <Button 
-            type="primary" 
-            icon={<PlusOutlined />}
-            onClick={() => navigate('/institutions/new')}
-          >
-            Nova Instituição
-          </Button>
-        }
+    <div className="institution-search-container">
+      <div className="institution-search">
+        <ListHeaderFilters
+          title="Instituições"
+          createButton={loggedUser.canCreateInstitutions() && {
+            icon: <UserAddOutlined />,
+            text: "Criar Instituição",
+            onClick: () => navigate('/institutions/new'),
+          }}
+          onSearch={handleInstitutionSearch}
+          onLocationChange={handleLocationChange}
+          onLocationClear={handleLocationClear}
+          onSearchClear={handleSearchClear}
+        />
       </div>
-
-      <div className="filters-section">
-        <Space wrap size="middle">
-          <Input.Search
-            placeholder="Buscar por nome..."
-            allowClear
-            enterButton={<SearchOutlined />}
-            onSearch={handleSearchChange}
-            style={{ width: 280 }}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            value={filters.search}
-          />
-          
-          <Select
-            placeholder="País"
-            allowClear
-            style={{ width: 180 }}
-            onChange={handleCountryChange}
-            value={filters.country || undefined}
-            showSearch
-            optionFilterProp="children"
-          >
-            {countries.map(country => (
-              <Option key={country} value={country}>{country}</Option>
-            ))}
-          </Select>
-
-          <Select
-            placeholder="Estado"
-            allowClear
-            style={{ width: 180 }}
-            onChange={handleStateChange}
-            value={filters.state || undefined}
-            disabled={!filters.country}
-            showSearch
-            optionFilterProp="children"
-          >
-            {states.map(state => (
-              <Option key={state} value={state}>{state}</Option>
-            ))}
-          </Select>
-
-          <Input
-            placeholder="Cidade"
-            allowClear
-            style={{ width: 180 }}
-            onChange={(e) => handleCityChange(e.target.value)}
-            value={filters.city}
-          />
-
-          {hasFilters && (
-            <Button type="link" onClick={clearFilters}>
-              Limpar filtros
-            </Button>
-          )}
-        </Space>
-      </div>
-
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '48px 0' }}>
+      {loading && (
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 24 }}>
           <Spin size="large" />
         </div>
-      ) : filteredInstitutions.length === 0 ? (
-        <Empty 
-          description={hasFilters ? "Nenhuma instituição corresponde aos filtros aplicados." : "Nenhuma instituição encontrada."} 
-        />
-      ) : (
-        <>
-          <div className="results-info">
-            <Text type="secondary">
-              {filteredInstitutions.length} {filteredInstitutions.length !== 1 ? 'instituições' : 'instituição'} encontrada{filteredInstitutions.length !== 1 ? 's' : ''}
-            </Text>
-          </div>
-
-          <List
-              className="institution-list"
-              itemLayout="horizontal"
-              dataSource={paginatedInstitutions}
-              renderItem={(institution) => (
-                <List.Item
-                  className="institution-list-item"
-                  onClick={() => handleCardClick(institution.slug)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <List.Item.Meta
-                    avatar={
-                      institution.logo ? (
-                        <Avatar src={institution.logo} size={48} shape="square" />
-                      ) : (
-                        <Avatar size={48} shape="square" style={{ backgroundColor: '#8A6AA2' }}>
-                          {institution.name?.[0]}
-                        </Avatar>
-                      )
-                    }
-                    title={
-                      <div className="institution-list-title">
-                        <Text strong>{institution.name}</Text>
-                      </div>
-                    }
-                    description={
-                      <div className="institution-list-description">
-                        <Text type="secondary" ellipsis>
-                          {institution.description || 'Sem descrição'}
-                        </Text>
-                        {(institution.city || institution.country) && (
-                          <Text type="secondary" className="institution-location">
-                            {institution.city}{institution.city && institution.country && ', '}{institution.country}
-                          </Text>
-                        )}
-                      </div>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-
-          <div className="pagination-wrapper">
-            <Pagination
-              current={currentPage}
-              pageSize={PAGE_SIZE}
-              total={filteredInstitutions.length}
-              onChange={handlePageChange}
-              showTotal={(total) => `${total} ${total !== 1 ? 'instituições' : 'instituição'}`}
-              showSizeChanger={false}
-            />
-          </div>
-        </>
       )}
-    </section>
+      <div className="results-info">
+        <Text type="secondary">
+          {pagination.total} {pagination.total !== 1 ? 'Instituições' : 'Instituição'} encontrado{pagination.total !== 1 ? 's' : ''}
+        </Text>
+      </div>
+      {!loading && institutionList.map((institution) => (
+        <div key={institution.uid} style={{ width: '100%', marginBottom: '20px'}}>
+          <Link to={`/institutions/${institution.slug}`}>
+            <Card className="institution-search-result-card" key={institution.uid}>
+              <InstitutionDisplay institution={institution} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
+            </Card>
+          </Link>
+        </div>
+      ))}
+      <div style={{ width: '100%' }}>
+        <Pagination
+          style={{ ...(institutionList.length === 0 && !loading ? { marginTop: '20px', display: 'none' } : { marginTop: '20px' }) }}
+          align='center'
+          total={pagination.total}
+          current={pagination.current}
+          pageSize={pagination.size}
+          onChange={handlePaginationChange}
+        />
+        {institutionList.length === 0 && !loading && (
+          <div style={{ marginTop: '20px' }}>
+            <Empty
+              description={"Nenhuma instituição corresponde aos filtros aplicados."}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
-export default InstitutionList;
+export default ListInstitution;
