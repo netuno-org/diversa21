@@ -1,0 +1,12 @@
+{
+  "tags":[
+    "institution"
+  ],
+  "summary": "List users from an institution",
+  "description": "Retrieve a list of users by their institution.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  }
+}
