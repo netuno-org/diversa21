@@ -11,6 +11,5 @@ if (_header.isOptions()) {
 } else if (_service.path == 'people/avatar/get') {
   _service.allow();
 } else if (_service.path !== '_auth') {
-  _log.debug("denied");
   _service.deny();
 }
