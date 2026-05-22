@@ -10,8 +10,8 @@ expect.extend({
     let message = "";
 
     for (const property of ["birthDate", "name", "username", "uid", "email"]) {
-      const isThisPropertyString = (typeof received[property] === "string");
-      if (!isThisPropertyString) {
+      const isPropertyString = (typeof received[property] === "string");
+      if (!isPropertyString) {
         message += `${property} should be of type string, got ${typeof received[property]}\n`;
       }
       pass &&= isPropertyString;
@@ -40,7 +40,7 @@ expect.extend({
     for (const property of ["name", "code"]) {
       const isPropertyString = (typeof received.group[property] === "string");
       if (!isPropertyString) {
-          message += `group.${property} should be of type string, got ${typeof received.group[property]}\n`;
+        message += `group.${property} should be of type string, got ${typeof received.group[property]}\n`;
       }
       pass &&= isPropertyString;
     }
