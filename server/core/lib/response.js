@@ -10,11 +10,11 @@ const stopWithError = (code, message) => {
 }
 
 const stopWithNotCreated = (entity) => {
-  stopWithError(400, `${entity}-not-created}`);
+  stopWithError(400, `${entity}-not-created`);
 }
 
 const stopWithNotFound = (entity) => {
-  stopWithError(404, `${entity}-not-found}`);
+  stopWithError(404, `${entity}-not-found`);
 }
 
 export default {
