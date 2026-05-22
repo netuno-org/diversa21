@@ -1,9 +1,49 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types";
 
 let page = _req.getInt('page', 1);
+let name = _req.getString('name');
+let countryUid = _req.getString('countryUid');
+let stateUid = _req.getString('stateUid');
+let cityUid = _req.getString('cityUid');
 
 const limit = 10;
 const offset = (page - 1) * limit;
+
+let whereClauses = [];
+let params = [];
+
+if (name) {
+    whereClauses.push("institution.name ILIKE ?::text");
+    params.push(`%${name}%`);
+}
+if (countryUid) {
+    whereClauses.push("country.uid = ?::uuid");
+    params.push(countryUid);
+}
+if (stateUid) {
+    whereClauses.push("state.uid = ?::uuid");
+    params.push(stateUid);
+}
+if (cityUid) {
+    whereClauses.push("city.uid = ?::uuid");
+    params.push(cityUid);
+}
+
+let whereSql = "";
+if (whereClauses.length > 0) {
+    whereSql = "WHERE " + whereClauses.join(" AND ");
+}
+
+const dbTotal = _db.query(`
+    SELECT COUNT(*) as total
+    FROM institution
+    INNER JOIN city ON institution.city_id = city.id
+    INNER JOIN state ON city.state_id = state.id
+    INNER JOIN country ON state.country_id = country.id
+    ${whereSql}
+`, ...params);
+
+const total = dbTotal[0].getInt('total');
 
 const dbInstitutions = _db.query(`
     SELECT
@@ -26,10 +66,11 @@ const dbInstitutions = _db.query(`
     INNER JOIN city ON institution.city_id = city.id
     INNER JOIN state ON city.state_id = state.id
     INNER JOIN country ON state.country_id = country.id
+    ${whereSql}
     ORDER BY institution.name ASC
     LIMIT 10
     OFFSET ?::int
-`, offset);
+`, ...params, offset);
 
 const institutions = _val.list()
 
@@ -57,5 +98,6 @@ for (const dbInstitution of dbInstitutions) {
 _out.json(
   _val.map()
     .set('result', true)
+    .set('total', total)
     .set('data', institutions)
 )
