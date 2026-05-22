@@ -1,32 +1,20 @@
 import {_req, _db, _val, _header, _exec, _out} from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
-
-const onAbort = () => {
-  _header.status(404)
-  _out.json(
-    _val.map()
-      .set("error", "not-exist")
-  );
-  _exec.stop()
-};
+import response from "#core/lib/response.js";
 
 const username = _req.getString("username");
 
 const dbPeople = people.getByUsername(username);
 
 if (!dbPeople) {
-  onAbort();
+  response.stopWithUserNotFound();
 }
 
 const data = people.getData(dbPeople.getUID("uid"));
 
 if (!data) {
-  onAbort();
+  response.stopWithUserNotFound();
 }
 
-_out.json(
-  _val.map()
-  .set("result", true)
-  .set("data", data)
-);
+response.successWithData(data);
