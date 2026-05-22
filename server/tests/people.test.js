@@ -92,3 +92,30 @@ test("list people", async () => {
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePeople();
 });
+
+test("get me", async () => {
+  const loginResponse = await request(NETUNO_URL)
+    .put("/_auth")
+    .set("Content-Type", "application/json")
+    .set("Accept", "*/*")
+    .send({
+      username: "test",
+      password: "12345678",
+      jwt: true
+    })
+
+  const accessToken = loginResponse.body.access_token;
+
+  const response = await request(NETUNO_URL)
+    .get("/people/me")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(200);
+
+  expect(response.body.result).toBe(true);
+  expect(response.body).toHaveProperty("data");
+  const me = response.body.data;
+  expect(me).toBePeople();
+  expect(me.name).toBe("Test");
+  expect(me.username).toBe("test");
+  expect(me.email).toBe("test@membro.com");
+});
