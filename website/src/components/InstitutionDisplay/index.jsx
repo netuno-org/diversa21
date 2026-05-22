@@ -27,7 +27,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
       
       <Avatar
-        style={avatarStyle}
+        style={{ backgroundColor: '#8A6AA2', ...avatarStyle }}
         src={avatarUrl}
         shape="square"
       >
