@@ -1,10 +1,9 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types";
 
-let page = _req.getInt('page', 0);
+let page = _req.getInt('page', 1);
 
-if (page > 0) {
-    page *= 10;
-}
+const limit = 10;
+const offset = (page - 1) * limit;
 
 const dbInstitutions = _db.query(`
     SELECT
@@ -27,10 +26,10 @@ const dbInstitutions = _db.query(`
     INNER JOIN city ON institution.city_id = city.id
     INNER JOIN state ON city.state_id = state.id
     INNER JOIN country ON state.country_id = country.id
-    ORDER BY name ASC
+    ORDER BY institution.name ASC
     LIMIT 10
     OFFSET ?::int
-`, page);
+`, offset);
 
 const institutions = _val.list()
 
