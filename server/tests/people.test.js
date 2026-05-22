@@ -66,7 +66,8 @@ test("unauthorized list people", async () => {
     .expect(401);
 });
 
-test("list people", async () => {
+
+const login = async () => {
   const loginResponse = await request(NETUNO_URL)
     .put("/_auth")
     .set("Content-Type", "application/json")
@@ -77,7 +78,11 @@ test("list people", async () => {
       jwt: true
     })
 
-  const accessToken = loginResponse.body.access_token;
+  return loginResponse.body.access_token;
+}
+
+test("list people", async () => {
+  const accessToken = await login(); 
 
   const response = await request(NETUNO_URL)
     .get("/people/list")
@@ -94,17 +99,7 @@ test("list people", async () => {
 });
 
 test("get me", async () => {
-  const loginResponse = await request(NETUNO_URL)
-    .put("/_auth")
-    .set("Content-Type", "application/json")
-    .set("Accept", "*/*")
-    .send({
-      username: "test",
-      password: "12345678",
-      jwt: true
-    })
-
-  const accessToken = loginResponse.body.access_token;
+  const accessToken = await login();
 
   const response = await request(NETUNO_URL)
     .get("/people/me")
@@ -118,4 +113,56 @@ test("get me", async () => {
   expect(me.name).toBe("Test");
   expect(me.username).toBe("test");
   expect(me.email).toBe("test@membro.com");
+});
+
+test("get by uid", async () => {
+  const accessToken = await login();
+
+  const response = await request(NETUNO_URL)
+    .get("/people?uid=0abd451a-b951-4c95-adc9-96332ad6c772")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(200);
+
+  expect(response.body.result).toBe(true);
+  expect(response.body).toHaveProperty("data");
+  const user = response.body.data;
+  expect(user).toBePeople();
+  expect(user.name).toBe("Bob");
+});
+
+test("get by uid not found", async () => {
+  const accessToken = await login();
+
+  const response = await request(NETUNO_URL)
+    .get("/people?uid=7c076702-0f99-44b9-b4f5-7b6d4810b7d8")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(404);
+  
+  expect(response.body.error).toBe("user-not-found");
+});
+
+test("get by username", async () => {
+  const accessToken = await login();
+
+  const response = await request(NETUNO_URL)
+    .get("/people/by?username=alice1")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(200);
+
+  expect(response.body.result).toBe(true);
+  expect(response.body).toHaveProperty("data");
+  const user = response.body.data;
+  expect(user).toBePeople();
+  expect(user.uid).toBe("2a86a611-2ab1-472d-a7fe-c41c4aeef36b");
+});
+
+test("get by username not found", async () => {
+  const accessToken = await login();
+
+  const response = await request(NETUNO_URL)
+    .get("/people/by?username=notexist")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(404);
+  
+  expect(response.body.error).toBe("user-not-found");
 });
