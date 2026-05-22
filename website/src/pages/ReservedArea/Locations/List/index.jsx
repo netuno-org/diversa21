@@ -233,7 +233,7 @@ function LocationList() {
       title: 'Ações',
       key: 'actions',
       width: 120,
-      align: 'right',
+      align: 'center',
       render: (_, record) => (
         <Space size="small">
           <Button
@@ -243,6 +243,7 @@ function LocationList() {
           />
           <Popconfirm
             title="Tem a certeza que deseja apagar?"
+            placement='topRight'
             onConfirm={() => handleDelete(record.uid)}
             okButtonProps={{ loading: isDeleting }}
           >
@@ -285,6 +286,7 @@ function LocationList() {
         columns={columns}
         rowKey="uid"
         loading={isLoading}
+        scroll={{ x: 'max-content' }}
         pagination={{
           current: pagination.current,
           pageSize: pagination.pageSize,

@@ -1,41 +1,37 @@
+@import '../../../../styles/variables.less';
+
 .locations-search-container {
   padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
 
   .locations-search {
     width: 100%;
   }
 
-  .search-input-container {
-    width: 100%;
-    gap: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .results-info {
-    margin-top: 20px;
-    margin-left: 10px;
-    margin-bottom: 16px;
+    margin: 20px 0 16px 8px;
   }
 
   .ant-tabs {
     width: 100%;
+
+    .ant-tabs-content {
+      margin-top: 8px;
+    }
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: @xs) {
   .locations-search-container {
-    align-items: center;
-
-    .search-input-container {
-      flex-direction: column;
-    }
+    padding: 16px;
 
     .results-info {
+      margin-left: 0;
+      text-align: center;
+
       .ant-typography {
-        font-size: 12px;
-        text-align: center;
+        font-size: 13px;
       }
     }
   }
