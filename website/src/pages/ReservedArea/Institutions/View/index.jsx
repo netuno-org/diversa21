@@ -14,7 +14,7 @@ import "./index.less";
 
 const { Title, Text, Paragraph } = Typography;
 
-function InstitutionView() {
+function View() {
   const navigate = useNavigate();
   const { slug } = useParams();
   const [institution, setInstitution] = useState(null);
@@ -222,4 +222,4 @@ function InstitutionView() {
   );
 }
 
-export default InstitutionView;
+export default View;

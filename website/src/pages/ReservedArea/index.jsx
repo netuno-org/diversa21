@@ -14,7 +14,7 @@ import UserProfileEdit from "./UserProfile/Edit";
 import People from "./People";
 import CreateUser from "../CreateUser";
 import InstitutionsList from "./Institutions/List";
-import InstitutionView from "./Institutions/View";
+import InstitutionView from "./Institutions/View/index.jsx";
 import InstitutionForm from "../../components/InstitutionForm";
 import LocationList from "./Locations/List";
 
