@@ -51,7 +51,7 @@ expect.extend({
       message
     };
   }
-})
+});
 
 test("unauthorized list people", async () => {
   const response = await request(NETUNO_URL)
