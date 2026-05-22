@@ -10,40 +10,39 @@ expect.extend({
     let message = "";
 
     for (const property of ["birthDate", "name", "username", "uid", "email"]) {
-      const thisPropertyIsString = (typeof received[property] === "string");
-      if (!thisPropertyIsString) {
+      const isThisPropertyString = (typeof received[property] === "string");
+      if (!isThisPropertyString) {
         message += `${property} should be of type string, got ${typeof received[property]}\n`;
       }
-      pass &&= thisPropertyIsString;
+      pass &&= isPropertyString;
     }
 
     for (const property of ["active", "avatar"]) {
-      const propertyIsBoolean = (typeof received[property] === "boolean");
-      if (!propertyIsBoolean) {
+      const isPropertyBoolean = (typeof received[property] === "boolean");
+      if (!isPropertyBoolean) {
         message += `${property} should be of type boolean, got ${typeof received[property]}\n`;
       }
-      pass &&= propertyIsBoolean;
+      pass &&= isPropertyBoolean;
     }
 
     for (const locationType of locationTypes) {
-      const nameIsString = (typeof received[locationType].name === "string");
-      const uidIsString = (typeof received[locationType].uid === "string");
-      if (!uidIsString) {
+      const isNameString = (typeof received[locationType].name === "string");
+      const isUidString = (typeof received[locationType].uid === "string");
+      if (!isUidString) {
         message += `${locationType}.uid should be of type string, got ${typeof received[locationType].uid}\n`;
       }
-      if (!nameIsString) {
+      if (!isNameString) {
         message += `${locationType}.name should be of type string, got ${typeof received[locationType].name}\n`;
       } 
-      pass &&= nameIsString && uidIsString;
+      pass &&= isNameString && isUidString;
     }
 
     for (const property of ["name", "code"]) {
-      const propertyIsString = (typeof received.group[property] === "string");
-      // TODO: testar se group.code e group.name tem um dos 4 valores possíveis
-      if (!propertyIsString) {
+      const isPropertyString = (typeof received.group[property] === "string");
+      if (!isPropertyString) {
           message += `group.${property} should be of type string, got ${typeof received.group[property]}\n`;
       }
-      pass &&= propertyIsString;
+      pass &&= isPropertyString;
     }
 
     return {
