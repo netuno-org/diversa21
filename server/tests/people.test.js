@@ -1,5 +1,7 @@
 import request from "supertest";
 
+import { MEMBER, MANAGEMENT, REVIEW, SUPER_ADMIN } from "#core/lib/groups.js";
+
 const NETUNO_URL = "http://localhost:9000/services";
 
 const locationTypes = ["city", "state", "country"];
@@ -44,6 +46,12 @@ expect.extend({
       }
       pass &&= isPropertyString;
     }
+
+    const isGroupCodeCorrect = [MEMBER, MANAGEMENT, REVIEW, SUPER_ADMIN].includes(received.group.code);
+    if (!isGroupCodeCorrect) { 
+      message += `group.code should be member, management, review or super-admin, got ${received.group.code}\n`;
+    }
+    pass &&= isGroupCodeCorrect;
 
     return {
       pass,
