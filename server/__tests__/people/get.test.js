@@ -130,6 +130,24 @@ test("get by uid", async () => {
   expect(user.name).toBe("Bob");
 });
 
+test("get missing uid paramenter", async () => {
+  const accessToken = await login();
+
+  await request(NETUNO_URL)
+    .get("/people")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(400);
+});
+
+test("get by non-existent paramenter, missing uid paramenter", async () => {
+  const accessToken = await login();
+
+  await request(NETUNO_URL)
+    .get("/people?foo=bar")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(400);
+});
+
 test("get by uid not found", async () => {
   const accessToken = await login();
 
@@ -165,4 +183,13 @@ test("get by username not found", async () => {
     .expect(404);
   
   expect(response.body.error).toBe("user-not-found");
+});
+
+test("get by, missing username parameter", async () => {
+  const accessToken = await login();
+
+  await request(NETUNO_URL)
+    .get("/people/by")
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(400);
 });
