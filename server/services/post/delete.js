@@ -1,5 +1,7 @@
 import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
 
+// TODO: import response from "#core/lib/response.js";
+
 const uid = _req.getString("uid");
 
 const dbPost = _db.queryFirst(`
@@ -59,4 +61,5 @@ if (dbParentPost) {
     )
 }
 
+// TODO: response.successWithoutData();
 _out.json({ result: true })

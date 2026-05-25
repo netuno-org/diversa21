@@ -52,6 +52,7 @@ if (dbPeople != null && dbPeople.getBoolean("active")) {
       .set("error", "user-not-active")
   );
 } else {
+  // TODO: trocar por erro user-not-found?
   _header.status(404);
   _out.json(
     _val.map()

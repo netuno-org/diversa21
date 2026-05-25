@@ -46,6 +46,8 @@ const dbInstitution = _db.queryFirst(`
     SELECT uid, slug FROM institution WHERE id = ?
 `, uid);
 
+// TODO: retonar without-data
+// begin
 if (!dbInstitution) {
     _header.status(500);
     _out.json(_val.map().set("error", "failed-to-retrieve-institution"));
@@ -60,3 +62,4 @@ _out.json(
         .set("slug", dbInstitution.getString("slug"))
     )
 );
+// end
