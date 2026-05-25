@@ -1,0 +1,15 @@
+{
+  "tags": [
+    "state"
+  ],
+  "summary": "Delete a State",
+  "description": "Removes a state based on its unique identifier. Will fail if there are cities linked to this state.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

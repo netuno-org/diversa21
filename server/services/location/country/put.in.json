@@ -1,0 +1,23 @@
+{
+  "tags": [
+    "country"
+  ],
+  "summary": "Create or Update a Country",
+  "description": "Inserts a new country or updates an existing one if the UID is provided.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    },
+    "code": {
+      "type": "string-not-empty",
+      "maxLength": 3
+    }
+  },
+  "required": [
+    "name",
+    "code"
+  ]
+}

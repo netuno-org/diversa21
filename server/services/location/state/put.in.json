@@ -1,0 +1,27 @@
+{
+  "tags": [
+    "state"
+  ],
+  "summary": "Create or Update a State",
+  "description": "Inserts a new state or updates an existing one if the UID is provided.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    },
+    "code": {
+      "type": "string-not-empty",
+      "maxLength": 3
+    },
+    "countryUid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "name",
+    "code",
+    "countryUid"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string-not-empty"
+          },
+          "name": {
+            "type": "string-not-empty"
+          },
+          "code": {
+            "type": "string-not-empty"
+          }
+        },
+        "required": [
+          "uid",
+          "name",
+          "code"
+        ]
+      }
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

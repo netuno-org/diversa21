@@ -1,0 +1,8 @@
+{
+  "tags": [
+    "state"
+  ],
+  "summary": "Fetch All States",
+  "description": "Retrieve a complete list of all registered states, including their respective country information.",
+  "properties": {}
+}

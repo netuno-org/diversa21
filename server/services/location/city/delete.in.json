@@ -1,0 +1,15 @@
+{
+  "tags": [
+    "city"
+  ],
+  "summary": "Delete a City",
+  "description": "Removes a city based on its unique identifier.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

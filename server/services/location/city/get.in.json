@@ -1,0 +1,8 @@
+{
+  "tags": [
+    "city"
+  ],
+  "summary": "Fetch All Cities",
+  "description": "Retrieve a complete list of all registered cities, including their state and country information.",
+  "properties": {}
+}

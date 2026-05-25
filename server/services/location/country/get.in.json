@@ -1,0 +1,8 @@
+{
+  "tags": [
+    "country"
+  ],
+  "summary": "Fetch All Countries",
+  "description": "Retrieve a complete list of all registered countries.",
+  "properties": {}
+}

@@ -1,0 +1,15 @@
+{
+  "tags": [
+    "country"
+  ],
+  "summary": "Delete a Country",
+  "description": "Removes a country based on its unique identifier.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

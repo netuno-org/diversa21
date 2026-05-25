@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string-not-empty"
+          },
+          "name": {
+            "type": "string-not-empty"
+          },
+          "stateUid": {
+            "type": "string-not-empty"
+          },
+          "stateName": {
+            "type": "string-not-empty"
+          },
+          "countryUid": {
+            "type": "string-not-empty"
+          },
+          "countryName": {
+            "type": "string-not-empty"
+          }
+        },
+        "required": [
+          "uid",
+          "name",
+          "stateUid",
+          "stateName",
+          "countryUid",
+          "countryName"
+        ]
+      }
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}
