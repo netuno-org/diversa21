@@ -60,7 +60,7 @@ expect.extend({
   }
 });
 
-test("unauthorized list people", async () => {
+test("list people without loging in", async () => {
   const response = await request(NETUNO_URL)
     .get("/people/list")
     .expect(401);
