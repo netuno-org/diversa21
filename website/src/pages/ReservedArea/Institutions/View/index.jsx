@@ -103,7 +103,7 @@ function View() {
                 {institution.name}
               </Title>
 
-              <Space titlePlacement="vertical" size={4} className="location-info">
+              <Space direction="vertical" size={4} className="location-info">
                 {(institution.city?.name || institution.country?.name) && (
                   <Text type="secondary">
                     <EnvironmentOutlined /> {institution.city?.name}{institution.city?.name && institution.country?.name && ', '}{institution.country?.name}
