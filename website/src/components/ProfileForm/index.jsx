@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Navigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Divider, Spin, notification } from 'antd';
+import { Navigate } from "react-router-dom";
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -11,8 +11,11 @@ import isNetworkError from "is-network-error";
 import globalNotification from "../../common/globalNotification.js";
 import usePeople from "../../common/usePeople.js";
 import Avatar from './Avatar';
+import './index.less';
 
 function ProfileForm({ 
+  textTitle2,
+  textTitle,
   operation,
   people,
   redirectTo
@@ -56,11 +59,6 @@ function ProfileForm({
   const [ready, setReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [api, contextHolder] = notification.useNotification();
-  const navigate = useNavigate();
-
-  const layout = operation === "edit" ? {
-    wrapperCol: { xs: { span: 24 }, sm: { span: 24 }, md: { span: 24 }, lg: { span: 12 } }
-  } : null;
 
   useEffect(() => {
     if (people && operation === "edit") {
@@ -284,18 +282,11 @@ function ProfileForm({
   }
 
   return (
-    <div>
+    <div className="profile-form">
       {contextHolder}
       <div className="content-body">
-        { operation === "edit" &&
-          <>
-            <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
-            <Divider titlePlacement="left" plain>Informações Gerais</Divider>
-          </>
-        }
         <Form
           style={{ width: '100%' }}
-          {...layout}
           onValuesChange={onValuesChange}
           ref={profileForm}
           layout="vertical"
@@ -322,157 +313,168 @@ function ProfileForm({
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
-          <Form.Item
-            label="Nome"
-            name="name"
-            rules={[
-              { required: true, message: 'Insira o nome.' },
-              { type: 'string', message: 'Nome inválido,.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
-            ]}
-          >
-            <Input disabled={submitting} maxLength={25} />
-          </Form.Item>
-          <Form.Item
-            label="Utilizador"
-            name="username"
-            rules={[
-              { required: true, message: 'Insira o usuário.' },
-              { type: 'string', message: 'Usuário inválido.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
-            ]}
-          >
-            <Input disabled={submitting} maxLength={25} />
-          </Form.Item>
-          <Form.Item
-            label="E-mail"
-            name="email"
-            rules={[
-              { type: 'email', message: 'O e-mail inserido não é válido.' },
-              { required: true, message: 'Insira o e-mail.' }
-            ]}
-          >
-            <Input disabled={submitting} maxLength={250} />
-          </Form.Item>
-          <Form.Item
-            label="Data de Nascimento"
-            name="birthDate"
-            rules={[
-              { type: 'date', message: 'A data inserida não é válida.' },
-              { required: true, message: 'Insira a data de nascimento.' }
-            ]}
-          >
-            <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
-          </Form.Item>
-          <Form.Item
-            label="Cidade"
-            name="city"
-            rules={[
-              { type: 'string', message: 'A cidade inserida não é válida.' },
-              { required: true, message: 'Insira a cidade.' }
-            ]}
-          >
-            <Select
-              showSearch
-              notFoundContent={null}
-              filterOption={false}
-              placeholder="Cidade"
-              options={cityOptions}
-              allowClear
-              onClear={handleCityClear}
-              onSearch={handleCitySearch}
-              onChange={handleCityChange}
-            />
-          </Form.Item>
-          { canViewInstitutionFormField &&
-          <Form.Item
-            label="Instituição"
-            name="institution"
-            rules={[
-              { type: 'string', message: 'A instituição inserida não é válida.' },
-              { required: true, message: 'Insira a instituição.' }
-            ]}
-          >
-            <Select
-              showSearch
-              notFoundContent={null}
-              filterOption={false}
-              placeholder="Instituição"
-              options={institutionOptions}
-              allowClear
-              onClear={handleInstitutionClear}
-              onSearch={handleInstitutionSearch}
-              onChange={handleInstitutionChange}
-            />
-          </Form.Item>
-          }
-          { canViewGroupFormField &&
+          {operation === "edit" && (
+            <Card title={"Editar usuário - " + textTitle} className="form-card">
+              <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
+            </Card>
+          )}
+          <Card title={operation === "create" ? textTitle + " - " + textTitle2 : operation === "edit" ? textTitle2 : textTitle2} className="form-card">
             <Form.Item
-              label="Grupo"
-              name="group"
+              label="Nome"
+              name="name"
               rules={[
-                { type: 'string', message: 'O grupo inserido não é válido.' },
-                { required: true, message: 'Insira o grupo.' }
+                { required: true, message: 'Insira o nome.' },
+                { type: 'string', message: 'Nome inválido,.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
+              ]}
+            >
+              <Input disabled={submitting} maxLength={25} />
+            </Form.Item>
+            <Form.Item
+              label="Utilizador"
+              name="username"
+              rules={[
+                { required: true, message: 'Insira o usuário.' },
+                { type: 'string', message: 'Usuário inválido.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
+              ]}
+            >
+              <Input disabled={submitting} maxLength={25} />
+            </Form.Item>
+            <Form.Item
+              label="E-mail"
+              name="email"
+              rules={[
+                { type: 'email', message: 'O e-mail inserido não é válido.' },
+                { required: true, message: 'Insira o e-mail.' }
+              ]}
+            >
+              <Input disabled={submitting} maxLength={250} />
+            </Form.Item>
+            <Form.Item
+              label="Data de Nascimento"
+              name="birthDate"
+              rules={[
+                { type: 'date', message: 'A data inserida não é válida.' },
+                { required: true, message: 'Insira a data de nascimento.' }
+              ]}
+            >
+              <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
+            </Form.Item>
+            <Form.Item
+              label="Cidade"
+              name="city"
+              rules={[
+                { type: 'string', message: 'A cidade inserida não é válida.' },
+                { required: true, message: 'Insira a cidade.' }
               ]}
             >
               <Select
                 showSearch
                 notFoundContent={null}
                 filterOption={false}
-                placeholder="Grupo"
-                options={groupOptions}
+                placeholder="Cidade"
+                options={cityOptions}
                 allowClear
-                onClear={handleGroupClear}
-                onChange={handleGroupChange}
+                onClear={handleCityClear}
+                onSearch={handleCitySearch}
+                onChange={handleCityChange}
               />
             </Form.Item>
-          }
-          { canViewPasswordFields && <>
-          <Form.Item
-            label={(operation === "edit" ? "Nova" : "") + " Palavra-passe"}
-            name="password"
-            rules={[
-              (operation === "create" && { required: true, message: 'Insira a palavra-passe.' }),
-              { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
-            ]}
-          >
-          { operation === "create" ?
-            <PasswordInput disabled={submitting} maxLength={25} /> :
-            <PasswordInput />
-          }
-          </Form.Item>
-          <Form.Item
-            label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Palavra-passe"}
-            name="password_confirm"
-            rules={[ (operation === "create" ?
-              { required: true, message: `Insira a confirmação da palavra-passe.` } :
-              { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
-              { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject('As palavras-passes não são iguais.');
-                },
-              })
-            ]}
-          >
+            {canViewInstitutionFormField && (
+              <Form.Item
+                label="Instituição"
+                name="institution"
+                rules={[
+                  { type: 'string', message: 'A instituição inserida não é válida.' },
+                  { required: true, message: 'Insira a instituição.' }
+                ]}
+              >
+                <Select
+                  showSearch
+                  notFoundContent={null}
+                  filterOption={false}
+                  placeholder="Instituição"
+                  options={institutionOptions}
+                  allowClear
+                  onClear={handleInstitutionClear}
+                  onSearch={handleInstitutionSearch}
+                  onChange={handleInstitutionChange}
+                />
+              </Form.Item>
+            )}
+            {canViewGroupFormField && (
+              <Form.Item
+                label="Grupo"
+                name="group"
+                rules={[
+                  { type: 'string', message: 'O grupo inserido não é válido.' },
+                  { required: true, message: 'Insira o grupo.' }
+                ]}
+              >
+                <Select
+                  showSearch
+                  notFoundContent={null}
+                  filterOption={false}
+                  placeholder="Grupo"
+                  options={groupOptions}
+                  allowClear
+                  onClear={handleGroupClear}
+                  onChange={handleGroupChange}
+                />
+              </Form.Item>
+            )}
+            {canViewActiveField && (
+              <Form.Item label="Estado" name="active">
+                <Switch checkedChildren="ativo" unCheckedChildren="inativo" />
+              </Form.Item>
+            )}
+          </Card>
+
+          {canViewPasswordFields && (
+            <Card title="Segurança" className="form-card">
+              <Form.Item
+                label={(operation === "edit" ? "Nova" : "") + " Palavra-passe"}
+                name="password"
+                rules={[
+                  (operation === "create" && { required: true, message: 'Insira a palavra-passe.' }),
+                  { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                ]}
+              >
+                {operation === "create" ?
+                  <PasswordInput disabled={submitting} maxLength={25} /> :
+                  <PasswordInput />
+                }
+              </Form.Item>
+              <Form.Item
+                label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Palavra-passe"}
+                name="password_confirm"
+                rules={[ (operation === "create" ?
+                  { required: true, message: `Insira a confirmação da palavra-passe.` } :
+                  { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
+                  { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('password') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject('As palavras-passes não são iguais.');
+                    },
+                  })
+                ]}
+              >
+                {operation === "create" ?
+                  <Input.Password disabled={submitting} maxLength={25} /> :
+                  <Input.Password maxLength={25} />
+                }
+              </Form.Item>
+            </Card>
+          )}
+
+          <Form.Item className="submit-form-item">
             { operation === "create" ?
-              <Input.Password disabled={submitting} maxLength={25} /> :
-              <Input.Password maxLength={25} />
-            }
-          </Form.Item>
-          </>}
-          { canViewActiveField && 
-            <Form.Item name="active">
-              <Switch checkedChildren="ativo" unCheckedChildren="inativo" />
-            </Form.Item>
-          }
-          <Form.Item>
-            { operation === "create" ?
-              <Button type="primary" htmlType="submit" loading={submitting}>
+              <Button type="primary" htmlType="submit" loading={submitting} size="large" block>
                 Criar Usuário
               </Button> :
-              <Button type="primary" htmlType="submit" loading={submitting}>
+              <Button type="primary" htmlType="submit" loading={submitting} size="large" block>
                 Atualizar Perfil
               </Button>
             }
