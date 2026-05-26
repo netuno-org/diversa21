@@ -56,8 +56,11 @@ const dbInstitutions = _db.query(`
         institution.website,
         institution.address,
         institution.post_code,
+        city.uid AS "city_uid",
         city.name AS "city",
+        state.uid AS "state_uid",
         state.name AS "state",
+        country.uid AS "country_uid",
         country.name AS "country",
         institution.cover_image,
         institution.logo,
@@ -82,9 +85,21 @@ for (const dbInstitution of dbInstitutions) {
             .set('cover_image', dbInstitution.get('cover_image'))
             .set('uid', dbInstitution.getString('uid'))
             .set('slug', dbInstitution.getString('slug'))
-            .set('country', dbInstitution.getString('country'))
-            .set('state', dbInstitution.getString('state'))
-            .set('city', dbInstitution.getString('city'))
+            .set('country',
+              _val.map()
+                .set('uid', dbInstitution.getString('country_uid'))
+                .set('name', dbInstitution.getString('country'))
+            )
+            .set('state',
+              _val.map()
+                .set('uid', dbInstitution.getString('state_uid'))
+                .set('name', dbInstitution.getString('state'))
+            )
+            .set('city',
+              _val.map()
+                .set('uid', dbInstitution.getString('city_uid'))
+                .set('name', dbInstitution.getString('city'))
+            )
             .set('post_code', dbInstitution.getString('post_code'))
             .set('address', dbInstitution.getString('address'))
             .set('website', dbInstitution.getString('website'))

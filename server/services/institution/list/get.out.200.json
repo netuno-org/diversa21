@@ -38,13 +38,40 @@
             "type": "string"
           },
           "city": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "uid": {
+                "type": "uid"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": ["uid", "name"]
           },
           "state": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "uid": {
+                "type": "uid"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": ["uid", "name"]
           },
           "country": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "uid": {
+                "type": "uid"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": ["uid", "name"]
           },
           "cover_image": {
             "type": "string"

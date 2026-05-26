@@ -18,8 +18,11 @@ if (slug) {
             institution.website,
             institution.address,
             institution.post_code,
+            city.uid AS "city_uid",
             city.name AS "city",
+            state.uid AS "state_uid",
             state.name AS "state",
+            country.uid AS "country_uid",
             country.name AS "country",
             institution.cover_image,
             institution.logo,
@@ -67,9 +70,21 @@ _out.json(
     .set('website', dbInstitution.getString('website'))
     .set('address', dbInstitution.getString('address'))
     .set('post_code', dbInstitution.getString('post_code'))
-    .set('city', dbInstitution.getString('city'))
-    .set('state', dbInstitution.getString('state'))
-    .set('country', dbInstitution.getString('country'))
+    .set('city',
+      _val.map()
+        .set('uid', dbInstitution.getString('city_uid'))
+        .set('name', dbInstitution.getString('city'))
+    )
+    .set('state',
+      _val.map()
+        .set('uid', dbInstitution.getString('state_uid'))
+        .set('name', dbInstitution.getString('state'))
+    )
+    .set('country',
+      _val.map()
+        .set('uid', dbInstitution.getString('country_uid'))
+        .set('name', dbInstitution.getString('country'))
+    )
     .set('cover_image', dbInstitution.getString('cover_image'))
     .set('logo', dbInstitution.getString('logo'))
     .set('active', dbInstitution.getString('active'))

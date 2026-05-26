@@ -122,13 +122,13 @@ function View() {
               </Title>
 
               <Space titlePlacement="vertical" size={4} className="location-info">
-                {(institution.city || institution.country) && (
+                {(institution.city?.name || institution.country?.name) && (
                   <Text type="secondary">
-                    <EnvironmentOutlined /> {institution.city}{institution.city && institution.country && ', '}{institution.country}
+                    <EnvironmentOutlined /> {institution.city?.name}{institution.city?.name && institution.country?.name && ', '}{institution.country?.name}
                   </Text>
                 )}
-                {institution.state && (
-                  <Text type="secondary">{institution.state}</Text>
+                {institution.state?.name && (
+                  <Text type="secondary">{institution.state?.name}</Text>
                 )}
               </Space>
 

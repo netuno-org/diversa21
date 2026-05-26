@@ -35,13 +35,40 @@
           "type": "string-not-empty"
         },
         "city": {
-          "type": "string-not-empty"
+          "type": "object",
+          "properties": {
+            "uid": {
+              "type": "uid"
+            },
+            "name": {
+              "type": "string-not-empty"
+            }
+          },
+          "required": ["uid", "name"]
         },
         "state": {
-          "type": "string-not-empty"
+          "type": "object",
+          "properties": {
+            "uid": {
+              "type": "uid"
+            },
+            "name": {
+              "type": "string-not-empty"
+            }
+          },
+          "required": ["uid", "name"]
         },
         "country": {
-          "type": "string-not-empty"
+          "type": "object",
+          "properties": {
+            "uid": {
+              "type": "uid"
+            },
+            "name": {
+              "type": "string-not-empty"
+            }
+          },
+          "required": ["uid", "name"]
         },
         "cover_image": {
           "type": "string"

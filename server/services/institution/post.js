@@ -6,7 +6,7 @@ const email = _req.getString("email");
 const telephone = _req.getString("telephone");
 const address = _req.getString("address");
 const post_code = _req.getString("post_code");
-const city = _req.getUID("city");
+const cityUid = _req.getUID("city");
 const website = _req.getString("website");
 const logo = _req.getFile("logo");
 const cover_image = _req.getFile("cover_image");
@@ -18,7 +18,7 @@ const institutionData = _val.map()
   .set("active", "true");
 
 if (telephone) {
-  institutionData.set("telephone", telephone);
+  institutionData.set("telephone", telephone.replace(/\s/g, ''));
 }
 if (address) {
   institutionData.set("address", address);
@@ -26,8 +26,16 @@ if (address) {
 if (post_code) {
   institutionData.set("post_code", post_code);
 }
-if (city) {
-  institutionData.set("city_id", city);
+if (cityUid) {
+  const dbCity = _db.queryFirst(`
+    SELECT id FROM city WHERE uid = ?::uuid
+  `, cityUid);
+  if (!dbCity) {
+    _header.status(404);
+    _out.json(_val.map().set("error", "city-not-found"));
+    _exec.stop();
+  }
+  institutionData.set("city_id", dbCity.getInt("id"));
 }
 if (website) {
   institutionData.set("website", website);

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Typography, Form, Input, Button, Divider, 
-  Upload, Card, message, Spin 
+  Upload, Card, message, Spin, Select 
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -33,6 +33,9 @@ export default function InstitutionForm({
   const [initialLogo, setInitialLogo] = useState(null);
   const [initialCover, setInitialCover] = useState(null);
 
+  const [cityOptions, setCityOptions] = useState([]);
+  const [selectedCity, setSelectedCity] = useState(null);
+
   // Use slug for edit mode if available, otherwise fallback to uid
   const editIdentifier = slug || uid;
   const isEditMode = !!editIdentifier;
@@ -53,6 +56,13 @@ export default function InstitutionForm({
             setInitialLogo(data.logo);
             setInitialCover(data.cover_image);
             
+            // Pre-populate city select
+            if (data.city && data.city.uid) {
+              const cityLabel = [data.country?.name, data.state?.name, data.city?.name].filter(Boolean).join(' > ');
+              setSelectedCity({ uid: data.city.uid, label: cityLabel });
+              setCityOptions([{ value: data.city.uid, label: cityLabel, uid: data.city.uid }]);
+            }
+            
             form.setFieldsValue({
               name: data.name,
               description: data.description,
@@ -60,9 +70,7 @@ export default function InstitutionForm({
               telephone: data.telephone,
               address: data.address,
               post_code: data.post_code,
-              city: data.city,
-              state: data.state,
-              country: data.country,
+              city: data.city?.uid,
               website: data.website
             });
           } else {
@@ -82,6 +90,13 @@ export default function InstitutionForm({
       setInitialLogo(initialData.logo);
       setInitialCover(initialData.cover_image);
       
+      // Pre-populate city select
+      if (initialData.city && initialData.city.uid) {
+        const cityLabel = [initialData.country?.name, initialData.state?.name, initialData.city?.name].filter(Boolean).join(' > ');
+        setSelectedCity({ uid: initialData.city.uid, label: cityLabel });
+        setCityOptions([{ value: initialData.city.uid, label: cityLabel, uid: initialData.city.uid }]);
+      }
+      
       form.setFieldsValue({
         name: initialData.name,
         description: initialData.description,
@@ -89,9 +104,7 @@ export default function InstitutionForm({
         telephone: initialData.telephone,
         address: initialData.address,
         post_code: initialData.post_code,
-        city: initialData.city,
-        state: initialData.state,
-        country: initialData.country,
+        city: initialData.city?.uid,
         website: initialData.website
       });
     }
@@ -131,12 +144,42 @@ export default function InstitutionForm({
     setCoverFile(null);
   };
 
+  const handleCitySearch = (value) => {
+    if (!value || value.trim() === '') {
+      setCityOptions([]);
+      return;
+    }
+    _service({
+      url: `location/city/search?name=${encodeURIComponent(value)}`,
+      success: (response) => {
+        const options = (response.json.data || []).map(city => ({
+          value: city.uid,
+          label: city.label,
+          uid: city.uid,
+        }));
+        setCityOptions(options);
+      },
+      fail: () => {
+        setCityOptions([]);
+      }
+    });
+  };
+
+  const handleCityChange = (value, option) => {
+    setSelectedCity(option);
+  };
+
+  const handleCityClear = () => {
+    setCityOptions([]);
+    setSelectedCity(null);
+  };
+
   function onFinish(values) {
     setSubmitting(true);
     
     const { 
       name, description, email, telephone, address, 
-      post_code, city, state, country, website 
+      post_code, website 
     } = values;
 
     const formData = new FormData();
@@ -148,9 +191,7 @@ export default function InstitutionForm({
     if (telephone) formData.append('telephone', telephone);
     if (address) formData.append('address', address);
     if (post_code) formData.append('post_code', post_code);
-    if (city) formData.append('city', city);
-    if (state) formData.append('state', state);
-    if (country) formData.append('country', country);
+    if (selectedCity?.uid) formData.append('city', selectedCity.uid);
     if (website) formData.append('website', website);
     
     // Append files only if changed in edit mode
@@ -220,7 +261,7 @@ export default function InstitutionForm({
           name="institution_form"
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          initialValues={!isEditMode ? { country: 'Portugal' } : {}}
+          initialValues={{}}
         >
           {loading && (
             <div className="institution-form-loading">
@@ -387,31 +428,21 @@ export default function InstitutionForm({
               label="Cidade"
               name="city"
               rules={[
-                { type: 'string', max: 250, message: 'Cidade inválida.' }
+                { required: true, message: 'Selecione a cidade.' }
               ]}
             >
-              <Input disabled={submitting} maxLength={250} />
-            </Form.Item>
-
-            <Form.Item
-              label="Estado/Região"
-              name="state"
-              rules={[
-                { type: 'string', max: 250, message: 'Estado inválido.' }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={250} />
-            </Form.Item>
-
-            <Form.Item
-              label="País"
-              name="country"
-              rules={[
-                { required: true, message: 'Insira o país.' },
-                { type: 'string', max: 250, message: 'País inválido.' }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={250} />
+              <Select
+                showSearch
+                notFoundContent={null}
+                filterOption={false}
+                placeholder="Pesquisar cidade..."
+                options={cityOptions}
+                onSearch={handleCitySearch}
+                onChange={handleCityChange}
+                onClear={handleCityClear}
+                allowClear
+                disabled={submitting}
+              />
             </Form.Item>
           </Card>
 

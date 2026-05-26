@@ -18,9 +18,9 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
     : null;
 
   const location = [
-    institution.city,
-    institution.state,
-    institution.country
+    institution.city?.name,
+    institution.state?.name,
+    institution.country?.name
   ].filter(Boolean).join(', ');
 
   return (
