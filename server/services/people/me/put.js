@@ -1,5 +1,7 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+
 import permissions from "#core/lib/permissions.js";
+import response from "#core/lib/response.js";
 
 const name = _req.getString("name");
 const username = _req.getString("username");
@@ -88,8 +90,4 @@ _db.update(
   peopleData
 );
 
-
-_out.json(
-  _val.map()
-  .set("result", true)
-);
+response.successWithoutData();
