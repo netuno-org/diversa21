@@ -28,6 +28,18 @@ if (!dbCity) {
 
 const cityId = dbCity.getInt("id");
 
+if (!name) {
+    _header.status(400);
+    _out.json(_val.map().set("error", "name-required"));
+    _exec.stop();
+}
+
+if (!email) {
+    _header.status(400);
+    _out.json(_val.map().set("error", "email-required"));
+    _exec.stop();
+}
+
 const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
