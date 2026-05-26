@@ -119,8 +119,10 @@ function View() {
               <Button
                 type="primary"
                 icon={<EditOutlined />}
+                size="large"
                 block
                 onClick={handleEdit}
+                style={{ marginTop: 24 }}
               >
                 Editar Instituição
               </Button>
