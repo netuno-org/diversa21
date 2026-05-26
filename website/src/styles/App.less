@@ -27,9 +27,14 @@
         position: relative;
         margin: 20px 0;
         &.auth {
-          //background-color: #F0F2F5;
-          @media screen and (max-width: @mobile-width) {
-            padding: 20px 0;
+          > * {
+            padding: 0 20px;
+            box-sizing: border-box;
+          }
+          @media screen and (max-width: 550px) {
+            > * {
+              padding: 0 10px;
+            }
           }
         }
       }

@@ -97,8 +97,8 @@ function People() {
   }
 
   return (
-    <div className="people-search-container">
-      <div className="people-search">
+    <div>
+      <div>
         <ListHeaderFilters
           title="Pessoas"
           createButton={loggedUser.canCreateAnyUser() && {
@@ -117,7 +117,7 @@ function People() {
           <Spin size="large" />
         </div>
       )}
-      <div className="results-info">
+      <div style={{ marginTop: 20 }}>
         <Text type="secondary">
           {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
         </Text>
