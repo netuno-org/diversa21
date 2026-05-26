@@ -50,7 +50,7 @@ function Avatar({currentImage}, ref) {
         </div>
       </Col>
         <Col xs={24} lg={12}>
-          <p><Button onClick={open} type="primary" ghost>Carregar Outra Imagem</Button></p>
+          <p style={{ marginTop: 0 }}><Button onClick={open} type="primary" ghost>Carregar Outra Imagem</Button></p>
           { imageEditing &&
             <>
               <Divider orientation="left" plain>Configurar Imagem</Divider>
