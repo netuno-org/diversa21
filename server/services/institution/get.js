@@ -1,13 +1,11 @@
 import {_req, _db, _exec, _header, _out, _val} from "@netuno/server-types";
 
-const uid = _req.getUID('uid');
 const slug = _req.getString('slug');
 
-let dbInstitution = null;
 let query = '';
 let param = null;
+let dbInstitution = null;
 
-// Prioritize slug if provided, otherwise use uid
 if (slug) {
     query = `
         SELECT
@@ -33,36 +31,11 @@ if (slug) {
         WHERE institution.slug = ?::text
     `;
     param = slug;
-} else if (uid) {
-    query = `
-        SELECT
-            institution.uid,
-            institution.slug,
-            institution.name,
-            institution.description,
-            institution.email,
-            institution.telephone,
-            institution.website,
-            institution.address,
-            institution.post_code,
-            city.name AS "city",
-            state.name AS "state",
-            country.name AS "country",
-            institution.cover_image,
-            institution.logo,
-            institution.active
-        FROM institution
-        INNER JOIN city ON institution.city_id = city.id
-        INNER JOIN state ON city.state_id = state.id
-        INNER JOIN country ON state.country_id = country.id
-        WHERE institution.uid = ?::uuid
-    `;
-    param = uid;
-} else {
+}else{
     _header.status(400);
     _out.json(
         _val.map()
-            .set('error', 'uid-or-slug-required')
+            .set('error', 'slug-required')
     )
     _exec.stop()
 }
