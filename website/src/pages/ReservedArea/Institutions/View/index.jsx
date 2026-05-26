@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Typography, Card, Spin, Breadcrumb, Button, Row, Col,
+  Typography, Card, Spin, Button, Row, Col,
   Divider, Avatar, Space, Empty, message
 } from "antd";
 import {
-  ArrowLeftOutlined, EditOutlined, MailOutlined,
+  EditOutlined, MailOutlined,
   PhoneOutlined, EnvironmentOutlined, GlobalOutlined
 } from '@ant-design/icons';
 import _service from '@netuno/service-client';
@@ -73,24 +73,6 @@ function View() {
 
   return (
     <section className="institution-view">
-      <div className="view-header">
-        <Button
-          className="go-back-btn"
-          type="link"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeftOutlined /> Voltar
-        </Button>
-      </div>
-
-      <Breadcrumb
-        items={[
-          { title: <a onClick={() => navigate('/institutions')}>Instituições</a> },
-          { title: institution.name }
-        ]}
-        className="breadcrumb"
-      />
-
       <div className="cover-image">
         {institution.cover_image ? (
           <img src={institution.cover_image} alt="Cover" />
