@@ -13,6 +13,23 @@ const website = _req.getString("website");
 const logo = _req.getFile("logo");
 const cover_image = _req.getFile("cover_image");
 
+if (!cityUid) {
+    _header.status(400);
+    _out.json(_val.map().set("error", "city-required"));
+    _exec.stop();
+}
+
+const dbCity = _db.queryFirst(`
+    SELECT id FROM city WHERE uid = ?::uuid
+`, cityUid);
+if (!dbCity) {
+    _header.status(404);
+    _out.json(_val.map().set("error", "city-not-found"));
+    _exec.stop();
+}
+
+const cityId = dbCity.getInt("id");
+
 // Find institution by uid OR slug
 let dbInstitution = null;
 
@@ -50,17 +67,7 @@ if (address) {
 if (post_code) {
   institutionData.set("post_code", post_code);
 }
-if (cityUid) {
-  const dbCity = _db.queryFirst(`
-    SELECT id FROM city WHERE uid = ?::uuid
-  `, cityUid);
-  if (!dbCity) {
-    _header.status(404);
-    _out.json(_val.map().set("error", "city-not-found"));
-    _exec.stop();
-  }
-  institutionData.set("city_id", dbCity.getInt("id"));
-}
+institutionData.set("city_id", cityId);
 if (website) {
   institutionData.set("website", website);
 }
