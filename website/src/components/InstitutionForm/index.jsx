@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   Typography, Form, Input, Button, Divider, 
   Upload, Card, message, Spin, Select 
@@ -35,6 +35,7 @@ export default function InstitutionForm({
 
   const [cityOptions, setCityOptions] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
+  const debounceTimer = useRef(null);
 
   // Use slug for edit mode if available, otherwise fallback to uid
   const editIdentifier = slug || uid;
@@ -144,26 +145,33 @@ export default function InstitutionForm({
     setCoverFile(null);
   };
 
-  const handleCitySearch = (value) => {
+  const handleCitySearch = useCallback((value) => {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
     if (!value || value.trim() === '') {
       setCityOptions([]);
       return;
     }
-    _service({
-      url: `location/city/search?name=${encodeURIComponent(value)}`,
-      success: (response) => {
-        const options = (response.json.data || []).map(city => ({
-          value: city.uid,
-          label: city.label,
-          uid: city.uid,
-        }));
-        setCityOptions(options);
-      },
-      fail: () => {
-        setCityOptions([]);
-      }
-    });
-  };
+
+    debounceTimer.current = setTimeout(() => {
+      _service({
+        url: `location/city/search?name=${encodeURIComponent(value)}`,
+        success: (response) => {
+          const options = (response.json.data || []).map(city => ({
+            value: city.uid,
+            label: city.label,
+            uid: city.uid,
+          }));
+          setCityOptions(options);
+        },
+        fail: () => {
+          setCityOptions([]);
+        }
+      });
+    }, 300);
+  }, []);
 
   const handleCityChange = (value, option) => {
     setSelectedCity(option);
