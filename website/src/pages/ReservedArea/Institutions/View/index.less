@@ -25,9 +25,12 @@
   }
 
   .content-wrapper {
+    .ant-row > .ant-col {
+      display: flex;
+    }
+
     .sidebar-card {
-      position: sticky;
-      top: 24px;
+      flex: 1;
       text-align: center;
 
       .logo-section {
@@ -51,6 +54,7 @@
     }
 
     .details-card {
+      flex: 1;
       .ant-typography {
         margin-bottom: 8px;
       }
@@ -114,7 +118,6 @@
 
     .content-wrapper {
       .sidebar-card {
-        position: static;
         margin-bottom: 24px;
 
         .logo-section {
