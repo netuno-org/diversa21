@@ -1,14 +1,14 @@
 import request from "supertest";
 
 import toBePeople from '../../custom/people.js'
-import login from '../../util/login.js'
+import loginAsTest from '../../util/login.js'
 
 expect.extend({ toBePeople });
 
 const NETUNO_URL = "http://localhost:9000/services";
 
 test("get by username", async () => {
-  const accessToken = await login();
+  const accessToken = await loginAsTest();
 
   const response = await request(NETUNO_URL)
     .get("/people/by?username=alice1")
@@ -23,7 +23,7 @@ test("get by username", async () => {
 });
 
 test("get by username not found", async () => {
-  const accessToken = await login();
+  const accessToken = await loginAsTest();
 
   const response = await request(NETUNO_URL)
     .get("/people/by?username=notexist")
@@ -34,7 +34,7 @@ test("get by username not found", async () => {
 });
 
 test("get by, missing username parameter", async () => {
-  const accessToken = await login();
+  const accessToken = await loginAsTest();
 
   await request(NETUNO_URL)
     .get("/people/by")
