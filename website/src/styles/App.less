@@ -79,6 +79,11 @@
         @media screen and (max-width: @desktop-width) {
           padding: 20px 40px;
         }
+
+        @media screen and (max-width: 450px) {
+          padding-left: 0;
+          padding-right: 0;
+        }
       }
     }
   }
@@ -88,6 +93,14 @@
     &-title,
     &-body {
       padding: 0 40px 5px;
+    }
+
+    @media screen and (max-width: 450px) {
+      &-title,
+      &-body {
+        padding-left: 0;
+        padding-right: 0;
+      }
     }
   }
 }

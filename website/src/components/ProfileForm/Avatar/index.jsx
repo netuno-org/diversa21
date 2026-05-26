@@ -3,6 +3,8 @@ import { Row, Col, Button, Slider, Divider } from 'antd';
 import {useDropzone} from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
 
+import './index.less';
+
 function Avatar({currentImage}, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
@@ -50,7 +52,7 @@ function Avatar({currentImage}, ref) {
         </div>
       </Col>
         <Col xs={24} lg={12}>
-          <p style={{ marginTop: 0 }}><Button onClick={open} type="primary" ghost>Carregar Outra Imagem</Button></p>
+          <p className="upload-image-button-profile"><Button onClick={open} type="primary" ghost>Carregar Outra Imagem</Button></p>
           { imageEditing &&
             <>
               <Divider orientation="left" plain>Configurar Imagem</Divider>

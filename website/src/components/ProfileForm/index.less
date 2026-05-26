@@ -30,11 +30,37 @@
         border-color: #7A5A92;
       }
     }
+
+    @media screen and (max-width: 450px) {
+      .form-card {
+        .ant-card-head-title,
+        .ant-card-body {
+          text-align: center;
+        }
+
+        .ant-card-body > .ant-row {
+          justify-content: center;
+        }
+      }
+
+      .ant-form-item {
+        max-width: 360px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .ant-form-item-label > label {
+        justify-content: center;
+      }
+
+      .ant-form-item-control-input-content {
+        text-align: center;
+      }
+
+      .ant-picker {
+        width: 100%;
+      }
+    }
   }
 }
 
-@media (max-width: 768px) {
-  .profile-form {
-    padding: 16px;
-  }
-}
