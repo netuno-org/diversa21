@@ -87,8 +87,8 @@ function LocationList() {
       : filteredCities;
 
   return (
-    <div className="locations-search-container">
-      <div className="locations-search">
+    <div className="locations-list">
+      <div className="locations-list__search">
         <ListHeaderFilters
           title="Localidades"
           createButton={loggedUser.canManageLocations() && {
@@ -106,7 +106,7 @@ function LocationList() {
         />
       </div>
 
-      <div className="results-info">
+      <div className="locations-list__results">
         <Text type='secondary'>
           {activeTab === 'country' && (currentData.length === 1 ? '1 país' : `${currentData.length} países`)}
           {activeTab === 'state' && (currentData.length === 1 ? '1 estado' : `${currentData.length} estados`)}
@@ -114,47 +114,49 @@ function LocationList() {
         </Text>
       </div>
 
-      <Tabs
-        activeKey={activeTab}
-        onChange={(key) => {
-          setActiveTab(key);
-          setPagination(prev => ({ ...prev, current: 1 }));
-        }}
-        items={[
-          { key: 'country', label: 'Países' },
-          { key: 'state', label: 'Estados' },
-          { key: 'city', label: 'Cidades' },
-        ].map(tab => ({
-          ...tab,
-          children: (
-            <LocationTable
-              activeTab={tab.key}
-              data={currentData}
-              loading={loading[tab.key]}
-              pagination={pagination}
-              setPagination={setPagination}
-              onEdit={(record) => {
-                setEditingItem(record);
-                setIsModalVisible(true);
-              }}
-              onDeleteSuccess={() => reload(tab.key)}
-            />
-          )
-        }))}
-      />
+      <div className="locations-list__content">
+        <Tabs
+          activeKey={activeTab}
+          onChange={(key) => {
+            setActiveTab(key);
+            setPagination(prev => ({ ...prev, current: 1 }));
+          }}
+          items={[
+            { key: 'country', label: 'Países' },
+            { key: 'state', label: 'Estados' },
+            { key: 'city', label: 'Cidades' },
+          ].map(tab => ({
+            ...tab,
+            children: (
+              <LocationTable
+                activeTab={tab.key}
+                data={currentData}
+                loading={loading[tab.key]}
+                pagination={pagination}
+                setPagination={setPagination}
+                onEdit={(record) => {
+                  setEditingItem(record);
+                  setIsModalVisible(true);
+                }}
+                onDeleteSuccess={() => reload(tab.key)}
+              />
+            )
+          }))}
+        />
 
-      <LocationModal
-        visible={isModalVisible}
-        activeTab={activeTab}
-        editingItem={editingItem}
-        allCountries={allCountries}
-        allStates={allStates}
-        onClose={() => {
-          setIsModalVisible(false);
-          setEditingItem(null);
-        }}
-        onSuccess={() => reload(activeTab)}
-      />
+        <LocationModal
+          visible={isModalVisible}
+          activeTab={activeTab}
+          editingItem={editingItem}
+          allCountries={allCountries}
+          allStates={allStates}
+          onClose={() => {
+            setIsModalVisible(false);
+            setEditingItem(null);
+          }}
+          onSuccess={() => reload(activeTab)}
+        />
+      </div>
     </div>
   );
 }

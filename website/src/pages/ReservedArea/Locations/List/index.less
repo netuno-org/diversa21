@@ -1,38 +1,38 @@
 @import '../../../../styles/variables.less';
 
-.locations-search-container {
+.locations-list {
   padding: 24px;
   width: 100%;
   box-sizing: border-box;
 
-  .locations-search {
+  &__search {
     width: 100%;
   }
 
-  .results-info {
+  &__results {
     margin: 20px 0 16px 8px;
   }
 
-  .ant-tabs {
-    width: 100%;
+  &__content {
+    .ant-tabs {
+      width: 100%;
 
-    .ant-tabs-content {
-      margin-top: 8px;
+      .ant-tabs-content {
+        margin-top: 8px;
+      }
     }
   }
 }
 
 @media (max-width: @xs) {
-  .locations-search-container {
-    padding: 16px;
+  padding: 16px;
 
-    .results-info {
-      margin-left: 0;
-      text-align: center;
+  .locations-list__results {
+    margin-left: 0;
+    text-align: center;
 
-      .ant-typography {
-        font-size: 13px;
-      }
+    .ant-typography {
+      font-size: 13px;
     }
   }
 }

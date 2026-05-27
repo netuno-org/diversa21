@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
 import { Table, Button, Space, Popconfirm, Typography, Empty, message } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+
 import _service from '@netuno/service-client';
 
 const { Text } = Typography;
 
-export default function LocationTable({
+function LocationTable({
   activeTab,
   data,
   loading,
@@ -27,7 +28,7 @@ export default function LocationTable({
       success: ({ json }) => {
         if (json?.result) {
           messageApi.success('Registo apagado com sucesso.');
-          onDeleteSuccess();
+          onDeleteSuccess() && onDeleteSuccess();
         } else {
           messageApi.error(json?.error || 'Não foi possível apagar o registo.');
         }
@@ -131,3 +132,5 @@ export default function LocationTable({
     </>
   );
 }
+
+export default LocationTable;

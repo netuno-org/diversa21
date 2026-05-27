@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Form, Modal, Input, Select, message } from 'antd';
+
 import _service from '@netuno/service-client';
 
-export default function LocationModal({
+function LocationModal({
   visible,
   activeTab,
   editingItem,
@@ -59,8 +60,8 @@ export default function LocationModal({
         success: ({ json }) => {
           if (json?.result) {
             messageApi.success(isEditing ? 'Registo atualizado com sucesso.' : 'Registo guardado com sucesso.');
-            onSuccess();
-            onClose();
+            onSuccess() && onSuccess();
+            onClose() && onClose();
           } else {
             messageApi.error(json?.error || 'Não foi possível guardar o registo.');
           }
@@ -71,8 +72,9 @@ export default function LocationModal({
           setIsSaving(false);
         },
       });
-    } catch {
-      return;
+    } catch (e) {
+      console.error(e);
+      setIsSaving(false);
     }
   };
 
@@ -134,3 +136,5 @@ export default function LocationModal({
     </>
   );
 }
+
+export default LocationModal;
