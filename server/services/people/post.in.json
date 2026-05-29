@@ -26,6 +26,9 @@
     },
     "institution": {
       "type": "uid"
+    },
+    "description": {
+      "type": "string-not-empty"
     }
   },
   "required": [
@@ -35,6 +38,7 @@
     "password",
     "birthDate",
     "city",
-    "institution"
+    "institution",
+    "description"
   ]
 }

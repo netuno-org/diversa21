@@ -14,7 +14,7 @@ test("modify my own user details", async () => {
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  const KEYS_TO_REMOVE = ['avatar', 'active', 'state', 'country', 'group', 'city', 'institution'];
+  const KEYS_TO_REMOVE = [ "avatar", "active", "city", "state", "country", "institution", "group" ];
 
   const oldData = cleanObject(oldDataResponse.body.data, KEYS_TO_REMOVE);
   oldData.city = oldDataResponse.body.data.city.uid;

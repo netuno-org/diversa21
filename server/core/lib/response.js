@@ -25,18 +25,23 @@ export default {
         .set("data", data)
     );
   },
-  successWithoutData: (data) => {
+  successWithoutData: () => {
     _out.json(
       _val.map()
         .set("result", true)
     );
   },
+
   stopWithNotExist: () => stopWithError(404, "not-exist"),
+
   stopWithUserNotFound: () => stopWithNotFound("user"),
+  stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithCityNotFound: () => stopWithNotFound("city"),
-  stopWithGroupNotFound: () => stopWithNotFound("city"),
+  stopWithGroupNotFound: () => stopWithNotFound("group"),
+  stopWithInstitutionNotFound: () => stopWithNotFound("institution"),
   stopWithStateNotFound: () => stopWithNotFound("state"),
   stopWithCountryNotFound: () => stopWithNotFound("country"),
+
   stopWithCityNotCreated: () => stopWithNotCreated("city"),
   stopWithStateNotCreated: () => stopWithNotCreated("state"),
   stopWithCountryNotCreated: () => stopWithNotCreated("country"),

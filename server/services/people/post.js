@@ -1,6 +1,8 @@
-import {_req, _db, _val, _user, _header, _out} from "@netuno/server-types"
-import permissions from "#core/lib/permissions.js";
+import {_req, _db, _val, _user, _header, _out, _group } from "@netuno/server-types"
 
+import permissions from "#core/lib/permissions.js";
+import response from "#core/lib/response.js";
+import { MANAGEMENT, MEMBER, REVIEW, SUPER_ADMIN } from "#core/lib/groups.js";
 
 // Validate user input
 
@@ -12,28 +14,15 @@ const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");
+const description = _req.getString("description");
 
-const groups = ["member", "review", "management", "super-admin"];
+const groups = [ MEMBER, REVIEW, MANAGEMENT, SUPER_ADMIN ];
 
 if (!groups.includes(groupCode)) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "group-not-found")
-  );
-  _exec.stop();
+  response.stopWithGroupNotFound();
 }
 
 const dbNetunoGroup = _group.firstByCode(groupCode);
-
-if (!dbNetunoGroup) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "group-not-found")
-  );
-  _exec.stop();
-}
 
 const dbInstitution = _db.queryFirst(`
   SELECT id FROM institution 
@@ -55,14 +44,8 @@ const dbCity = _db.queryFirst(`
 `, cityUid)
 
 if (!dbCity) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "city-not-found")
-  );
-  _exec.stop();
+  response.stopWithInstitutionNotFound();
 }
-
 
 const userEmailExists = _user.firstByMail(email);
 const usernameExists = _user.firstByUser(username);
@@ -115,6 +98,7 @@ if (userId) {
       'people',
       _val.map()
         .set("name", name)
+        .set("description", description)
         .set("email", email)
         .set("people_user_id", userId)
         .set("birth_date", birthDate)

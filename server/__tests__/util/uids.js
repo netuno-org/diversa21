@@ -6,10 +6,12 @@ const userUid = {
 
 const cityUid = {
   saoPaulo: "2692c307-b5ed-4913-99f7-e2ad20d00131",
+  portoAlegre: "5f6a7b8c-9d0e-1234-f012-1f2a3b4c5d6e",
 }
   
 const institutionUid = {
   clinicaSaoRafael: "fbe8724d-1184-49f6-a700-c06ce3f8a338",
+  laboratorioModelo: "8661840b-73d4-415c-bf87-984f1b4a6c42",
 }
 
 export { userUid, cityUid, institutionUid };

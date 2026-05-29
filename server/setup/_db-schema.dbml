@@ -32,6 +32,8 @@ Table people {
   avatar text [note: 'Avatar']
   birth_date date [not null, note: 'Data de Nascimento']
   city_id int [not null, ref: > city.id, note: 'Cidade']
+  cover_image text [note: 'Imagem de capa']
+  description text [not null, note: 'Descrição']
   email varchar(250) [not null, unique, note: 'Email']
   institution_id int [not null, ref: > institution.id, note: 'Instituição']
   name varchar(250) [not null, note: 'Nome']
