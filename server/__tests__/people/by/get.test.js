@@ -2,6 +2,7 @@ import request from "supertest";
 
 import toBePeople from '../../custom/people.js';
 import login from '../../util/login.js';
+import { userUid } from '../../util/uids.js';
 
 expect.extend({ toBePeople });
 
@@ -19,7 +20,7 @@ test("get by username", async () => {
   expect(response.body).toHaveProperty("data");
   const user = response.body.data;
   expect(user).toBePeople();
-  expect(user.uid).toBe("2a86a611-2ab1-472d-a7fe-c41c4aeef36b");
+  expect(user.uid).toBe(userUid.test);
 });
 
 test("get by username not found", async () => {

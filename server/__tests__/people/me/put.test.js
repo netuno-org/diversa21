@@ -2,6 +2,7 @@ import request from "supertest";
 
 import login from '../../util/login.js';
 import cleanObject from '../../util/clean.js';
+import { cityUid, institutionUid } from '../../util/uids.js';
 
 const NETUNO_URL = "http://localhost:9000/services";
 
@@ -24,8 +25,8 @@ test("modify my own user details", async () => {
     username: "newname",
     email: "newname@gmail.com",
     birthDate: "1970-01-01",
-    city: "2692c307-b5ed-4913-99f7-e2ad20d00131",
-    institution: "fbe8724d-1184-49f6-a700-c06ce3f8a338"
+    city: cityUid.saoPaulo,
+    institution: institutionUid.clinicaSaoRafael,
   }
 
   await request(NETUNO_URL)

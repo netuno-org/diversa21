@@ -2,6 +2,7 @@ import request from "supertest";
 
 import toBePeople from '../custom/people.js';
 import login from '../util/login.js';
+import { userUid } from '../util/uids.js'
 
 expect.extend({ toBePeople });
 
@@ -11,7 +12,7 @@ test("get by uid", async () => {
   const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
-    .get("/people?uid=0abd451a-b951-4c95-adc9-96332ad6c772")
+    .get(`/people?uid=${userUid.bob}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
@@ -44,7 +45,7 @@ test("get by uid not found", async () => {
   const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
-    .get("/people?uid=7c076702-0f99-44b9-b4f5-7b6d4810b7d8")
+    .get(`/people?uid=${userUid.notExist}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(404);
   
