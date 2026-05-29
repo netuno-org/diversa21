@@ -2,13 +2,13 @@ import request from "supertest";
 
 const NETUNO_URL = "http://localhost:9000/services";
 
-const loginAsTest = async () => {
+const loginAs = async (name) => {
   const loginResponse = await request(NETUNO_URL)
     .put("/_auth")
     .set("Content-Type", "application/json")
     .set("Accept", "*/*")
     .send({
-      username: "test",
+      username: name,
       password: "12345678",
       jwt: true
     })
@@ -16,4 +16,7 @@ const loginAsTest = async () => {
   return loginResponse.body.access_token;
 }
 
-export default loginAsTest;
+export default {
+  asTest: () => loginAs("test"),
+  asSuperAdmin: () => loginAs("super"),
+}

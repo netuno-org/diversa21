@@ -1,14 +1,14 @@
 import request from "supertest";
 
 import toBePeople from '../custom/people.js'
-import loginAsTest from '../util/login.js'
+import login from '../util/login.js'
 
 expect.extend({ toBePeople });
 
 const NETUNO_URL = "http://localhost:9000/services";
 
 test("get by uid", async () => {
-  const accessToken = await loginAsTest();
+  const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
     .get("/people?uid=0abd451a-b951-4c95-adc9-96332ad6c772")
@@ -23,7 +23,7 @@ test("get by uid", async () => {
 });
 
 test("get missing uid paramenter", async () => {
-  const accessToken = await loginAsTest();
+  const accessToken = await login.asTest();
 
   await request(NETUNO_URL)
     .get("/people")
@@ -32,7 +32,7 @@ test("get missing uid paramenter", async () => {
 });
 
 test("get by non-existent paramenter, missing uid paramenter", async () => {
-  const accessToken = await loginAsTest();
+  const accessToken = await login.asTest();
 
   await request(NETUNO_URL)
     .get("/people?foo=bar")
@@ -41,7 +41,7 @@ test("get by non-existent paramenter, missing uid paramenter", async () => {
 });
 
 test("get by uid not found", async () => {
-  const accessToken = await loginAsTest();
+  const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
     .get("/people?uid=7c076702-0f99-44b9-b4f5-7b6d4810b7d8")

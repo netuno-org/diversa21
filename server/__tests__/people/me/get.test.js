@@ -1,14 +1,14 @@
 import request from "supertest";
 
 import toBePeople from '../../custom/people.js'
-import loginAsTest from '../../util/login.js'
+import login from '../../util/login.js'
 
 expect.extend({ toBePeople });
 
 const NETUNO_URL = "http://localhost:9000/services";
 
 test("get me", async () => {
-  const accessToken = await loginAsTest();
+  const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
     .get("/people/me")
