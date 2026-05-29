@@ -1,7 +1,7 @@
 import request from "supertest";
 
-import toBePeople from '../custom/people.js'
-import login from '../util/login.js'
+import toBePeople from '../custom/people.js';
+import login from '../util/login.js';
 
 expect.extend({ toBePeople });
 

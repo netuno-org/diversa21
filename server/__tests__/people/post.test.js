@@ -1,28 +1,16 @@
 import request from "supertest";
 
-import login from '../../util/login.js';
-import cleanObject from '../../util/clean.js';
+import login from '../util/login.js';
 
 const NETUNO_URL = "http://localhost:9000/services";
 
-test("modify my own user details", async () => {
-  const accessToken = await login.asTest();
-
-  const oldDataResponse = await request(NETUNO_URL)
-    .get("/people/me")
-    .set("Authorization", `Bearer ${accessToken}`)
-    .expect(200);
-
-  const KEYS_TO_REMOVE = ['avatar', 'active', 'state', 'country', 'group', 'city', 'institution'];
-
-  const oldData = cleanObject(oldDataResponse.body.data, KEYS_TO_REMOVE);
-  oldData.city = oldDataResponse.body.data.city.uid;
-  oldData.institution = oldDataResponse.body.data.institution.uid;
+test("create a new user", async () => {
+  const accessToken = await login.asSuperAdmin();
 
   const newData = {
-    name: "New Name",
-    username: "newname",
-    email: "newname@gmail.com",
+    name: "New User",
+    username: "newuser",
+    email: "newuser@gmail.com",
     birthDate: "1970-01-01",
     city: "2692c307-b5ed-4913-99f7-e2ad20d00131",
     institution: "fbe8724d-1184-49f6-a700-c06ce3f8a338"
@@ -41,7 +29,7 @@ test("modify my own user details", async () => {
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  const fetchedUser = cleanObject(newDataResponse.body.data, KEYS_TO_REMOVE);
+  let { newAvatar, newActive, newState, newCountry, newGroup, newCity, newInstitution, ...fetchedUser } = newDataResponse.body.data;
   fetchedUser.city = newDataResponse.body.data.city.uid;
   fetchedUser.institution = newDataResponse.body.data.institution.uid;
 
