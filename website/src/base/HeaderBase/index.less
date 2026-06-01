@@ -7,6 +7,7 @@
   padding: 0 calc((100vw - @desktop-width)/2);
   z-index: 100;
   box-shadow: 10px 0 10px rgb(0 0 0 / 20%);
+  background-color: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -20,16 +21,12 @@
     padding-right: 0;
   }
 
-  > *:not(.logo-container) {
-    float: right;
-  }
-
   &.auth {
     width: calc(100% - 200px);
     padding: 0 20px;
     right: 0;
     transition: all 0.2s;
-    display: inline-block !important;
+    justify-content: flex-end;
 
     &.collapsed {
       width: 100%;
@@ -41,18 +38,25 @@
   }
 
   ul.ant-menu {
-    display: block;
-    float: right;
-    clear: right;
     border: 0;
+    border-bottom: 0;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .profile-menu {
       margin-right: 0;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
       .anticon {
         padding: 0 14px;
         margin: 0;
         font-size: 22px;
-        color:#1677ff;
+        color: #1677ff;
       }
     }
   }
@@ -71,5 +75,11 @@
       height: auto;
       margin-top: -5px;
     }
+  }
+}
+
+.profile-menu-popup {
+  .ant-menu-sub {
+    min-width: 232px;
   }
 }

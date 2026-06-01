@@ -1,31 +1,78 @@
 @import '../../styles/variables.less';
 
-.login-container {
-  form {
-    .ant-btn {
+.login-layout {
+  background-color: transparent;
+
+  .login-container {
+    padding: 40px 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: transparent;
+
+    .content-body {
       width: 100%;
     }
 
-    >hr {
-      height: 1px;
-      border-bottom: 0;
-      border-left: 0;
-      border-right: 0;
+    form {
+      .ant-btn {
+        width: 100%;
+      }
+
+      >hr {
+        height: 1px;
+        border-bottom: 0;
+        border-left: 0;
+        border-right: 0;
+      }
+
+      >span {
+        text-align: center;
+        display: block;
+        margin-top: -21px;
+        margin-bottom: 10px;
+        z-index: 1;
+        position: relative;
+
+        p {
+          font-size: 14px !important;
+          padding: 0 10px;
+          background-color: @layout-body-background;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  .login-sider {
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+
+  @media screen and (max-width: @desktop-width) {
+    .login-sider {
+      display: none !important;
     }
 
-    >span {
-      text-align: center;
-      display: block;
-      margin-top: -21px;
-      margin-bottom: 10px;
-      z-index: 1;
-      position: relative;
+    .login-container {
+      padding: 24px;
+      align-items: center;
 
-      p {
-        font-size: 14px !important;
-        padding: 0 10px;
-        background-color: @layout-body-background;
-        display: inline-block;
+      .content-title {
+        text-align: center;
+      }
+
+      .content-body {
+        width: 100%;
+        max-width: 100%;
       }
     }
   }

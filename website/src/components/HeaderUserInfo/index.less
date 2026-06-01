@@ -1,16 +1,21 @@
 .header__user-info {
   width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
   display: flex;
-  justify-content: end;
+  justify-content: center;
   align-items: center;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+
   img {
     border-radius: 50%;
     width: 30px;
     height: 30px;
     margin-right: 10px;
+    flex-shrink: 0;
   }
 }

@@ -123,7 +123,7 @@ function Login() {
     return <Navigate to="/posts" />;
   } else {
     return (
-      <Layout>
+      <Layout className="login-layout">
         <Content className="login-container">
           <div className="content-title">
             <Title>Iniciar Sessão</Title>
@@ -208,7 +208,7 @@ function Login() {
           </div>
 
         </Content>
-        <Sider width={'50%'}>
+        <Sider width={'50%'} className="login-sider">
           <span className="helper" /><img alt="sider-login" src={"/images/sider-login.png"} />
         </Sider>
       </Layout>

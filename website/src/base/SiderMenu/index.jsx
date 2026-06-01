@@ -71,6 +71,10 @@ function SiderMenu({ collapsed, onCollapse }) {
     if (menuItem) {
       setSelectedMenuKeys([menuItem.key]);
       navigate(menuItem.link);
+
+      if (sideMenuMobileMode && !collapsed) {
+        onCollapse(true);
+      }
     }
   }
 
