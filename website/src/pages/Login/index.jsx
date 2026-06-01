@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navigate, Link } from "react-router-dom";
 import { Layout, Typography, Form, Input, Button, Checkbox, notification } from 'antd';
+import { MdOutlineLogin } from "react-icons/md";
 import _auth from '@netuno/auth-client';
 import _service from '@netuno/service-client';
 import Config from '../../common/Config';
@@ -119,7 +120,7 @@ function Login() {
     initialValues = JSON.parse(localStorage.getItem("login"));
   }
   if (_auth.isLogged()) {
-    return <Navigate to="/profile/view" />;
+    return <Navigate to="/posts" />;
   } else {
     return (
       <Layout>
@@ -194,6 +195,7 @@ function Login() {
               <Form.Item>
                 <Button loading={submitting} type="primary" className="login-btn" htmlType="submit">
                   Iniciar Sessão
+                  <MdOutlineLogin />
                 </Button>
               </Form.Item>
 

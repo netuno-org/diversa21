@@ -1,8 +1,14 @@
 import _auth from "@netuno/auth-client";
-import {MenuOutlined, DashboardOutlined, BlockOutlined, UserOutlined, EnvironmentOutlined} from "@ant-design/icons";
-import {Menu, Layout} from "antd";
-import {useLocation, useNavigate} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import { MenuOutlined, HomeOutlined, EnvironmentOutlined } from "@ant-design/icons";
+import { CgProfile } from "react-icons/cg";
+import { RiCommunityLine } from "react-icons/ri";
+// import { FaPeopleRoof } from "react-icons/fa6";
+import { RxPeople } from "react-icons/rx";
+
+
+import { Menu, Layout } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 import "./index.less";
 
@@ -12,27 +18,28 @@ const { Sider } = Layout;
 
 const menuItems = [
   {
-    key: "profile-view",
-    label: "Meu perfil",
-    icon: <UserOutlined/>,
-    link: "/profile/view"
-  },
-  {
     key: "posts",
     label: "Postagens",
-    icon: <DashboardOutlined/>,
+    icon: <HomeOutlined />,
     link: "/posts"
+  },
+  {
+    key: "profile-view",
+    label: "Meu perfil",
+    icon: <CgProfile />,
+    link: "/profile/view"
   },
   {
     key: "institutions",
     label: "Instituições",
-    icon: <BlockOutlined />,
+    icon: <RiCommunityLine />,
+    // icon: <FaPeopleRoof />,
     link: "/institutions"
   },
   {
     key: "people",
     label: "Pessoas",
-    icon: <UserOutlined />,
+    icon: <RxPeople />,
     link: "/people"
   },
   {
@@ -43,13 +50,13 @@ const menuItems = [
   }
 ];
 
-function SiderMenu({collapsed, onCollapse}) {
-  const [selectedMenuKeys, setSelectedMenuKeys] = useState(["profile-view"]);
+function SiderMenu({ collapsed, onCollapse }) {
+  const [selectedMenuKeys, setSelectedMenuKeys] = useState(["posts"]);
   const [sideMenuMobileMode, setSideMenuMobileMode] = useState(false);
   const loggedUser = usePeople();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const menuItem = menuItems.find((i) => location.pathname === i.link);
     if (menuItem) {
