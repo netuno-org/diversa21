@@ -15,7 +15,7 @@ function FooterBase() {
           <Space separator={<Divider orientation="vertical" className="footer-base__divider" />}>
 
             <Text type="secondary">
-              © netuno.org {currentYear}
+              © diversa21.org {currentYear}
             </Text>
 
             <Link

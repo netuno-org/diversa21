@@ -1,5 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom';
-import { BankOutlined, EditOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
+import { RiCommunityLine } from "react-icons/ri";
 import { Card, Button, Popover, Spin, Grid, Col } from 'antd';
 import UserProfileDisplay from '../UserProfileDisplay';
 import PostList from '../Post/List'
@@ -73,14 +74,14 @@ function Profile({ user }) {
                   >
                     <div className="institution-text">
                       <Link to={`/institutions/${user.institution.uid}`}>
-                        <p><BankOutlined /> {user.institution.name}</p>
+                        <p><RiCommunityLine /> {user.institution.name}</p>
                       </Link>
                     </div>
                   </Popover>
                 ) : (
                   <div className="institution-text">
                     <Link to={`/institutions/${user.institution.uid}`}>
-                      <p><BankOutlined /> {user.institution.name}</p>
+                      <p><RiCommunityLine /> {user.institution.name}</p>
                     </Link>
                   </div>
                 )
