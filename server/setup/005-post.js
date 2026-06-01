@@ -65,15 +65,17 @@ const likes = [
 
 posts.forEach((post) => {
   try {
-    _db.insertIfNotExists("post", _val.map()
-      .set("uid", post.uid)
-      .set("people_id", post.people_id)
-      .set("moment", _db.timestamp())
-      .set("parent_id", post.parent_id)
-      .set("content", post.content)
-      .set("comments", post.comments)
-      .set("likes", post.likes)
-    )
+    if (_db.get("post", post.uid) == null) {
+      _db.insertIfNotExists("post", _val.map()
+        .set("uid", post.uid)
+        .set("people_id", post.people_id)
+        .set("moment", _db.timestamp())
+        .set("parent_id", post.parent_id)
+        .set("content", post.content)
+        .set("comments", post.comments)
+        .set("likes", post.likes)
+      )
+    }
   } catch (e) {
     _log.warn("error: post not created", e);
   }
