@@ -1,32 +1,33 @@
-import {_db, _group, _user, _val, _ws} from "@netuno/server-types";
+import { _db, _group, _user, _val, _ws } from "@netuno/server-types";
 
 export default {
   getData: (uid) => {
     const dbPeople = _db.queryFirst(`
       SELECT people.uid,
-             people.name,
-             netuno_user.user,
-             people.email,
-             people.avatar,
-             people.birth_date,
-             city.uid AS "city_uid",
-             state.uid AS "state_uid",
-             country.uid AS "country_uid",
-             city.name AS "city_name",
-             state.name AS "state_name",
-             country.name AS "country_name",
-             institution.uid AS "institution_uid",
-             institution.name AS "institution_name",
-             netuno_group.code AS "group_code",
-             netuno_group.name AS "group_name",
-             netuno_user.active as "active"
+          people.name,
+          netuno_user.user,
+          people.description,
+          people.email,
+          people.avatar,
+          people.birth_date,
+          city.uid AS "city_uid",
+          state.uid AS "state_uid",
+          country.uid AS "country_uid",
+          city.name AS "city_name",
+          state.name AS "state_name",
+          country.name AS "country_name",
+          institution.uid AS "institution_uid",
+          institution.name AS "institution_name",
+          netuno_group.code AS "group_code",
+          netuno_group.name AS "group_name",
+          netuno_user.active as "active"
       FROM people
-             INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
-             INNER JOIN institution ON people.institution_id = institution.id
-             INNER JOIN city ON people.city_id = city.id
-             INNER JOIN state ON city.state_id = state.id
-             INNER JOIN country ON state.country_id = country.id
-             INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
+          INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+          INNER JOIN institution ON people.institution_id = institution.id
+          INNER JOIN city ON people.city_id = city.id
+          INNER JOIN state ON city.state_id = state.id
+          INNER JOIN country ON state.country_id = country.id
+          INNER JOIN netuno_group ON netuno_user.group_id = netuno_group.id
       WHERE people.uid = ?::uuid
     `, uid);
     if (dbPeople) {
@@ -34,6 +35,7 @@ export default {
         .set("uid", dbPeople.getUID("uid"))
         .set("name", dbPeople.getString("name"))
         .set("username", dbPeople.getString("user"))
+        .set("description", dbPeople.getString("description"))
         .set("group",
           _val.map()
             .set("code", dbPeople.getString("group_code"))

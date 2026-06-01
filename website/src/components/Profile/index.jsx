@@ -86,6 +86,9 @@ function Profile({ user }) {
                   </div>
                 )
               }
+              <div> 
+                <p> {user.description}</p>
+              </div>
             </div>
           </UserProfileDisplay>
         </Card>

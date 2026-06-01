@@ -6,7 +6,7 @@ const toBePeople = (received) => {
   let pass = true;
   let message = "";
 
-  for (const property of ["birthDate", "name", "username", "uid", "email"]) {
+  for (const property of ["name", "username", "description", "uid", "email", "birthDate"]) {
     const isPropertyString = (typeof received[property] === "string");
     if (!isPropertyString) {
       message += `${property} should be of type string, got ${typeof received[property]}\n`;
