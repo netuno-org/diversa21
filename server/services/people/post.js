@@ -2,6 +2,7 @@ import {_req, _db, _val, _user, _header, _out, _group } from "@netuno/server-typ
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
+import people from "#core/lib/people.js";
 import { MANAGEMENT, MEMBER, REVIEW, SUPER_ADMIN } from "#core/lib/groups.js";
 
 // Validate user input
@@ -92,6 +93,8 @@ const userId = _user.create(userData);
 const institutionId = dbInstitution.getInt("id");
 const cityId = dbCity.getInt("id");
 
+const order = people.createOrder();
+
 if (userId) {
   try {
     _db.insertIfNotExists(
@@ -104,6 +107,7 @@ if (userId) {
         .set("birth_date", birthDate)
         .set("city_id", cityId)
         .set("institution_id", institutionId)
+        .set("order", order)
     );
   } catch (e) {
     _log.warn("error: user not created", e);

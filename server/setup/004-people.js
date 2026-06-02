@@ -1,9 +1,13 @@
 import {_log, _val, _db, _user, _group } from "@netuno/server-types";
 
+import _people from "#core/lib/people.js";
+const createOrder = _people.createOrder;
+
 // Example names
 const people = [
   {
     uid: "f0c206fc-923d-40b6-8b2b-6570f698d855",
+    order: createOrder(),
     name: "Test",
     username: "test",
     description: "Oi, meu nome é Test.",
@@ -15,6 +19,7 @@ const people = [
   },
   {
     uid: "2a86a611-2ab1-472d-a7fe-c41c4aeef36b",
+    order: createOrder(),
     name: "Alice",
     username: "alice1",
     description: "Oi, meu nome é Alice.",
@@ -27,6 +32,7 @@ const people = [
   },
   {
     uid: "0abd451a-b951-4c95-adc9-96332ad6c772",
+    order: createOrder(),
     name: "Bob",
     username: "bob2",
     description: "Oi, meu nome é Bob.",
@@ -39,6 +45,7 @@ const people = [
   },
   {
     uid: "36c8b6a8-eeb7-4477-ade8-f6a8dbceba41",
+    order: createOrder(),
     name: "Charlie",
     username: "charlie3",
     description: "Oi, meu nome é Charlie.",
@@ -51,6 +58,7 @@ const people = [
   },
   {
     uid: "b271af58-2fad-473f-b706-a87bbb60b634",
+    order: createOrder(),
     name: "Noah",
     username: "noah4",
     description: "Oi, meu nome é Noah.",
@@ -63,6 +71,7 @@ const people = [
   },
   {
     uid: "b1e812a2-9898-4fd3-930f-14f6315c65d5",
+    order: createOrder(),
     name: "Oliver",
     username: "oliver5",
     description: "Oi, meu nome é Oliver.",
@@ -75,6 +84,7 @@ const people = [
   },
   {
     uid: "29bd1755-a1f6-4d64-adf0-2039f306091b",
+    order: createOrder(),
     name: "Elijah",
     username: "elijah6",
     description: "Oi, meu nome é Elijah.",
@@ -87,6 +97,7 @@ const people = [
   },
   {
     uid: "7205c3b9-9660-46fa-bd07-2ec922ebcfd2",
+    order: createOrder(),
     name: "Isabela",
     username: "isabela7",
     description: "Oi, meu nome é Isabela.",
@@ -99,6 +110,7 @@ const people = [
   },
   {
     uid: "c1ef85bb-d427-4d05-a899-f092be7d05f4",
+    order: createOrder(),
     name: "Lucas",
     username: "lucas8",
     description: "Oi, meu nome é Lucas.",
@@ -111,6 +123,7 @@ const people = [
   },
   {
     uid: "c61caa3f-98bc-4e7d-8098-d64a1562bd03",
+    order: createOrder(),
     name: "Jack",
     username: "jack9",
     description: "Oi, meu nome é Jack.",
@@ -123,6 +136,7 @@ const people = [
   },
   {
     uid: "ceb1b82e-21ee-44cc-828e-fe1ea7ffb06d",
+    order: createOrder(),
     name: "Ben",
     username: "ben10",
     description: "Oi, meu nome é Ben.",
@@ -135,6 +149,7 @@ const people = [
   },
   {
     uid: "25312758-5689-4362-a7b5-d877eb94644a",
+    order: createOrder(),
     name: "Revisor",
     username: "review",
     description: "Oi, meu nome é Revisor.",
@@ -147,6 +162,7 @@ const people = [
   },
   {
     uid: "6f909f82-f51c-489b-933d-876846b0a7c4",
+    order: createOrder(),
     name: "Gestor",
     username: "manager",
     description: "Oi, meu nome é Gestor.",
@@ -159,6 +175,7 @@ const people = [
   },
   {
     uid: "e7ab1ade-d464-4602-bd61-f0f7eb7c880e",
+    order: createOrder(),
     name: "Superadmin",
     username: "super",
     description: "Oi, meu nome é Superadmin.",
@@ -194,6 +211,7 @@ people.forEach((person) => {
         "people",
         _val.map()
         .set("uid", person.uid)
+        .set("order", person.order)
         .set("name", person.name)
         .set("description", person.description)
         .set("people_user_id", user_id)

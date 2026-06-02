@@ -53,7 +53,7 @@ params.add(offset);
 sqlQuery +=
 `
       )
-    ORDER BY RANDOM() 
+    ORDER BY "order"::INTEGER
     LIMIT ${pageSize} 
     OFFSET ?::int
 `;

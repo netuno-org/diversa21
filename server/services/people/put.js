@@ -1,5 +1,7 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+
 import permissions from "#core/lib/permissions.js";
+import people from "#core/lib/people.js";
 
 
 // Validate user input
@@ -147,6 +149,8 @@ _user.update(
 const institutionId = dbInstitution.getInt("id");
 const cityId = dbCity.getInt("id");
 
+const order = people.createOrder();
+
 const peopleData = _val.map()
   .set("name", name)
   .set("description", description)
@@ -154,6 +158,7 @@ const peopleData = _val.map()
   .set("birth_date", birthDate)
   .set("city_id", cityId)
   .set("active", active)
+  .set("order", order)
 
 // redundant checking:
 // if (permissions.canChangeUserInstitution()) {

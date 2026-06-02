@@ -85,5 +85,12 @@ export default {
           INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
       WHERE netuno_user."user" = ?::varchar;
     `, username);
-  }
+  },
+  createOrder: () => {
+    let order = '';
+    for (let i = 0; i < 7; i++) {
+        order += Math.floor(Math.random() * 10)
+    }
+    return order;
+  },
 }
