@@ -1,0 +1,32 @@
+@import '../../styles/variables.less';
+
+.footer-base {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  padding: 24px;
+
+  &__text {
+    color: @primary-color;
+  }
+
+  &__divider {
+    border-color: @primary-color;
+    opacity: 0.6;
+  }
+
+  &__link {
+    color: @primary-color !important;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      color: @primary-color !important;
+      opacity: 0.7;
+    }
+
+    .anticon {
+      font-size: 16px;
+    }
+  }
+}
