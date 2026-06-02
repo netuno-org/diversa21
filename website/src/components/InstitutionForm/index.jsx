@@ -4,6 +4,7 @@ import {
   Upload, Card, message, Spin, Select 
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 import _service from '@netuno/service-client';
 import "./index.less";
@@ -20,11 +21,17 @@ export default function InstitutionForm({
   submitText = null,
   title = null,
   showBackButton = true,
-  onBack = () => {}
+  onBack
 }) {
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState((!!uid || !!slug) && !initialData);
   const [form] = Form.useForm();
+
+  const defaultOnBack = slug
+    ? () => navigate(`/institutions/${slug}`)
+    : () => navigate('/institutions');
+  const backAction = onBack || defaultOnBack;
   
   const [logoPreview, setLogoPreview] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
@@ -251,7 +258,7 @@ export default function InstitutionForm({
           <Button 
             className="go-back-btn" 
             type="link" 
-            onClick={onBack}
+            onClick={backAction}
           >
             ← Voltar atrás
           </Button>
