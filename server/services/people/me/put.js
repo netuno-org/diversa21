@@ -11,6 +11,7 @@ const avatar = _req.getFile("avatar");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
+const description = _req.getString("description");
 
 const dbInstitution = _db.queryFirst(`
   SELECT id FROM institution 
@@ -65,6 +66,7 @@ const cityId = dbCity.getInt("id");
 
 const peopleData = _val.map()
   .set("name", name)
+  .set("description", description)
   .set("email", email)
   .set("birth_date", birthDate)
   .set("city_id", cityId)

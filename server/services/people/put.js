@@ -14,6 +14,7 @@ const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");
 const active = _req.getBoolean("active");
+const description = _req.getString("description");
 
 const groups = ["member", "review", "management", "super-admin"];
 
@@ -148,6 +149,7 @@ const cityId = dbCity.getInt("id");
 
 const peopleData = _val.map()
   .set("name", name)
+  .set("description", description)
   .set("email", email)
   .set("birth_date", birthDate)
   .set("city_id", cityId)

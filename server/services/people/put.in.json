@@ -32,8 +32,11 @@
     },
     "institution": {
       "type": "uid"
+    },
+    "description": {
+      "type": "string-not-empty"
     }
-  },
+ },
   "required": [
     "uid",
     "name",

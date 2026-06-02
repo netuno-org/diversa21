@@ -158,11 +158,12 @@ function ProfileForm({
     setSubmitting(true);
 
     let url = 'people';
-    const { name, username, password, email, birthDate, active } = values;
+    const { name, username, password, email, birthDate, active, description } = values;
 
     const data = {
       name,
       username,
+      description,
       password,
       email,
       birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
@@ -296,6 +297,7 @@ function ProfileForm({
             {
               name: people.name,
               username: people.username,
+              description: people.description,
               email: people.email,
               birthDate: dayjs(people.birthDate),
               city: people.country.name + " > " + people.state.name + " > " + people.city.name,
@@ -338,6 +340,15 @@ function ProfileForm({
               ]}
             >
               <Input disabled={submitting} maxLength={25} />
+            </Form.Item>
+            <Form.Item
+              label="Descrição"
+              name="description"
+              rules={[
+                { required: true, message: 'Insira a descrição do usuário.' }
+              ]}
+            >
+              <Input disabled={submitting} maxLength={250} />
             </Form.Item>
             <Form.Item
               label="E-mail"
