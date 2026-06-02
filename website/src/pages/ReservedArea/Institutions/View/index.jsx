@@ -81,9 +81,8 @@ function View() {
         )}
       </div>
 
-      <div className="content-wrapper">
-        <Row gutter={[32, 24]}>
-          <Col xs={24} lg={8}>
+      <Row gutter={[32, 24]}>
+        <Col xs={24} lg={8}>
             <Card className="sidebar-card">
               <div className="logo-section">
                 {institution.logo ? (
@@ -201,7 +200,6 @@ function View() {
             </Card>
           </Col>
         </Row>
-      </div>
     </section>
   );
 }

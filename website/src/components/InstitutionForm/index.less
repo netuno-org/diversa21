@@ -1,7 +1,6 @@
 .institution-form {
-  padding: 24px;
-  max-width: 800px;
-  margin: 0 auto;
+  min-height: calc(100vh - 140px);
+  padding: 16px 0;
 
   .content-title {
     margin-bottom: 16px;
@@ -68,7 +67,8 @@
       background-color: #8A6AA2;
       border-color: #8A6AA2;
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         background-color: #7A5A92;
         border-color: #7A5A92;
       }
@@ -80,12 +80,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 64px 0;
+  min-height: 50vh;
 }
 
 @media (max-width: 768px) {
   .institution-form {
-    padding: 16px;
+    padding: 12px 0;
 
     .upload-container {
       .image-preview img {
@@ -98,5 +98,33 @@
         height: 80px;
       }
     }
+  }
+}
+
+@media (max-width: 576px) {
+  .institution-form {
+    padding: 8px 0;
+
+    .content-title {
+      margin-bottom: 12px;
+
+      .ant-typography {
+        font-size: 20px;
+      }
+    }
+
+    .content-body {
+      .form-card {
+        margin-bottom: 12px;
+      }
+
+      .ant-form-item {
+        margin-bottom: 12px;
+      }
+    }
+  }
+
+  .institution-form-loading {
+    min-height: 40vh;
   }
 }
