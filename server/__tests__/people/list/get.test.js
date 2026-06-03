@@ -28,4 +28,8 @@ test("list people", async () => {
   expect(response.body.data.totalCount).toBe(14);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePeople();
+
+  // this test will work if the list of users has 10 users per page
+  const sortedUsers = ["Alice", "Ben", "Bob", "Charlie", "Elijah", "Gestor", "Isabela", "Jack", "Lucas", "Noah"];
+  expect(response.body.data.items.map(e => e.name)).not.toEqual(sortedUsers);
 });
