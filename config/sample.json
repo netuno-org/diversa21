@@ -1,6 +1,13 @@
 {
   "cron": {
-    "jobs": []
+    "secret": "m3u-S3Gred0",
+    "jobs": [
+      {
+        "name": "people-order",
+        "config": "1 * * * * ?",
+        "url": "/services/jobs/people-order"
+      }
+    ]
   },
   "settings": {
     "api": {
