@@ -316,7 +316,7 @@ function ProfileForm({
           onFinishFailed={onFinishFailed}
         >
           {operation === "edit" && (
-            <Card title={"Editar usuário - " + textTitle} className="form-card"
+            <Card title={"Editar usuário - " + textTitle}
               className="form-card"
               extra={
                   canViewActiveField && (
