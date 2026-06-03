@@ -26,7 +26,7 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
     }
 
     if (author) {
-      data.authorUid = author;
+      data.peopleUid = author;
     }
 
     data.page = page;

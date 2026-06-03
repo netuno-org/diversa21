@@ -1,6 +1,6 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
-const postAuthorPeopleUid = _req.getUID("authorUid");
+const peopleUid = _req.getUID("peopleUid");
 const parent = _req.getString('parent');
 let page = _req.getInt('page', 1);
 
@@ -37,9 +37,9 @@ let sqlQuery = `
     WHERE 1 = 1
 `;
 
-if (postAuthorPeopleUid) {
+if (peopleUid) {
   sqlQuery += ` AND (people.uid = ?::uuid) `;
-  params.add(postAuthorPeopleUid);
+  params.add(peopleUid);
 }
 
 sqlQuery += `
