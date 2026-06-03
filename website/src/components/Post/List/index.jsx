@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useImperativeHandle } from "react";
 import _service from "@netuno/service-client";
-import { Button, Col, notification, Row, Spin } from "antd";
+import { Button, Col, notification, Row, Spin, Empty } from "antd";
 import Post from "..";
 
 function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
@@ -96,7 +96,7 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
   return (
     <div>
       {
-        posts.map((post, index) => (
+        posts.map((post) => (
           <Post
             key={post.uid}
             {...post}
@@ -105,6 +105,15 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
           />
         ))
       }
+
+      {!loadingPosts && posts.length === 0 && (
+        <div style={{ padding: '40px 20px', background: '#fff', borderRadius: '8px', border: '1px solid #f0f0f0' }}>
+          <Empty
+            description={parent ? "Ainda não existem comentários." : "Ainda não existem publicações."}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        </div>
+      )}
 
       {!loadingPosts && parent && posts.length >= 10 && (
         <Button
@@ -116,7 +125,7 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
       )}
 
       {loadingPosts && page > 0 && (
-        <Row justify="center">
+        <Row justify="center" style={{ marginTop: 20 }}>
           <Col>
             <Spin size="large" />
           </Col>

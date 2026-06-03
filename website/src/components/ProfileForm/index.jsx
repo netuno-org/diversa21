@@ -316,7 +316,20 @@ function ProfileForm({
           onFinishFailed={onFinishFailed}
         >
           {operation === "edit" && (
-            <Card title={"Editar usuário - " + textTitle} className="form-card">
+            <Card title={"Editar usuário - " + textTitle} className="form-card"
+              className="form-card"
+              extra={
+                  canViewActiveField && (
+                    <Form.Item 
+                      name="active" 
+                      valuePropName="checked" 
+                      style={{ marginBottom: 0 }}
+                    >
+                      <Switch checkedChildren="Ativo" unCheckedChildren="Inativo" />
+                    </Form.Item>
+                  )
+                }
+              >
               <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
             </Card>
           )}
@@ -431,11 +444,6 @@ function ProfileForm({
                   onClear={handleGroupClear}
                   onChange={handleGroupChange}
                 />
-              </Form.Item>
-            )}
-            {canViewActiveField && (
-              <Form.Item label="Estado" name="active">
-                <Switch checkedChildren="ativo" unCheckedChildren="inativo" />
               </Form.Item>
             )}
           </Card>

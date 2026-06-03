@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Row, Col, Card, Typography, Avatar, Button, Divider, Space, Spin, Popover } from 'antd';
+import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty } from 'antd';
 import {
   EditOutlined,
   EnvironmentOutlined,
   CalendarOutlined,
   SafetyOutlined
 } from '@ant-design/icons';
-import { RiCommunityLine } from "react-icons/ri";
+import { RiCommunityLine, RiFileEditLine } from "react-icons/ri";
 import { BsFillHouseGearFill } from "react-icons/bs";
-import { RiFileEditLine } from "react-icons/ri";
 
 import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
@@ -69,96 +68,113 @@ function Profile({ user }) {
     );
   };
 
+  const tabItems = [
+    {
+      key: 'posts',
+      label: 'Publicações',
+      children: (
+        <div className="profile-tabs__content">
+          <PostList author={user.uid} />
+        </div>
+      ),
+    },
+    {
+      key: 'activity',
+      label: 'Atividade',
+      children: (
+        <div className="profile-tabs__content profile-tabs__empty">
+          <Empty
+            description="Este utilizador ainda não tem atividade recente."
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <section className="profile-view">
-      <div className="cover-image">
-        <div className="cover-placeholder" />
+      <div className="profile-cover">
+        <div className="profile-cover__placeholder" />
       </div>
 
-      <Row gutter={[32, 24]}>
-
-        <Col xs={24} lg={8}>
-          <Card className="sidebar-card">
-            <div className="avatar-section">
-              <Avatar src={avatarUrl} size={140} />
-            </div>
-
-            <Title level={2} className="user-name">
-              {user.name}
-            </Title>
-            <Text type="secondary" className="user-username">
-              @{user.username}
-            </Text>
-
-            <div className="badge-container">
-              {renderGroupInfo()}
-            </div>
-
-            <Space direction="vertical" size={12} className="user-info-list">
-              {(user.city?.name || user.country?.name) && (
-                <div className="info-item">
-                  <EnvironmentOutlined />
-                  <Text type="secondary">
-                    {user.city?.name}{user.city?.name && user.state?.name && ', '}{user.state?.name}
-                  </Text>
-                </div>
-              )}
-
-              {user.birthDate && (
-                <div className="info-item">
-                  <CalendarOutlined />
-                  <Text type="secondary">{dayjs(user.birthDate).format('LL')}</Text>
-                </div>
-              )}
-
-              {user.institution && (
-                <Popover
-                  content={<div className="institution-text-popover">Visitar página da instituição</div>}
-                  placement="bottom"
-                  trigger="hover"
-                >
-                  <Link to={`/institutions/${user.institution.uid}`} className="info-item institution-link">
-                    <RiCommunityLine />
-                    <span>{user.institution.name}</span>
-                  </Link>
-                </Popover>
-              )}
-            </Space>
-
-            {loggedUser.canManageUser(user) && (
-              <>
-                <Divider />
-                <Button
-                  type="primary"
-                  icon={<EditOutlined />}
-                  size="large"
-                  block
-                  onClick={handleEdit}
-                >
-                  Editar Perfil
-                </Button>
-              </>
-            )}
-          </Card>
-        </Col>
-
-        <Col xs={24} lg={16}>
-          <Card className="details-card">
-            <Title level={3}>Sobre</Title>
-            <Paragraph>
-              {user.description && user.description !== "-"
-                ? user.description
-                : 'Este utilizador ainda não adicionou uma descrição.'}
-            </Paragraph>
-          </Card>
-
-          <div className="posts-section">
-            <Title level={3} className="posts-title">Atividade</Title>
-            <PostList author={user.uid} />
+      <Card className="profile-card">
+        <div className="profile-header">
+          <div className="profile-header__avatar">
+            <Avatar src={avatarUrl} size={120} shape="square"/>
           </div>
-        </Col>
 
-      </Row>
+          {loggedUser.canManageUser(user) && (
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={handleEdit}
+              className="profile-header__btn"
+            >
+              Editar Perfil
+            </Button>
+          )}
+        </div>
+
+        <div className="profile-info">
+          <Title level={2} className="profile-info__name">
+            {user.name}
+          </Title>
+          <Text type="secondary" className="profile-info__username">
+            @{user.username}
+          </Text>
+
+          <div className="profile-info__badges-wrapper">
+            {renderGroupInfo()}
+          </div>
+
+          <Space size="large" className="profile-info__details" wrap>
+            {(user.city?.name || user.country?.name) && (
+              <div className="profile-info__item">
+                <EnvironmentOutlined />
+                <Text type="secondary">
+                  {user.city?.name}{user.city?.name && user.state?.name && ', '}{user.state?.name}
+                </Text>
+              </div>
+            )}
+
+            {user.birthDate && (
+              <div className="profile-info__item">
+                <CalendarOutlined />
+                <Text type="secondary">{dayjs(user.birthDate).format('LL')}</Text>
+              </div>
+            )}
+
+            {user.institution && (
+              <Popover
+                content={<div className="profile-info__popover">Visitar página da instituição</div>}
+                placement="bottom"
+                trigger="hover"
+              >
+                <Link to={`/institutions/${user.institution.uid}`} className="profile-info__item profile-info__link">
+                  <RiCommunityLine />
+                  <span>{user.institution.name}</span>
+                </Link>
+              </Popover>
+            )}
+          </Space>
+        </div>
+
+        <Divider />
+
+        <div className="profile-about">
+          <Title level={4}>Sobre</Title>
+          <Paragraph className="profile-about__text">
+            {user.description && user.description !== "-"
+              ? user.description
+              : 'Este utilizador ainda não adicionou uma descrição.'}
+          </Paragraph>
+        </div>
+      </Card>
+
+      <div className="profile-tabs">
+        <Tabs defaultActiveKey="posts" items={tabItems} size="large" />
+      </div>
     </section>
   );
 }

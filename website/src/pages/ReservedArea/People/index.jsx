@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, message } from 'antd';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, message, Switch } from 'antd';
 import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
@@ -150,6 +150,12 @@ function People() {
 
               {loggedUser.canManageUser(person) && (
                 <div className="people-card__actions">
+                  <Switch
+                    checked={person.active}
+                    size ="small"
+                  // onChange={(checked) => handleToggleActive(person.uid, checked)}
+                  />
+
                   <Button
                     type="link"
                     onClick={() => navigate(`/e/${person.username}`)}
