@@ -1,23 +1,23 @@
 import request from "supertest";
 
-import toBePeople from '../../custom/people.js';
+import toBePost from '../../custom/post.js';
 import login from '../../util/login.js';
 
-expect.extend({ toBePeople });
+expect.extend({ toBePost });
 
 const NETUNO_URL = "http://localhost:9000/services";
 
-test("list people without loging in", async () => {
+test("list posts without loging in", async () => {
   await request(NETUNO_URL)
-    .get("/people/list")
+    .get("/post/list")
     .expect(401);
 });
 
-test("list people", async () => {
+test("list posts", async () => {
   const accessToken = await login.asTest(); 
 
   const response = await request(NETUNO_URL)
-    .get("/people/list")
+    .get("/post/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
@@ -25,7 +25,7 @@ test("list people", async () => {
   expect(response.body).toHaveProperty("data");
   expect(response.body.data.pageSize).toBe(10);
   expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(14);
+  expect(response.body.data.totalCount).toBe(2);
   expect(response.body.data).toHaveProperty("items");
-  expect(response.body.data.items[0]).toBePeople();
+  expect(response.body.data.items[0]).toBePost();
 });

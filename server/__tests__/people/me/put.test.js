@@ -23,6 +23,7 @@ test("modify my own user details", async () => {
   const newData = {
     name: "New Name",
     username: "newname",
+    description: "Ola, eu sou o New Name!",
     email: "newname@gmail.com",
     birthDate: "1970-01-01",
     city: cityUid.saoPaulo,

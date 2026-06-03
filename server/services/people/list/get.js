@@ -64,7 +64,7 @@ for (const dbPerson of dbPeople) {
   list.add(people.getData(dbPerson.getUID("uid")));
 }
 
-if (dbPeople.length == 0) {
+if (dbPeople.length === 0) {
   result.set("totalCount", 0);
 } else {
   result.set("totalCount", dbPeople[0].getInt("total_count"));

@@ -1,12 +1,16 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
+import response from "#core/lib/response.js";
+
 const peopleUid = _req.getUID("peopleUid");
 const parent = _req.getString('parent');
 let page = _req.getInt('page', 1);
 
+const pageSize = 10;
+
 let offset = 0;
 if (page > 0) {
-  offset = (page - 1) * 10;
+  offset = (page - 1) * pageSize;
 }
 
 let dbParent = _val.map();
@@ -26,7 +30,8 @@ const loggedUserPeopleId = _db.queryFirst(`
 params.add(loggedUserPeopleId);
 
 let sqlQuery = `
-    SELECT post.uid, post.moment, post.content, post.comments, post.likes,
+    SELECT count(*) over() as total_count,
+        post.uid, post.moment, post.content, post.comments, post.likes,
         people.name AS "people_name", people.uid AS "people_uid",
         netuno_user.user AS "people_user",
         people.avatar AS "people_avatar",
@@ -75,4 +80,15 @@ for (const dbPost of dbPosts) {
       )
   )
 }
-_out.json(posts);
+
+const result = _val.map();
+
+if (dbPosts.length === 0) {
+  result.set("totalCount", 0);
+} else {
+  result.set("totalCount", dbPosts[0].getInt("total_count"));
+}
+result.set("items", posts);
+result.set("pageSize", pageSize);
+
+response.successWithData(result);

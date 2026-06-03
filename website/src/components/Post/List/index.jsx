@@ -40,7 +40,7 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
         }
 
         setLoadingPosts(false);
-        setPosts([...posts, ...response.json]);
+        setPosts([...posts, ...response.json.data.items]);
       },
       fail: (e) => {
         if (onLoaded) {
