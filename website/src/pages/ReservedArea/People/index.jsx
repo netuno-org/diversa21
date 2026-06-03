@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Avatar, Spin, Pagination, Empty, Typography, Grid } from 'antd';
-import { UserAddOutlined } from '@ant-design/icons';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, message } from 'antd';
+import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
@@ -28,6 +28,7 @@ function People() {
     location: null
   });
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
   const screens = useBreakpoint();
   const screenSize = screens.xl
     ? 100
@@ -49,7 +50,7 @@ function People() {
       url: 'people/list',
       data: {
         name: term,
-        ...(location && {[location.type + "Uid"]: location.uid}),
+        ...(location && { [location.type + "Uid"]: location.uid }),
         page,
       },
       success: (response) => {
@@ -92,13 +93,24 @@ function People() {
   }
 
   const handleSearchClear = () => {
-    setPagination({ ...pagination, current: 1, term: ''});
+    setPagination({ ...pagination, current: 1, term: '' });
     fetchPeopleList('', pagination.location, 1);
   }
 
+  const handleDeleteUser = (uid) => {
+    loggedUser.remove(uid, {
+      onSuccess: () => {
+        messageApi.success('Utilizador apagado com sucesso.');
+        fetchPeopleList(pagination.term, pagination.location, pagination.current);
+      }
+    });
+  };
+
   return (
-    <div>
-      <div>
+    <div className="people-list">
+      {contextHolder}
+
+      <div className="people-list__header">
         <ListHeaderFilters
           title="Pessoas"
           createButton={loggedUser.canCreateAnyUser() && {
@@ -112,28 +124,67 @@ function People() {
           onSearchClear={handleSearchClear}
         />
       </div>
+
       {loading && (
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 24 }}>
+        <div className="people-list__loading">
           <Spin size="large" />
         </div>
       )}
-      <div style={{ marginTop: 20 }}>
+
+      <div className="people-list__count">
         <Text type="secondary">
           {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
         </Text>
       </div>
-      {!loading && peopleList.map((person) => (
-        <div key={person.uid} style={{ width: '100%' }}>
-          <Link to={`/u/${person.username}`}>
-            <Card className="people-search-result-card" key={person.uid}>
-              <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
-            </Card>
-          </Link>
-        </div>
-      ))}
-      <div style={{ width: '100%' }}>
+
+      <div className="people-list__items">
+        {!loading && peopleList.map((person) => (
+          <Card key={person.uid} className="people-card">
+            <div className="people-card__content">
+
+              <div className="people-card__info">
+                <Link to={`/u/${person.username}`} className="people-card__link">
+                  <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
+                </Link>
+              </div>
+
+              {loggedUser.canManageUser(person) && (
+                <div className="people-card__actions">
+                  <Popconfirm
+                    title="Tem a certeza que deseja apagar este utilizador?"
+                    placement="topRight"
+                    onConfirm={() => handleDeleteUser(person.uid)}
+                    okText="Apagar"
+                    cancelText="Cancelar"
+                    okButtonProps={{ danger: true }}
+                  >
+                    <Button
+                      danger
+                      type="link"
+                      className="people-card__btn people-card__btn--delete"
+                    >
+                      <DeleteOutlined />
+                    </Button>
+                  </Popconfirm>
+
+                  <Button
+                    type="link"
+                    onClick={() => navigate(`/e/${person.username}`)}
+                    className="people-card__btn people-card__btn--edit"
+                  >
+                    <EditOutlined />
+                  </Button>
+                </div>
+              )}
+
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="people-list__footer">
         <Pagination
-          style={{ ...(peopleList.length === 0 && !loading ? { marginTop: '20px', display: 'none' } : { marginTop: '20px' }) }}
+          className={`people-list__pagination ${peopleList.length === 0 && !loading ? 'people-list__pagination--hidden' : ''}`}
           align='center'
           total={pagination.total}
           current={pagination.current}
@@ -141,10 +192,8 @@ function People() {
           onChange={handlePaginationChange}
         />
         {peopleList.length === 0 && !loading && (
-          <div style={{ marginTop: '20px' }}>
-            <Empty
-              description={"Nenhuma pessoa encontrada corresponde aos filtros aplicados."}
-            />
+          <div className="people-list__empty">
+            <Empty description="Nenhuma pessoa encontrada corresponde aos filtros aplicados." />
           </div>
         )}
       </div>

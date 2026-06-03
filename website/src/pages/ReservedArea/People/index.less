@@ -1,34 +1,93 @@
-.people-search-result-card {
-  display: flex;
-  margin-top: 20px;
+.people-list {
+  &__loading {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  &__count,
+  &__pagination,
+  &__empty {
+    margin-top: 20px;
+  }
+
+  &__items,
+  &__footer {
+    width: 100%;
+  }
+
+  &__pagination {
+    &--hidden {
+      display: none;
+    }
+  }
+}
+
+.people-card {
   width: 100%;
+  margin-top: 20px;
+  margin-bottom: 16px;
   transition: all 0.2s ease;
 
   &:hover {
     background-color: #fafafa;
     border-color: #8A6AA2;
   }
-}
 
-@media (max-width: 576px) {
-  .people-search-result-card {
-    margin-top: 20px;
-    transition: all 0.2s ease;
+  .ant-card-body {
+    padding: 16px 24px;
+  }
 
-    &:hover {
-      background: #fafafa;
-      border-color: #8A6AA2;
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__link {
+    display: block;
+    color: rgba(0, 0, 0, 0.85);
+    text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: rgba(0, 0, 0, 0.85);
+      text-decoration: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+
+  &__btn {
+    height: auto;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+
+    &--delete {
+      margin-right: 12px;
     }
   }
 }
 
 @media (max-width: 480px) {
-  .people-search-container {
+  .people-list {
     padding: 0 10px;
+  }
 
-    .search-input-container {
-      flex-direction: column;
-    }
+  .people-card {
     .ant-card-body {
       padding: 10px;
     }

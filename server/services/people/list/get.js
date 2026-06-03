@@ -1,4 +1,4 @@
-import {_req, _db, _val, _out} from "@netuno/server-types"
+import { _req, _db, _val, _out } from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
@@ -41,9 +41,6 @@ if (cityUid) {
 } else if (countryUid) {
   sqlQuery += ` OR country.uid = ?::uuid `;
   params.add(countryUid);
-} else if (countryUid) {
-  sqlQuery += ` OR country.uid = ?::uuid `;
-  params.add(countryUid);
 } else {
   sqlQuery += ` OR 1 = 1 `;
 }
@@ -52,10 +49,10 @@ params.add(offset);
 
 sqlQuery +=
 `
-      )
-    ORDER BY "order"::INTEGER
-    LIMIT ${pageSize} 
-    OFFSET ?::int
+  )
+  ORDER BY people.name ASC
+  LIMIT ${pageSize} 
+  OFFSET ?::int
 `;
 
 const dbPeople = _db.query(sqlQuery, params);
