@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import _auth from "@netuno/auth-client";
-import {Button, Spin, Typography} from "antd";
-import {useNavigate, useLocation, useParams} from "react-router-dom";
+import { Button, Spin, Typography } from "antd";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import usePeople from "../../common/usePeople.js";
 
@@ -20,7 +20,7 @@ import LocationList from "./Locations/List";
 
 import "./index.less";
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 function ReservedArea() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ function ReservedArea() {
 
     useEffect(() => {
       if (people.data == null) {
-        people.load((result)=> {
+        people.load((result) => {
           if (result) {
             setLoading(false);
           } else {
@@ -43,60 +43,72 @@ function ReservedArea() {
         setLoading(false);
       }
     }, [people.data]);
-    if (loading) {
-      return (
-        <section className="reserved-area">
-          <Spin spinning={loading}></Spin>
-        </section>
-      );
-    }
-    if (location.pathname === "/profile/edit") {
-      return <ProfileEdit/>;
-    }
-    if (location.pathname === "/profile/view") {
-      return <ProfileView/>;
-    }
-    if (location.pathname === "/posts") {
-      return <Posts/>;
-    }
-    if (location.pathname.startsWith("/u/")) {
-      return <UserProfile username={params.username}/>;
-    }
-    if (location.pathname.startsWith("/e/")) {
-      return <UserProfileEdit username={params.username}/>;
-    }
-    if (location.pathname === "/people") {
-      return <People/>;
-    }
-    if (location.pathname === "/people/create/user") {
-      if (!people.canCreateAnyUser()) {
-        navigate('/people');  
-        return;
+
+    const getContent = () => {
+      if (loading) {
+        return (
+          <div className="loading">
+            <Spin spinning={loading}></Spin>
+          </div>
+        );
       }
-      return <CreateUser/>;
-    }
-    if (location.pathname === "/institutions") {
-      return <InstitutionsList/>;
-    }
-    if (location.pathname === "/institutions/new") {
-      return <InstitutionForm onSuccess={() => navigate('/institutions')} onCancel={() => navigate('/institutions')} />;
-    }
-    if (location.pathname.match(/^\/institutions\/[\w-]+$/)) {
-      return <InstitutionView/>;
-    }
-    if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
-      const slug = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
-      return <InstitutionForm slug={slug} onSuccess={() => navigate(`/institutions/${slug}`)} onCancel={() => navigate(`/institutions/${slug}`)} />;
-    }
-    if (location.pathname === "/locations") {
-      if (!people.canManageLocations()) {
-        navigate('/');  
-        return;
+      if (location.pathname === "/profile/edit") {
+        return <ProfileEdit />;
       }
-      return <LocationList />;
-    }
-    return <NotFound />;
+      if (location.pathname === "/profile/view") {
+        return <ProfileView />;
+      }
+      if (location.pathname === "/posts") {
+        return <Posts />;
+      }
+      if (location.pathname.startsWith("/u/")) {
+        return <UserProfile username={params.username} />;
+      }
+      if (location.pathname.startsWith("/e/")) {
+        return <UserProfileEdit username={params.username} />;
+      }
+      if (location.pathname === "/people") {
+        return <People />;
+      }
+      if (location.pathname === "/people/create/user") {
+        if (!people.canCreateAnyUser()) {
+          navigate('/people');
+          return;
+        }
+        return <CreateUser />;
+      }
+      if (location.pathname === "/institutions") {
+        return <InstitutionsList />;
+      }
+      if (location.pathname === "/institutions/new") {
+        return <InstitutionForm onSuccess={() => navigate('/institutions')} onCancel={() => navigate('/institutions')} />;
+      }
+      if (location.pathname.match(/^\/institutions\/[\w-]+$/)) {
+        return <InstitutionView />;
+      }
+      if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
+        const slug = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
+        return <InstitutionForm slug={slug} onSuccess={() => navigate(`/institutions/${slug}`)} onCancel={() => navigate(`/institutions/${slug}`)} />;
+      }
+      if (location.pathname === "/locations") {
+        if (!people.canManageLocations()) {
+          navigate('/');
+          return;
+        }
+        return <LocationList />;
+      }
+      return <NotFound />;
+    };
+
+    const content = getContent();
+
+    return (
+      <section className="reserved-area">
+        {content}
+      </section>
+    );
   }
+
   return (
     <section className="reserved-area">
       <Title>Não Autorizado</Title>

@@ -6,12 +6,6 @@ import { _service } from "@netuno/server-types";
 //   _env: ${_env}
 // `);
 
-if (_header.isOptions()) {
+if (_service.path === 'people/avatar/get') {
   _service.allow();
-} else if (_auth.isJWT()) {
-  _service.allow();
-} else if (_service.path === 'people/avatar/get' || _service.path === 'jobs/people-order') {
-  _service.allow();
-} else if (_service.path !== '_auth') {
-  _service.deny();
 }

@@ -150,23 +150,6 @@ function People() {
 
               {loggedUser.canManageUser(person) && (
                 <div className="people-card__actions">
-                  <Popconfirm
-                    title="Tem a certeza que deseja apagar este utilizador?"
-                    placement="topRight"
-                    onConfirm={() => handleDeleteUser(person.uid)}
-                    okText="Apagar"
-                    cancelText="Cancelar"
-                    okButtonProps={{ danger: true }}
-                  >
-                    <Button
-                      danger
-                      type="link"
-                      className="people-card__btn people-card__btn--delete"
-                    >
-                      <DeleteOutlined />
-                    </Button>
-                  </Popconfirm>
-
                   <Button
                     type="link"
                     onClick={() => navigate(`/e/${person.username}`)}
