@@ -49,10 +49,10 @@ params.add(offset);
 
 sqlQuery +=
 `
-  )
-  ORDER BY people.name ASC
-  LIMIT ${pageSize} 
-  OFFSET ?::int
+      )
+    ORDER BY "order"::INTEGER
+    LIMIT ${pageSize} 
+    OFFSET ?::int
 `;
 
 const dbPeople = _db.query(sqlQuery, params);
