@@ -12,12 +12,12 @@ const dbCountry = _db.queryFirst(`
 `, countryUid);
 
 if (!dbCountry) {
-    _header.status(404);
-    _out.json(
-        _val.map()
-            .set("error", "country-not-found")
-    );
-    _exec.stop();
+  _header.status(404);
+  _out.json(
+    _val.map()
+      .set("error", "country-not-found")
+  );
+  _exec.stop();
 }
 
 // Check for duplicates within the same country
@@ -30,43 +30,43 @@ const stateExists = _db.queryFirst(`
 `, countryId, name, code);
 
 if (stateExists) {
-    _header.status(409);
-    _out.json(
-        _val.map()
-            .set("error", "state-already-exists")
-    );
-    _exec.stop();
+  _header.status(409);
+  _out.json(
+    _val.map()
+      .set("error", "state-already-exists")
+  );
+  _exec.stop();
 }
 
 if (!permissions.canManageLocations()) {
-    _header.status(403);
-    _out.json(
-        _val.map()
-            .set("error", "permission denied")
-    );
-    _exec.stop();
+  _header.status(403);
+  _out.json(
+    _val.map()
+      .set("error", "permission denied")
+  );
+  _exec.stop();
 }
 
 // Create state
 try {
-    _db.insert("state",
-        _val.map()
-            .set("name", name)
-            .set("code", code)
-            .set("country_id", countryId)
-    );
+  _db.insert("state",
+    _val.map()
+      .set("name", name)
+      .set("code", code)
+      .set("country_id", countryId)
+  );
 } catch (e) {
-    _log.warn("error: state not created", e);
-    _header.status(400);
-    _out.json(
-        _val.map()
-            .set("error", "state not created")
-    );
-    _exec.stop();
+  _log.warn("error: state not created", e);
+  _header.status(400);
+  _out.json(
+    _val.map()
+      .set("error", "state not created")
+  );
+  _exec.stop();
 }
 
 
 _out.json(
-    _val.map()
-        .set("result", true)
+  _val.map()
+    .set("result", true)
 );

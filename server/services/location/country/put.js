@@ -1,4 +1,15 @@
 import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
+import permissions from "#core/lib/permissions.js";
+
+//Verify permissions
+if (!permissions.canManageLocations()) {
+  _header.status(403);
+  _out.json(
+    _val.map()
+      .set("error", "permission denied")
+  );
+  _exec.stop();
+}
 
 const uid = _req.getUID("uid");
 const name = _req.getString("name");
