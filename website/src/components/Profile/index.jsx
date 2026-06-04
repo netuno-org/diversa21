@@ -13,6 +13,8 @@ import { BsFillHouseGearFill } from "react-icons/bs";
 import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
 
+import ActivityList from "../Activity/List";
+
 import PostList from '../Post/List';
 import usePeople from "../../common/usePeople.js";
 import './index.less';
@@ -82,12 +84,15 @@ function Profile({ user }) {
       key: 'activity',
       label: 'Atividade',
       children: (
-        <div className="profile-tabs__content profile-tabs__empty">
-          <Empty
-            description="Este utilizador ainda não tem atividade recente."
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
+        <div className="profile-tabs__content">
+          <ActivityList author={user.uid}/>
         </div>
+        // <div className="profile-tabs__content profile-tabs__empty">
+        //   <Empty
+        //     description="Este utilizador ainda não tem atividade recente."
+        //     image={Empty.PRESENTED_IMAGE_SIMPLE}
+        //   />
+        // </div>
       ),
     },
   ];
