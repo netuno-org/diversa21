@@ -14,7 +14,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
   if (!institution) return null;
 
   const avatarUrl = institution.logo
-    ? _service.url(`/institution/logo?uid=${institution.uid}`)
+    ? _service.url(`/institution/avatar?uid=${institution.uid}`)
     : null;
 
   const location = [
@@ -27,7 +27,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
       
       <Avatar
-        style={{ backgroundColor: '#8A6AA2', ...avatarStyle }}
+        style={{ backgroundColor: avatarUrl ? '#fff' : '#8A6AA2', ...avatarStyle }}
         src={avatarUrl}
         shape="square"
       >

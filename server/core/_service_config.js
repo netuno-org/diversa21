@@ -9,3 +9,11 @@ import { _service } from "@netuno/server-types";
 if (_service.path === 'people/avatar/get') {
   _service.allow();
 }
+
+if (_service.path === 'institution/avatar/get') {
+  _service.allow();
+}
+
+if (_service.path === 'institution/banner/get') {
+  _service.allow();
+}

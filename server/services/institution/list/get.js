@@ -81,8 +81,8 @@ for (const dbInstitution of dbInstitutions) {
     institutions.add(
         _val.map()
             .set('active', dbInstitution.getString('active'))
-            .set('logo', dbInstitution.get('logo'))
-            .set('cover_image', dbInstitution.get('cover_image'))
+            .set('logo', dbInstitution.getString('logo') !== '')
+            .set('cover_image', dbInstitution.getString('cover_image') !== '')
             .set('uid', dbInstitution.getString('uid'))
             .set('slug', dbInstitution.getString('slug'))
             .set('country',

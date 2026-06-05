@@ -71,10 +71,10 @@
           "required": ["uid", "name"]
         },
         "cover_image": {
-          "type": "string"
+          "type": "boolean"
         },
         "logo": {
-          "type": "string"
+          "type": "boolean"
         },
         "active": {
           "type": "string"
