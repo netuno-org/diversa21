@@ -1,78 +1,170 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Row, Col, Button, Slider, Divider } from 'antd';
-import {useDropzone} from 'react-dropzone';
+import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar } from 'antd';
+import {
+  UploadOutlined,
+  ZoomInOutlined,
+  ZoomOutOutlined,
+  UndoOutlined,
+  FormatPainterOutlined
+} from '@ant-design/icons';
+import { useDropzone } from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
 
 import './index.less';
 
-function Avatar({currentImage}, ref) {
+const { Text } = Typography;
+
+function Avatar({ currentImage }, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
   const [position, setPosition] = useState(undefined);
   const [color, setColor] = useState('#ffffff');
-  const {getRootProps, getInputProps, open} = useDropzone({
+
+  const refAvatarEditor = useRef(null);
+
+  const { getRootProps, getInputProps, open } = useDropzone({
     noClick: true,
     noKeyboard: true,
     multiple: false,
-    onDrop: ([image]) => setImage(image)
+    onDrop: ([file]) => {
+      setImage(file);
+      setScale(1.0);
+      setRotate(0);
+      setPosition(undefined);
+    }
   });
+
   useEffect(() => {
     setImage(null);
     setTimeout(() => setImage(currentImage), 250);
   }, [currentImage]);
-  const refAvatarEditor = useRef(null);
+
   useImperativeHandle(ref, () => ({
-    getImage: ()=> imageEditing ? refAvatarEditor?.current?.getImage().toDataURL() : null
+    getImage: () => imageEditing ? refAvatarEditor?.current?.getImage().toDataURL() : null
   }));
-  const imageEditing = image && typeof(image) !== 'string';
+
+  const imageEditing = image && typeof (image) !== 'string';
+
+  const handleUndo = () => {
+    setImage(currentImage);
+    setScale(1.0);
+    setRotate(0);
+    setPosition(undefined);
+  };
+
   return (
-    <Row gutter={16}>
-      <Col>
-        <div {...getRootProps()}>
-          <AvatarEditor
-            ref={refAvatarEditor}
-            image={image}
-            width={250}
-            height={250}
-            border={imageEditing ? 25 : 0}
-            borderRadius={250}
-            backgroundColor={color}
-            scale={scale}
-            rotate={rotate}
-            position={position}
-            onPositionChange={(position)=> setPosition(position)}
+    <div className="avatar-editor">
+      {!imageEditing ? (
+        <div className="avatar-editor__view" {...getRootProps()}>
+          <input {...getInputProps()} />
+
+          <AntAvatar
+            src={currentImage}
+            size={160}
+            shape="square"
+            className="avatar-editor__preview"
           />
-          <input
-            name="newImage"
-            type="file"
-            onChange={(e) => e.target.files?.[0] && setImage(e.target.files[0])}
-            {...getInputProps()}
-          />
+
+          <Button
+            onClick={open}
+            type="primary"
+            icon={<UploadOutlined />}
+            size="large"
+            className="avatar-editor__btn-upload"
+          >
+            Carregar Nova Imagem
+          </Button>
+
+          <Text type="secondary" className="avatar-editor__hint">
+            (Ou arrasta e larga a foto aqui)
+          </Text>
         </div>
-      </Col>
-        <Col xs={24} lg={12}>
-          <p className="upload-image-button-profile"><Button onClick={open} type="primary" ghost>Carregar Outra Imagem</Button></p>
-          { imageEditing &&
-            <>
-              <Divider orientation="left" plain>Configurar Imagem</Divider>
-              <p>
-                Dimensionar: <Slider min={0.5} max={1.5} defaultValue={scale} step={0.01} onChange={(value) => setScale(value)}></Slider>
-              </p>
-              <p>
-                Rodar: <Slider min={-180} max={180} defaultValue={rotate} step={1} onChange={(value) => setRotate(value)}></Slider>
-              </p>
-              <p>
-                Color de Fundo: <input type="color" defaultValue={color} onChange={(e) => setColor(e.target.value)}/>
-                <br/><i>Apenas para imagens com transparência.</i>
-              </p>
-              <p>
-                <Button onClick={() => setImage(currentImage)} type="dashed" danger>Desfazer</Button>
-              </p>
-            </>
-          }
-        </Col>
-    </Row>
+      ) : (
+        <div className="avatar-editor__edit" {...getRootProps()}>
+          <input {...getInputProps()} />
+          <Row gutter={[32, 24]} align="middle">
+
+            <Col xs={24} md={10} className="avatar-editor__canvas-wrapper">
+              <AvatarEditor
+                ref={refAvatarEditor}
+                image={image}
+                width={220}
+                height={220}
+                border={20}
+                borderRadius={16}
+                backgroundColor={color}
+                scale={scale}
+                rotate={rotate}
+                position={position}
+                onPositionChange={(pos) => setPosition(pos)}
+                className="avatar-editor__canvas"
+              />
+            </Col>
+
+            <Col xs={24} md={14}>
+              <Space direction="vertical" size="large" className="avatar-editor__controls-wrapper">
+                <Button
+                  onClick={open}
+                  type="default"
+                  icon={<UploadOutlined />}
+                  className="avatar-editor__btn-swap"
+                >
+                  Trocar Ficheiro
+                </Button>
+
+                <div className="avatar-editor__settings">
+                  <Divider orientation="left" className="avatar-editor__divider">
+                    Ajustes da Imagem
+                  </Divider>
+
+                  <Row align="middle" gutter={16} className="avatar-editor__slider-row">
+                    <Col><ZoomOutOutlined className="avatar-editor__icon" /></Col>
+                    <Col flex="auto">
+                      <Slider
+                        min={0.5} max={2.5} step={0.01}
+                        value={scale} onChange={setScale}
+                        tooltip={{ formatter: (v) => `${Math.round(v * 100)}%` }}
+                      />
+                    </Col>
+                    <Col><ZoomInOutlined className="avatar-editor__icon" /></Col>
+                  </Row>
+
+                  <Row align="middle" gutter={16} className="avatar-editor__slider-row avatar-editor__slider-row--spaced">
+                    <Col><UndoOutlined className="avatar-editor__icon" /></Col>
+                    <Col flex="auto">
+                      <Slider
+                        min={-180} max={180} step={1}
+                        value={rotate} onChange={setRotate}
+                        tooltip={{ formatter: (v) => `${v}°` }}
+                      />
+                    </Col>
+                  </Row>
+
+                  <Space size="large" align="center" className="avatar-editor__actions">
+                    <Space>
+                      <FormatPainterOutlined className="avatar-editor__icon" />
+                      <Text type="secondary">Cor de fundo:</Text>
+                      <input
+                        type="color"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        title="Apenas visível em imagens com fundo transparente (PNG)"
+                        className="avatar-editor__color-picker"
+                      />
+                    </Space>
+
+                    <Button onClick={handleUndo} type="dashed" danger>
+                      Cancelar Edição
+                    </Button>
+                  </Space>
+                </div>
+              </Space>
+            </Col>
+          </Row>
+        </div>
+      )}
+    </div>
   );
 }
 

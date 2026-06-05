@@ -150,12 +150,6 @@ function People() {
 
               {loggedUser.canManageUser(person) && (
                 <div className="people-card__actions">
-                  <Switch
-                    checked={person.active}
-                    size ="small"
-                  // onChange={(checked) => handleToggleActive(person.uid, checked)}
-                  />
-
                   <Button
                     type="link"
                     onClick={() => navigate(`/e/${person.username}`)}

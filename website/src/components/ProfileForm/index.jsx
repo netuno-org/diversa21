@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col, Divider } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
 import _service from '@netuno/service-client';
-
 import isNetworkError from "is-network-error";
 
 import globalNotification from "../../common/globalNotification.js";
@@ -13,7 +12,7 @@ import usePeople from "../../common/usePeople.js";
 import Avatar from './Avatar';
 import './index.less';
 
-function ProfileForm({ 
+function ProfileForm({
   textTitle2,
   textTitle,
   operation,
@@ -21,41 +20,28 @@ function ProfileForm({
   redirectTo
 }) {
   const loggedUser = usePeople();
-
-  // not sure if this should be a state
-  // cause it never changes
-  // but we need a kind of global variable to tell us if the logged user is
-  // trying to modify his own profile
   const [itsLoggedUserProfile, setItsLoggedUserProfile] = useState(false);
-
   const profileForm = useRef(null);
+  const profileAvatar = useRef(null);
 
-  const canViewGroupFormField = 
+  const canViewGroupFormField =
     (operation === "create" && loggedUser.canCreateAnyUser()) ||
     (operation === "edit" && !itsLoggedUserProfile && loggedUser.canChangeUserGroup(people));
   const canViewPasswordFields = operation === "create" || (operation === "edit" && itsLoggedUserProfile);
   const canViewInstitutionFormField =
     (operation === "create" && loggedUser.canCreateAnyUser()) ||
     (operation === "edit" && (
-       !itsLoggedUserProfile && loggedUser.canChangeUserInstitution() ||
-       itsLoggedUserProfile && loggedUser.canChangeOwnInstitution()
-    )); 
-  const canViewActiveField = !itsLoggedUserProfile && operation == "edit" && 
+      !itsLoggedUserProfile && loggedUser.canChangeUserInstitution() ||
+      itsLoggedUserProfile && loggedUser.canChangeOwnInstitution()
+    ));
+  const canViewActiveField = !itsLoggedUserProfile && operation == "edit" &&
     loggedUser.canManageUser(people);
+  const showPermissionsCard = canViewGroupFormField || canViewActiveField;
 
-
-  const [cityOptions, setCityOptions] = useState([])
-  const [institutionOptions, setInstitutionOptions] = useState([])
-
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [selectedInstitution, setSelectedInstitution] = useState(null);
-  const [selectedGroup, setSelectedGroup] = useState(null);
-
+  const [cityOptions, setCityOptions] = useState([]);
+  const [institutionOptions, setInstitutionOptions] = useState([]);
   const [passwordRequired, setPasswordRequired] = useState(false);
-
-  const profileAvatar = useRef(null);
   const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
-
   const [ready, setReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [api, contextHolder] = notification.useNotification();
@@ -65,49 +51,9 @@ function ProfileForm({
       if (people.avatar) {
         setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
       }
-      setSelectedCity(people.city);
-      setSelectedInstitution(people.institution);
-      setSelectedGroup({ 
-        label: people.group.name, 
-        value: people.group.code 
-      });
       setItsLoggedUserProfile(people.username === loggedUser.data.username);
     }
   }, []);
-
-  const handleCitySearch = value => {
-    _service({
-      url: `location/city/search?name=${value}`,
-      success: (response) => {
-        const options = response.json.data.map(city => ({
-          value: city.label,
-          label: city.label,
-          uid: city.uid,
-        }))
-        setCityOptions(options);
-      },
-      fail: () => {
-        setCityOptions([]);
-      }
-    })
-  };
-
-  const handleInstitutionSearch = value => {
-    _service({
-      url: `institution/search?name=${value}`,
-      success: (response) => {
-        const options = response.json.data.map(institution => ({
-          value: institution.name,
-          label: institution.name,
-          uid: institution.uid,
-        }))
-        setInstitutionOptions(options);
-      },
-      fail: () => {
-        setInstitutionOptions([]);
-      }
-    })
-  };
 
   const groupOptions = [
     {
@@ -128,101 +74,104 @@ function ProfileForm({
     },
   ];
 
-  const handleCityChange = (value, option) => {
-    setSelectedCity(option);
+  const handleCitySearch = value => {
+    if (!value) {
+      setCityOptions([]);
+      return;
+    }
+
+    _service({
+      url: `location/city/search?name=${value}`,
+      success: ({ json }) => {
+        setCityOptions(json.data.map(city => (
+          { label: city.label, value: city.uid }
+        )));
+      },
+      fail: () => setCityOptions([])
+    })
   };
 
-  const handleInstitutionChange = (value, option) => {
-    setSelectedInstitution(option);
+  const handleInstitutionSearch = value => {
+    if (!value) {
+      setInstitutionOptions([]);
+      return;
+    }
+
+    _service({
+      url: `institution/search?name=${value}`,
+      success: ({ json }) => {
+        setInstitutionOptions(json.data.map(inst => (
+          { label: inst.name, value: inst.uid }
+        )));
+      },
+      fail: () => setInstitutionOptions([])
+    })
   };
-
-  const handleGroupChange = (value, option) => {
-    setSelectedGroup(option);
-  };
-
-  const handleCityClear = () => {
-    setCityOptions([]);
-    setSelectedCity('');
-  }
-
-  const handleInstitutionClear = () => {
-    setInstitutionOptions([]);
-    setSelectedInstitution('');
-  }
-
-  const handleGroupClear = () => {
-    setSelectedGroup('');
-  }
 
   function onFinish(values) {
     setSubmitting(true);
 
     let url = 'people';
-    const { name, username, password, email, birthDate, active, description } = values;
 
     const data = {
-      name,
-      username,
-      description,
-      password,
-      email,
-      birthDate: birthDate?.format('YYYY-MM-DD') ?? '',
-      city: selectedCity.uid,
-      institution: selectedInstitution.uid,
-      group: selectedGroup.value,
-      active
+      name: values.name,
+      username: values.username,
+      description: values.description,
+      password: values.password,
+      email: values.email,
+      birthDate: values.birthDate?.format('YYYY-MM-DD') ?? '',
+      city: values.city?.value || values.city,
+      institution: values.institution?.value || values.institution,
+      group: values.group?.value || values.group,
+      active: values.active
     }
 
     if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
-
-      if (itsLoggedUserProfile) {
-        url += '/me';
-      } else {
-        data.uid = people.uid
-      }
+      if (itsLoggedUserProfile) url += '/me';
+      else data.uid = people.uid;
     }
 
-    const method = operation === "edit" ? "PUT" : "POST"
+    const method = operation === "edit" ? "PUT" : "POST";
 
     _service({
       method,
       url,
       data,
-      success: (response) => {
-        if (response.json.result) {
+      success: ({ json }) => {
+        if (json.result) {
           if (operation === "edit") {
             globalNotification.success({
               message: 'Edição do Perfil',
               description: 'Os dados do seu perfil foram alterados com sucesso.',
             });
-            setSubmitting(false);
-          } else if (operation === "create") {
+          } else {
             api.success({
               message: 'Conta Criada',
               description: 'A conta foi criada com sucesso, pode iniciar sessão.',
             });
-            setSubmitting(false);
+
             profileForm.current.setFieldsValue({
               password: "",
               password_confirm: ""
             });
           }
           setReady(true);
+
           if (itsLoggedUserProfile) {
             loggedUser.reload();
-          } 
+          }
         } else if (operation === "edit") {
           globalNotification.warning({
             message: 'Utilizador existente',
-            description: response.json.error,
+            description: json.error,
           });
-          setSubmitting(false);
           profileForm.current.setFieldsValue({
             password: "",
             password_confirm: ""
           });
         }
+        setSubmitting(false);
       },
       fail: (e) => {
         setSubmitting(false);
@@ -263,19 +212,11 @@ function ProfileForm({
   }
 
   function onValuesChange(changedValues, allValues) {
-    if (allValues.password && allValues.password.length > 0) {
-      setPasswordRequired(true);
-    } else {
-      setPasswordRequired(false);
-    }
-  }
-
-  function onFinishFailed(errorInfo) {
-    console.log('Failed:', errorInfo);
+    setPasswordRequired(!!(allValues.password && allValues.password.length > 0));
   }
 
   if (operation === "edit" && !people) {
-    return <Spin />
+    return <Spin />;
   }
 
   if (ready) {
@@ -285,218 +226,255 @@ function ProfileForm({
   return (
     <div className="profile-form">
       {contextHolder}
-      <div className="content-body">
+      <div className="profile-form__body">
         <Form
           style={{ width: '100%' }}
           onValuesChange={onValuesChange}
           ref={profileForm}
           layout="vertical"
           name="basic"
+
           initialValues={
-            operation === "edit" ?
-            {
+            operation === "edit" ? {
               name: people.name,
               username: people.username,
               description: people.description,
               email: people.email,
               birthDate: dayjs(people.birthDate),
-              city: people.country.name + " > " + people.state.name + " > " + people.city.name,
-              institution: people.institution.name,
-              group: people.group.name,
-              active: people.active 
+              city: {
+                label: `${people.country.name} > ${people.state.name} > ${people.city.name}`,
+                value: people.city.uid
+              },
+              institution: {
+                label: people.institution.name,
+                value: people.institution.uid
+              },
+              group: {
+                label: people.group.name,
+                value: people.group.code
+              },
+              active: people.active
             }
-            : operation === "create" && !loggedUser.canCreateAnyUser() ?
-            { 
-              group: { value: "member", label: "Membro" },
-              institution: loggedUser.data.institution.name,
-            }
-            : {}
+              : operation === "create" && !loggedUser.canCreateAnyUser() ? {
+                group: { value: "member", label: "Membro" },
+
+
+                institution: loggedUser.data.institution.name,
+              }
+                : {}
           }
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
         >
           {operation === "edit" && (
-            <Card title={"Editar usuário - " + textTitle}
-              className="form-card"
-              extra={
-                  canViewActiveField && (
-                    <Form.Item 
-                      name="active" 
-                      valuePropName="checked" 
+            <Card title={`${textTitle}`} className="profile-form__card">
+              <Avatar ref={profileAvatar} currentImage={avatarImageURL} />
+            </Card>
+          )}
+
+          <Card title="Informações Gerais" className="profile-form__card">
+            <Row gutter={16}>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="Nome"
+                  name="name"
+                  rules={[
+                    { required: true, message: 'Insira o nome.' },
+                    { type: 'string', message: 'Nome inválido.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
+                  ]}
+                >
+                  <Input disabled={submitting} maxLength={25} />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="Utilizador"
+                  name="username"
+                  rules={[
+                    { required: true, message: 'Insira o usuário.' },
+                    { type: 'string', message: 'Usuário inválido.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
+                  ]}
+                >
+                  <Input disabled={submitting} maxLength={25} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="E-mail"
+                  name="email"
+                  rules={[
+                    { type: 'email', message: 'O e-mail inserido não é válido.' },
+                    { required: true, message: 'Insira o e-mail.' }
+                  ]}
+                >
+                  <Input disabled={submitting} maxLength={250} />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="Data de Nascimento"
+                  name="birthDate"
+                  rules={[
+                    { type: 'date', message: 'A data inserida não é válida.' },
+                    { required: true, message: 'Insira a data de nascimento.' }
+                  ]}
+                >
+                  <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" style={{ width: '100%' }} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  label="Descrição"
+                  name="description"
+                  rules={[{ required: true, message: 'Insira a descrição do usuário.' }]}
+                  style={{ marginBottom: showPermissionsCard ? 8 : undefined }}
+                >
+                  <Input.TextArea disabled={submitting} maxLength={250} autoSize={{ minRows: 3, maxRows: 6 }} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <>
+              <Row gutter={16}>
+                <Col xs={24} md={canViewInstitutionFormField ? 12 : 24}>
+                  <Form.Item
+                    label="Cidade"
+                    name="city"
+                    rules={[{ required: true, message: 'Insira a cidade.' }]}
+                  >
+                    <Select
+                      labelInValue
+                      showSearch
+                      notFoundContent={null}
+                      filterOption={false}
+                      placeholder="Cidade"
+                      options={cityOptions}
+                      allowClear
+                      onSearch={handleCitySearch}
+                    />
+                  </Form.Item>
+                </Col>
+
+                {canViewInstitutionFormField && (
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Instituição"
+                      name="institution"
+                      rules={[{ required: true, message: 'Insira a instituição.' }]}
+                    >
+                      <Select
+                        labelInValue
+                        showSearch
+                        notFoundContent={null}
+                        filterOption={false}
+                        placeholder="Instituição"
+                        options={institutionOptions}
+                        allowClear
+                        onSearch={handleInstitutionSearch}
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+              </Row>
+            </>
+          </Card>
+
+          {showPermissionsCard && (
+            <Card title="Permissões e Acessos" className="profile-form__card">
+              <Row gutter={16} align="middle">
+                {canViewGroupFormField && (
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Grupo"
+                      name="group"
+
+                      rules={[{ required: true, message: 'Insira o grupo.' }]}
+                      style={{ marginBottom: 0 }}
+                    >
+                      <Select
+                        labelInValue
+                        showSearch
+                        notFoundContent={null}
+                        filterOption={false}
+                        placeholder="Grupo"
+                        options={groupOptions}
+                        allowClear
+
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+
+                {canViewActiveField && (
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Estado da Conta"
+                      name="active"
+                      valuePropName="checked"
                       style={{ marginBottom: 0 }}
                     >
                       <Switch checkedChildren="Ativo" unCheckedChildren="Inativo" />
                     </Form.Item>
-                  )
-                }
-              >
-              <Avatar ref={profileAvatar} currentImage={avatarImageURL}/>
+                  </Col>
+                )}
+              </Row>
             </Card>
           )}
-          <Card title={operation === "create" ? textTitle + " - " + textTitle2 : operation === "edit" ? textTitle2 : textTitle2} className="form-card">
-            <Form.Item
-              label="Nome"
-              name="name"
-              rules={[
-                { required: true, message: 'Insira o nome.' },
-                { type: 'string', message: 'Nome inválido,.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={25} />
-            </Form.Item>
-            <Form.Item
-              label="Utilizador"
-              name="username"
-              rules={[
-                { required: true, message: 'Insira o usuário.' },
-                { type: 'string', message: 'Usuário inválido.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={25} />
-            </Form.Item>
-            <Form.Item
-              label="Descrição"
-              name="description"
-              rules={[
-                { required: true, message: 'Insira a descrição do usuário.' }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={250} />
-            </Form.Item>
-            <Form.Item
-              label="E-mail"
-              name="email"
-              rules={[
-                { type: 'email', message: 'O e-mail inserido não é válido.' },
-                { required: true, message: 'Insira o e-mail.' }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={250} />
-            </Form.Item>
-            <Form.Item
-              label="Data de Nascimento"
-              name="birthDate"
-              rules={[
-                { type: 'date', message: 'A data inserida não é válida.' },
-                { required: true, message: 'Insira a data de nascimento.' }
-              ]}
-            >
-              <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" />
-            </Form.Item>
-            <Form.Item
-              label="Cidade"
-              name="city"
-              rules={[
-                { type: 'string', message: 'A cidade inserida não é válida.' },
-                { required: true, message: 'Insira a cidade.' }
-              ]}
-            >
-              <Select
-                showSearch
-                notFoundContent={null}
-                filterOption={false}
-                placeholder="Cidade"
-                options={cityOptions}
-                allowClear
-                onClear={handleCityClear}
-                onSearch={handleCitySearch}
-                onChange={handleCityChange}
-              />
-            </Form.Item>
-            {canViewInstitutionFormField && (
-              <Form.Item
-                label="Instituição"
-                name="institution"
-                rules={[
-                  { type: 'string', message: 'A instituição inserida não é válida.' },
-                  { required: true, message: 'Insira a instituição.' }
-                ]}
-              >
-                <Select
-                  showSearch
-                  notFoundContent={null}
-                  filterOption={false}
-                  placeholder="Instituição"
-                  options={institutionOptions}
-                  allowClear
-                  onClear={handleInstitutionClear}
-                  onSearch={handleInstitutionSearch}
-                  onChange={handleInstitutionChange}
-                />
-              </Form.Item>
-            )}
-            {canViewGroupFormField && (
-              <Form.Item
-                label="Grupo"
-                name="group"
-                rules={[
-                  { type: 'string', message: 'O grupo inserido não é válido.' },
-                  { required: true, message: 'Insira o grupo.' }
-                ]}
-              >
-                <Select
-                  showSearch
-                  notFoundContent={null}
-                  filterOption={false}
-                  placeholder="Grupo"
-                  options={groupOptions}
-                  allowClear
-                  onClear={handleGroupClear}
-                  onChange={handleGroupChange}
-                />
-              </Form.Item>
-            )}
-          </Card>
 
           {canViewPasswordFields && (
-            <Card title="Segurança" className="form-card">
-              <Form.Item
-                label={(operation === "edit" ? "Nova" : "") + " Palavra-passe"}
-                name="password"
-                rules={[
-                  (operation === "create" && { required: true, message: 'Insira a palavra-passe.' }),
-                  { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
-                ]}
-              >
-                {operation === "create" ?
-                  <PasswordInput disabled={submitting} maxLength={25} /> :
-                  <PasswordInput />
-                }
-              </Form.Item>
-              <Form.Item
-                label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Palavra-passe"}
-                name="password_confirm"
-                rules={[ (operation === "create" ?
-                  { required: true, message: `Insira a confirmação da palavra-passe.` } :
-                  { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
-                  { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('As palavras-passes não são iguais.');
-                    },
-                  })
-                ]}
-              >
-                {operation === "create" ?
-                  <Input.Password disabled={submitting} maxLength={25} /> :
-                  <Input.Password maxLength={25} />
-                }
-              </Form.Item>
+            <Card title="Segurança" className="profile-form__card">
+              <Row gutter={16}>
+                <Col xs={24} md={12}>
+                  <Form.Item
+                    label={(operation === "edit" ? "Nova" : "") + " Palavra-passe"}
+                    name="password"
+                    rules={[
+                      (operation === "create" && { required: true, message: 'Insira a palavra-passe.' }),
+                      { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                    ]}
+                  >
+                    {operation === "create" ? <PasswordInput disabled={submitting} maxLength={25} /> : <PasswordInput />}
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} md={12}>
+                  <Form.Item
+                    label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Palavra-passe"}
+                    name="password_confirm"
+                    rules={[
+                      (operation === "create" ? { required: true, message: `Insira a confirmação da palavra-passe.` } : { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
+                      { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || getFieldValue('password') === value) return Promise.resolve();
+                          return Promise.reject('As palavras-passes não são iguais.');
+                        },
+                      })
+                    ]}
+                  >
+                    {operation === "create" ? <Input.Password disabled={submitting} maxLength={25} /> : <Input.Password maxLength={25} />}
+                  </Form.Item>
+                </Col>
+              </Row>
             </Card>
           )}
 
-          <Form.Item className="submit-form-item">
-            { operation === "create" ?
-              <Button type="primary" htmlType="submit" loading={submitting} size="large" block>
-                Criar Usuário
-              </Button> :
-              <Button type="primary" htmlType="submit" loading={submitting} size="large" block>
-                Atualizar Perfil
-              </Button>
-            }
+          <Form.Item className="profile-form__submit-item">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={submitting}
+              size="large"
+              block
+              className="profile-form__submit-btn"
+            >
+              {operation === "create" ? "Criar Usuário" : "Atualizar Perfil"}
+            </Button>
           </Form.Item>
         </Form>
       </div>
