@@ -49,6 +49,14 @@ const posts = [
     content: "21 de maio*",
     comments: 0,
     likes: 1 // Superadmin
+  },
+  {
+    uid: "96635804-1264-4e58-a72a-94d12a75b158",
+    people_id: "f0c206fc-923d-40b6-8b2b-6570f698d855", // Test
+    parent_id: "f44e649a-987f-4c2c-9a83-d3ac370f82de",
+    content: "lskjflkd",
+    comments: 0,
+    likes: 0
   }
 ];
 
