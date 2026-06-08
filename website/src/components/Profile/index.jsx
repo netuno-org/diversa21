@@ -25,10 +25,12 @@ function Profile({ user }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
+  const [bannerUrl, setBannerUrl] = useState();
 
   useEffect(() => {
-    if (user && user.avatar) {
-      setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}`));
+    if (user) {
+      user.avatar && setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}`));
+      user.coverImage && setBannerUrl(_service.url(`/people/banner?uid=${user.uid}`));
     }
   }, [user]);
 
@@ -100,7 +102,9 @@ function Profile({ user }) {
   return (
     <section className="profile-view">
       <div className="profile-cover">
-        <div className="profile-cover__placeholder" />
+        <div className="profile-cover__placeholder">
+          <img src={bannerUrl}/>
+        </div>
       </div>
 
       <Card className="profile-card">

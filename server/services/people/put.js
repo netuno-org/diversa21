@@ -11,6 +11,7 @@ const name = _req.getString("name");
 const username = _req.getString("username");
 const email = _req.getString("email");
 const avatar = _req.getFile("avatar");
+const coverImage = _req.getFile("coverImage");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
@@ -167,7 +168,23 @@ const peopleData = _val.map()
 // }
 
 if (avatar) {
-  peopleData.set("avatar", avatar)
+  peopleData.set(
+    "avatar", 
+    _image
+      .init(avatar)
+      .resize(500, 500)
+      .file(avatar.name(), "jpeg")
+  )
+}
+
+if (coverImage) {
+  peopleData.set(
+    "cover_image", 
+    _image
+      .init(coverImage)
+      .resize(720, 180)
+      .file(coverImage.name(), "jpeg")
+  )
 }
 
 _db.update(

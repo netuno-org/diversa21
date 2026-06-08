@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navigate } from "react-router-dom";
 import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col, Divider } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
@@ -10,10 +10,10 @@ import isNetworkError from "is-network-error";
 import globalNotification from "../../common/globalNotification.js";
 import usePeople from "../../common/usePeople.js";
 import Avatar from './Avatar';
+import CoverImage from './CoverImage';
 import './index.less';
 
 function ProfileForm({
-  textTitle2,
   textTitle,
   operation,
   people,
@@ -23,6 +23,7 @@ function ProfileForm({
   const [itsLoggedUserProfile, setItsLoggedUserProfile] = useState(false);
   const profileForm = useRef(null);
   const profileAvatar = useRef(null);
+  const profileBanner = useRef(null);
 
   const canViewGroupFormField =
     (operation === "create" && loggedUser.canCreateAnyUser()) ||
@@ -42,6 +43,7 @@ function ProfileForm({
   const [institutionOptions, setInstitutionOptions] = useState([]);
   const [passwordRequired, setPasswordRequired] = useState(false);
   const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
+  const [coverImageURL, setCoverImageURL] = useState('');
   const [ready, setReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [api, contextHolder] = notification.useNotification();
@@ -50,6 +52,9 @@ function ProfileForm({
     if (people && operation === "edit") {
       if (people.avatar) {
         setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
+      }
+      if (people.coverImage) {
+        setCoverImageURL(_service.url(`/people/banner?uid=${people.uid}`));
       }
       setItsLoggedUserProfile(people.username === loggedUser.data.username);
     }
@@ -128,6 +133,7 @@ function ProfileForm({
 
     if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
+      data.coverImage = profileBanner?.current?.getImage();
       if (itsLoggedUserProfile) url += '/me';
       else data.uid = people.uid;
     }
@@ -266,9 +272,14 @@ function ProfileForm({
           onFinish={onFinish}
         >
           {operation === "edit" && (
-            <Card title={`${textTitle}`} className="profile-form__card">
-              <Avatar ref={profileAvatar} currentImage={avatarImageURL} />
-            </Card>
+            <>
+              <Card title={`${textTitle}`} className="profile-form__card">
+                <Avatar ref={profileAvatar} currentImage={avatarImageURL} />
+              </Card>
+              <Card title={`${textTitle}`} className="profile-form__card">
+                <CoverImage ref={profileBanner} currentImage={coverImageURL} />
+              </Card>
+            </>
           )}
 
           <Card title="Informações Gerais" className="profile-form__card">

@@ -152,7 +152,7 @@ export default function InstitutionForm({
     if (!file) return;
     try {
       await validateImageDimensions(file, {
-        minW: 100, minH: 100, maxW: 400, maxH: 400, label: 'Logótipo'
+        minW: 100, minH: 100, maxW: 400, maxH: 400, label: 'Logotipo'
       });
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -386,9 +386,9 @@ export default function InstitutionForm({
             </Form.Item>
           </Card>
 
-          <Card title="Logótipo e Imagem de Capa" className="form-card">
+          <Card title="Logotipo e Imagem de Capa" className="form-card">
             <Form.Item
-              label="Logótipo"
+              label="Logotipo"
               name="logo"
             >
               <div className="upload-container">
@@ -414,7 +414,7 @@ export default function InstitutionForm({
                     accept="image/*"
                   >
                     <Button icon={<UploadOutlined />} disabled={submitting}>
-                      Carregar Logótipo
+                      Carregar Logotipo
                     </Button>
                   </Upload>
                 )}
