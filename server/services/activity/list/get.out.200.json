@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "totalCount": {
+          "type": "integer"
+        },
+        "pageSize": {
+          "type": "integer"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uid": {
+                "type": "string-not-empty"
+              },
+              "moment": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "comments": {
+                "type": "integer"
+              },
+              "likes": {
+                "type": "integer"
+              },
+              "liked": {
+                "type": "boolean"
+              },
+              "people": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string-not-empty"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["uid", "name", "user", "avatar"]
+              }
+            },
+            "required": ["uid", "moment", "content", "comments", "likes", "liked", "people"]
+          }
+        }
+      },
+      "required": ["totalCount", "pageSize", "items"]
+    }
+  },
+  "required": ["result"]
+}

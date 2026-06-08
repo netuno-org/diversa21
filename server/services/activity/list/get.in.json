@@ -1,0 +1,19 @@
+{
+  "tags": [
+    "activity"
+  ],
+  "summary": "List user activity posts",
+  "description": "Retrieve paginated activity posts for a specific user.",
+  "properties": {
+    "peopleUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  },
+  "required": [
+    "peopleUid"
+  ]
+}
