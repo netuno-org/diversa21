@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty } from 'antd';
+import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty, Tag } from 'antd';
 import {
   EditOutlined,
   EnvironmentOutlined,
@@ -125,9 +125,18 @@ function Profile({ user }) {
           <Title level={2} className="profile-info__name">
             {user.name}
           </Title>
-          <Text type="secondary" className="profile-info__username">
-            @{user.username}
-          </Text>
+
+          <div className="profile-info__username-wrapper">
+            <Text type="secondary" className="profile-info__username">
+              @{user.username}
+            </Text>
+            
+            {user.active === false && (
+              <Tag bordered={false} color="error" className="profile-info__status-tag">
+                Conta Inativa
+              </Tag>
+            )}
+          </div>
 
           <div className="profile-info__badges-wrapper">
             {renderGroupInfo()}

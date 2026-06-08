@@ -64,10 +64,25 @@
     word-break: break-word;
   }
 
+  &__username-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
   &__username {
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 0;
+    margin-top: 10px;
     font-size: 16px;
+  }
+
+  &__status-tag {
+    border-radius: 12px;
+    font-weight: 500;
+    padding: 0 10px;
+    margin-top: 10px;
   }
 
   &__badges-wrapper {
@@ -121,6 +136,7 @@
 
 .profile-tabs {
   .ant-tabs-nav {
+    padding: 0 32px;
     margin-bottom: 24px;
 
     .ant-tabs-tab {
@@ -155,6 +171,12 @@
   .profile-card {
     .ant-card-body {
       padding: 0 20px 24px;
+    }
+  }
+
+  .profile-tabs {
+    .ant-tabs-nav {
+      padding: 0 20px;
     }
   }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, message, Switch } from 'antd';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, message, Switch, Tag } from 'antd';
 import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
@@ -106,6 +106,8 @@ function People() {
     });
   };
 
+  const isSuperAdmin = loggedUser.data?.group?.code === 'super-admin';
+
   return (
     <div className="people-list">
       {contextHolder}
@@ -143,13 +145,22 @@ function People() {
             <div className="people-card__content">
 
               <div className="people-card__info">
-                <Link to={`/u/${person.username}`} className="people-card__link">
+                <Link
+                  to={`/u/${person.username}`}
+                  className={`people-card__link ${!person.active && isSuperAdmin ? 'people-card__link--inactive' : ''}`}
+                >
                   <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
                 </Link>
               </div>
 
               {loggedUser.canManageUser(person) && (
                 <div className="people-card__actions">
+                  {person.active === false && (
+                    <Tag variant="filled" color="error" className="people-card__status-tag">
+                      Inativo
+                    </Tag>
+                  )}
+
                   <Button
                     type="link"
                     onClick={() => navigate(`/e/${person.username}`)}
