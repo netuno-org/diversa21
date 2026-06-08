@@ -77,3 +77,28 @@ bun run dev
 ```
 
 Se quiser executar o `bun` integrado com o terminal do Netuno no mesmo processo, habilite os `commands` na configuração da aplicação.
+
+## Limpar 
+
+Para restaurar o banco de dados para o estado inicial com dados de teste, \
+primeiro limpe o banco de dados com a seguinte query
+
+```sql
+delete from post_like
+;;
+delete from post
+;;
+delete from people
+;;
+delete from institution
+;;
+delete from city
+;;
+delete from state
+;;
+delete from country
+;;
+delete from netuno_user
+```
+
+Depois, execute o setup novamente.
