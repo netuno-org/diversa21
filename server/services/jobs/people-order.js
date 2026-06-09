@@ -9,5 +9,5 @@ _db.execute(`
   );`
 );
 
-_log.info("Job de reordenar pessoas")
+// _log.info("Job de reordenar pessoas")
 _out.print("Ok")
