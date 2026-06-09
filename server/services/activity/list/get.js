@@ -1,6 +1,7 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
 import response from "#core/lib/response.js";
+import people from "#core/lib/people.js";
 
 const peopleUid = _req.getUID("peopleUid");
 let page = _req.getInt('page', 1);
@@ -12,11 +13,7 @@ if (page > 0) {
   offset = (page - 1) * pageSize;
 }
 
-const loggedUserPeopleId = _db.queryFirst(`
-    SELECT id
-    FROM people 
-    WHERE people_user_id = ?::int
-`, _user.id).getInt("id");
+const loggedUserPeopleId = people.getLogged().getInt("id");
 
 const dbPosts = _db.query(`
     WITH RECURSIVE activity AS (

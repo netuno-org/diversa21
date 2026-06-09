@@ -1,6 +1,7 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
 import response from "#core/lib/response.js";
+import people from "#core/lib/people.js";
 
 const peopleUid = _req.getUID("peopleUid");
 const parent = _req.getString('parent');
@@ -21,14 +22,6 @@ if (parent != '') {
 
 const params = _val.list();
 
-const loggedUserPeopleId = _db.queryFirst(`
-    SELECT id
-    FROM people 
-    WHERE people_user_id = ?::int
-`, _user.id).getInt("id");
-
-params.add(loggedUserPeopleId);
-
 let sqlQuery = `
     SELECT count(*) over() as total_count,
         post.uid, post.moment, post.content, post.comments, post.likes,
@@ -41,6 +34,9 @@ let sqlQuery = `
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
     WHERE 1 = 1
 `;
+
+const loggedUserPeopleId = people.getLogged().getInt("id");
+params.add(loggedUserPeopleId);
 
 if (peopleUid) {
   sqlQuery += ` AND (people.uid = ?::uuid) `;
