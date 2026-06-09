@@ -21,6 +21,13 @@
   margin-bottom: 32px;
   background: #f0f0f0;
 
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   &__placeholder {
     width: 100%;
     height: 100%;
@@ -161,11 +168,24 @@
     padding: 12px 0;
   }
 
-  .profile-cover {
+  profile-cover {
     height: 180px;
     border-radius: 0;
     margin: 0 -16px 40px;
-    width: calc(100% + 32px);
+    width: auto;
+
+    &__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    &__placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #8A6AA2 0%, #B8A3D4 100%);
+    }
   }
 
   .profile-card {

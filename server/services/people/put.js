@@ -182,7 +182,7 @@ if (coverImage) {
     "cover_image", 
     _image
       .init(coverImage)
-      .resize(720, 180)
+      .resize(720, 240)
       .file(coverImage.name(), "jpeg")
   )
 }

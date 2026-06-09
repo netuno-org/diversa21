@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar } from 'antd';
+import { Row, Col, Button, Slider, Divider, Space, Typography } from 'antd';
 import {
   UploadOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
   UndoOutlined,
-  FormatPainterOutlined
+  FormatPainterOutlined,
+  PictureOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import { useDropzone } from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
@@ -14,7 +16,7 @@ import './index.less';
 
 const { Text } = Typography;
 
-function CoverImage({ currentImage }, ref) {
+function CoverImage({ currentImage, onRemove }, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
@@ -54,72 +56,89 @@ function CoverImage({ currentImage }, ref) {
   };
 
   return (
-    <div className="avatar-editor">
+    <div className="cover-editor">
       {!imageEditing ? (
-        <div className="avatar-editor__view" {...getRootProps()}>
+        <div className="cover-editor__view" {...getRootProps()}>
           <input {...getInputProps()} />
 
-          <AntAvatar
-            src={currentImage}
-            size={160}
-            shape="square"
-            className="avatar-editor__preview"
-          />
+          {currentImage && currentImage !== '/images/profile-default.png' ? (
+            <img src={currentImage} alt="Capa" className="cover-editor__preview" />
+          ) : (
+            <div className="cover-editor__preview cover-editor__preview--empty">
+              <PictureOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+            </div>
+          )}
 
-          <Button
-            onClick={open}
-            type="primary"
-            icon={<UploadOutlined />}
-            size="large"
-            className="avatar-editor__btn-upload"
-          >
-            Carregar Nova Imagem
-          </Button>
+          <Space orientation="vertical" size="middle" style={{ marginTop: 24, width: '100%', alignItems: 'center' }}>
+            <Button
+              onClick={open}
+              type="primary"
+              icon={<UploadOutlined />}
+              size="large"
+              className="cover-editor__btn-upload"
+              style={{ margin: 0 }}
+            >
+              Carregar Imagem de Capa
+            </Button>
 
-          <Text type="secondary" className="avatar-editor__hint">
+            {currentImage && currentImage !== '/images/profile-default.png' && (
+              <Button
+                type="dashed"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={onRemove}
+                className="cover-editor__btn-remove"
+              >
+                Remover Capa Atual
+              </Button>
+            )}
+          </Space>
+
+          <Text type="secondary" className="cover-editor__hint">
             (Ou arrasta e larga a foto aqui)
           </Text>
         </div>
       ) : (
-        <div className="avatar-editor__edit" {...getRootProps()}>
+        <div className="cover-editor__edit" {...getRootProps()}>
           <input {...getInputProps()} />
           <Row gutter={[32, 24]} align="middle">
 
-            <Col xs={24} md={10} className="avatar-editor__canvas-wrapper">
+            <Col xs={24} lg={12} className="cover-editor__canvas-wrapper">
               <AvatarEditor
                 ref={refAvatarEditor}
                 image={image}
-                width={220}
-                height={220}
+                width={740}
+                height={240}
                 border={20}
-                borderRadius={16}
+                borderRadius={12}
                 backgroundColor={color}
                 scale={scale}
                 rotate={rotate}
                 position={position}
                 onPositionChange={(pos) => setPosition(pos)}
-                className="avatar-editor__canvas"
+                className="cover-editor__canvas"
+                style={{ width: '100%', height: 'auto', maxWidth: '740px' }}
               />
             </Col>
 
-            <Col xs={24} md={14}>
-              <Space direction="vertical" size="large" className="avatar-editor__controls-wrapper">
+            <Col xs={24} lg={12}>
+              <Space orientation="vertical" size="large" className="cover-editor__controls-wrapper">
                 <Button
                   onClick={open}
                   type="default"
                   icon={<UploadOutlined />}
-                  className="avatar-editor__btn-swap"
+                  className="cover-editor__btn-swap"
                 >
                   Trocar Ficheiro
                 </Button>
 
-                <div className="avatar-editor__settings">
-                  <Divider orientation="left" className="avatar-editor__divider">
-                    Ajustes da Imagem
+                <div className="cover-editor__settings">
+                  <Divider orientation="left" className="cover-editor__divider">
+                    Ajustes da Capa
                   </Divider>
 
-                  <Row align="middle" gutter={16} className="avatar-editor__slider-row">
-                    <Col><ZoomOutOutlined className="avatar-editor__icon" /></Col>
+                  <Row align="middle" gutter={16} className="cover-editor__slider-row">
+                    <Col><ZoomOutOutlined className="cover-editor__icon" /></Col>
                     <Col flex="auto">
                       <Slider
                         min={0.5} max={2.5} step={0.01}
@@ -127,11 +146,11 @@ function CoverImage({ currentImage }, ref) {
                         tooltip={{ formatter: (v) => `${Math.round(v * 100)}%` }}
                       />
                     </Col>
-                    <Col><ZoomInOutlined className="avatar-editor__icon" /></Col>
+                    <Col><ZoomInOutlined className="cover-editor__icon" /></Col>
                   </Row>
 
-                  <Row align="middle" gutter={16} className="avatar-editor__slider-row avatar-editor__slider-row--spaced">
-                    <Col><UndoOutlined className="avatar-editor__icon" /></Col>
+                  <Row align="middle" gutter={16} className="cover-editor__slider-row cover-editor__slider-row--spaced">
+                    <Col><UndoOutlined className="cover-editor__icon" /></Col>
                     <Col flex="auto">
                       <Slider
                         min={-180} max={180} step={1}
@@ -141,16 +160,16 @@ function CoverImage({ currentImage }, ref) {
                     </Col>
                   </Row>
 
-                  <Space size="large" align="center" className="avatar-editor__actions">
+                  <Space size="large" align="center" className="cover-editor__actions">
                     <Space>
-                      <FormatPainterOutlined className="avatar-editor__icon" />
+                      <FormatPainterOutlined className="cover-editor__icon" />
                       <Text type="secondary">Cor de fundo:</Text>
                       <input
                         type="color"
                         value={color}
                         onChange={(e) => setColor(e.target.value)}
                         title="Apenas visível em imagens com fundo transparente (PNG)"
-                        className="avatar-editor__color-picker"
+                        className="cover-editor__color-picker"
                       />
                     </Space>
 

@@ -273,11 +273,24 @@ function ProfileForm({
         >
           {operation === "edit" && (
             <>
-              <Card title={`${textTitle}`} className="profile-form__card">
-                <Avatar ref={profileAvatar} currentImage={avatarImageURL} />
+              <Card title={`Foto de Perfil`} className="profile-form__card">
+                <Avatar
+                  ref={profileAvatar}
+                  currentImage={avatarImageURL}
+                  onRemove={() => {
+                    setAvatarImageURL('/images/profile-default.png');
+                  }}
+                />
               </Card>
-              <Card title={`${textTitle}`} className="profile-form__card">
-                <CoverImage ref={profileBanner} currentImage={coverImageURL} />
+
+              <Card title={`Imagem de Capa`} className="profile-form__card">
+                <CoverImage
+                  ref={profileBanner}
+                  currentImage={coverImageURL}
+                  onRemove={() => {
+                    setCoverImageURL(null);
+                  }}
+                />
               </Card>
             </>
           )}

@@ -29,8 +29,8 @@ function Profile({ user }) {
 
   useEffect(() => {
     if (user) {
-      user.avatar && setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}`));
-      user.coverImage && setBannerUrl(_service.url(`/people/banner?uid=${user.uid}`));
+      user.avatar && setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}&${new Date().getTime()}`));
+      user.coverImage && setBannerUrl(_service.url(`/people/banner?uid=${user.uid}&${new Date().getTime()}`));
     }
   }, [user]);
 
@@ -102,9 +102,11 @@ function Profile({ user }) {
   return (
     <section className="profile-view">
       <div className="profile-cover">
-        <div className="profile-cover__placeholder">
-          <img src={bannerUrl}/>
-        </div>
+        {bannerUrl ? (
+          <img src={bannerUrl} alt="Capa de perfil" className="profile-cover__image" />
+        ) : (
+          <div className="profile-cover__placeholder" />
+        )}
       </div>
 
       <Card className="profile-card">
@@ -134,7 +136,6 @@ function Profile({ user }) {
             <Text type="secondary" className="profile-info__username">
               @{user.username}
             </Text>
-            
             {user.active === false && (
               <Tag bordered={false} color="error" className="profile-info__status-tag">
                 Conta Inativa

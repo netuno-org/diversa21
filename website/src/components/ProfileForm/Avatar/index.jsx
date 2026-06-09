@@ -5,7 +5,8 @@ import {
   ZoomInOutlined,
   ZoomOutOutlined,
   UndoOutlined,
-  FormatPainterOutlined
+  FormatPainterOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import { useDropzone } from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
@@ -14,7 +15,7 @@ import './index.less';
 
 const { Text } = Typography;
 
-function Avatar({ currentImage }, ref) {
+function Avatar({ currentImage, onRemove }, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
@@ -66,15 +67,30 @@ function Avatar({ currentImage }, ref) {
             className="avatar-editor__preview"
           />
 
-          <Button
-            onClick={open}
-            type="primary"
-            icon={<UploadOutlined />}
-            size="large"
-            className="avatar-editor__btn-upload"
-          >
-            Carregar Nova Imagem
-          </Button>
+          <Space orientation="vertical" size="middle" style={{ marginTop: 24, width: '100%', alignItems: 'center' }}>
+            <Button
+              onClick={open}
+              type="primary"
+              icon={<UploadOutlined />}
+              size="large"
+              className="avatar-editor__btn-upload"
+              style={{ margin: 0 }}
+            >
+              Carregar Nova Imagem
+            </Button>
+
+            {currentImage && currentImage !== '/images/profile-default.png' && (
+              <Button
+                type="dashed"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={onRemove}
+                className="avatar-editor__btn-remove"
+              >
+                Remover Foto Atual
+              </Button>
+            )}
+          </Space>
 
           <Text type="secondary" className="avatar-editor__hint">
             (Ou arrasta e larga a foto aqui)
@@ -103,7 +119,7 @@ function Avatar({ currentImage }, ref) {
             </Col>
 
             <Col xs={24} md={14}>
-              <Space direction="vertical" size="large" className="avatar-editor__controls-wrapper">
+              <Space orientation="vertical" size="large" className="avatar-editor__controls-wrapper">
                 <Button
                   onClick={open}
                   type="default"
