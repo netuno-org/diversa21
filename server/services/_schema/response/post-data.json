@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "moment": {
+      "type": "string-not-empty"
+    },
+    "content": {
+      "type": "string-not-empty"
+    },
+    "comments": {
+      "type": "integer"
+    },
+    "likes": {
+      "type": "integer"
+    },
+    "liked": {
+      "type": "boolean"
+    },
+    "people": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        },
+        "user": {
+          "type": "string-not-empty"
+        },
+        "avatar": {
+          "type": "boolean"
+        }
+      },
+      "required": ["uid", "name", "user", "avatar"]
+    }
+  },
+  "required": ["uid", "moment", "content", "comments", "likes", "liked", "people"]
+}

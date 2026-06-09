@@ -1,0 +1,19 @@
+{
+  "tags": [
+    "post"
+  ],
+  "summary": "List user posts",
+  "description": "Retrieve paginated posts for a specific user.",
+  "properties": {
+    "peopleUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    },
+    "parent": {
+      "type": "uid"
+    }
+  }
+}
