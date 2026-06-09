@@ -28,4 +28,6 @@ test("list posts", async () => {
   expect(response.body.data.totalCount).toBe(2);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
+  expect(response.body.data.items[0].liked).toBe(true);
+  expect(response.body.data.items[1].liked).toBe(false);
 });
