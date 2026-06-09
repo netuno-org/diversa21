@@ -8,6 +8,7 @@ const username = _req.getString("username");
 const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
+const coverImage = _req.getFile("coverImage");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
@@ -80,6 +81,16 @@ if (permissions.canChangeOwnInstitution()) {
 
 if (avatar) {
   peopleData.set("avatar", avatar)
+}
+
+if (coverImage) {
+  peopleData.set(
+    "cover_image", 
+    _image
+      .init(coverImage)
+      .resize(720, 240)
+      .file(coverImage.name(), "jpeg")
+  )
 }
 
 const dbPeople = _db.queryFirst(`
