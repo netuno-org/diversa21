@@ -7,6 +7,7 @@ const posts = [
     people_id: "ceb1b82e-21ee-44cc-828e-fe1ea7ffb06d", // Ben
     parent_id: 0,
     content: "Primeiro post!",
+    moment: "2026-06-09 11:03:21",
     comments: 2, // Alice & Noah
     likes: 2 // Alice and Noah
   },
@@ -15,6 +16,7 @@ const posts = [
     people_id: "2a86a611-2ab1-472d-a7fe-c41c4aeef36b", // Alice
     parent_id: "b3499f27-44b8-4169-92ea-d0a8b6c12148", // Ben - Primeiro Post
     content: "Primeiro comentário!",
+    moment: "2026-06-09 11:03:31",
     comments: 0,
     likes: 1 // Noah
   },
@@ -23,6 +25,7 @@ const posts = [
     people_id: "b271af58-2fad-473f-b706-a87bbb60b634", // Noah
     parent_id: "b3499f27-44b8-4169-92ea-d0a8b6c12148", // Ben - Primeiro Post
     content: "eesh tarde demais",
+    moment: "2026-06-09 11:03:41",
     comments: 1, // Elijah
     likes: 1 // Elijah
   },
@@ -31,6 +34,7 @@ const posts = [
     people_id: "29bd1755-a1f6-4d64-adf0-2039f306091b", // Elijah
     parent_id: "06fa908f-9fd8-441d-8a08-dd0278be2974", // Noah - Tarde Demais
     content: "ia dizer o mesmo haha",
+    moment: "2026-06-09 11:03:50",
     comments: 0,
     likes: 0
   },
@@ -39,6 +43,7 @@ const posts = [
     people_id: "e7ab1ade-d464-4602-bd61-f0f7eb7c880e", // Superadmin
     parent_id: 0,
     content: "Manutenção do sistema agendada para 20 de maio, 02:00–04:00 UTC. Alguns serviços (envio de arquivos, notificações) podem ficar intermitentes.",
+    moment: "2026-06-09 11:03:35",
     comments: 1,
     likes: 3 // Gestor, Revisor, Test
   },
@@ -46,6 +51,7 @@ const posts = [
     uid: "86635804-1264-4e58-a72a-94d12a75b158",
     people_id: "f0c206fc-923d-40b6-8b2b-6570f698d855", // Test
     parent_id: "f44e649a-987f-4c2c-9a83-d3ac370f82de",
+    moment: "2026-06-09 11:03:55",
     content: "21 de maio*",
     comments: 0,
     likes: 1 // Superadmin
@@ -54,6 +60,7 @@ const posts = [
     uid: "96635804-1264-4e58-a72a-94d12a75b158",
     people_id: "f0c206fc-923d-40b6-8b2b-6570f698d855", // Test
     parent_id: "f44e649a-987f-4c2c-9a83-d3ac370f82de",
+    moment: "2026-06-09 11:03:65",
     content: "lskjflkd",
     comments: 0,
     likes: 0
@@ -77,7 +84,7 @@ posts.forEach((post) => {
       _db.insertIfNotExists("post", _val.map()
         .set("uid", post.uid)
         .set("people_id", post.people_id)
-        .set("moment", _db.timestamp())
+        .set("moment", post.moment)
         .set("parent_id", post.parent_id)
         .set("content", post.content)
         .set("comments", post.comments)
