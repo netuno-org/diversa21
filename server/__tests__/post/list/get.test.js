@@ -2,10 +2,9 @@ import request from "supertest";
 
 import toBePost from '../../custom/post.js';
 import login from '../../util/login.js';
+import { NETUNO_URL } from '../../config.js';
 
 expect.extend({ toBePost });
-
-const NETUNO_URL = "http://localhost:9000/services";
 
 test("list posts without loging in", async () => {
   await request(NETUNO_URL)

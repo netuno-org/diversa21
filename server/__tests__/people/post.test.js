@@ -4,8 +4,7 @@ import { MEMBER } from "#core/lib/groups.js";
 import login from '../util/login.js';
 import { cityUid, institutionUid } from '../util/uids.js';
 import cleanObject from '../util/clean.js';
-
-const NETUNO_URL = "http://localhost:9000/services";
+import { NETUNO_URL } from '../config.js';
 
 // TODO: testar com grupo inexistente, cidade inexistente, instituicao inexistente
 // name, username, birthDate e email invalidos

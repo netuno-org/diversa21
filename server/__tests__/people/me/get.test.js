@@ -2,10 +2,9 @@ import request from "supertest";
 
 import toBePeople from '../../custom/people.js';
 import login from '../../util/login.js';
+import { NETUNO_URL } from '../../config.js';
 
 expect.extend({ toBePeople });
-
-const NETUNO_URL = "http://localhost:9000/services";
 
 test("get me", async () => {
   const accessToken = await login.asTest();

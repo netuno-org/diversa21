@@ -3,8 +3,7 @@ import request from "supertest";
 import login from '../../util/login.js';
 import cleanObject from '../../util/clean.js';
 import { cityUid, institutionUid } from '../../util/uids.js';
-
-const NETUNO_URL = "http://localhost:9000/services";
+import { NETUNO_URL } from '../../config.js';
 
 test("modify my own user details", async () => {
   const accessToken = await login.asTest();
