@@ -64,6 +64,7 @@ test("list comments on a post", async () => {
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
   expect(response.body.data.items[0].content).toBe("eesh tarde demais");
+  // o primeiro comentario vem depois porque é ordenado do mais recente pro mais antigo
   expect(response.body.data.items[1].content).toBe("Primeiro comentário!");
 });
 

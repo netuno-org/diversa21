@@ -3,6 +3,7 @@ const userUid = {
   test: "2a86a611-2ab1-472d-a7fe-c41c4aeef36b",
   bob: "0abd451a-b951-4c95-adc9-96332ad6c772",
   ben: "ceb1b82e-21ee-44cc-828e-fe1ea7ffb06d",
+  alice: "2a86a611-2ab1-472d-a7fe-c41c4aeef36b",
   notExist: "7c076702-0f99-44b9-b4f5-7b6d4810b7d8",
 }
 

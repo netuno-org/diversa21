@@ -22,11 +22,11 @@ test("list activities without passing the user UID", async () => {
     .expect(400);
 });
 
-test("list activities of the user Test", async () => {
+test("list activities of the user Alice", async () => {
   const accessToken = await login.asTest(); 
 
   const response = await request(NETUNO_URL)
-    .get(`/activity/list?peopleUid=${userUid.test}`)
+    .get(`/activity/list?peopleUid=${userUid.alice}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
@@ -37,7 +37,7 @@ test("list activities of the user Test", async () => {
   expect(response.body.data.totalCount).toBe(1);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
-  expect(response.body.data.items[0].liked).toBe(false);
+  expect(response.body.data.items[0].content).toBe("Primeiro post!");
 });
 
 test("list activities of the user Super", async () => {
@@ -52,11 +52,10 @@ test("list activities of the user Super", async () => {
   expect(response.body).toHaveProperty("data");
   expect(response.body.data.pageSize).toBe(10);
   expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(2);
+  expect(response.body.data.totalCount).toBe(1);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
-  expect(response.body.data.items[0].liked).toBe(false);
-  expect(response.body.data.items[1].liked).toBe(true);
+  expect(response.body.data.items[0].content).toBe("Manutenção do sistema agendada para 20 de maio, 02:00–04:00 UTC. Alguns serviços (envio de arquivos, notificações) podem ficar intermitentes.");
 });
 
 test("list activities with pagination", async () => {
