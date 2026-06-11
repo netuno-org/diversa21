@@ -1,4 +1,5 @@
 const userUid = {
+  super: "e7ab1ade-d464-4602-bd61-f0f7eb7c880e",
   test: "2a86a611-2ab1-472d-a7fe-c41c4aeef36b",
   bob: "0abd451a-b951-4c95-adc9-96332ad6c772",
   notExist: "7c076702-0f99-44b9-b4f5-7b6d4810b7d8",
