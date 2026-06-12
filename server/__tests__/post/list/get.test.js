@@ -68,6 +68,16 @@ test("list comments on a post", async () => {
   expect(response.body.data.items[1].content).toBe("Primeiro comentário!");
 });
 
+it("souldn't list comment with a parent that doesn't exist", async () => {
+  const accessToken = await login.asTest(); 
+  const fakeParentUid = "39bc1b9d-3bfa-43e7-a417-6dd6b5ad1ce0";
+
+  const response = await request(NETUNO_URL)
+    .get(`/post/list?parent=${fakeParentUid}`)
+    .set("Authorization", `Bearer ${accessToken}`)
+    .expect(404);
+});
+
 test("list posts by a user", async () => {
   const accessToken = await login.asTest(); 
 
