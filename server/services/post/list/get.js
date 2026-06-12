@@ -20,6 +20,10 @@ if (parent != '') {
   dbParent = _db.get('post', parent);
 }
 
+if (!dbParent) {
+  response.stopWithPostNotFound();
+}
+
 const params = _val.list();
 
 let sqlQuery = `

@@ -34,13 +34,14 @@ export default {
 
   stopWithNotExist: () => stopWithError(404, "not-exist"),
 
-  stopWithUserNotFound: () => stopWithNotFound("user"),
+  stopWithUserNgtFound: () => stopWithNotFound("user"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithCityNotFound: () => stopWithNotFound("city"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithInstitutionNotFound: () => stopWithNotFound("institution"),
   stopWithStateNotFound: () => stopWithNotFound("state"),
   stopWithCountryNotFound: () => stopWithNotFound("country"),
+  stopWithPostNotFound: () => stopWithNotFound("post"),
 
   stopWithCityNotCreated: () => stopWithNotCreated("city"),
   stopWithStateNotCreated: () => stopWithNotCreated("state"),
