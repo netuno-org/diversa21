@@ -17,6 +17,7 @@ import InstitutionsList from "./Institutions/List";
 import InstitutionView from "./Institutions/View/index.jsx";
 import InstitutionForm from "../../components/InstitutionForm";
 import LocationList from "./Locations/List";
+import Messages from "./Messages";
 
 import "./index.less";
 
@@ -96,6 +97,9 @@ function ReservedArea() {
           return;
         }
         return <LocationList />;
+      }
+      if (location.pathname === "/messages") {
+        return <Messages />;
       }
       return <NotFound />;
     };

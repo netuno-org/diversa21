@@ -2,9 +2,8 @@ import _auth from "@netuno/auth-client";
 import { MenuOutlined, HomeOutlined, EnvironmentOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine } from "react-icons/ri";
-// import { FaPeopleRoof } from "react-icons/fa6";
 import { RxPeople } from "react-icons/rx";
-
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 import { Menu, Layout } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -33,7 +32,6 @@ const menuItems = [
     key: "institutions",
     label: "Instituições",
     icon: <RiCommunityLine />,
-    // icon: <FaPeopleRoof />,
     link: "/institutions"
   },
   {
@@ -47,6 +45,12 @@ const menuItems = [
     label: "Localizações",
     icon: <EnvironmentOutlined />,
     link: "/locations"
+  },
+  {
+    key: "messages",
+    label: "Mensagens",
+    icon: <IoChatbubblesOutline />,
+    link: "/messages"
   }
 ];
 

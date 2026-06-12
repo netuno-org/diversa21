@@ -1,0 +1,51 @@
+@import '../../../../styles/variables.less';
+
+.messages__friends-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.messages__friends-header {
+  padding: 20px 20px 12px 20px;
+  flex-shrink: 0;
+}
+
+.messages__friends-search {
+  border-radius: 8px;
+
+  &:focus,
+  &:focus-within {
+    background-color: #ffffff;
+  }
+}
+
+.messages__friends-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.messages__friends-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
