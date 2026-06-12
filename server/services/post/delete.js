@@ -37,7 +37,6 @@ const result = _db.execute(`
     deleted_likes AS (
         DELETE FROM post_like
         WHERE post_id IN (SELECT id FROM post_tree)
-        RETURNING post_id
     )
     DELETE FROM post
     WHERE id IN (SELECT id FROM post_tree);
