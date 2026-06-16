@@ -34,7 +34,7 @@ export default {
 
   stopWithNotExist: () => stopWithError(404, "not-exist"),
 
-  stopWithUserNgtFound: () => stopWithNotFound("user"),
+  stopWithUserNotFound: () => stopWithNotFound("user"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithCityNotFound: () => stopWithNotFound("city"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
