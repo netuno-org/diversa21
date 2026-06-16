@@ -1,21 +1,30 @@
 import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
 
 // TODO: import response from "#core/lib/response.js";
+import permissions from "#core/lib/permissions.js";
 
 const uid = _req.getString("uid");
 
 const dbPost = _db.queryFirst(`
-    SELECT post.id, post.parent_id
+    SELECT post.id, post.parent_id, people.people_user_id 
     FROM post
         INNER JOIN people ON post.people_id = people.id
-    WHERE 1 = 1
-        AND post.uid = ?::uuid
-        AND people.people_user_id = ?::int 
-`, uid, _user.id);
+    WHERE post.uid = ?::uuid
+`, uid);
 
 if (!dbPost) {
   _header.status(404);
   _exec.stop();
+}
+
+// if the post is not from the logged user and the logged user is not on the review group 
+if (dbPost.getInt("people_user_id") !== _user.id && !permissions.canManagePosts()) {
+    _header.status(403);
+    _out.json(
+      _val.map()
+        .set("error", "permission denied")
+    );
+    _exec.stop();
 }
 
 const postId = dbPost.getInt("id");
