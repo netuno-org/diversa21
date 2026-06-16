@@ -29,10 +29,9 @@ afterEach(async () => {
     .set("Content-Type", "application/json")
 });
 
-test("delete post without loging in", async () => {
-  const uid = "b3499f27-44b8-4169-92ea-d0a8b6c12148";
+it("should't delete post without loging in", async () => {
   await request(NETUNO_URL)
-    .delete(`/post?uid=${uid}`)
+    .delete(`/post?uid=${newPostUid}`)
     .expect(401);
 });
 
@@ -119,4 +118,30 @@ it("shouldn't delete a post with an UID that's not on the database", async () =>
     .set("Accept", "*/*")
     .set("Content-Type", "application/json")
     .expect(404);
+});
+
+test("user from the review group should be able to delete any post by any user", async () => {
+  const accessToken = await login.asReview();
+
+  // new post is a post made by super in beforeAll
+  // since the logged user is review he should be able to delete the post
+  await request(NETUNO_URL)
+    .delete(`/post?uid=${newPostUid}`)
+    .set("Authorization", `Bearer ${accessToken}`)
+    .set("Accept", "*/*")
+    .set("Content-Type", "application/json")
+    .expect(200);
+});
+
+test("user shouldn't be able to delete a post that is not his own if he's not on the review group", async () => {
+  const accessToken = await login.asTest();
+
+  // new post is a post made by super in beforeAll
+  // so the user test shouldn't be able to delete this post
+  await request(NETUNO_URL)
+    .delete(`/post?uid=${newPostUid}`)
+    .set("Authorization", `Bearer ${accessToken}`)
+    .set("Accept", "*/*")
+    .set("Content-Type", "application/json")
+    .expect(403);
 });

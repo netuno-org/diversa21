@@ -19,4 +19,5 @@ const loginAs = async (name) => {
 export default {
   asTest: () => loginAs("test"),
   asSuperAdmin: () => loginAs("super"),
+  asReview: () => loginAs("review"),
 }
