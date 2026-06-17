@@ -1,11 +1,14 @@
 import classNames from "classnames";
 import _auth from "@netuno/auth-client";
-import {Link, useNavigate, useLocation} from "react-router-dom";
-import {Button, Layout, Menu} from "antd";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Button, Layout, Menu } from "antd";
 import HeaderUserInfo from "../../components/HeaderUserInfo/index.jsx";
-import {EditOutlined, LogoutOutlined} from "@ant-design/icons";
+import { EditOutlined, LogoutOutlined } from "@ant-design/icons";
 import { MdLogout } from "react-icons/md";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
+
+import HeaderNotifications from "../../components/HeaderNotifcations";
+import usePeople from "../../common/usePeople.js";
 
 import "./index.less";
 
@@ -15,6 +18,8 @@ function HeaderBase({ collapsed }) {
   const [menuKeysSelected, setMenuKeysSelected] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const loggedUser = usePeople();
+
   useEffect(() => {
     if (location.pathname === '/profile/edit') {
       setMenuKeysSelected(['profileEdit']);
@@ -22,13 +27,15 @@ function HeaderBase({ collapsed }) {
       setMenuKeysSelected([]);
     }
   }, [location]);
-  function onUserMenuClick({key}) {
+
+  function onUserMenuClick({ key }) {
     if (key === "profileEdit") {
       navigate("/profile/edit");
     } else if (key === "logout") {
       _auth.logout();
     }
   }
+
   return (
     <Header className={'header-base ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
       {!_auth.isLogged() &&
@@ -37,9 +44,18 @@ function HeaderBase({ collapsed }) {
       {_auth.isLogged() &&
         <Menu
           mode="horizontal"
+          disabledOverflow={true}
           onClick={onUserMenuClick}
           selectedKeys={menuKeysSelected}
           items={[
+            loggedUser.canChangeUserGroup() &&
+            {
+              key: "notifications",
+              label: <HeaderNotifications />,
+              className: "notifications-menu",
+              popupClassName: "notifications-menu-popup",
+              style: { padding: 0 }
+            },
             {
               key: "profile",
               label: <HeaderUserInfo />,

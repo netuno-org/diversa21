@@ -1,5 +1,5 @@
 import _auth from "@netuno/auth-client";
-import { MenuOutlined, HomeOutlined, EnvironmentOutlined } from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
@@ -52,6 +52,12 @@ const menuItems = [
     icon: <IoChatbubblesOutline />,
     link: "/messages"
   }
+  , {
+    key: "notifications",
+    label: "Notificações",
+    icon: <BellOutlined />,
+    link: "/notifications"
+  }
 ];
 
 function SiderMenu({ collapsed, onCollapse }) {
@@ -103,7 +109,15 @@ function SiderMenu({ collapsed, onCollapse }) {
             selectedKeys={selectedMenuKeys}
             mode="inline"
             items={
-              menuItems.filter(item => item.key !== 'locations' || loggedUser.canManageInstitution())
+              menuItems.filter((item) => {
+                const restrictedKeys = ['locations', 'messages', 'notifications'];
+
+                if (restrictedKeys.includes(item.key)) {
+                  return loggedUser.canManageInstitution();
+                }
+
+                return true;
+              })
             }
           />
         </Sider>

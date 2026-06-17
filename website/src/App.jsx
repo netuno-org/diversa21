@@ -132,6 +132,7 @@ export default function App() {
                 <Route path="/institutions/:slug/edit" element={<ReservedArea />} />
                 <Route path="/locations" element={<ReservedArea />} />
                 <Route path="/messages" element={<ReservedArea />} />
+                <Route path="/notifications" element={<ReservedArea />} />
 
                 {/** // RESERVED AREA **/}
                 <Route path="*" element={<NotFound/>} />

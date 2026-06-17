@@ -1,8 +1,18 @@
 .reserved-area {
   max-width: 780px;
   margin: 0 auto;
-  
-  > div.loading{
+
+  >div.loading {
     text-align: center;
+  }
+
+  @media screen and (max-width: 576px) {
+    padding: 16px;
+
+    .ant-result-extra {
+      .ant-btn {
+        width: 100%;
+      }
+    }
   }
 }

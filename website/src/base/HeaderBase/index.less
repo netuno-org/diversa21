@@ -22,10 +22,14 @@
 
   &.auth {
     width: calc(100% - 200px);
-    padding: 0 20px;
+    padding: 0 64px;
     right: 0;
     transition: all 0.2s;
     justify-content: flex-end;
+
+    @media screen and (max-width: @mobile-width) {
+      padding: 0 !important;
+    }
 
     &.collapsed {
       width: 100%;
@@ -41,22 +45,37 @@
     border-bottom: 0;
     background: transparent;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
+    height: 100%;
 
+    .ant-menu-item,
+    .ant-menu-submenu {
+      height: 64px;
+      width: 64px;
+      margin: 0 12px;
+
+      &>.ant-menu-submenu-title {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0;
+      }
+    }
+
+    .notifications-menu,
     .profile-menu {
-      margin-right: 0;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
       .anticon {
         padding: 0 14px;
         margin: 0;
         font-size: 22px;
-        color: #1677ff;
       }
+    }
+
+    .notifications-menu .anticon {
+      color: @primary-color;
     }
   }
 
@@ -64,6 +83,7 @@
     max-width: 200px;
     height: 90%;
     display: flex;
+    align-items: center;
 
     @media screen and (max-width: @mobile-width) {
       max-width: 50%;

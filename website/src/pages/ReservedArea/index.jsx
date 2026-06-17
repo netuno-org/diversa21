@@ -18,6 +18,7 @@ import InstitutionView from "./Institutions/View/index.jsx";
 import InstitutionForm from "../../components/InstitutionForm";
 import LocationList from "./Locations/List";
 import Messages from "./Messages";
+import Notifications from "./Notifications";
 
 import "./index.less";
 
@@ -99,7 +100,18 @@ function ReservedArea() {
         return <LocationList />;
       }
       if (location.pathname === "/messages") {
+        if (!people.canChangeUserGroup()) {
+          navigate('/');
+          return;
+        }
         return <Messages />;
+      }
+      if (location.pathname === "/notifications") {
+        if (!people.canChangeUserGroup()) {
+          navigate('/');
+          return;
+        }
+        return <Notifications />;
       }
       return <NotFound />;
     };

@@ -12,6 +12,7 @@ function HeaderUserInfo() {
   const [loading, setLoading] = useState(false);
   const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
   const people = usePeople();
+
   useEffect(() => {
     if (people.data == null) {
       setLoading(true);
@@ -19,11 +20,12 @@ function HeaderUserInfo() {
       setLoading(false);
       if (people.data.avatar) {
         setTimeout(() => setAvatarImageURL(_service.url(`/people/avatar?uid=${people.data.uid}&${new Date().getTime()}`)), 250);
-      }  else {
+      } else {
         setAvatarImageURL('/images/profile-default.png')
       }
     }
   }, [people.data]);
+
   if (loading) {
     return (
       <div>
@@ -31,11 +33,11 @@ function HeaderUserInfo() {
       </div>
     );
   }
+
   if (people.data) {
     return (
       <div className="header__user-info">
         {avatarImageURL && <img src={avatarImageURL} />}
-        <span>{people.data.name}</span>
       </div>
     );
   }

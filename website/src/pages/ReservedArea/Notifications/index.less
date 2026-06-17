@@ -1,0 +1,152 @@
+@import '../../../styles/variables.less';
+
+.notifications-page {
+  margin: 0 auto;
+  box-sizing: border-box;
+  height: calc(100vh - 116px);
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    border-radius: 16px;
+    margin-bottom: 24px;
+  }
+
+  &__card {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+    background: #ffffff;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .ant-card-body {
+      padding: 0 !important;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  &__toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+
+    .ant-tabs {
+      width: 100%;
+
+      .ant-tabs-content {
+        margin-top: 8px;
+      }
+    }
+  }
+
+  &__tabs {
+    .ant-tabs-nav {
+      margin: 0 !important;
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+
+  &__list {
+    flex: 1;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:hover {
+      background-color: #fafafa;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &--unread {
+      background-color: fade(@primary-color, 3%);
+
+      &:hover {
+        background-color: fade(@primary-color, 6%);
+      }
+    }
+
+    &-meta {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 16px;
+    }
+
+    &-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    &-title {
+      color: @primary-color;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    &-time {
+      font-size: 13px;
+      font-weight: normal;
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+
+    &-extra {
+      margin-left: 16px;
+      width: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .notifications-page {
+    padding: 16px;
+
+    &__toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 16px;
+      gap: 12px;
+    }
+  }
+}
