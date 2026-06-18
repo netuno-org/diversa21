@@ -34,7 +34,9 @@ function Post({
 
   const refPostList = useRef(null);
 
-  const userPeople = usePeople();
+  const loggedUser = usePeople();
+
+  const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts(); 
 
   useEffect(() => {
     if (people.avatar) {
@@ -155,7 +157,7 @@ function Post({
         </div>
 
         <div className="user-info-actions">
-          {people.uid === userPeople.data.uid && (
+          {canViewDeletePostButton && (
             <>
               <Popconfirm
                 title="Tem a certeza que quer remover o post?"
