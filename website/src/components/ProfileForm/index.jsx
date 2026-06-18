@@ -14,7 +14,6 @@ import CoverImage from './CoverImage';
 import './index.less';
 
 function ProfileForm({
-  textTitle,
   operation,
   people,
   redirectTo
