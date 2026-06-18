@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Typography, Card, Spin, Button, Row, Col,
-  Divider, Avatar, Space, Empty, message
+  Divider, Avatar, Space, Empty, Pagination, Grid
 } from "antd";
 import {
-  EditOutlined, MailOutlined,
+  EditOutlined, MailOutlined, TeamOutlined,
   PhoneOutlined, EnvironmentOutlined, GlobalOutlined
 } from '@ant-design/icons';
 import _service from '@netuno/service-client';
-import { connect } from 'react-redux';
+
+import UserProfileDisplay from '../../../../components/UserProfileDisplay';
+
 import "./index.less";
 
 const { Title, Text, Paragraph } = Typography;
@@ -20,6 +22,10 @@ function View() {
   const [institution, setInstitution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [usersPagination, setUsersPagination] = useState({ current: 1, total: 0 });
 
   useEffect(() => {
     if (slug) {
@@ -43,6 +49,30 @@ function View() {
       });
     }
   }, [slug]);
+
+  useEffect(() => {
+    if (institution?.uid) {
+      fetchUsers(1);
+    }
+  }, [institution]);
+
+  const fetchUsers = (page) => {
+    setUsersLoading(true);
+    _service({
+      method: 'GET',
+      url: '/institution/people/list',
+      data: { uid: institution.uid, page },
+      success: ({ json }) => {
+        setUsers(json.data.items);
+        setUsersPagination({ current: page, total: json.data.totalCount });
+        setUsersLoading(false);
+      },
+      fail: () => {
+        setUsers([]);
+        setUsersLoading(false);
+      }
+    });
+  };
 
   const handleEdit = () => {
     navigate(`/institutions/${slug}/edit`);
@@ -200,6 +230,56 @@ function View() {
             </Card>
           </Col>
         </Row>
+
+        {/* Secção de Membros */}
+        <div className="users-section">
+          <Divider orientation="left">
+            <Space>
+              <TeamOutlined />
+              <span>Membros</span>
+              {!usersLoading && (
+                <span className="users-count">({usersPagination.total})</span>
+              )}
+            </Space>
+          </Divider>
+
+          {usersLoading ? (
+            <div className="users-loading-wrapper">
+              <Spin size="large" />
+            </div>
+          ) : users.length > 0 ? (
+            <>
+              <div className="users-list">
+                {users.map((user) => (
+                  <Card key={user.uid} className="user-card">
+                    <div className="user-card__content">
+                      <div className="user-card__info">
+                        <UserProfileDisplay
+                          user={user}
+                          avatarStyle={{ width: 64, height: 64 }}
+                        />
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+              {usersPagination.total > 10 && (
+                <Pagination
+                  className="users-pagination"
+                  align="center"
+                  total={usersPagination.total}
+                  current={usersPagination.current}
+                  pageSize={10}
+                  onChange={fetchUsers}
+                />
+              )}
+            </>
+          ) : (
+            <div className="users-empty-wrapper">
+              <Empty description="Nenhum membro encontrado nesta instituição." />
+            </div>
+          )}
+        </div>
     </section>
   );
 }

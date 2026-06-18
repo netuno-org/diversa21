@@ -3,10 +3,15 @@
     "institution"
   ],
   "summary": "List users from an institution",
-  "description": "Retrieve a list of users by their institution.",
+  "description": "Retrieve a paginated list of users by their institution.",
   "properties": {
     "uid": {
-      "type": "uid"
+      "type": "uid",
+      "description": "Institution UID"
+    },
+    "page": {
+      "type": "string",
+      "description": "Page number (default: 1)"
     }
   }
 }
