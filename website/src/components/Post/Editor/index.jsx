@@ -126,6 +126,7 @@ function Editor({
 
   return (
     <Form
+      className={`editor-form editor-${type}`}
       form={form}
       onFinish={types[type].onFinish}
       layout="vertical"
@@ -139,23 +140,28 @@ function Editor({
         label={types[type].title}
       >
         <TextArea
-          style={{ resize: 'none' }}
+          style={{ resize: 'none', padding: '12px 16px' }}
           maxLength={500}
           rows={4} />
       </Form.Item>
+
       <Form.Item>
         <div className="post-actions-container">
-          <Space>
-            <Button htmlType="submit" loading={submitting} type="primary">
-              {types[type].submitButtonText}
-            </Button>
-            {types[type].showCancelButton && (
-              <Button onClick={onCancel}>Cancelar</Button>
-            )}
-          </Space>
-            <span>
+          <Space size="middle" className="action-right" align="center">
+            <span className="word-count">
               {contentValue.length}/500
             </span>
+
+            {types[type].showCancelButton && (
+              <Button className="btn-cancel-pill" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
+
+            <Button className="btn-submit-pill" htmlType="submit" loading={submitting} type="primary">
+              {types[type].submitButtonText}
+            </Button>
+          </Space>
         </div>
       </Form.Item>
     </Form>

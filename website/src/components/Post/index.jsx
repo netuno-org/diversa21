@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Card, Avatar, Button, Popconfirm, notification } from "antd";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { FaRegComment } from "react-icons/fa";
 import momentjs from "moment";
 import Editor from "./Editor";
 import PostList from "./List";
@@ -126,39 +127,42 @@ function Post({
   const displayContent = [];
   for (const line of content.split("\n")) {
     displayContent.push(line);
-    displayContent.push(<br/>);
+    displayContent.push(<br />);
   }
   displayContent.pop();
 
   return (
     <Card className="post-container">
-      <>
-        <div
-          className="header-user-info-container"
-        >
-          <div style={{ display: "flex" }}>
-            <Link to={`/u/${people.user}`}>
-              <Avatar
-                size={50}
-                style={{ marginRight: '12px' }}
-                src={avatarUrl}
-                alt={people.name}
-              />
+      <div className="header-user-info-container">
+        <div className="user-info-left">
+          <Link to={`/u/${people.user}`}>
+            <Avatar
+              size={50}
+              className="user-avatar"
+              src={avatarUrl}
+              alt={people.name}
+              shape="square"
+            />
+          </Link>
+          <div className="user-info-text">
+            <Link className="user-name-link" to={`/u/${people.user}`}>
+              <p className="user-name">{people.name}</p>
             </Link>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Link style={{ fontSize: '20px' }} to={`/u/${people.user}`}>
-                <p className="user-name">{people.name}</p>
-              </Link>
-              <span style={{ fontSize: '13px', color: '#8c8c8c' }}>
-                {momentjs(moment).format("lll")}
-              </span>
-            </div>
+            <span className="post-date">
+              {momentjs(moment).format("lll")}
+            </span>
           </div>
-          <div>
-            {people.uid === userPeople.data.uid && <>
+        </div>
+
+        <div className="user-info-actions">
+          {people.uid === userPeople.data.uid && (
+            <>
               <Popconfirm
-                title="Removendo post"
+                title="Tem a certeza que quer remover o post?"
+                description="Esta ação é irreversível"
                 onConfirm={onDeletePost}
+                okText="Sim"
+                cancelText="Não"
               >
                 <Button
                   danger
@@ -177,73 +181,82 @@ function Post({
                   <EditOutlined />
                 </Button>
               )}
-            </>}
-          </div>
+            </>
+          )}
         </div>
-      </>
-      {
-        editMode ? (
-          <Editor
-            uid={uid}
-            type="editPost"
-            content={content}
-            onCancel={() => setEditMode(false)}
-            onSubmitted={(values) => {
-              onEditPost(uid, values.content);
-              setEditMode(false);
-              if (refPostList.current) {
-                refPostList.current.newPost(values);
-              }
-            }}
-          />
-        ) : <div className="post-text-container">
-              {displayContent}
-            </div>}
-      {[
-        <div>
-          <Button type='link' onClick={onLike}>
-            {isLiked ? <LikeFilled /> : <LikeOutlined />}
-            &nbsp;{likesCounter}
-          </Button>
-          {!showEditor && !editMode && (
-            <Button onClick={() => setShowEditor(true)}><RiArrowGoBackLine /> Responder</Button>
-          )}
+      </div>
 
-          {!editMode && countComments > 0 && (
-            <Button
-              type="link"
-              onClick={() => {
-                setShowComments(!showComments);
+      {editMode ? (
+        <Editor
+          uid={uid}
+          type="editPost"
+          content={content}
+          onCancel={() => setEditMode(false)}
+          onSubmitted={(values) => {
+            onEditPost(uid, values.content);
+            setEditMode(false);
+            if (refPostList.current) {
+              refPostList.current.newPost(values);
+            }
+          }}
+        />
+      ) : (
+        <div className="post-text-container">
+          {displayContent}
+        </div>
+      )}
 
-                if (!showComments) {
-                  setLoadingComments(true);
-                }
-              }}
-              loading={loadingComments}
-            >
-              {showComments ? "Esconder comentários" : `Carregar comentários (${countComments})`}
+      {!editMode && (
+        <div className="post-actions-wrapper">
+          <div className="post-actions-buttons">
+            <Button type="link" onClick={onLike}>
+              {isLiked ? <LikeFilled /> : <LikeOutlined />}
+              &nbsp;{likesCounter}
             </Button>
+            
+            {countComments > 0 && (
+              <Button
+                type="link"
+                className="btn-load-comments"
+                onClick={() => {
+                  setShowComments(!showComments);
+                  if (!showComments) {
+                    setLoadingComments(true);
+                  }
+                }}
+                loading={loadingComments}
+              >
+                {showComments ? "Esconder comentários" : `Ver comentários (${countComments})`}
+              </Button>
+            )}
+
+            {!showEditor && (
+              <Button className="btn-reply" onClick={() => setShowEditor(true)}>
+                <RiArrowGoBackLine /> Responder
+              </Button>
+            )}
+          </div>
+
+          {showEditor && (
+            <Editor
+              type="comment"
+              onCancel={() => setShowEditor(false)}
+              onSubmitted={onCreated}
+              parent={uid}
+            />
           )}
 
-        </div>,
-        showEditor && (
-          <Editor
-            type="comment"
-            onCancel={() => setShowEditor(false)}
-            onSubmitted={onCreated}
-            parent={uid}
-          />
-        ),
-        !editMode && showComments && (
-          <PostList
-            ref={refPostList}
-            parent={uid}
-            onLoaded={onCommentsLoaded}
-            onItemRemoved={onCommentRemoved}
-          />
-        )
-      ]}
-    </Card >
+          {showComments && (
+            <PostList
+              ref={refPostList}
+              parent={uid}
+              onLoaded={onCommentsLoaded}
+              onItemRemoved={onCommentRemoved}
+            />
+          )}
+        </div>
+      )}
+    </Card>
   );
 }
 

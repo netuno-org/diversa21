@@ -1,29 +1,103 @@
-.post-container {
-  margin-top: 20px;
+@import '../../styles/variables.less';
 
-  .user-name {
-    margin: 0;
-  }
+.post-container {
+  margin-top: 24px;
 
   .header-user-info-container {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .user-info-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .user-avatar {
+    margin-right: 12px;
+  }
+
+  .user-info-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .user-name-link {
+    font-size: 20px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .user-name {
+    margin: 0;
+  }
+
+  .post-date {
+    font-size: 14px;
+    color: #8c8c8c;
+  }
+
+  .user-info-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .delete-post-button {
+    padding: 0;
+    margin-right: 12px;
+  }
+
+  .edit-post-button {
+    padding: 0;
   }
 
   .post-text-container {
     width: 100%;
     word-break: break-word;
     margin: 12px 0;
+    font-size: 15px;
   }
 
-  .delete-post-button {
-    padding: 0;
-    margin-right: 10px;
+  .post-actions-wrapper {
+    margin-top: 16px;
+
+    >.editor-form,
+    >.ant-list {
+      margin-top: 12px;
+    }
   }
 
-  .edit-post-button {
-    padding: 0;
+  .post-actions-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .ant-btn {
+      padding-left: 0;
+
+      &:not(:first-child) {
+        padding: 4px 8px;
+      }
+    }
+
+    .btn-reply {
+      color: @primary-color;
+      border-color: @primary-color;
+      background-color: transparent;
+      padding: 0 16px !important;
+
+      &:hover {
+        color: fade(@primary-color, 80%);
+        border-color: fade(@primary-color, 80%);
+        background-color: fade(@primary-color, 5%);
+      }
+    }
   }
 
   .ant-comment-actions {
@@ -32,4 +106,3 @@
     }
   }
 }
-
