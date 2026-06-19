@@ -160,7 +160,7 @@ function Profile({ user }) {
             {user.birthDate && (
               <div className="profile-info__item">
                 <CalendarOutlined />
-                <Text type="secondary">{dayjs(user.birthDate).format('LL')}</Text>
+                <Text type="secondary">{dayjs().diff(dayjs(user.birthDate), 'year')} anos</Text>
               </div>
             )}
 

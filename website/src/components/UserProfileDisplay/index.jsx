@@ -53,7 +53,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
           </div>
         )}
         <div><EnvironmentOutlined /> {user.city.name}, {user.state.name}, {user.country.name}</div>
-        <div><CalendarOutlined /> {dayjs(user.birthDate).format('LL')}</div>
+        <div><CalendarOutlined /> {dayjs().diff(dayjs(user.birthDate), 'year')} anos</div>
         {children}
       </div>
     </div>
