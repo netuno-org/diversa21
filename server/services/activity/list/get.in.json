@@ -15,5 +15,9 @@
       "type": "string",
       "pattern": "^\\d+$"
     }
-  }
+  },
+  "oneOf": [ 
+    { "required": [peopleUid] },
+    { "required": [institutionUid] }
+  ]
 }
