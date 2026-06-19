@@ -36,6 +36,32 @@ Table institution {
   Note: 'Instituição'
 }
 
+Table notification {
+  id int [pk, increment]
+  content text [note: 'Conteúdo']
+  extra text [note: 'Dados Adicionais']
+  people_id int [not null, ref: > people.id, note: 'Pessoa']
+  read_at timestamp [note: 'Lido Em']
+  sent_at timestamp [not null, note: 'Enviado Em']
+  title varchar(250) [not null, note: 'Título']
+  type_id int [not null, ref: > notification_type.id, note: 'Tipo']
+  Note: 'Notificação'
+}
+
+Table notification_settings {
+  id int [pk, increment]
+  people_id int [not null, ref: > people.id, note: 'Pessoa']
+  type_id int [not null, ref: > notification_type.id, note: 'Tipo']
+  Note: 'Configurações'
+}
+
+Table notification_type {
+  id int [pk, increment]
+  code varchar(250) [not null, unique, note: 'Código']
+  name varchar(250) [not null, unique, note: 'Name']
+  Note: 'Tipo'
+}
+
 Table people {
   id int [pk, increment]
   avatar text [note: 'Avatar']
