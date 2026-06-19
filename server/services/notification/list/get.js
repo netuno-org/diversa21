@@ -1,0 +1,64 @@
+import { _db, _map } from "@netuno/server-types"
+
+import people from "#core/lib/people.js";
+import response from "#core/lib/response.js";
+
+const loggedUserUid = people.getLogged().getUID("uid");
+const page = _req.getInt('page', 1);
+
+const pageSize = 5;
+
+let offset = 0;
+if (page > 0) {
+  offset = (page - 1) * pageSize;
+}
+
+const dbNotifications = _db.query(`
+  SELECT
+      COUNT(*) OVER() as total_count,
+      notification.uid AS uid,
+      notification_type.code AS type,
+      notification.title AS title,
+      people.uid AS people,
+      notification.extra AS extra,
+      notification.content AS content,
+      notification.read_at AS read_at,
+      notification.sent_at AS sent_at
+  FROM notification
+  INNER JOIN people ON notification.people_id = people.id
+  INNER JOIN notification_type ON notification.type_id = notification_type.id
+  INNER JOIN notification_settings
+      ON notification_settings.people_id = people.id
+      AND notification_settings.type_id = notification_type.id
+  WHERE people.uid = ?::uuid
+  ORDER BY notification.sent_at 
+  LIMIT ?::int OFFSET ?::int
+`, loggedUserUid, pageSize, offset);
+
+const list = _val.list();
+
+
+for (const dbNotification of dbNotifications) {
+  const notification = _val.map()
+    .set("uid", dbNotification.getUID("uid"))
+    .set("type", dbNotification.getString("type"))
+    .set("title", dbNotification.getString("title"))
+    .set("people", dbNotification.getString("people"))
+    .set("extra", dbNotification.getString("extra"))
+    .set("content", dbNotification.getString("content"))
+    .set("read_at", dbNotification.getString("read_at"))
+    .set("sent_at", dbNotification.getString("sent_at"))
+
+  list.add(notification);
+}
+
+const totalCount = dbNotifications.length > 0
+  ? dbNotifications[0].getInt("total_count")
+  : 0;
+
+response.successWithData(
+  _val.map()
+    .set("items", list)
+    .set("totalCount", totalCount)
+    .set("pageSize", pageSize)
+);
