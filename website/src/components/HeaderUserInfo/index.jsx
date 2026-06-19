@@ -37,7 +37,7 @@ function HeaderUserInfo() {
   if (people.data) {
     return (
       <div className="header__user-info">
-        <Avatar src={avatarImageURL} shape="square"/>
+        <Avatar src={avatarImageURL} shape="square" />
       </div>
     );
   }

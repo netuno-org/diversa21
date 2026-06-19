@@ -8,7 +8,7 @@ const { Text } = Typography;
 
 function FriendItem({ uid, name, avatar, isActive, onClick }) {
   const avatarSrc = avatar
-    ? _service.url(`/profile/avatar?uid=${uid}&${new Date().getTime()}`)
+    ? _service.url(`/people/avatar?uid=${uid}&${new Date().getTime()}`)
     : '/images/profile-default.png';
 
   return (
@@ -17,7 +17,7 @@ function FriendItem({ uid, name, avatar, isActive, onClick }) {
       className={`messages__friend-item ${isActive ? 'messages__friend-item--active' : ''}`}
     >
       <div className="messages__friend-item-avatar-wrapper">
-        <Avatar size={48} src={avatarSrc} shape="square"/>
+        <Avatar size={48} src={avatarSrc} shape="square" />
         <span className="messages__friend-item-status"></span>
       </div>
 

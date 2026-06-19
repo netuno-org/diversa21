@@ -15,13 +15,14 @@ function Message({ friend, data }) {
   return (
     <li className={`messages__message ${isIncoming ? 'messages__message--incoming' : 'messages__message--outgoing'}`}>
       {isIncoming && (
-        <div className="messages__message-avatar">
-          <Avatar
-            size={36}
-            src={friend.avatar ? _service.url(`/profile/avatar?uid=${friend.uid}&${new Date().getTime()}`) : '/images/profile-default.png'}
-            shape="square"
-          />
-        </div>
+        <Avatar
+          size={36}
+          src={friend.avatar
+            ? _service.url(`/people/avatar?uid=${friend.uid}&${new Date().getTime()}`)
+            : '/images/profile-default.png'}
+          shape="square"
+          className="messages__message-avatar"
+        />
       )}
 
       <div className="messages__message-content">
