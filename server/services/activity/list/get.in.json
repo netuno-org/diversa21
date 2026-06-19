@@ -8,12 +8,12 @@
     "peopleUid": {
       "type": "uid"
     },
+    "institutionUid": {
+      "type": "uid"
+    },
     "page": {
       "type": "string",
       "pattern": "^\\d+$"
     }
-  },
-  "required": [
-    "peopleUid"
-  ]
+  }
 }

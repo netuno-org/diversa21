@@ -1,8 +1,9 @@
-import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import { _req, _db, _val, _user, _out, _log } from "@netuno/server-types"
 
 import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
 
+const institutionUid = _req.getUID("institutionUid");
 const peopleUid = _req.getUID("peopleUid");
 let page = _req.getInt('page', 1);
 
@@ -15,14 +16,65 @@ if (page > 0) {
 
 const loggedUserPeopleId = people.getLogged().getInt("id");
 
-const dbPosts = _db.query(`
-    WITH RECURSIVE activity AS (
+let params = _val.list();
 
-        SELECT post.id, post.content, post.parent_id
-        FROM post
-        INNER JOIN people
-        ON post.people_id = people.id
-        WHERE post.parent_id != 0
+let sqlQuery = "";
+
+if (institutionUid) {
+  sqlQuery = `
+    WITH RECURSIVE activity AS (
+      SELECT post.id, post.content, post.parent_id
+      FROM post
+      INNER JOIN people ON post.people_id = people.id
+      INNER JOIN institution i ON people.institution_id = i.id
+      WHERE post.parent_id != 0
+        AND i.uid = ?::uuid
+
+      UNION
+
+      SELECT post.id, post.content, post.parent_id
+      FROM post_like
+      INNER JOIN post ON post.id = post_like.post_id
+      INNER JOIN people ON post_like.people_id = people.id
+      INNER JOIN institution i ON people.institution_id = i.id
+      WHERE i.uid = ?::uuid
+
+      UNION
+
+      SELECT p.id, p.content, p.parent_id
+      FROM post p
+      INNER JOIN activity a ON a.parent_id = p.id
+    )
+
+    SELECT count(*) over() as total_count,
+      post.uid, post.moment, post.content, post.comments, post.likes,
+      people.name AS "people_name", people.uid AS "people_uid",
+      netuno_user.user AS "people_user",
+      people.avatar AS "people_avatar",
+      (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id"
+    FROM post
+      INNER JOIN people ON post.people_id = people.id
+      INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+      INNER JOIN activity ON activity.id = post.id
+    WHERE activity.parent_id = 0
+    ORDER BY post.moment DESC
+    LIMIT 10
+    OFFSET ?::int
+  `;
+
+  params
+    .add(institutionUid)
+    .add(institutionUid)
+    .add(loggedUserPeopleId)
+    .add(offset);
+}
+else {
+  sqlQuery = `
+    WITH RECURSIVE activity AS (
+      SELECT post.id, post.content, post.parent_id
+      FROM post
+      INNER JOIN people ON post.people_id = people.id
+      WHERE post.parent_id != 0
         AND people.uid = ?::uuid
 
         UNION
@@ -57,12 +109,16 @@ const dbPosts = _db.query(`
     ORDER BY post.moment DESC
     LIMIT 10
     OFFSET ?::int
-`,
-peopleUid,
-peopleUid,
-loggedUserPeopleId,
-offset
-);
+  `;
+
+  params
+    .add(peopleUid)
+    .add(peopleUid)
+    .add(loggedUserPeopleId)
+    .add(offset);
+}
+
+const dbPosts = _db.query(sqlQuery, params);
 
 const posts = _val.list();
 for (const dbPost of dbPosts) {
@@ -73,9 +129,9 @@ for (const dbPost of dbPosts) {
       .set("content", dbPost.getString("content"))
       .set("comments", dbPost.getInt("comments", 0))
       .set("liked", dbPost.getInt("post_like_id", 0) > 0)
-      .set("likes" ,dbPost.getInt("likes"))
+      .set("likes", dbPost.getInt("likes"))
       .set(
-        "people", 
+        "people",
         _val.map()
           .set("uid", dbPost.getString("people_uid"))
           .set("name", dbPost.getString("people_name"))

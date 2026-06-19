@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Typography, Card, Spin, Button, Row, Col,
-  Divider, Avatar, Space, Empty, Pagination, Grid
+  Divider, Avatar, Space, Empty, Pagination, Tabs
 } from "antd";
 import {
   EditOutlined, MailOutlined, TeamOutlined,
@@ -11,6 +11,8 @@ import {
 import _service from '@netuno/service-client';
 
 import UserProfileDisplay from '../../../../components/UserProfileDisplay';
+
+import ActivityList from "../../../../components/Activity/List";
 
 import "./index.less";
 
@@ -33,7 +35,7 @@ function View() {
       _service({
         method: 'GET',
         url: `/institution`,
-        data: {slug},
+        data: { slug },
         success: ({ json }) => {
           if (json.data) {
             setInstitution(json.data);
@@ -51,9 +53,7 @@ function View() {
   }, [slug]);
 
   useEffect(() => {
-    if (institution?.uid) {
-      fetchUsers(1);
-    }
+    if (institution?.uid) fetchUsers(1);
   }, [institution]);
 
   const fetchUsers = (page) => {
@@ -74,9 +74,7 @@ function View() {
     });
   };
 
-  const handleEdit = () => {
-    navigate(`/institutions/${slug}/edit`);
-  };
+  const handleEdit = () => navigate(`/institutions/${slug}/edit`);
 
   if (loading) {
     return (
@@ -101,11 +99,58 @@ function View() {
     );
   }
 
+  const membersTab = (
+    <>
+      {usersLoading ? (
+        <div className="users-loading-wrapper">
+          <Spin size="large" />
+        </div>
+      ) : users.length > 0 ? (
+        <>
+          <div className="users-list">
+            {users.map((user) => (
+              <Card key={user.uid} className="user-card">
+                <div className="user-card__content">
+                  <div className="user-card__info">
+                    <UserProfileDisplay
+                      user={user}
+                      avatarStyle={{ width: 64, height: 64 }}
+                    />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {usersPagination.total > 10 && (
+            <Pagination
+              className="users-pagination"
+              align="center"
+              total={usersPagination.total}
+              current={usersPagination.current}
+              pageSize={10}
+              onChange={fetchUsers}
+            />
+          )}
+        </>
+      ) : (
+        <div className="users-empty-wrapper">
+          <Empty description="Nenhum membro encontrado nesta instituição." />
+        </div>
+      )}
+    </>
+  );
+
+  const membersCount = usersLoading ? '' : ` (${usersPagination.total})`;
+
   return (
     <section className="institution-view">
       <div className="cover-image">
         {institution.cover_image ? (
-          <img src={_service.url(`/institution/banner?uid=${institution.uid}`)} alt="Cover" />
+          <img
+            src={_service.url(`/institution/banner?uid=${institution.uid}`)}
+            alt="Cover"
+          />
         ) : (
           <div className="cover-placeholder" />
         )}
@@ -113,173 +158,153 @@ function View() {
 
       <Row gutter={[32, 24]}>
         <Col xs={24} lg={8}>
-            <Card className="sidebar-card">
-              <div className="logo-section">
-                {institution.logo ? (
-                  <Avatar src={_service.url(`/institution/avatar?uid=${institution.uid}`)} size={120} shape="square" style={{ backgroundColor: '#fff' }} />
-                ) : (
-                  <Avatar
-                    size={120}
-                    shape="square"
-                    style={{ backgroundColor: '#8A6AA2', fontSize: 48 }}
-                  >
-                    {institution.name?.[0]}
-                  </Avatar>
-                )}
-              </div>
+          <Card className="sidebar-card">
+            <div className="logo-section">
+              {institution.logo ? (
+                <Avatar
+                  src={_service.url(`/institution/avatar?uid=${institution.uid}`)}
+                  size={120}
+                  shape="square"
+                  style={{ backgroundColor: '#fff' }}
+                />
+              ) : (
+                <Avatar
+                  size={120}
+                  shape="square"
+                  style={{ backgroundColor: '#8A6AA2', fontSize: 48 }}
+                >
+                  {institution.name?.[0]}
+                </Avatar>
+              )}
+            </div>
 
-              <Title level={2} className="institution-name">
-                {institution.name}
-              </Title>
+            <Title level={2} className="institution-name">
+              {institution.name}
+            </Title>
 
-              <Space direction="vertical" size={4} className="location-info">
-                {(institution.city?.name || institution.country?.name) && (
-                  <Text type="secondary">
-                    <EnvironmentOutlined /> {institution.city?.name}{institution.city?.name && institution.country?.name && ', '}{institution.country?.name}
-                  </Text>
-                )}
-                {institution.state?.name && (
-                  <Text type="secondary">{institution.state?.name}</Text>
-                )}
-              </Space>
-
-              <Divider />
-
-              <Button
-                type="primary"
-                icon={<EditOutlined />}
-                size="large"
-                block
-                onClick={handleEdit}
-                style={{ marginTop: 24 }}
-              >
-                Editar Instituição
-              </Button>
-            </Card>
-          </Col>
-
-          <Col xs={24} lg={16}>
-            <Card className="details-card">
-              <Title level={3}>Sobre</Title>
-              <Paragraph>
-                {institution.description || 'Sem descrição disponível.'}
-              </Paragraph>
-
-              <Divider titlePlacement="left">Informações de Contacto</Divider>
-
-              <div className="contact-info">
-                {institution.email && (
-                  <div className="contact-item">
-                    <MailOutlined />
-                    <div className="contact-details">
-                      <Text type="secondary">E-mail</Text>
-                      <a href={`mailto:${institution.email}`}>{institution.email}</a>
-                    </div>
-                  </div>
-                )}
-
-                {institution.telephone && (
-                  <div className="contact-item">
-                    <PhoneOutlined />
-                    <div className="contact-details">
-                      <Text type="secondary">Telefone</Text>
-                      <a href={`tel:${institution.telephone}`}>{institution.telephone}</a>
-                    </div>
-                  </div>
-                )}
-
-                {(institution.address || institution.post_code) && (
-                  <div className="contact-item">
-                    <EnvironmentOutlined />
-                    <div className="contact-details">
-                      <Text type="secondary">Endereço</Text>
-                      <Text>
-                        {institution.address}
-                        {institution.address && institution.post_code && ', '}
-                        {institution.post_code}
-                      </Text>
-                    </div>
-                  </div>
-                )}
-
-                {institution.website && (
-                  <div className="contact-item">
-                    <GlobalOutlined />
-                    <div className="contact-details">
-                      <Text type="secondary">Website</Text>
-                      {institution.website ? (
-                        <a
-                          href={institution.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {institution.website}
-                        </a>
-                      ) : (
-                        <Text type="secondary">Website indisponível</Text>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {(!institution.email && !institution.telephone &&
-                !institution.address && !institution.website) && (
-                  <Text type="secondary">Sem informações de contacto disponíveis.</Text>
-                )}
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Secção de Membros */}
-        <div className="users-section">
-          <Divider orientation="left">
-            <Space>
-              <TeamOutlined />
-              <span>Membros</span>
-              {!usersLoading && (
-                <span className="users-count">({usersPagination.total})</span>
+            <Space direction="vertical" size={4} className="location-info">
+              {(institution.city?.name || institution.country?.name) && (
+                <Text type="secondary">
+                  <EnvironmentOutlined /> {institution.city?.name}
+                  {institution.city?.name && institution.country?.name && ', '}
+                  {institution.country?.name}
+                </Text>
+              )}
+              {institution.state?.name && (
+                <Text type="secondary">{institution.state?.name}</Text>
               )}
             </Space>
-          </Divider>
 
-          {usersLoading ? (
-            <div className="users-loading-wrapper">
-              <Spin size="large" />
-            </div>
-          ) : users.length > 0 ? (
-            <>
-              <div className="users-list">
-                {users.map((user) => (
-                  <Card key={user.uid} className="user-card">
-                    <div className="user-card__content">
-                      <div className="user-card__info">
-                        <UserProfileDisplay
-                          user={user}
-                          avatarStyle={{ width: 64, height: 64 }}
-                        />
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-              {usersPagination.total > 10 && (
-                <Pagination
-                  className="users-pagination"
-                  align="center"
-                  total={usersPagination.total}
-                  current={usersPagination.current}
-                  pageSize={10}
-                  onChange={fetchUsers}
-                />
+            <Divider />
+
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              size="large"
+              block
+              onClick={handleEdit}
+              style={{ marginTop: 24 }}
+            >
+              Editar Instituição
+            </Button>
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={16}>
+          <Card className="details-card">
+            <Title level={3}>Sobre</Title>
+            <Paragraph>
+              {institution.description || 'Sem descrição disponível.'}
+            </Paragraph>
+
+            <Divider titlePlacement="left">Informações de Contacto</Divider>
+
+            <div className="contact-info">
+              {institution.email && (
+                <div className="contact-item">
+                  <MailOutlined />
+                  <div className="contact-details">
+                    <Text type="secondary">E-mail</Text>
+                    <a href={`mailto:${institution.email}`}>{institution.email}</a>
+                  </div>
+                </div>
               )}
-            </>
-          ) : (
-            <div className="users-empty-wrapper">
-              <Empty description="Nenhum membro encontrado nesta instituição." />
+
+              {institution.telephone && (
+                <div className="contact-item">
+                  <PhoneOutlined />
+                  <div className="contact-details">
+                    <Text type="secondary">Telefone</Text>
+                    <a href={`tel:${institution.telephone}`}>{institution.telephone}</a>
+                  </div>
+                </div>
+              )}
+
+              {(institution.address || institution.post_code) && (
+                <div className="contact-item">
+                  <EnvironmentOutlined />
+                  <div className="contact-details">
+                    <Text type="secondary">Endereço</Text>
+                    <Text>
+                      {institution.address}
+                      {institution.address && institution.post_code && ', '}
+                      {institution.post_code}
+                    </Text>
+                  </div>
+                </div>
+              )}
+
+              {institution.website && (
+                <div className="contact-item">
+                  <GlobalOutlined />
+                  <div className="contact-details">
+                    <Text type="secondary">Website</Text>
+                    {institution.website ? (
+                      <a
+                        href={institution.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {institution.website}
+                      </a>
+                    ) : (
+                      <Text type="secondary">Website indisponível</Text>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+
+            {(!institution.email && !institution.telephone &&
+              !institution.address && !institution.website) && (
+                <Text type="secondary">Sem informações de contacto disponíveis.</Text>
+              )}
+          </Card>
+        </Col>
+      </Row>
+
+      <div className="users-section">
+        <Tabs
+          defaultActiveKey="members"
+          items={[
+            {
+              key: 'members',
+              label: (
+                <Space>
+                  <TeamOutlined />
+                  <span>{`Membros${membersCount}`}</span>
+                </Space>
+              ),
+              children: membersTab
+            },
+            {
+              key: 'activity',
+              label: 'Atividade',
+              children: (<ActivityList institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />)
+            }
+          ]}
+        />
+      </div>
     </section>
   );
 }

@@ -3,7 +3,7 @@ import _service from "@netuno/service-client";
 import { Button, Col, notification, Row, Spin, Empty } from "antd";
 import Post from "../../Post";
 
-function ActivityList({ author, parent, onLoaded, onItemRemoved }, ref) {
+function ActivityList({ author, parent, institution, onLoaded, onItemRemoved }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [page, setPage] = useState(0);
@@ -23,6 +23,10 @@ function ActivityList({ author, parent, onLoaded, onItemRemoved }, ref) {
 
     if (parent) {
       data.parent = parent;
+    }
+
+    if (institution) {
+      data.institutionUid = institution;
     }
 
     if (author) {
