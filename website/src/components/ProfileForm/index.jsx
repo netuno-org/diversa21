@@ -23,6 +23,8 @@ function ProfileForm({
   const profileForm = useRef(null);
   const profileAvatar = useRef(null);
   const profileBanner = useRef(null);
+  const [form] = Form.useForm();
+  const descriptionValue = Form.useWatch("description", form) || "";
 
   const canViewGroupFormField =
     (operation === "create" && loggedUser.canCreateAnyUser()) ||
@@ -233,6 +235,7 @@ function ProfileForm({
       {contextHolder}
       <div className="profile-form__body">
         <Form
+          form={form}
           style={{ width: '100%' }}
           onValuesChange={onValuesChange}
           ref={profileForm}
@@ -358,8 +361,11 @@ function ProfileForm({
                   rules={[{ required: true, message: 'Insira a descrição do usuário.' }]}
                   style={{ marginBottom: showPermissionsCard ? 8 : undefined }}
                 >
-                  <Input.TextArea disabled={submitting} maxLength={250} autoSize={{ minRows: 3, maxRows: 6 }} />
+                  <Input.TextArea disabled={submitting} maxLength={1000} autoSize={{ minRows: 3, maxRows: 6 }} />
                 </Form.Item>
+                <div className="profile-form__description-count">
+                  <span>{descriptionValue.length}/1000</span>
+                </div>
               </Col>
             </Row>
 
