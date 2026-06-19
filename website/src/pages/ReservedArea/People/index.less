@@ -23,6 +23,12 @@
       display: none;
     }
   }
+
+  &__count {
+    @media (max-width: 480px) {
+      padding-left: 10px;
+    }
+  }
 }
 
 .people-card {
@@ -38,6 +44,10 @@
 
   .ant-card-body {
     padding: 16px 24px;
+
+    @media (max-width: 480px) {
+      padding: 10px;
+    }
   }
 
   &__content {
@@ -45,6 +55,12 @@
     justify-content: space-between;
     align-items: flex-start;
     width: 100%;
+
+    @media (max-width: 420px) {
+      .ant-avatar {
+        flex-shrink: 0;
+      }
+    }
   }
 
   &__info {
@@ -89,23 +105,5 @@
     &:hover {
       color: #6D4F8A;
     }
-  }
-}
-
-@media (max-width: 480px) {
-  .people-list__count {
-    padding-left: 10px;
-  }
-
-  .people-card {
-    .ant-card-body {
-      padding: 10px;
-    }
-  }
-}
-
-@media (max-width: 420px) {
-  .ant-avatar {
-    flex-shrink: 0;
   }
 }

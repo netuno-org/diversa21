@@ -5,6 +5,10 @@
     background-color: #fafafa;
     padding: 16px;
     border-radius: 16px;
+
+    @media (max-width: 480px) {
+      padding: 10px;
+    }
   }
 
   &__header {
@@ -21,14 +25,8 @@
         }
       }
     }
-  }
 
-  &__inputs {
-    margin-top: 20px;
-  }
-  
-  @media (max-width: 552px) {
-    &__header {
+    @media (max-width: 552px) {
       > .ant-row {
         > .ant-col {
           flex: 0 0 100%;
@@ -42,24 +40,33 @@
         }
       }
     }
+
+    @media (max-width: 480px) {
+      > .ant-row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+
+      > .ant-row > .ant-col {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+    }
   }
 
-  @media (max-width: 480px) {
-    &__header,
-    &__inputs {
-      padding: 10px;
-    }
+  &__inputs {
+    margin-top: 20px;
 
-    &__header > .ant-row,
-    &__inputs > .ant-row {
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-    }
+    @media (max-width: 480px) {
+      > .ant-row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
 
-    &__header > .ant-row > .ant-col,
-    &__inputs > .ant-row > .ant-col {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
+      > .ant-row > .ant-col {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
     }
   }
 }
