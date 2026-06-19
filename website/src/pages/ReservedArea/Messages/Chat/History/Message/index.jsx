@@ -19,6 +19,7 @@ function Message({ friend, data }) {
           <Avatar
             size={36}
             src={friend.avatar ? _service.url(`/profile/avatar?uid=${friend.uid}&${new Date().getTime()}`) : '/images/profile-default.png'}
+            shape="square"
           />
         </div>
       )}

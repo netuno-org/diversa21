@@ -17,7 +17,7 @@ function FriendItem({ uid, name, avatar, isActive, onClick }) {
       className={`messages__friend-item ${isActive ? 'messages__friend-item--active' : ''}`}
     >
       <div className="messages__friend-item-avatar-wrapper">
-        <Avatar size={48} src={avatarSrc} />
+        <Avatar size={48} src={avatarSrc} shape="square"/>
         <span className="messages__friend-item-status"></span>
       </div>
 

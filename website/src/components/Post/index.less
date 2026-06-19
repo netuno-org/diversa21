@@ -64,26 +64,13 @@
     font-size: 15px;
   }
 
-  .post-actions-wrapper {
-    margin-top: 16px;
-
-    >.editor-form,
-    >.ant-list {
-      margin-top: 12px;
-    }
-  }
-
   .post-actions-buttons {
     display: flex;
     align-items: center;
     gap: 8px;
 
-    .ant-btn {
-      padding-left: 0;
-
-      &:not(:first-child) {
-        padding: 4px 8px;
-      }
+    >.ant-btn:first-child {
+      padding: 0;
     }
 
     .btn-reply {

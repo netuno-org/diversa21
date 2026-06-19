@@ -150,6 +150,7 @@ function Messages() {
                       : "/images/profile-default.png"
                   }
                   size="small"
+                  shape="square"
                 />
                 <Text>{option.data.label}</Text>
                 {option.data.personData.username && (

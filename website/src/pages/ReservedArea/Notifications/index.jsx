@@ -36,9 +36,9 @@ function Notifications() {
 
   const getIconForType = (type) => {
     switch (type) {
-      case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} />;
-      case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#FDBA3C' }} />;
-      default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;
+      case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} shape='square' />;
+      case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#FDBA3C' }} shape='square' />;
+      default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} shape='square' />;
     }
   };
 
@@ -119,9 +119,9 @@ function Notifications() {
                     </div>
                   </div>
                 </div>
-                  <div className="notifications-page__item-extra">
-                    {!item.read && <Badge color="#8A6AA2" />}
-                  </div>
+                <div className="notifications-page__item-extra">
+                  {!item.read && <Badge color="#8A6AA2" />}
+                </div>
               </div>
             ))
           )}

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { connect } from 'react-redux';
 import _service from "@netuno/service-client";
+import { Space, Tag } from "antd";
 import { Link } from "react-router-dom";
 import { Card, Avatar, Button, Popconfirm, notification } from "antd";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
@@ -36,7 +37,7 @@ function Post({
 
   const loggedUser = usePeople();
 
-  const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts(); 
+  const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts();
 
   useEffect(() => {
     if (people.avatar) {
@@ -211,11 +212,11 @@ function Post({
       {!editMode && (
         <div className="post-actions-wrapper">
           <div className="post-actions-buttons">
-            <Button type="link" onClick={onLike}>
+            <Button type="link" onClick={onLike} className="btn-like">
               {isLiked ? <LikeFilled /> : <LikeOutlined />}
               &nbsp;{likesCounter}
             </Button>
-            
+
             {countComments > 0 && (
               <Button
                 type="link"
@@ -228,7 +229,16 @@ function Post({
                 }}
                 loading={loadingComments}
               >
-                {showComments ? "Esconder comentários" : `Ver comentários (${countComments})`}
+                {showComments ? (
+                  "Esconder comentários"
+                ) : (
+                  <Space size="small">
+                    Ver comentários
+                    <Tag color="#8A6AA2" variant="solid" style={{ margin: 0 }}>
+                      {countComments}
+                    </Tag>
+                  </Space>
+                )}
               </Button>
             )}
 

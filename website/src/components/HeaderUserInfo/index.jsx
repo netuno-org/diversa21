@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Spin } from 'antd';
+import { Spin, Avatar } from 'antd';
 
 import _service from '@netuno/service-client';
 
@@ -37,7 +37,7 @@ function HeaderUserInfo() {
   if (people.data) {
     return (
       <div className="header__user-info">
-        {avatarImageURL && <img src={avatarImageURL} />}
+        <Avatar src={avatarImageURL} shape="square"/>
       </div>
     );
   }

@@ -92,7 +92,7 @@ function Chat({ friend, onClose }) {
     <div className="messages__chat">
       <div className="messages__chat-header">
         <div className="messages__chat-header-user">
-          <Avatar src={friend.avatar || "/images/profile-default.png"} size="large" />
+          <Avatar src={friend.avatar || "/images/profile-default.png"} size="large" shape="square"/>
           <div className="messages__chat-header-info">
             <Text strong className="messages__chat-name">{friend.name || "Utilizador"}</Text>
             {friend.username && <Text type="secondary" className="messages__chat-username">@{friend.username}</Text>}

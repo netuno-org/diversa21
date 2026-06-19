@@ -279,6 +279,7 @@ function ProfileForm({
                   onRemove={() => {
                     setAvatarImageURL('/images/profile-default.png');
                   }}
+                  shape="square"
                 />
               </Card>
 
