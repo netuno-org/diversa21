@@ -32,6 +32,7 @@ function Post({
   const [editMode, setEditMode] = useState(false);
   const [isLiked, setIsLiked] = useState(liked);
   const [likesCounter, setLikesCounter] = useState(likes);
+  const [loadingLike, setLoadingLike] = useState(false);
 
   const refPostList = useRef(null);
 
@@ -88,6 +89,12 @@ function Post({
   };
 
   const onLike = () => {
+    if (loadingLike) {
+      return;
+    }
+
+    setLoadingLike(true);
+
     if (!isLiked) {
       _service({
         url: 'post/like',
@@ -98,12 +105,14 @@ function Post({
         success: (response) => {
           setIsLiked(true);
           setLikesCounter(likesCounter + 1);
+          setLoadingLike(false);
         },
         fail: (e) => {
           notification.error({
             title: "Falha ao dar o like."
           });
           console.error("Service Error", e);
+          setLoadingLike(false);
         }
       });
     } else {
@@ -116,12 +125,14 @@ function Post({
         success: (response) => {
           setIsLiked(false);
           setLikesCounter(likesCounter - 1);
+          setLoadingLike(false);
         },
         fail: (e) => {
           notification.error({
             title: "Falha ao remover o like."
           });
           console.error("Service Error", e);
+          setLoadingLike(false);
         }
       });
     }
@@ -212,7 +223,7 @@ function Post({
       {!editMode && (
         <div className="post-actions-wrapper">
           <div className="post-actions-buttons">
-            <Button type="link" onClick={onLike} className="btn-like">
+            <Button type="link" onClick={onLike} className="btn-like" loading={loadingLike} disabled={loadingLike}>
               {isLiked ? <LikeFilled /> : <LikeOutlined />}
               &nbsp;{likesCounter}
             </Button>
