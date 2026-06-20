@@ -133,7 +133,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
                 </Button>
 
                 <div className="cover-editor__settings">
-                  <Divider orientation="left" className="cover-editor__divider">
+                  <Divider titlePlacement="left" className="cover-editor__divider">
                     Ajustes da Capa
                   </Divider>
 

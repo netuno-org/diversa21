@@ -130,7 +130,7 @@ function Avatar({ currentImage, onRemove }, ref) {
                 </Button>
 
                 <div className="avatar-editor__settings">
-                  <Divider orientation="left" className="avatar-editor__divider">
+                  <Divider titlePlacement="left" className="avatar-editor__divider">
                     Ajustes da Imagem
                   </Divider>
 

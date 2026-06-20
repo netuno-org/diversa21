@@ -141,22 +141,22 @@ function People() {
 
       <div className="people-list__items">
         {!loading && peopleList.map((person) => (
-          <Card key={person.uid} className="people-card">
-            <div className="people-card__content">
+          <Card key={person.uid} className="people-list__card">
+            <div className="people-list__card-content">
 
-              <div className="people-card__info">
+              <div className="people-list__card-info">
                 <Link
                   to={`/u/${person.username}`}
-                  className={`people-card__link ${!person.active && isSuperAdmin ? 'people-card__link--inactive' : ''}`}
+                  className={`people-list__card-link ${!person.active && isSuperAdmin ? 'people-list__card-link--inactive' : ''}`}
                 >
                   <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
                 </Link>
               </div>
 
               {loggedUser.canManageUser(person) && (
-                <div className="people-card__actions">
+                <div className="people-list__card-actions">
                   {person.active === false && (
-                    <Tag variant="filled" color="error" className="people-card__status-tag">
+                    <Tag variant="filled" color="error" className="people-list__card-status-tag">
                       Inativo
                     </Tag>
                   )}
@@ -164,7 +164,7 @@ function People() {
                   <Button
                     type="link"
                     onClick={() => navigate(`/e/${person.username}`)}
-                    className="people-card__btn people-card__btn--edit"
+                    className="people-list__card-btn people-list__card-btn--edit"
                   >
                     <EditOutlined />
                   </Button>
