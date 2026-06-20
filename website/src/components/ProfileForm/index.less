@@ -24,22 +24,15 @@
     margin-bottom: 16px;
   }
 
-  &__submit-item {
-    margin-top: 16px;
-    margin-bottom: 32px;
+  &__actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
   }
 
-  &__submit-btn {
-    background-color: #8A6AA2;
-    border-color: #8A6AA2;
-    font-size: 16px;
-    font-weight: 500;
-
-    &:hover,
-    &:focus {
-      background-color: #7A5A92;
-      border-color: #7A5A92;
-    }
+  &__action-item {
+    flex: 1;
+    margin-bottom: 0;
   }
 
   @media screen and (max-width: 450px) {
@@ -49,7 +42,7 @@
         text-align: center;
       }
 
-      .ant-card-body > .ant-row {
+      .ant-card-body>.ant-row {
         justify-content: center;
       }
     }
@@ -60,7 +53,7 @@
       margin-right: auto;
     }
 
-    .ant-form-item-label > label {
+    .ant-form-item-label>label {
       justify-content: center;
     }
 

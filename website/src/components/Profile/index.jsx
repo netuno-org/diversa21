@@ -27,6 +27,9 @@ function Profile({ user }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [bannerUrl, setBannerUrl] = useState();
 
+  const isOwnProfile = user?.username === loggedUser?.data?.username;
+  const canEditProfile = isOwnProfile || loggedUser?.canManageUser(user);
+
   useEffect(() => {
     if (user) {
       user.avatar && setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}&${new Date().getTime()}`));
@@ -35,13 +38,17 @@ function Profile({ user }) {
   }, [user]);
 
   const handleEdit = () => {
-    navigate(`/e/${user.username}`);
+    if (isOwnProfile) {
+      navigate(`/profile/edit`);
+    } else {
+      navigate(`/e/${user.username}`);
+    }
   };
 
   if (!user) {
     return (
-      <div className="profile-view">
-        <div className="loading-wrapper">
+      <div className="profile">
+        <div className="profile__loading">
           <Spin size="large" />
         </div>
       </div>
@@ -65,7 +72,7 @@ function Profile({ user }) {
     }
 
     return (
-      <div className="group-badge" style={{ color }}>
+      <div className="profile__group-badge" style={{ color }}>
         <Icon size={16} />
         <span>{user.group.name}</span>
       </div>
@@ -77,7 +84,7 @@ function Profile({ user }) {
       key: 'posts',
       label: 'Publicações',
       children: (
-        <div className="profile-tabs__content">
+        <div className="profile__tabs-content">
           <PostList author={user.uid} />
         </div>
       ),
@@ -86,70 +93,64 @@ function Profile({ user }) {
       key: 'activity',
       label: 'Atividade',
       children: (
-        <div className="profile-tabs__content">
-          <ActivityList author={user.uid}/>
+        <div className="profile__tabs-content">
+          <ActivityList author={user.uid} />
         </div>
-        // <div className="profile-tabs__content profile-tabs__empty">
-        //   <Empty
-        //     description="Este utilizador ainda não tem atividade recente."
-        //     image={Empty.PRESENTED_IMAGE_SIMPLE}
-        //   />
-        // </div>
       ),
     },
   ];
 
   return (
-    <section className="profile-view">
-      <div className="profile-cover">
+    <section className="profile">
+      <div className="profile__cover">
         {bannerUrl ? (
-          <img src={bannerUrl} alt="Capa de perfil" className="profile-cover__image" />
+          <img src={bannerUrl} alt="Capa de perfil" className="profile__cover-image" />
         ) : (
-          <div className="profile-cover__placeholder" />
+          <div className="profile__cover-placeholder" />
         )}
       </div>
 
-      <Card className="profile-card">
-        <div className="profile-header">
-          <div className="profile-header__avatar">
-            <Avatar src={avatarUrl} size={120} shape="square"/>
+      <Card className="profile__card">
+        <div className="profile__header">
+          <div className="profile__avatar">
+            <Avatar src={avatarUrl} size={120} shape="square" />
           </div>
 
-          {loggedUser.canManageUser(user) && (
+          {canEditProfile && (
             <Button
               type="primary"
               icon={<EditOutlined />}
               onClick={handleEdit}
-              className="profile-header__btn"
+              className="profile__edit-btn"
             >
               Editar Perfil
             </Button>
           )}
         </div>
 
-        <div className="profile-info">
-          <Title level={2} className="profile-info__name">
+        <div className="profile__info">
+          <Title level={2} className="profile__name">
             {user.name}
           </Title>
 
-          <div className="profile-info__username-wrapper">
-            <Text type="secondary" className="profile-info__username">
+          <div className="profile__username-wrapper">
+            <Text type="secondary" className="profile__username">
               @{user.username}
             </Text>
             {user.active === false && (
-              <Tag bordered={false} color="error" className="profile-info__status-tag">
+              <Tag bordered={false} color="error" className="profile__status-tag">
                 Conta Inativa
               </Tag>
             )}
           </div>
 
-          <div className="profile-info__badges-wrapper">
+          <div className="profile__badges-wrapper">
             {renderGroupInfo()}
           </div>
 
-          <Space size="large" className="profile-info__details" wrap>
+          <Space size="large" className="profile__details" wrap>
             {(user.city?.name || user.country?.name) && (
-              <div className="profile-info__item">
+              <div className="profile__detail-item">
                 <EnvironmentOutlined />
                 <Text type="secondary">
                   {user.city?.name}{user.city?.name && user.state?.name && ', '}{user.state?.name}
@@ -158,7 +159,7 @@ function Profile({ user }) {
             )}
 
             {user.birthDate && (
-              <div className="profile-info__item">
+              <div className="profile__detail-item">
                 <CalendarOutlined />
                 <Text type="secondary">{dayjs().diff(dayjs(user.birthDate), 'year')} anos</Text>
               </div>
@@ -166,11 +167,11 @@ function Profile({ user }) {
 
             {user.institution && (
               <Popover
-                content={<div className="profile-info__popover">Visitar página da instituição</div>}
+                content={<div className="profile__popover">Visitar página da instituição</div>}
                 placement="bottom"
                 trigger="hover"
               >
-                <Link to={`/institutions/${user.institution.uid}`} className="profile-info__item profile-info__link">
+                <Link to={`/institutions/${user.institution.uid}`} className="profile__detail-item profile__detail-link">
                   <RiCommunityLine />
                   <span>{user.institution.name}</span>
                 </Link>
@@ -181,9 +182,9 @@ function Profile({ user }) {
 
         <Divider />
 
-        <div className="profile-about">
+        <div className="profile__about">
           <Title level={4}>Sobre</Title>
-          <Paragraph className="profile-about__text">
+          <Paragraph className="profile__about-text">
             {user.description && user.description !== "-"
               ? user.description
               : 'Este utilizador ainda não adicionou uma descrição.'}
@@ -191,7 +192,7 @@ function Profile({ user }) {
         </div>
       </Card>
 
-      <div className="profile-tabs">
+      <div className="profile__tabs">
         <Tabs defaultActiveKey="posts" items={tabItems} size="large" />
       </div>
     </section>

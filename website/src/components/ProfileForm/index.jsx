@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col, Divider } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
@@ -19,6 +19,7 @@ function ProfileForm({
   redirectTo
 }) {
   const loggedUser = usePeople();
+  const navigate = useNavigate();
 
   const itsLoggedUserProfile = people && loggedUser?.data
     ? people.username === loggedUser.data.username
@@ -496,19 +497,32 @@ function ProfileForm({
               </Row>
             </Card>
           )}
+          <div className="profile-form__actions">
+            <Form.Item className="profile-form__action-item">
+              <Button
+                type="default"
+                onClick={() => navigate(redirectTo || -1)}
+                size="large"
+                block
+                className="profile-form__btn profile-form__btn--cancel"
+              >
+                Cancelar
+              </Button>
+            </Form.Item>
 
-          <Form.Item className="profile-form__submit-item">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={submitting}
-              size="large"
-              block
-              className="profile-form__submit-btn"
-            >
-              {operation === "create" ? "Criar Usuário" : "Atualizar Perfil"}
-            </Button>
-          </Form.Item>
+            <Form.Item className="profile-form__action-item">
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={submitting}
+                size="large"
+                block
+                className="profile-form__btn profile-form__btn--submit"
+              >
+                {operation === "create" ? "Criar Usuário" : "Atualizar Perfil"}
+              </Button>
+            </Form.Item>
+          </div>
         </Form>
       </div>
     </div>
