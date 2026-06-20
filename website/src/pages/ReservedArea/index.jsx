@@ -127,13 +127,15 @@ function ReservedArea() {
 
   return (
     <section className="reserved-area">
-      <Title>Não Autorizado</Title>
-      <p>
-        É necessário realizar a autenticação para aceder a área reservada.
-      </p>
-      <Button type="primary" onClick={() => navigate("/login")}>
-        Ir para o Login
-      </Button>
+      <div className="reserved-area__unauthorized">
+        <Title>Não Autorizado</Title>
+        <p>
+          É necessário realizar a autenticação para aceder a área reservada.
+        </p>
+        <Button type="primary" onClick={() => navigate("/login")}>
+          Ir para o Login
+        </Button>
+      </div>
     </section>
   );
 }
