@@ -19,7 +19,11 @@ function ProfileForm({
   redirectTo
 }) {
   const loggedUser = usePeople();
-  const [itsLoggedUserProfile, setItsLoggedUserProfile] = useState(false);
+
+  const itsLoggedUserProfile = people && loggedUser?.data
+    ? people.username === loggedUser.data.username
+    : false;
+
   const profileForm = useRef(null);
   const profileAvatar = useRef(null);
   const profileBanner = useRef(null);
@@ -57,9 +61,8 @@ function ProfileForm({
       if (people.coverImage) {
         setCoverImageURL(_service.url(`/people/banner?uid=${people.uid}`));
       }
-      setItsLoggedUserProfile(people.username === loggedUser.data.username);
     }
-  }, []);
+  }, [people, operation]);
 
   const groupOptions = [
     {
@@ -127,9 +130,9 @@ function ProfileForm({
       email: values.email,
       birthDate: values.birthDate?.format('YYYY-MM-DD') ?? '',
       city: values.city?.value || values.city,
-      institution: values.institution?.value || values.institution,
-      group: values.group?.value || values.group,
-      active: values.active
+      institution: values.institution?.value || values.institution || people?.institution?.uid,
+      group: values.group?.value || values.group || people?.group?.code,
+      active: values.active !== undefined ? values.active : people?.active
     }
 
     if (operation === "edit" && people && loggedUser) {
@@ -149,12 +152,12 @@ function ProfileForm({
         if (json.result) {
           if (operation === "edit") {
             globalNotification.success({
-              message: 'Edição do Perfil',
+              title: 'Edição do Perfil',
               description: 'Os dados do seu perfil foram alterados com sucesso.',
             });
           } else {
             api.success({
-              message: 'Conta Criada',
+              title: 'Conta Criada',
               description: 'A conta foi criada com sucesso, pode iniciar sessão.',
             });
 
@@ -170,7 +173,7 @@ function ProfileForm({
           }
         } else if (operation === "edit") {
           globalNotification.warning({
-            message: 'Utilizador existente',
+            title: 'Utilizador existente',
             description: json.error,
           });
           profileForm.current.setFieldsValue({
@@ -184,7 +187,7 @@ function ProfileForm({
         setSubmitting(false);
         if (e.error && isNetworkError(e.error)) {
           return api.error({
-            message: 'Conexão',
+            title: 'Conexão',
             description:
               'Há problemas de conexão com o servidor, tente novamente mais tarde.',
           });
@@ -192,25 +195,25 @@ function ProfileForm({
         if (e && e.status === 409 && e.json && e.json.error) {
           if (e.json.error === 'email-already-exists') {
             return api.warning({
-              message: 'E-mail Existente',
+              title: 'E-mail Existente',
               description: 'Este e-mail já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
             });
           }
           if (e.json.error === 'user-already-exists') {
             return api.warning({
-              message: 'Utilizador Existente',
+              title: 'Utilizador Existente',
               description: 'Este utilizador já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
             });
           }
         }
         if (operation === "edit") {
           globalNotification.serviceFail({
-            message: 'Erro na Edição do Perfil',
+            title: 'Erro na Edição do Perfil',
             description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
           });
         } else if (operation === "create") {
           return api.error({
-            message: 'Erro na Criação de Conta',
+            title: 'Erro na Criação de Conta',
             description: 'Não foi possível criar a conta, contacte-nos através do chat de suporte.',
           });
         }
