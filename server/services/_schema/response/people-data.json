@@ -23,37 +23,13 @@
       "format": "date"
     },
     "city": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string-not-empty"
-        },
-        "uid": {
-          "type": "uid"
-        }
-      }
+      "_schema": "response/location-unit"
     },
     "state": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string-not-empty"
-        },
-        "uid": {
-          "type": "uid"
-        }
-      }
+      "_schema": "response/location-unit"
     },
     "country": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string-not-empty"
-        },
-        "uid": {
-          "type": "uid"
-        }
-      }
+      "_schema": "response/location-unit"
     },
     "group": {
       "type": "object",

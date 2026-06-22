@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string-not-empty"
+    },
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "name",
+    "uid"
+  ]
+}
