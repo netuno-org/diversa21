@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "friend"
+  ],
+  "summary": "Friendship Status",
+  "description": "Get friendship status between the logged-in user and another user by their UID.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}
