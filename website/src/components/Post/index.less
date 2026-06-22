@@ -67,6 +67,7 @@
 
   .post-actions-buttons {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
 
@@ -79,11 +80,15 @@
       border-color: @primary-color;
       background-color: transparent;
       padding: 0 16px !important;
-
+      
       &:hover {
         color: fade(@primary-color, 80%);
         border-color: fade(@primary-color, 80%);
         background-color: fade(@primary-color, 5%);
+      }
+      @media (max-width: 445.60px) {
+        width: 100% !important;
+        margin-top: 8px;
       }
     }
   }
