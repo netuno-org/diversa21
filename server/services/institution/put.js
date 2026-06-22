@@ -1,5 +1,6 @@
 import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
 import permissions from "#core/lib/permissions.js";
+import response from "#core/lib/response.js";
 
 const uid = _req.getUID('uid');
 const slug = _req.getString('slug');
@@ -14,20 +15,13 @@ const website = _req.getString("website");
 const logo = _req.getFile("logo");
 const cover_image = _req.getFile("cover_image");
 
-if (!cityUid) {
-  _header.status(400);
-  _out.json(_val.map().set("error", "city-required"));
-  _exec.stop();
-}
+if (!uid && !slug) response.stopWithInstitutionNotFound();
+if (!cityUid) response.stopWithCityNotFound();
 
 const dbCity = _db.queryFirst(`
     SELECT id FROM city WHERE uid = ?::uuid
 `, cityUid);
-if (!dbCity) {
-  _header.status(404);
-  _out.json(_val.map().set("error", "city-not-found"));
-  _exec.stop();
-}
+if (!dbCity) response.stopWithCityNotFound();
 
 const cityId = dbCity.getInt("id");
 
@@ -42,28 +36,15 @@ if (slug) {
   dbInstitution = _db.queryFirst(`
         SELECT id, slug FROM institution WHERE uid = ?::uuid
     `, uid);
-} else {
-  _header.status(400);
-  _out.json(_val.map().set('error', 'uid-or-slug-required'));
-  _exec.stop();
 }
 
-if (!dbInstitution) {
-  _header.status(404);
-  _out.json(_val.map().set('error', 'institution-not-found'));
-  _exec.stop();
-}
+if (!dbInstitution) response.stopWithInstitutionNotFound();
 
 // Verify permissions
 const targetInstitutionUid = dbInstitution.getString("uid");
 
 if (!permissions.canManageInstitution(targetInstitutionUid)) {
-  _header.status(403);
-  _out.json(
-    _val.map()
-      .set("error", "permission denied")
-  );
-  _exec.stop();
+  response.stopWithPermissionDenied();
 }
 
 const institutionData = _val.map()
@@ -93,4 +74,4 @@ if (cover_image) {
 
 _db.update("institution", dbInstitution.getInt("id"), institutionData);
 
-_out.json(_val.map().set("result", true));
+response.successWithoutData();
