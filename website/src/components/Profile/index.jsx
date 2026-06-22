@@ -171,7 +171,7 @@ function Profile({ user }) {
                 placement="bottom"
                 trigger="hover"
               >
-                <Link to={`/institutions/${user.institution.uid}`} className="profile__detail-item profile__detail-link">
+                <Link to={`/institutions/${user.institution.slug}`} className="profile__detail-item profile__detail-link">
                   <RiCommunityLine />
                   <span>{user.institution.name}</span>
                 </Link>

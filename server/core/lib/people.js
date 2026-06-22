@@ -19,6 +19,7 @@ export default {
           country.name AS "country_name",
           institution.uid AS "institution_uid",
           institution.name AS "institution_name",
+          institution.slug AS "institution_slug",
           netuno_group.code AS "group_code",
           netuno_group.name AS "group_name",
           netuno_user.active as "active"
@@ -65,6 +66,7 @@ export default {
           _val.map()
             .set("uid", dbPeople.getUID("institution_uid"))
             .set("name", dbPeople.getString("institution_name"))
+            .set("slug", dbPeople.getString("institution_slug"))
         )
         .set("active", dbPeople.getBoolean("active"))
     }
@@ -83,7 +85,7 @@ export default {
   getByUsername: (username) => {
     return _db.queryFirst(`
       SELECT people.*
-      FROM people 
+      FROM people
           INNER JOIN netuno_user ON people.people_user_id = netuno_user.id 
       WHERE netuno_user."user" = ?::varchar;
     `, username);
@@ -91,7 +93,7 @@ export default {
   createOrder: () => {
     let order = '';
     for (let i = 0; i < 7; i++) {
-        order += Math.floor(Math.random() * 10)
+      order += Math.floor(Math.random() * 10)
     }
     return order;
   },
