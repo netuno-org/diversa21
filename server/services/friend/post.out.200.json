@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "status": {
+      "type": "string-not-empty"
+    }
+  }
+}
