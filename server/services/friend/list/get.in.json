@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "friend"
+  ],
+  "summary": "List friends",
+  "description": "Retrieve paginated list of friends for the logged-in user.",
+  "properties": {
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    },
+    "uid": {
+      "type": "uid"
+    }
+  }
+}

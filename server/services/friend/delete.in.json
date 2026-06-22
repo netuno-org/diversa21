@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "friend"
+  ],
+  "summary": "Remove Friend or Friend Request",
+  "description": "Delete a friendship, cancel a sent request, or reject a received request by the user's UID.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

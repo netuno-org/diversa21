@@ -1,0 +1,16 @@
+{
+  "tags":[
+    "friend"
+  ],
+  "summary": "Accept Friend Request",
+  "description": "Accept a pending friend request by its relation UID",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

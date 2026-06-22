@@ -1,0 +1,16 @@
+{
+  "tags":[
+    "friend"
+  ],
+  "summary": "Create Friend Request",
+  "description": "Send a friend request to another user by their UID",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}
