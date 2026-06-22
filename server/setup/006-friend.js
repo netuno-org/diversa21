@@ -12,6 +12,30 @@ const friends = [
     to_uid: "0abd451a-b951-4c95-adc9-96332ad6c772",   // Bob
     request_at: "2026-06-11 09:00:00",
     accepted_at: "2026-06-11 14:00:00"
+  },
+  {
+    from_uid: "e7ab1ade-d464-4602-bd61-f0f7eb7c880e", // Superadmin
+    to_uid: "36c8b6a8-eeb7-4477-ade8-f6a8dbceba41",   // Charlie
+    request_at: "2026-06-12 08:30:00",
+    accepted_at: "2026-06-12 10:00:00"
+  },
+  {
+    from_uid: "e7ab1ade-d464-4602-bd61-f0f7eb7c880e", // Superadmin
+    to_uid: "b271af58-2fad-473f-b706-a87bbb60b634",   // Noah
+    request_at: "2026-06-13 14:00:00",
+    accepted_at: "2026-06-13 15:30:00"
+  },
+  {
+    from_uid: "2a86a611-2ab1-472d-a7fe-c41c4aeef36b", // Alice
+    to_uid: "0abd451a-b951-4c95-adc9-96332ad6c772",   // Bob
+    request_at: "2026-06-14 09:00:00",
+    accepted_at: "2026-06-14 11:00:00"
+  },
+  {
+    from_uid: "36c8b6a8-eeb7-4477-ade8-f6a8dbceba41", // Charlie
+    to_uid: "b271af58-2fad-473f-b706-a87bbb60b634",   // Noah
+    request_at: "2026-06-15 10:00:00",
+    accepted_at: "2026-06-15 12:00:00"
   }
 ];
 
