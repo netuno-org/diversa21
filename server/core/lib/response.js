@@ -33,10 +33,13 @@ export default {
   },
 
   stopWithNotExist: () => stopWithError(404, "not-exist"),
+  stopWithPermissionDenied: () => stopWithError(403, "permission-denied"),
 
   stopWithUserNotFound: () => stopWithNotFound("user"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithCityNotFound: () => stopWithNotFound("city"),
+  stopWithNameNotFound: () => stopWithNotFound("name"),
+  stopWithEmailNotFound: () => stopWithNotFound("email"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithInstitutionNotFound: () => stopWithNotFound("institution"),
   stopWithSlugNotFound: () => stopWithNotFound("slug"),
