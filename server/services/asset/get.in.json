@@ -1,0 +1,19 @@
+{
+  "tags": [
+    "asset"
+  ],
+  "summary": "Fetch Asset File",
+  "description": "Retrieve an asset file from storage by UID, asset name, and entity (database table) name.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "assetName": {
+      "type": "string-not-empty"
+    },
+    "entityName": {
+      "type": "string-not-empty",
+      "description": "Database table name. Examples: 'people', 'institution'"
+    }
+  }
+}

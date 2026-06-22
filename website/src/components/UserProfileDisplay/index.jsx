@@ -15,7 +15,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
 
   useEffect(() => {
     if (user && user.avatar) {
-      setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}`));
+      setAvatarUrl(_service.url(`/asset?uid=${user.uid}&assetName=avatar&entityName=people`));
     }
   }, [user]);
 
@@ -25,7 +25,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-      <Avatar style={avatarStyle} src={avatarUrl} shape="square"/>
+      <Avatar style={avatarStyle} src={avatarUrl} shape="square" />
       <div className="user-profile-display-content">
         <div><UserOutlined /> {user.name}</div>
         {user.group.code !== "member" && (
@@ -43,7 +43,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
             }}
           >
             {user.group.code === "super-admin" ? (
-              <SafetyOutlined  />
+              <SafetyOutlined />
             ) : user.group.code === "management" ? (
               <BsFillHouseGearFill size={iconSize} />
             ) : (

@@ -8,7 +8,7 @@ const { Text } = Typography;
 
 function FriendItem({ uid, name, avatar, isActive, onClick }) {
   const avatarSrc = avatar
-    ? _service.url(`/people/avatar?uid=${uid}&${new Date().getTime()}`)
+    ? _service.url(`/asset?uid=${uid}&assetName=avatar&entityName=people&${new Date().getTime()}`)
     : '/images/profile-default.png';
 
   return (

@@ -148,7 +148,7 @@ function View() {
       <div className="cover-image">
         {institution.cover_image ? (
           <img
-            src={_service.url(`/institution/banner?uid=${institution.uid}`)}
+            src={_service.url(`/asset?uid=${institution.uid}&assetName=banner&entityName=institution`)}
             alt="Cover"
           />
         ) : (
@@ -162,7 +162,7 @@ function View() {
             <div className="logo-section">
               {institution.logo ? (
                 <Avatar
-                  src={_service.url(`/institution/avatar?uid=${institution.uid}`)}
+                  src={_service.url(`/asset?uid=${institution.uid}&assetName=avatar&entityName=institution`)}
                   size={120}
                   shape="square"
                   style={{ backgroundColor: '#fff' }}

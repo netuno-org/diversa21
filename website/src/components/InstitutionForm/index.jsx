@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { 
-  Typography, Form, Input, Button, Divider, 
-  Upload, Card, message, Spin, Select 
+import {
+  Typography, Form, Input, Button, Divider,
+  Upload, Card, message, Spin, Select
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -12,12 +12,12 @@ import "./index.less";
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-export default function InstitutionForm({ 
+export default function InstitutionForm({
   uid = null,
   slug = null,
   initialData = null,
-  onSuccess = () => {},
-  onCancel = () => {},
+  onSuccess = () => { },
+  onCancel = () => { },
   submitText = null,
   title = null,
   showBackButton = true,
@@ -32,7 +32,7 @@ export default function InstitutionForm({
     ? () => navigate(`/institutions/${slug}`)
     : () => navigate('/institutions');
   const backAction = onBack || defaultOnBack;
-  
+
   const [logoPreview, setLogoPreview] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
   const [logoFile, setLogoFile] = useState(null);
@@ -59,18 +59,18 @@ export default function InstitutionForm({
         success: ({ json }) => {
           if (json.data) {
             const data = json.data;
-            setLogoPreview(data.logo ? _service.url(`/institution/avatar?uid=${data.uid}`) : null);
-            setCoverPreview(data.cover_image ? _service.url(`/institution/banner?uid=${data.uid}`) : null);
+            setLogoPreview(data.logo ? _service.url(`/asset?uid=${data.uid}&assetName=avatar&entityName=institution`) : null);
+            setCoverPreview(data.cover_image ? _service.url(`/asset?uid=${data.uid}&assetName=banner&entityName=institution`) : null);
             setInitialLogo(data.logo);
             setInitialCover(data.cover_image);
-            
+
             // Pre-populate city select
             if (data.city && data.city.uid) {
               const cityLabel = [data.country?.name, data.state?.name, data.city?.name].filter(Boolean).join(' > ');
               setSelectedCity({ uid: data.city.uid, label: cityLabel });
               setCityOptions([{ value: data.city.uid, label: cityLabel, uid: data.city.uid }]);
             }
-            
+
             form.setFieldsValue({
               name: data.name,
               description: data.description,
@@ -93,18 +93,18 @@ export default function InstitutionForm({
       });
     } else if (initialData) {
       // Use provided initialData
-      setLogoPreview(initialData.logo ? _service.url(`/institution/avatar?uid=${initialData.uid}`) : null);
-      setCoverPreview(initialData.cover_image ? _service.url(`/institution/banner?uid=${initialData.uid}`) : null);
+      setLogoPreview(initialData.logo ? _service.url(`/asset?uid=${initialData.uid}&assetName=avatar&entityName=institution`) : null);
+      setCoverPreview(initialData.cover_image ? _service.url(`/asset?uid=${initialData.uid}&assetName=banner&entityName=institution`) : null);
       setInitialLogo(initialData.logo);
       setInitialCover(initialData.cover_image);
-      
+
       // Pre-populate city select
       if (initialData.city && initialData.city.uid) {
         const cityLabel = [initialData.country?.name, initialData.state?.name, initialData.city?.name].filter(Boolean).join(' > ');
         setSelectedCity({ uid: initialData.city.uid, label: cityLabel });
         setCityOptions([{ value: initialData.city.uid, label: cityLabel, uid: initialData.city.uid }]);
       }
-      
+
       form.setFieldsValue({
         name: initialData.name,
         description: initialData.description,
@@ -232,24 +232,24 @@ export default function InstitutionForm({
 
   function onFinish(values) {
     setSubmitting(true);
-    
-    const { 
-      name, description, email, telephone, address, 
-      post_code, website 
+
+    const {
+      name, description, email, telephone, address,
+      post_code, website
     } = values;
 
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description || '');
     formData.append('email', email);
-    
+
     // Only append optional fields if they have values
     if (telephone) formData.append('telephone', telephone);
     if (address) formData.append('address', address);
     if (post_code) formData.append('post_code', post_code);
     if (selectedCity?.uid) formData.append('city', selectedCity.uid);
     if (website) formData.append('website', website);
-    
+
     // Append files only if changed in edit mode
     if (logoFile) {
       formData.append('logo', logoFile);
@@ -296,20 +296,20 @@ export default function InstitutionForm({
     <div className="institution-form">
       {showBackButton && (
         <div className="content-title">
-          <Button 
-            className="go-back-btn" 
-            type="link" 
+          <Button
+            className="go-back-btn"
+            type="link"
             onClick={backAction}
           >
             ← Voltar atrás
           </Button>
         </div>
       )}
-      
+
       <div className="content-title">
         <Title level={2}>{pageTitle}</Title>
       </div>
-      
+
       <div className="content-body">
         <Form
           form={form}
@@ -323,8 +323,8 @@ export default function InstitutionForm({
             <div className="institution-form-loading">
               <Spin size="large" />
             </div>
-)}
-       
+          )}
+
           <Card title="Informações Principais" className="form-card">
             <Form.Item
               label="Nome"
@@ -344,10 +344,10 @@ export default function InstitutionForm({
                 { required: true, message: 'Insira a descrição da instituição.' }
               ]}
             >
-              <TextArea 
-              style={{ resize: 'none' }}
-                rows={4} 
-                disabled={submitting} 
+              <TextArea
+                style={{ resize: 'none' }}
+                rows={4}
+                disabled={submitting}
                 maxLength={2000}
                 showCount
               />
@@ -378,9 +378,9 @@ export default function InstitutionForm({
                 { type: 'url', message: 'URL inválida.' }
               ]}
             >
-              <Input 
-                disabled={submitting} 
-                maxLength={500} 
+              <Input
+                disabled={submitting}
+                maxLength={500}
                 placeholder="https://"
               />
             </Form.Item>
@@ -395,9 +395,9 @@ export default function InstitutionForm({
                 {logoPreview ? (
                   <div className="image-preview">
                     <img src={logoPreview} alt="Logo" />
-                    <Button 
-                      type="link" 
-                      danger 
+                    <Button
+                      type="link"
+                      danger
                       onClick={removeLogo}
                       disabled={submitting}
                     >
@@ -432,9 +432,9 @@ export default function InstitutionForm({
                 {coverPreview ? (
                   <div className="image-preview cover-preview">
                     <img src={coverPreview} alt="Cover" />
-                    <Button 
-                      type="link" 
-                      danger 
+                    <Button
+                      type="link"
+                      danger
                       onClick={removeCover}
                       disabled={submitting}
                     >
@@ -505,9 +505,9 @@ export default function InstitutionForm({
           <Divider />
 
           <Form.Item>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
+            <Button
+              type="primary"
+              htmlType="submit"
               loading={submitting}
               size="large"
               block

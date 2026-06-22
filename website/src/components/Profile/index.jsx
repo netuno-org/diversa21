@@ -32,8 +32,8 @@ function Profile({ user }) {
 
   useEffect(() => {
     if (user) {
-      user.avatar && setAvatarUrl(_service.url(`/people/avatar?uid=${user.uid}&${new Date().getTime()}`));
-      user.coverImage && setBannerUrl(_service.url(`/people/banner?uid=${user.uid}&${new Date().getTime()}`));
+      user.avatar && setAvatarUrl(_service.url(`/asset?uid=${user.uid}&assetName=avatar&entityName=people&${new Date().getTime()}`));
+      user.coverImage && setBannerUrl(_service.url(`/asset?uid=${user.uid}&assetName=avatar&entityName=people&${new Date().getTime()}`));
     }
   }, [user]);
 

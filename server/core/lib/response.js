@@ -37,6 +37,7 @@ export default {
 
   stopWithUserNotFound: () => stopWithNotFound("user"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
+  stopWithTableNotFound: () => stopWithNotFound("table"),
   stopWithCityNotFound: () => stopWithNotFound("city"),
   stopWithNameNotFound: () => stopWithNotFound("name"),
   stopWithEmailNotFound: () => stopWithNotFound("email"),
@@ -46,6 +47,7 @@ export default {
   stopWithStateNotFound: () => stopWithNotFound("state"),
   stopWithCountryNotFound: () => stopWithNotFound("country"),
   stopWithPostNotFound: () => stopWithNotFound("post"),
+  stopWithAssetNotFound: () => stopWithNotFound("asset"),
 
   stopWithCityNotCreated: () => stopWithNotCreated("city"),
   stopWithStateNotCreated: () => stopWithNotCreated("state"),
