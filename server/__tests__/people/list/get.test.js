@@ -22,9 +22,9 @@ test("list people", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(14);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(14);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePeople();
 

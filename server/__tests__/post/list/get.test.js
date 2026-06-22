@@ -14,7 +14,7 @@ test("list posts without loging in", async () => {
 });
 
 test("list posts", async () => {
-  const accessToken = await login.asTest(); 
+  const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
     .get("/post/list")
@@ -23,9 +23,9 @@ test("list posts", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(2);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(2);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
   expect(response.body.data.items[0].liked).toBe(true);
@@ -33,7 +33,7 @@ test("list posts", async () => {
 });
 
 it("shouldn't return comments if parent is not passed", async () => {
-  const accessToken = await login.asTest(); 
+  const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
     .get(`/post/list?peopleUid=${userUid.test}`)
@@ -42,14 +42,14 @@ it("shouldn't return comments if parent is not passed", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(0);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(0);
   expect(response.body.data).toHaveProperty("items");
 });
 
 test("list comments on a post", async () => {
-  const accessToken = await login.asTest(); 
+  const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
     .get(`/post/list?parent=${postUid.primeiroPost}`)
@@ -58,9 +58,9 @@ test("list comments on a post", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(2);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(2);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
   expect(response.body.data.items[0].content).toBe("eesh tarde demais");
@@ -69,7 +69,7 @@ test("list comments on a post", async () => {
 });
 
 it("souldn't list comment with a parent that doesn't exist", async () => {
-  const accessToken = await login.asTest(); 
+  const accessToken = await login.asTest();
   const fakeParentUid = "39bc1b9d-3bfa-43e7-a417-6dd6b5ad1ce0";
 
   const response = await request(NETUNO_URL)
@@ -79,7 +79,7 @@ it("souldn't list comment with a parent that doesn't exist", async () => {
 });
 
 test("list posts by a user", async () => {
-  const accessToken = await login.asTest(); 
+  const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
     .get(`/post/list?peopleUid=${userUid.ben}`)
@@ -88,16 +88,16 @@ test("list posts by a user", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(1);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(1);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
   expect(response.body.data.items[0].content).toBe("Primeiro post!");
 });
 
 test("list posts with pagination", async () => {
-  const accessToken = await login.asSuperAdmin(); 
+  const accessToken = await login.asSuperAdmin();
 
   const response = await request(NETUNO_URL)
     .get("/post/list?page=2")
@@ -106,9 +106,9 @@ test("list posts with pagination", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(0);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(0);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items).toStrictEqual([]);
 });

@@ -32,9 +32,9 @@ test("list activities of the user Alice", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(1);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(1);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
   expect(response.body.data.items[0].content).toBe("Primeiro post!");
@@ -50,9 +50,9 @@ test("list activities of the user Super", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(1);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(1);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items[0]).toBePost();
   expect(response.body.data.items[0].content).toBe("Manutenção do sistema agendada para 20 de maio, 02:00–04:00 UTC. Alguns serviços (envio de arquivos, notificações) podem ficar intermitentes.");
@@ -68,9 +68,9 @@ test("list activities with pagination", async () => {
 
   expect(response.body.result).toBe(true);
   expect(response.body).toHaveProperty("data");
-  expect(response.body.data.pageSize).toBe(10);
-  expect(typeof response.body.data.totalCount).toBe("number");
-  expect(response.body.data.totalCount).toBe(0);
+  expect(response.body.data.pagination.pageSize).toBe(10);
+  expect(typeof response.body.data.pagination.totalCount).toBe("number");
+  expect(response.body.data.pagination.totalCount).toBe(0);
   expect(response.body.data).toHaveProperty("items");
   expect(response.body.data.items).toStrictEqual([]);
 });
