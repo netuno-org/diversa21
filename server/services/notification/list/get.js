@@ -27,10 +27,11 @@ const dbNotifications = _db.query(`
   FROM notification
   INNER JOIN people ON notification.people_id = people.id
   INNER JOIN notification_type ON notification.type_id = notification_type.id
-  INNER JOIN notification_settings
-      ON notification_settings.people_id = people.id
-      AND notification_settings.type_id = notification_type.id
+  LEFT JOIN notification_opt_out
+      ON notification_opt_out.people_id = people.id
+      AND notification_opt_out.type_id = notification_type.id
   WHERE people.uid = ?::uuid
+  AND notification_opt_out.id IS NULL
   ORDER BY notification.sent_at 
   LIMIT ?::int OFFSET ?::int
 `, loggedUserUid, pageSize, offset);

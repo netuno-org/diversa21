@@ -22,13 +22,13 @@ _form.createIfNotExists(
 		.set("export_xls", true)
 		.set("export_xml", true)
 		.set("firebase", "")
-		.set("name", "notification_settings")
+		.set("name", "notification_opt_out")
 		.set("parent_uid", "d395b86d-9985-472e-9b02-ae1c8dcd1c38")
 		.set("reorder", 0)
 		.set("report", false)
 		.set("report_behaviour", 0)
 		.set("show_id", true)
-		.set("title", "Configura\u00E7\u00F5es")
+		.set("title", "Bloqueios")
 		.set("uid", "b881807d-7f60-45b9-888d-81695755a1ea")
 );
 _form.createComponentIfNotExists(
