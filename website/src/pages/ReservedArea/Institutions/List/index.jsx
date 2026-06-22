@@ -56,7 +56,7 @@ function ListInstitution() {
       success: (response) => {
         console.log(response.json)
 
-        const institutions = response.json.data;
+        const institutions = response.json.data.items;
 
         setInstitutionList(institutions);
         console.log('institutions', institutionList);
@@ -66,8 +66,8 @@ function ListInstitution() {
           current: page,
           term,
           location,
-          total: institutions.length,
-          size: 10
+          total: response.json.data.pagination.totalCount,
+          size: response.json.data.pagination.pageSize
         }));
         setLoading(false);
       },
@@ -129,7 +129,7 @@ function ListInstitution() {
         </Text>
       </div>
       {!loading && institutionList.map((institution) => (
-        <div key={institution.uid} style={{ width: '100%', marginBottom: '20px'}}>
+        <div key={institution.uid} style={{ width: '100%', marginBottom: '20px' }}>
           <Link to={`/institutions/${institution.slug}`}>
             <Card className="institution-search-result-card" key={institution.uid}>
               <InstitutionDisplay institution={institution} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
