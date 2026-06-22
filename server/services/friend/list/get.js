@@ -22,6 +22,7 @@ if (!loggedUser) {
   _exec.stop();
 }
 const profileUid = _req.getString("uid");
+const name = _req.getString("name");
 
 const loggedId = loggedUser.getInt("id");
 let targetId = loggedId;
@@ -40,7 +41,7 @@ if (profileUid && profileUid !== "") {
 }
 
 const params = _val.list();
-params.add(targetId).add(targetId).add(targetId);
+params.add(targetId).add(targetId).add(targetId).add(`%${name}%`);
 
 let sqlQuery = `
     SELECT count(*) over() as total_count,
@@ -58,6 +59,7 @@ let sqlQuery = `
         INNER JOIN netuno_user ON p.people_user_id = netuno_user.id
     WHERE (f.people_id = ? OR f.friend_id = ?)
         AND f.accepted_at IS NOT NULL
+        AND p.name ILIKE ?::varchar
     ORDER BY p.name ASC
     LIMIT 10
     OFFSET ?::int

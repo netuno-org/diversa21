@@ -11,6 +11,9 @@
     },
     "uid": {
       "type": "uid"
+    },
+    "name": {
+      "type": "string"
     }
   }
 }
