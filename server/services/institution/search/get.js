@@ -1,4 +1,5 @@
 import { _req, _db, _out } from "@netuno/server-types";
+import response from "#core/lib/response.js";
 
 const input = _req.getString('name') || "";
 
@@ -11,9 +12,6 @@ const data = _db.query(`
     WHERE institution.name ILIKE ?::text
     LIMIT 10
 `,
-"%" + input + "%");
+  "%" + input + "%");
 
-_out.json({
-  data,
-  result: true
-})
+response.successWithData(data);
