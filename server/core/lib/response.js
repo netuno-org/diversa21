@@ -1,4 +1,4 @@
-import {_header, _out, _val, _exec} from "@netuno/server-types";
+import { _header, _out, _val, _exec } from "@netuno/server-types";
 
 const stopWithError = (code, message) => {
   _header.status(code);
@@ -39,6 +39,7 @@ export default {
   stopWithCityNotFound: () => stopWithNotFound("city"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithInstitutionNotFound: () => stopWithNotFound("institution"),
+  stopWithSlugNotFound: () => stopWithNotFound("slug"),
   stopWithStateNotFound: () => stopWithNotFound("state"),
   stopWithCountryNotFound: () => stopWithNotFound("country"),
   stopWithPostNotFound: () => stopWithNotFound("post"),

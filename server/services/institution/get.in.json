@@ -1,15 +1,12 @@
 {
-    "tags":[
-      "institution"
-    ],
-    "summary": "Fetch Institution Data",
-    "description": "Retrieve information from a specific institution.",
-    "properties": {
-      "uid": {
-        "type": "uid"
-      },
-      "slug": {
-        "type": "string-not-empty"
-      }
+  "tags": [
+    "institution"
+  ],
+  "summary": "Fetch Institution Data",
+  "description": "Retrieve information from a specific institution using their slug.",
+  "properties": {
+    "slug": {
+      "type": "string-not-empty"
     }
+  }
 }

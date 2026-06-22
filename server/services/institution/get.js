@@ -1,92 +1,69 @@
-import {_req, _db, _exec, _header, _out, _val} from "@netuno/server-types";
+import { _req, _db, _exec, _header, _out, _val } from "@netuno/server-types";
+
+import response from "#core/lib/response.js";
 
 const slug = _req.getString('slug');
 
-let query = '';
-let param = null;
-let dbInstitution = null;
+if (!slug) response.stopWithSlugNotFound();
 
-if (slug) {
-    query = `
-        SELECT
-            institution.uid,
-            institution.slug,
-            institution.name,
-            institution.description,
-            institution.email,
-            institution.telephone,
-            institution.website,
-            institution.address,
-            institution.post_code,
-            city.uid AS "city_uid",
-            city.name AS "city",
-            state.uid AS "state_uid",
-            state.name AS "state",
-            country.uid AS "country_uid",
-            country.name AS "country",
-            institution.cover_image,
-            institution.logo,
-            institution.active
-        FROM institution
-        INNER JOIN city ON institution.city_id = city.id
-        INNER JOIN state ON city.state_id = state.id
-        INNER JOIN country ON state.country_id = country.id
-        WHERE institution.slug = ?::text
-    `;
-    param = slug;
-}else{
-    _header.status(400);
-    _out.json(
-        _val.map()
-            .set('error', 'slug-required')
-    )
-    _exec.stop()
-}
+let sqlQuery = `
+    SELECT
+        institution.uid,
+        institution.slug,
+        institution.name,
+        institution.description,
+        institution.email,
+        institution.telephone,
+        institution.website,
+        institution.address,
+        institution.post_code,
+        city.uid AS "city_uid",
+        city.name AS "city",
+        state.uid AS "state_uid",
+        state.name AS "state",
+        country.uid AS "country_uid",
+        country.name AS "country",
+        institution.cover_image,
+        institution.logo,
+        institution.active
+    FROM institution
+    INNER JOIN city ON institution.city_id = city.id
+    INNER JOIN state ON city.state_id = state.id
+    INNER JOIN country ON state.country_id = country.id
+    WHERE institution.slug = ?::text
+`;
 
-const dbInstitutions = _db.query(query, param);
+const dbInstitution = _db.queryFirst(sqlQuery, slug);
 
-if (!dbInstitutions || dbInstitutions.length === 0) {
-    _header.status(404);
-    _out.json(
-        _val.map()
-            .set('error', 'institution-not-found')
-    )
-    _exec.stop()
-}
+if (!dbInstitution) response.stopWithInstitutionNotFound();
 
-dbInstitution = dbInstitutions[0];
-
-_out.json(
-  _val.map()
-  .set('result', true)
-  .set('data',
+const data = _val.map()
+  .set('uid', dbInstitution.getString('uid'))
+  .set('slug', dbInstitution.getString('slug'))
+  .set('name', dbInstitution.getString('name'))
+  .set('description', dbInstitution.getString('description'))
+  .set('email', dbInstitution.getString('email'))
+  .set('telephone', dbInstitution.getString('telephone'))
+  .set('website', dbInstitution.getString('website'))
+  .set('address', dbInstitution.getString('address'))
+  .set('post_code', dbInstitution.getString('post_code'))
+  .set('city',
     _val.map()
-    .set('uid', dbInstitution.getString('uid'))
-    .set('slug', dbInstitution.getString('slug'))
-    .set('name', dbInstitution.getString('name'))
-    .set('description', dbInstitution.getString('description'))
-    .set('email', dbInstitution.getString('email'))
-    .set('telephone', dbInstitution.getString('telephone'))
-    .set('website', dbInstitution.getString('website'))
-    .set('address', dbInstitution.getString('address'))
-    .set('post_code', dbInstitution.getString('post_code'))
-    .set('city',
-      _val.map()
-        .set('uid', dbInstitution.getString('city_uid'))
-        .set('name', dbInstitution.getString('city'))
-    )
-    .set('state',
-      _val.map()
-        .set('uid', dbInstitution.getString('state_uid'))
-        .set('name', dbInstitution.getString('state'))
-    )
-    .set('country',
-      _val.map()
-        .set('uid', dbInstitution.getString('country_uid'))
-        .set('name', dbInstitution.getString('country'))
-    )
-    .set('cover_image', dbInstitution.getString('cover_image') !== '')
-    .set('logo', dbInstitution.getString('logo') !== '')
-    .set('active', dbInstitution.getString('active'))
+      .set('uid', dbInstitution.getString('city_uid'))
+      .set('name', dbInstitution.getString('city'))
   )
-)
+  .set('state',
+    _val.map()
+      .set('uid', dbInstitution.getString('state_uid'))
+      .set('name', dbInstitution.getString('state'))
+  )
+  .set('country',
+    _val.map()
+      .set('uid', dbInstitution.getString('country_uid'))
+      .set('name', dbInstitution.getString('country'))
+  )
+  .set('cover_image', dbInstitution.getString('cover_image') !== '')
+  .set('logo', dbInstitution.getString('logo') !== '')
+  .set('active', dbInstitution.getString('active'));
+
+response.successWithData(data);
