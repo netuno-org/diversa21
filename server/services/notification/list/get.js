@@ -19,18 +19,20 @@ const dbNotifications = _db.query(`
       notification.uid AS uid,
       notification_type.code AS type,
       notification.title AS title,
-      people.uid AS people,
+      originator.uid AS originator,
+      recipient.uid AS recipient,
       notification.extra AS extra,
       notification.content AS content,
       notification.read_at AS read_at,
       notification.sent_at AS sent_at
   FROM notification
-  INNER JOIN people ON notification.people_id = people.id
+  INNER JOIN people originator ON notification.originator_id = originator.id
+  INNER JOIN people recipient ON notification.recipient_id = recipient.id
   INNER JOIN notification_type ON notification.type_id = notification_type.id
   LEFT JOIN notification_opt_out
-      ON notification_opt_out.people_id = people.id
+      ON notification_opt_out.people_id = recipient.id
       AND notification_opt_out.type_id = notification_type.id
-  WHERE people.uid = ?::uuid
+  WHERE recipient.uid = ?::uuid
   AND notification_opt_out.id IS NULL
   ORDER BY notification.sent_at 
   LIMIT ?::int OFFSET ?::int
@@ -44,7 +46,8 @@ for (const dbNotification of dbNotifications) {
     .set("uid", dbNotification.getUID("uid"))
     .set("type", dbNotification.getString("type"))
     .set("title", dbNotification.getString("title"))
-    .set("people", dbNotification.getString("people"))
+    .set("originator", dbNotification.getString("originator"))
+    .set("recipient", dbNotification.getString("recipient"))
     .set("extra", dbNotification.getString("extra"))
     .set("content", dbNotification.getString("content"))
     .set("read_at", dbNotification.getString("read_at"))
