@@ -1,0 +1,13 @@
+{
+  "tags": [
+    "friend"
+  ],
+  "summary": "List pending friend requests",
+  "description": "Retrieve paginated list of pending friend requests received by the logged-in user.",
+  "properties": {
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  }
+}
