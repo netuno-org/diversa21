@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "pageSize": {
+      "type": "integer"
+    },
+    "totalCount": {
+      "type": "integer"
+    }
+  },
+  "required": ["pageSize", "totalCount"]
+}

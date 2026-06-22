@@ -64,7 +64,7 @@ function View() {
       data: { uid: institution.uid, page },
       success: ({ json }) => {
         setUsers(json.data.items);
-        setUsersPagination({ current: page, total: json.data.totalCount });
+        setUsersPagination({ current: page, total: json.data.pagination.totalCount });
         setUsersLoading(false);
       },
       fail: () => {

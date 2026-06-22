@@ -54,15 +54,15 @@ function People() {
         page,
       },
       success: (response) => {
-        const { items, totalCount, pageSize } = response.json.data;
+        const { items, pagination } = response.json.data;
         setPeopleList(items);
         setPagination((currentPagination) => ({
           ...currentPagination,
           current: page,
           term,
           location,
-          total: totalCount,
-          size: pageSize
+          total: pagination.totalCount,
+          size: pagination.pageSize
         }));
         setLoading(false);
       },

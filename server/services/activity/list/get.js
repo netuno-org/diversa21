@@ -142,13 +142,8 @@ for (const dbPost of dbPosts) {
 }
 
 const result = _val.map();
-
-if (dbPosts.length === 0) {
-  result.set("totalCount", 0);
-} else {
-  result.set("totalCount", dbPosts[0].getInt("total_count"));
-}
+const totalCount = dbPosts.length === 0 ? 0 : dbPosts[0].getInt("total_count");
 result.set("items", posts);
-result.set("pageSize", pageSize);
+result.set("pagination", { pageSize, totalCount });
 
 response.successWithData(result);

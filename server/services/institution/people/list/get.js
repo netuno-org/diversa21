@@ -54,13 +54,10 @@ for (const dbPerson of dbPeople) {
   list.add(people.getData(dbPerson.getUID("uid")));
 }
 
-const totalCount = dbPeople.length > 0
-  ? dbPeople[0].getInt("total_count")
-  : 0;
+const totalCount = dbPeople.length === 0 ? 0 : dbPeople[0].getInt("total_count");
 
 response.successWithData(
   _val.map()
     .set("items", list)
-    .set("totalCount", totalCount)
-    .set("pageSize", pageSize)
+    .set("pagination", { pageSize, totalCount })
 );

@@ -7,21 +7,23 @@
     "data": {
       "type": "object",
       "properties": {
-        "totalCount": {
-          "type": "integer"
-        },
-        "pageSize": {
-          "type": "integer"
-        },
         "items": {
           "type": "array",
           "items": {
             "_schema": "response/post-data"
           }
+        },
+        "pagination": {
+          "_schema": "response/pagination"
         }
       },
-      "required": ["totalCount", "pageSize", "items"]
+      "required": [
+        "items",
+        "pagination"
+      ]
     }
   },
-  "required": ["result"]
+  "required": [
+    "result"
+  ]
 }

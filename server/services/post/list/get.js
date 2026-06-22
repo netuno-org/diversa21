@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import { _req, _db, _val, _user, _out } from "@netuno/server-types"
 
 import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
@@ -69,9 +69,9 @@ for (const dbPost of dbPosts) {
       .set("content", dbPost.getString("content"))
       .set("comments", dbPost.getInt("comments", 0))
       .set("liked", dbPost.getInt("post_like_id", 0) > 0)
-      .set("likes" ,dbPost.getInt("likes"))
+      .set("likes", dbPost.getInt("likes"))
       .set(
-        "people", 
+        "people",
         _val.map()
           .set("uid", dbPost.getString("people_uid"))
           .set("name", dbPost.getString("people_name"))
@@ -81,14 +81,10 @@ for (const dbPost of dbPosts) {
   )
 }
 
-const result = _val.map();
+const totalCount = dbPosts.length === 0 ? 0 : dbPosts[0].getInt("total_count");
 
-if (dbPosts.length === 0) {
-  result.set("totalCount", 0);
-} else {
-  result.set("totalCount", dbPosts[0].getInt("total_count"));
-}
-result.set("items", posts);
-result.set("pageSize", pageSize);
-
-response.successWithData(result);
+response.successWithData(
+  _val.map()
+    .set("items", posts)
+    .set("pagination", { pageSize, totalCount })
+);

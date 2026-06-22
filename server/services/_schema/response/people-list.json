@@ -13,13 +13,11 @@
             "_schema": "response/people-data"
           }
         },
-        "pageSize": {
-          "type": "number"
-        },
-        "totalCount": {
-          "type": "number"
+        "pagination": {
+          "_schema": "response/pagination"
         }
-      }
+      },
+      "required": ["items", "pagination"]
     }
   },
   "required": [
