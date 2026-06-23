@@ -73,7 +73,7 @@ function ReservedArea() {
         return <People />;
       }
       if (location.pathname === "/people/create/user") {
-        if (!people.canCreateAnyUser()) {
+        if (!(people.canCreateAnyUser() || people.canCreateMember(people.data?.institution))) {
           navigate('/people');
           return;
         }

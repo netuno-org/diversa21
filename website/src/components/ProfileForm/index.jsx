@@ -131,9 +131,9 @@ function ProfileForm({
       email: values.email,
       birthDate: values.birthDate?.format('YYYY-MM-DD') ?? '',
       city: values.city?.value || values.city,
-      institution: values.institution?.value || values.institution || people?.institution?.uid,
-      group: values.group?.value || values.group || people?.group?.code,
-      active: values.active !== undefined ? values.active : people?.active
+      institution: values.institution?.value || values.institution || people?.institution?.uid || loggedUser.data?.institution?.uid,
+      group: values.group?.value || values.group || people?.group?.code || "member",
+      active: values.active !== undefined ? values.active : (people?.active ?? true)
     }
 
     if (operation === "edit" && people && loggedUser) {

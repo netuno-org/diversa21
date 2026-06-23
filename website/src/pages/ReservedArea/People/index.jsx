@@ -115,7 +115,7 @@ function People() {
       <div className="people-list__header">
         <ListHeaderFilters
           title="Pessoas"
-          createButton={loggedUser.canCreateAnyUser() && {
+          createButton={(loggedUser.canCreateAnyUser() || loggedUser.canCreateMember(loggedUser.data?.institution)) && {
             icon: <UserAddOutlined />,
             text: "Criar usuário",
             onClick: () => navigate('/people/create/user'),
