@@ -3,6 +3,29 @@
   "properties": {
     "status": {
       "type": "string-not-empty"
+    },
+    "canRequest": {
+      "type": "boolean"
+    },
+    "group": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string-not-empty"
+        },
+        "name": {
+          "type": "string-not-empty"
+        }
+      },
+      "required": [
+        "code",
+        "name"
+      ]
     }
-  }
+  },
+  "required": [
+    "status",
+    "canRequest",
+    "group"
+  ]
 }

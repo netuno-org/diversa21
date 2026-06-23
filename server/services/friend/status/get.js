@@ -7,11 +7,21 @@ if (!loggedUser) response.stopWithPermissionDenied();
 
 const friendUid = _req.getString("uid");
 
-const dbFriend = _db.queryFirst("SELECT id FROM people WHERE uid = ?::uuid", friendUid);
+const dbFriend = _db.queryFirst(`
+  SELECT p.id, g.code AS "group_code", g.name AS "group_name"
+  FROM people p
+  INNER JOIN netuno_user u ON p.people_user_id = u.id
+  INNER JOIN netuno_group g ON u.group_id = g.id
+  WHERE p.uid = ?::uuid
+`, friendUid);
 if (!dbFriend) response.stopWithUserNotFound();
 
 const loggedId = loggedUser.getInt("id");
 const friendId = dbFriend.getInt("id");
+
+const loggedGroupCode = _group.code();
+const targetGroupCode = dbFriend.getString("group_code");
+const canRequest = loggedGroupCode === "member" && targetGroupCode === "member";
 
 let status = "none";
 
@@ -43,4 +53,9 @@ if (loggedId === friendId) {
 _out.json(
   _val.map()
     .set("status", status)
+    .set("canRequest", canRequest)
+    .set("group", _val.map()
+      .set("code", dbFriend.getString("group_code"))
+      .set("name", dbFriend.getString("group_name"))
+    )
 );
