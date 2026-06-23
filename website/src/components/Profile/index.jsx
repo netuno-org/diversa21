@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty, Tag } from 'antd';
+import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty, Tag, notification } from 'antd';
 import {
   EditOutlined,
   EnvironmentOutlined,
   CalendarOutlined,
-  SafetyOutlined
+  SafetyOutlined,
+  ClockCircleOutlined,
+  CheckOutlined,
+  CloseOutlined
 } from '@ant-design/icons';
 import { RiCommunityLine, RiFileEditLine } from "react-icons/ri";
 import { BsFillHouseGearFill } from "react-icons/bs";
+import { FaUserPlus } from "react-icons/fa";
+import { LuUserCheck } from "react-icons/lu";
 
 import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
@@ -26,9 +31,35 @@ function Profile({ user }) {
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [bannerUrl, setBannerUrl] = useState();
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [friendStatus, setFriendStatus] = useState(null);
+  const [canRequestFriend, setCanRequestFriend] = useState(false);
   const isOwnProfile = user?.username === loggedUser?.data?.username;
   const canEditProfile = isOwnProfile || loggedUser?.canManageUser(user);
+  const showAddFriendButton = !canEditProfile && canRequestFriend;
+
+  const friendshipStatus = {
+    none: { label: "Adicionar amigo", action: "request" },
+    pending: { label: "Cancelar pedido", action: "cancel" },
+    received: { label: "Confirmar", action: "accept" },
+    friends: { label: "Amigos", action: "remove" }
+  };
+  const currentFriendship = friendshipStatus[friendStatus];
+  let buttonIcon = undefined;
+
+  if (canEditProfile) {
+    buttonIcon = <EditOutlined />;
+  } else if (friendStatus === null) {
+    buttonIcon = undefined;
+  } else if (friendStatus === "none") {
+    buttonIcon = <FaUserPlus size={19} />;
+  } else if (friendStatus === "pending") {
+    buttonIcon = <ClockCircleOutlined />;
+  } else if (friendStatus === "received") {
+    buttonIcon = <CheckOutlined />;
+  } else {
+    buttonIcon = <LuUserCheck size={19} />;
+  }
 
   useEffect(() => {
     if (user) {
@@ -37,11 +68,152 @@ function Profile({ user }) {
     }
   }, [user]);
 
+
+  useEffect(() => {
+    if (!user?.uid) return;
+
+    if (isOwnProfile) {
+      setCanRequestFriend(false);
+      setFriendStatus("self");
+      return;
+    }
+
+    setCanRequestFriend(false);
+
+    _service({
+      method: "GET",
+      url: "/friend/status",
+      data: {
+        uid: user.uid
+      },
+      success: ({ json }) => {
+        setCanRequestFriend(json.canRequest);
+        setFriendStatus(json.status);
+      },
+      fail: (error) => {
+        console.error(error);
+        setCanRequestFriend(false);
+        setFriendStatus("none");
+      }
+    });
+  }, [user, isOwnProfile]);
+
   const handleEdit = () => {
     if (isOwnProfile) {
       navigate(`/profile/edit`);
     } else {
       navigate(`/e/${user.username}`);
+    }
+  };
+
+  const requestFriendAction = ({
+    method,
+    status,
+    successMessage,
+    successDescription,
+    errorMessage,
+    errorDescription
+  }) => {
+
+    setIsLoading(true);
+
+    _service({
+      method,
+      url: "/friend",
+      data: {
+        uid: user.uid
+      },
+      success: () => {
+        setFriendStatus(status);
+        setIsLoading(false);
+        notification.success({
+          title: successMessage,
+          description: successDescription
+        });
+      },
+      fail: (error) => {
+        setIsLoading(false);
+        console.error(error);
+        notification.error({
+          title: errorMessage,
+          description: errorDescription
+        });
+      }
+    });
+  };
+
+  const handleSendFriendRequest = () => {
+    requestFriendAction({
+      method: "POST",
+      status: "pending",
+      successMessage: "Solicitação enviada",
+      successDescription: "A solicitação de amizade foi enviada com sucesso.",
+      errorMessage: "Erro ao enviar solicitação",
+      errorDescription: "Não foi possível enviar a solicitação de amizade."
+    });
+  };
+
+  const handleCancelFriendRequest = () => {
+    requestFriendAction({
+      method: "DELETE",
+      status: "none",
+      successMessage: "Solicitação cancelada",
+      successDescription: "A solicitação de amizade foi cancelada com sucesso.",
+      errorMessage: "Erro ao cancelar solicitação",
+      errorDescription: "Não foi possível cancelar a solicitação de amizade."
+    });
+  };
+
+  const handleAcceptFriendRequest = () => {
+    requestFriendAction({
+      method: "PUT",
+      status: "friends",
+      successMessage: "Pedido aceito",
+      successDescription: "O pedido de amizade foi aceito com sucesso.",
+      errorMessage: "Erro ao aceitar pedido",
+      errorDescription: "Não foi possível aceitar o pedido de amizade."
+    });
+  };
+
+  const handleRejectFriendRequest = () => {
+    requestFriendAction({
+      method: "DELETE",
+      status: "none",
+      successMessage: "Pedido recusado",
+      successDescription: "O pedido de amizade foi recusado com sucesso.",
+      errorMessage: "Erro ao recusar pedido",
+      errorDescription: "Não foi possível recusar o pedido de amizade."
+    });
+  };
+
+  const handleRemoveFriend = () => {
+    requestFriendAction({
+      method: "DELETE",
+      status: "none",
+      successMessage: "Amizade desfeita",
+      successDescription: "Você não está mais conectado com este usuário.",
+      errorMessage: "Erro ao desfazer amizade",
+      errorDescription: "Não foi possível desfazer a amizade."
+    });
+  };
+
+  const handleFriendAction = () => {
+    if (!currentFriendship?.action) return;
+    switch (currentFriendship.action) {
+      case "request":
+        handleSendFriendRequest();
+        break;
+      case "cancel":
+        handleCancelFriendRequest();
+        break;
+      case "accept":
+        handleAcceptFriendRequest();
+        break;
+      case "remove":
+        handleRemoveFriend();
+        break;
+      default:
+        break;
     }
   };
 
@@ -109,30 +281,39 @@ function Profile({ user }) {
           <div className="profile__cover-placeholder" />
         )}
       </div>
-
       <Card className="profile__card">
         <div className="profile__header">
           <div className="profile__avatar">
             <Avatar src={avatarUrl} size={120} shape="square" />
           </div>
-
-          {canEditProfile && (
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              onClick={handleEdit}
-              className="profile__edit-btn"
-            >
-              Editar Perfil
-            </Button>
-          )}
+          <div className="profile__actions">
+            {(canEditProfile || showAddFriendButton) && (
+              <Button
+                type="primary"
+                className={`profile__edit-btn ${friendStatus === "friends" ||
+                  friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
+                icon={buttonIcon}
+                onClick={canEditProfile ? handleEdit : handleFriendAction}
+                loading={isLoading}
+              >
+                {canEditProfile ? "Editar Perfil" : currentFriendship.label}
+              </Button>
+            )}
+            {showAddFriendButton && friendStatus === "received" && (
+              <Button
+                className="profile__secondary-btn"
+                onClick={handleRejectFriendRequest}
+                loading={isLoading}
+              >
+                <CloseOutlined />Recusar
+              </Button>
+            )}
+          </div>
         </div>
-
         <div className="profile__info">
           <Title level={2} className="profile__name">
             {user.name}
           </Title>
-
           <div className="profile__username-wrapper">
             <Text type="secondary" className="profile__username">
               @{user.username}
@@ -143,11 +324,9 @@ function Profile({ user }) {
               </Tag>
             )}
           </div>
-
           <div className="profile__badges-wrapper">
             {renderGroupInfo()}
           </div>
-
           <Space size="large" className="profile__details" wrap>
             {(user.city?.name || user.country?.name) && (
               <div className="profile__detail-item">
@@ -179,9 +358,7 @@ function Profile({ user }) {
             )}
           </Space>
         </div>
-
         <Divider />
-
         <div className="profile__about">
           <Title level={4}>Sobre</Title>
           <Paragraph className="profile__about-text">
@@ -191,7 +368,6 @@ function Profile({ user }) {
           </Paragraph>
         </div>
       </Card>
-
       <div className="profile__tabs">
         <Tabs defaultActiveKey="posts" items={tabItems} size="large" />
       </div>

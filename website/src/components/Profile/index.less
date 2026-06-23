@@ -1,3 +1,5 @@
+@import '../../styles/variables.less';
+
 .profile {
   min-height: calc(100vh - 140px);
   padding: 16px 0;
@@ -68,6 +70,18 @@
     }
   }
 
+  &__actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+
+    @media (max-width: 576px) {
+      flex-direction: column;
+      width: 100%;
+      align-items: stretch;
+    }
+  }
+
 
   &__avatar {
     margin-top: -70px;
@@ -94,6 +108,17 @@
 
     @media (max-width: 576px) {
       margin-top: 16px;
+      width: 100%;
+    }
+  }
+
+  &__secondary-btn {
+    color: @primary-color;
+    border-color: @primary-color;
+    background-color: transparent;
+    padding: 0 16px !important;
+
+    @media (max-width: 576px) {
       width: 100%;
     }
   }
