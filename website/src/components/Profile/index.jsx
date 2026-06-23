@@ -64,7 +64,7 @@ function Profile({ user }) {
   useEffect(() => {
     if (user) {
       user.avatar && setAvatarUrl(_service.url(`/asset?uid=${user.uid}&type=avatar&entity=people&${new Date().getTime()}`));
-      user.coverImage && setBannerUrl(_service.url(`/asset?uid=${user.uid}&type=avatar&entity=people&${new Date().getTime()}`));
+      user.coverImage && setBannerUrl(_service.url(`/asset?uid=${user.uid}&type=banner&entity=people&${new Date().getTime()}`));
     }
   }, [user]);
 

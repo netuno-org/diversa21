@@ -5,8 +5,15 @@ import { _service } from "@netuno/server-types";
 //   group_id: ${_group.id}
 //   _env: ${_env}
 // `);
+if (_service.path === 'asset/get') {
+  _service.allow();
+}
 
 if (_service.path === 'people/avatar/get') {
+  _service.allow();
+}
+
+if (_service.path === 'people/banner/get') {
   _service.allow();
 }
 
