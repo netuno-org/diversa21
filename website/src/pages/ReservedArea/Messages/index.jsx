@@ -146,7 +146,7 @@ function Messages() {
                 <Avatar
                   src={
                     option.data.personData.avatar
-                      ? _service.url(`/asset?uid=${option.data.personData.uid}&assetName=avatar&entityName=people&${new Date().getTime()}`)
+                      ? _service.url(`/asset?uid=${option.data.personData.uid}&type=avatar&entity=people&${new Date().getTime()}`)
                       : "/images/profile-default.png"
                   }
                   size="small"

@@ -3,22 +3,22 @@ import { _req, _header, _out, _val, _exec } from "@netuno/server-types";
 import response from "#core/lib/response.js";
 
 const uid = _req.getString('uid');
-const assetName = _req.getString('assetName');
-const entityName = _req.getString('entityName');
+const type = _req.getString('type');
+const entity = _req.getString('entity');
 
 if (!uid) response.stopWithUserNotFound();
-if (!assetName) response.stopWithNameNotFound();
-if (!entityName) response.stopWithNameNotFound();
+if (!type) response.stopWithNameNotFound();
+if (!entity) response.stopWithNameNotFound();
 
-const dbTable = _db.get(entityName, uid);
+const dbTable = _db.get(entity, uid);
 
 if (!dbTable) response.stopWithTableNotFound();
 
-const dbTableName = dbTable.getString(assetName);
+const dbTableName = dbTable.getString(type);
 
 const storageFile = _storage.database(
-  entityName,
-  assetName,
+  entity,
+  type,
   dbTableName
 );
 

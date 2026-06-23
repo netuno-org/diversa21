@@ -15,7 +15,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
 
   useEffect(() => {
     if (user && user.avatar) {
-      setAvatarUrl(_service.url(`/asset?uid=${user.uid}&assetName=avatar&entityName=people`));
+      setAvatarUrl(_service.url(`/asset?uid=${user.uid}&type=avatar&entity=people`));
     }
   }, [user]);
 

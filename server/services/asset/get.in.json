@@ -3,17 +3,20 @@
     "asset"
   ],
   "summary": "Fetch Asset File",
-  "description": "Retrieve an asset file from storage by UID, asset name, and entity (database table) name.",
+  "description": "Fetch asset file from storage by UID, asset type, and entity name.",
   "properties": {
     "uid": {
       "type": "uid"
     },
-    "assetName": {
-      "type": "string-not-empty"
-    },
-    "entityName": {
+    "type": {
       "type": "string-not-empty",
-      "description": "Database table name. Examples: 'people', 'institution'"
+      "description": "Type of asset.",
+      "example": "avatar"
+    },
+    "entity": {
+      "type": "string-not-empty",
+      "description": "Entity name.",
+      "example": "people"
     }
   }
 }

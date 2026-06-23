@@ -14,7 +14,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
   if (!institution) return null;
 
   const avatarUrl = institution.logo
-    ? _service.url(`/asset?uid=${institution.uid}&assetName=avatar&entityName=institution`)
+    ? _service.url(`/asset?uid=${institution.uid}&type=avatar&entity=institution`)
     : null;
 
   const location = [

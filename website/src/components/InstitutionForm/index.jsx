@@ -59,8 +59,8 @@ export default function InstitutionForm({
         success: ({ json }) => {
           if (json.data) {
             const data = json.data;
-            setLogoPreview(data.logo ? _service.url(`/asset?uid=${data.uid}&assetName=avatar&entityName=institution`) : null);
-            setCoverPreview(data.cover_image ? _service.url(`/asset?uid=${data.uid}&assetName=banner&entityName=institution`) : null);
+            setLogoPreview(data.logo ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution`) : null);
+            setCoverPreview(data.cover_image ? _service.url(`/asset?uid=${data.uid}&type=banner&entity=institution`) : null);
             setInitialLogo(data.logo);
             setInitialCover(data.cover_image);
 
@@ -93,8 +93,8 @@ export default function InstitutionForm({
       });
     } else if (initialData) {
       // Use provided initialData
-      setLogoPreview(initialData.logo ? _service.url(`/asset?uid=${initialData.uid}&assetName=avatar&entityName=institution`) : null);
-      setCoverPreview(initialData.cover_image ? _service.url(`/asset?uid=${initialData.uid}&assetName=banner&entityName=institution`) : null);
+      setLogoPreview(initialData.logo ? _service.url(`/asset?uid=${initialData.uid}&type=avatar&entity=institution`) : null);
+      setCoverPreview(initialData.cover_image ? _service.url(`/asset?uid=${initialData.uid}&type=banner&entity=institution`) : null);
       setInitialLogo(initialData.logo);
       setInitialCover(initialData.cover_image);
 

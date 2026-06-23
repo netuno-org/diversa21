@@ -19,7 +19,7 @@ function HeaderUserInfo() {
     } else {
       setLoading(false);
       if (people.data.avatar) {
-        setTimeout(() => setAvatarImageURL(_service.url(`/asset?uid=${people.data.uid}&assetName=avatar&entityName=people&${new Date().getTime()}`)), 250);
+        setTimeout(() => setAvatarImageURL(_service.url(`/asset?uid=${people.data.uid}&type=avatar&entity=people&${new Date().getTime()}`)), 250);
       } else {
         setAvatarImageURL('/images/profile-default.png')
       }
