@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import _auth from "@netuno/auth-client";
-import { Button, Spin, Typography } from "antd";
+import { Button, Result, Spin, Typography } from "antd";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import usePeople from "../../common/usePeople.js";
@@ -128,13 +128,16 @@ function ReservedArea() {
   return (
     <section className="reserved-area">
       <div className="reserved-area__unauthorized">
-        <Title>Não Autorizado</Title>
-        <p>
-          É necessário realizar a autenticação para aceder a área reservada.
-        </p>
-        <Button type="primary" onClick={() => navigate("/login")}>
-          Ir para o Login
-        </Button>
+        <Result
+          status="403"
+          title="Não Autorizado"
+          subTitle="É necessário realizar a autenticação para aceder a área reservada."
+          extra={
+            <Button type="primary" onClick={() => navigate("/login")}>
+              Ir para o Login
+            </Button>
+          }
+        />
       </div>
     </section>
   );
