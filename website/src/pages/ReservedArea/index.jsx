@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import _auth from "@netuno/auth-client";
-import { Button, Result, Spin, Typography } from "antd";
+import { Button, Result, Spin } from "antd";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import usePeople from "../../common/usePeople.js";
@@ -21,8 +21,6 @@ import Messages from "./Messages";
 import Notifications from "./Notifications";
 
 import "./index.less";
-
-const { Title } = Typography;
 
 function ReservedArea() {
   const navigate = useNavigate();

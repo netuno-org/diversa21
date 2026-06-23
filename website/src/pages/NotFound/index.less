@@ -1,20 +1,31 @@
-.notfound-wrapper {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  text-align: center;
+.not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 65vh;
+  padding: 40px 20px;
 
-  .notfound-content {
-    position: absolute;
-    width: 100%;
-    top: calc(50% - 85px);
-    left: 0;
-    .content-title {
-      .ant-typography+h2.ant-typography {
-        margin-top: 0;
-        margin-bottom: 1.1em;
+  .ant-result-title {
+    margin-top: 24px;
+    font-weight: bold;
+  }
+
+  .ant-result-extra {
+    .ant-btn {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 576px) {
+    padding: 20px 0;
+    min-height: 60vh;
+
+    .ant-result-extra {
+      margin-top: 32px;
+
+      .ant-btn {
+        width: 100%;
       }
     }
   }
