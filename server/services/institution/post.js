@@ -1,4 +1,4 @@
-import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types"
+import { _req, _db, _val, _out, _header, _exec, _convert } from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -15,7 +15,6 @@ const cityUid = _req.getUID("city");
 const website = _req.getString("website");
 const logo = _req.getFile("logo");
 const cover_image = _req.getFile("cover_image");
-
 if (!cityUid) response.stopWithCityNotFound();
 
 const dbCity = _db.queryFirst(`SELECT id FROM city WHERE uid = ?::uuid`, cityUid);
@@ -26,13 +25,16 @@ const cityId = dbCity.getInt("id");
 
 if (!name) response.stopWithNameNotFound();
 
+const slug = _convert.slug(name);
+
 if (!email) response.stopWithEmailNotFound();
 
 const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
   .set("email", email)
-  .set("active", "true");
+  .set("active", "true")
+  .set("slug", slug);
 
 if (telephone) {
   institutionData.set("telephone", telephone.replace(/\s/g, ''));
@@ -56,8 +58,10 @@ if (cover_image) {
 
 const uid = _db.insert("institution", institutionData);
 
+_db.execute("UPDATE institution SET slug = ? WHERE id = ?", slug, uid);
+
 const dbInstitution = _db.queryFirst(`
-    SELECT uid, slug FROM institution WHERE id = ?
+SELECT uid, slug FROM institution WHERE id = ?
 `, uid);
 
 if (!dbInstitution) response.stopWithInstitutionNotFound();
