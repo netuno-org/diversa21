@@ -6,6 +6,11 @@
         "name": "people-order",
         "config": "1 * * * * ?",
         "url": "/services/jobs/people-order"
+      },
+      {
+        "name": "notification",
+        "config": "0/10 * * * * ?",
+        "url": "/services/jobs/notification"
       }
     ]
   },
