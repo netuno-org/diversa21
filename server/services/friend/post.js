@@ -1,43 +1,20 @@
 import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
 import people from "#core/lib/people.js";
+import response from "#core/lib/response.js";
 
 const loggedUser = people.getLogged();
-if (!loggedUser) {
-  _header.status(403);
-  _out.json(
-    _val.map()
-      .set("error", "forbidden")
-  );
-  _exec.stop();
-}
+if (!loggedUser) response.stopWithPermissionDenied();
 
 const friendUid = _req.getString("uid");
 
-// Localizar o potencial amigo na base de dados
 const dbFriend = _db.queryFirst("SELECT id, name FROM people WHERE uid = ?::uuid", friendUid);
-if (!dbFriend) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "not_found")
-  );
-  _exec.stop();
-}
+if (!dbFriend) response.stopWithUserNotFound();
 
 const loggedId = loggedUser.getInt("id");
 const friendId = dbFriend.getInt("id");
 
-// Não permitir adicionar-se a si próprio
-if (loggedId === friendId) {
-  _header.status(400);
-  _out.json(
-    _val.map()
-      .set("error", "cannot_add_self")
-  );
-  _exec.stop();
-}
+if (loggedId === friendId) response.stopWithBadRequest("cannot_add_self");
 
-// Verificar se já existe uma relação
 const dbExisting = _db.queryFirst(`
   SELECT id, people_id, friend_id, accepted_at
   FROM friend
@@ -47,37 +24,16 @@ const dbExisting = _db.queryFirst(`
 
 if (dbExisting) {
   const acceptedAt = dbExisting.getString("accepted_at");
-  if (acceptedAt && acceptedAt !== "") {
-    _header.status(400);
-    _out.json(
-      _val.map()
-        .set("error", "already_friends")
-    );
-    _exec.stop();
-  }
+  if (acceptedAt && acceptedAt !== "") response.stopWithBadRequest("already_friends");
 
-  // Se já existe um pedido pendente
   const initiatorId = dbExisting.getInt("people_id");
   if (initiatorId === loggedId) {
-    // Fui eu que enviei o pedido e ainda está pendente
-    _header.status(400);
-    _out.json(
-      _val.map()
-        .set("error", "request_already_sent")
-    );
-    _exec.stop();
+    response.stopWithBadRequest("request_already_sent");
   } else {
-    // A outra pessoa enviou-me o pedido e está pendente de eu aceitar
-    _header.status(400);
-    _out.json(
-      _val.map()
-        .set("error", "request_already_received")
-    );
-    _exec.stop();
+    response.stopWithBadRequest("request_already_received");
   }
 }
 
-// Criar um novo pedido de amizade pendente
 const currentTimestamp = _db.timestamp();
 const requestId = _db.insert("friend", _val.map()
   .set("people_id", loggedId)

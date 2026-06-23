@@ -11,14 +11,7 @@ if (page > 0) {
 }
 
 const loggedUser = people.getLogged();
-if (!loggedUser) {
-  _header.status(403);
-  _out.json(
-    _val.map()
-      .set("error", "forbidden")
-  );
-  _exec.stop();
-}
+if (!loggedUser) response.stopWithPermissionDenied();
 
 const loggedId = loggedUser.getInt("id");
 

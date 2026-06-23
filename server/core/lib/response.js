@@ -34,6 +34,7 @@ export default {
 
   stopWithNotExist: () => stopWithError(404, "not-exist"),
   stopWithPermissionDenied: () => stopWithError(403, "permission-denied"),
+  stopWithBadRequest: (message) => stopWithError(400, message),
 
   stopWithUserNotFound: () => stopWithNotFound("user"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),

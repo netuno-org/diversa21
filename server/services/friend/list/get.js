@@ -13,14 +13,8 @@ if (page > 0) {
 }
 
 const loggedUser = people.getLogged();
-if (!loggedUser) {
-  _header.status(403);
-  _out.json(
-    _val.map()
-      .set("error", "forbidden")
-  );
-  _exec.stop();
-}
+if (!loggedUser) response.stopWithPermissionDenied();
+
 const profileUid = _req.getString("uid");
 const name = _req.getString("name");
 
@@ -29,14 +23,7 @@ let targetId = loggedId;
 
 if (profileUid && profileUid !== "") {
   const dbProfile = _db.queryFirst("SELECT id FROM people WHERE uid = ?::uuid", profileUid);
-  if (!dbProfile) {
-    _header.status(404);
-    _out.json(
-      _val.map()
-        .set("error", "not_found")
-    );
-    _exec.stop();
-  }
+  if (!dbProfile) response.stopWithUserNotFound();
   targetId = dbProfile.getInt("id");
 }
 
