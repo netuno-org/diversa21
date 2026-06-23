@@ -7,7 +7,7 @@ import { Card, Avatar, Button, Popconfirm, notification } from "antd";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaRegComment } from "react-icons/fa";
-import momentjs from "moment";
+import dayjs from "dayjs";
 import Editor from "./Editor";
 import PostList from "./List";
 import "./index.less";
@@ -163,7 +163,7 @@ function Post({
               <p className="user-name">{people.name}</p>
             </Link>
             <span className="post-date">
-              {momentjs(moment).format("lll")}
+              {dayjs(moment).format("llll")}
             </span>
           </div>
         </div>
