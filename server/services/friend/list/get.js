@@ -59,12 +59,8 @@ const dbFriends = _db.query(sqlQuery, params);
 const friends = _val.list();
 for (const dbFriend of dbFriends) {
   friends.add(
-    _val.map()
-      .set("uid", dbFriend.getString("friend_uid"))
-      .set("name", dbFriend.getString("friend_name"))
-      .set("user", dbFriend.getString("friend_user"))
-      .set("avatar", dbFriend.getString("friend_avatar") !== "")
-  )
+    people.getData(dbFriend.getUID("friend_uid"))
+  );
 }
 
 const result = _val.map();
