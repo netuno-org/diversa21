@@ -3,17 +3,37 @@
 .editor-form {
   margin-top: 12px;
 
-  .ant-form-item:last-child {
+  &__text-area {
+    resize: none !important;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+
+  &__footer-item {
     margin-bottom: 0;
   }
 
-  .post-actions-container {
+  &__actions {
     display: flex;
     justify-content: end;
     align-items: center;
   }
 
-  &.editor-post {
+  &__btn {
+    &--cancel {
+      color: @primary-color;
+      border-color: @primary-color;
+      background-color: transparent;
+
+      &:hover {
+        color: fade(@primary-color, 80%);
+        border-color: fade(@primary-color, 80%);
+        background-color: fade(@primary-color, 5%);
+      }
+    }
+  }
+
+  &--post {
     .ant-form-item-label {
       margin-left: 24px;
       padding-bottom: 16px;
@@ -22,18 +42,6 @@
         font-weight: 600;
         color: @primary-color;
       }
-    }
-  }
-
-  .btn-cancel-pill {
-    color: @primary-color;
-    border-color: @primary-color;
-    background-color: transparent;
-
-    &:hover {
-      color: fade(@primary-color, 80%);
-      border-color: fade(@primary-color, 80%);
-      background-color: fade(@primary-color, 5%);
     }
   }
 }

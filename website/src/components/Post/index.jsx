@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { connect } from 'react-redux';
 import _service from "@netuno/service-client";
 import { Space, Tag } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Card, Avatar, Button, Popconfirm, notification } from "antd";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { RiArrowGoBackLine } from "react-icons/ri";
@@ -33,11 +33,16 @@ function Post({
   const [isLiked, setIsLiked] = useState(liked);
   const [likesCounter, setLikesCounter] = useState(likes);
   const [loadingLike, setLoadingLike] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(false);
 
   const refPostList = useRef(null);
+  const postCardRef = useRef(null);
 
   const loggedUser = usePeople();
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const isAlreadyIsolated = String(location.state?.autoOpenPostUid) === String(uid);
   const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts();
 
   useEffect(() => {
@@ -47,6 +52,34 @@ function Post({
       );
     }
   }, []);
+
+  useEffect(() => {
+    if (isAlreadyIsolated) {
+      setIsHighlighted(true);
+
+      setTimeout(() => {
+        postCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (countComments > 0 && !showComments) {
+          setShowComments(true);
+          setLoadingComments(true);
+        }
+
+        setTimeout(() => setIsHighlighted(false), 3000);
+      }, 500);
+    }
+  }, [location.state, uid, countComments, showComments]);
+
+  const handleCardClick = (e) => {
+    if (isAlreadyIsolated || editMode) return;
+
+    if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.ant-popover') || e.target.closest('.ant-popconfirm')) {
+      return;
+    }
+
+    navigate('/posts', {
+      state: { autoOpenPostUid: uid }
+    });
+  };
 
   const onCommentRemoved = () => {
     setCountComments(countComments - 1);
@@ -146,7 +179,18 @@ function Post({
   displayContent.pop();
 
   return (
-    <Card className="post-container">
+    <Card
+      className={`post-container 
+        ${isHighlighted.valueOf
+          ? 'post-container--highlight'.valueOf
+          : ''} 
+        ${!isAlreadyIsolated
+          ? 'post-container--clickable'
+          : ''}`}
+      ref={postCardRef}
+      onClick={handleCardClick}
+      style={{ cursor: !isAlreadyIsolated ? 'pointer' : 'default' }}
+    >
       <div className="header-user-info-container">
         <div className="user-info-left">
           <Link to={`/u/${people.user}`}>

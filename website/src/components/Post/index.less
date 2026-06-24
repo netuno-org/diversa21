@@ -2,6 +2,28 @@
 
 .post-container {
   margin-top: 24px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  // transition: background-color 0.2s ease;
+
+  &--clickable {
+    &:hover {
+      border-color: @primary-color;
+      box-shadow: 0 4px 12px fade(@primary-color, 15%);
+      // background-color: fade(@primary-color, 4%);
+    }
+  }
+
+  .post-container {
+    margin-top: 24px;
+    /*
+    background-color: #ffffff;
+
+    &:hover {
+      background-color: fade(@primary-color, 4%);
+    }
+    */
+  }
 
   .header-user-info-container {
     width: 100%;
@@ -80,12 +102,13 @@
       border-color: @primary-color;
       background-color: transparent;
       padding: 0 16px !important;
-      
+
       &:hover {
         color: fade(@primary-color, 80%);
         border-color: fade(@primary-color, 80%);
         background-color: fade(@primary-color, 5%);
       }
+
       @media (max-width: 445.60px) {
         width: 100% !important;
         margin-top: 8px;

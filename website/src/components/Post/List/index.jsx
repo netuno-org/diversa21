@@ -3,7 +3,7 @@ import _service from "@netuno/service-client";
 import { Button, Col, notification, Row, Spin, Empty } from "antd";
 import Post from "..";
 
-function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
+function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [page, setPage] = useState(0);
@@ -29,18 +29,28 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
       data.peopleUid = author;
     }
 
+    if (isolatedUid) {
+      data.uid = isolatedUid;
+    }
+
     data.page = page;
 
     _service({
       url: "post/list",
       data,
-      success: (response) => {
+      success: ({ json }) => {
         if (onLoaded) {
           onLoaded();
         }
 
         setLoadingPosts(false);
-        setPosts([...posts, ...response.json.data.items]);
+        let fetchedItems = json?.data?.items || [];
+
+        if (isolatedUid) {
+          fetchedItems = fetchedItems.filter(p => String(p.uid) === String(isolatedUid));
+        }
+
+        setPosts([...posts, ...fetchedItems]);
       },
       fail: (e) => {
         if (onLoaded) {
@@ -109,13 +119,13 @@ function PostList({ author, parent, onLoaded, onItemRemoved }, ref) {
       {!loadingPosts && posts.length === 0 && (
         <div style={{ padding: '40px 20px', background: '#fff', borderRadius: '8px', border: '1px solid #f0f0f0' }}>
           <Empty
-            description={parent ? "Ainda não existem comentários." : "Ainda não existem publicações."}
+            description={parent ? "Ainda não existem comentários." : "Esta publicação não foi encontrada ou foi apagada."}
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
         </div>
       )}
 
-      {!loadingPosts && parent && posts.length >= 10 && (
+      {!loadingPosts && parent && posts.length >= 10 && !isolatedUid && (
         <Button
           type="link"
           onClick={onLoadMorePosts}

@@ -58,7 +58,7 @@
       }
     }
   }
-  
+
   &__header {
     display: flex;
     justify-content: space-between;
@@ -135,14 +135,15 @@
   &__username-wrapper {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-top: 8px;
+    margin-bottom: 16px;
   }
 
   &__username {
     display: block;
-    margin-bottom: 0;
-    margin-top: 10px;
+    margin: 0;
     font-size: 16px;
   }
 
@@ -150,11 +151,7 @@
     border-radius: 12px;
     font-weight: 500;
     padding: 0 10px;
-    margin-top: 10px;
-  }
-
-  &__badges-wrapper {
-    margin-bottom: 16px;
+    margin: 0;
   }
 
   &__group-badge {
@@ -165,6 +162,7 @@
     background: rgba(0, 0, 0, 0.03);
     padding: 4px 12px;
     border-radius: 16px;
+    margin: 0;
   }
 
   &__details {

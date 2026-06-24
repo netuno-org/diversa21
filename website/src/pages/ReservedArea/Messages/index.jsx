@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Row, Col, Card, Modal, Select, Spin, Typography, Avatar, Space, Empty } from "antd";
 import { LuMessageSquarePlus } from "react-icons/lu";
 
@@ -22,6 +23,14 @@ function Messages() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const loggedUser = usePeople();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.autoOpenFriend) {
+      setChatFriend(location.state.autoOpenFriend);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const fetchPeopleForModal = (term = "") => {
     setFetchingPeople(true);

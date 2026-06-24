@@ -318,14 +318,12 @@ function Profile({ user }) {
             <Text type="secondary" className="profile__username">
               @{user.username}
             </Text>
+            {renderGroupInfo()}
             {user.active === false && (
               <Tag bordered={false} color="error" className="profile__status-tag">
                 Conta Inativa
               </Tag>
             )}
-          </div>
-          <div className="profile__badges-wrapper">
-            {renderGroupInfo()}
           </div>
           <Space size="large" className="profile__details" wrap>
             {(user.city?.name || user.country?.name) && (
