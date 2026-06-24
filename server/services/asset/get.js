@@ -28,8 +28,6 @@ const storageFile = _storage.database(
   dbTableName
 );
 
-_log.debug(`${storageFile}`);
-
 _header.contentTypePNG();
 _header.noCache();
 
