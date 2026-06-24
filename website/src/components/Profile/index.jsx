@@ -68,9 +68,10 @@ function Profile({ user }) {
     }
   }, [user]);
 
-
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     if (isOwnProfile) {
       setCanRequestFriend(false);
@@ -197,7 +198,10 @@ function Profile({ user }) {
   };
 
   const handleFriendAction = () => {
-    if (!currentFriendship?.action) return;
+    if (!currentFriendship?.action)  {
+      return;
+    }
+
     switch (currentFriendship.action) {
       case "request":
         handleSendFriendRequest();
@@ -226,7 +230,9 @@ function Profile({ user }) {
   }
 
   const renderGroupInfo = () => {
-    if (user.group.code === "member") return null;
+    if (user.group.code === "member") {
+      return null;
+    }
 
     let Icon = RiFileEditLine;
     let color = "#d0990f"; // Review
@@ -332,14 +338,12 @@ function Profile({ user }) {
                 </Text>
               </div>
             )}
-
             {user.birthDate && (
               <div className="profile__detail-item">
                 <CalendarOutlined />
                 <Text type="secondary">{dayjs().diff(dayjs(user.birthDate), 'year')} anos</Text>
               </div>
             )}
-
             {user.institution && (
               <Popover
                 content={<div className="profile__popover">Visitar página da instituição</div>}
