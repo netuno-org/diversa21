@@ -33,11 +33,7 @@ const dbNotifications = _db.query(`
     INNER JOIN netuno_user originator_user ON originator.people_user_id = originator_user.id
     INNER JOIN netuno_user recipient_user ON recipient.people_user_id = recipient_user.id
     INNER JOIN notification_type ON notification.type_id = notification_type.id
-    LEFT JOIN notification_opt_out
-        ON notification_opt_out.people_id = recipient.id
-        AND notification_opt_out.type_id = notification_type.id
     WHERE recipient.uid = ?::uuid
-    AND notification_opt_out.id IS NULL
     ORDER BY notification.sent_at 
     LIMIT ?::int OFFSET ?::int
   `, loggedUserUid, pageSize, offset

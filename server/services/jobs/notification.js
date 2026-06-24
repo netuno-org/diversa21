@@ -33,8 +33,12 @@ _db.execute(`
     FROM post
     INNER JOIN people originator ON post.people_id = originator.id
     INNER JOIN people recipient ON recipient.institution_id = originator.institution_id
+    LEFT JOIN notification_opt_out
+        ON notification_opt_out.people_id = recipient.id
+        AND notification_opt_out.type_id = ${institutionNotificationId} 
     WHERE 1 = 1
       AND moment >= NOW() - INTERVAL '11 seconds'
       AND originator.id <> recipient.id
+      AND notification_opt_out.id IS NULL
     ORDER BY moment DESC;
 `);
