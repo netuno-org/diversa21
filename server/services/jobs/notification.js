@@ -33,6 +33,8 @@ _db.execute(`
     FROM post
     INNER JOIN people originator ON post.people_id = originator.id
     INNER JOIN people recipient ON recipient.institution_id = originator.institution_id
-    WHERE moment >= NOW() - INTERVAL '11 seconds'
+    WHERE 1 = 1
+      AND moment >= NOW() - INTERVAL '11 seconds'
+      AND originator.id <> recipient.id
     ORDER BY moment DESC;
 `);
