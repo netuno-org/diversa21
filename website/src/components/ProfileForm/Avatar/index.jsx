@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar } from 'antd';
-import {
-  UploadOutlined,
-  ZoomInOutlined,
-  ZoomOutOutlined,
-  UndoOutlined,
-  FormatPainterOutlined,
-  DeleteOutlined
-} from '@ant-design/icons';
+import { UploadOutlined, ZoomInOutlined, ZoomOutOutlined, UndoOutlined, FormatPainterOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useDropzone } from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
 

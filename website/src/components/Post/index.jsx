@@ -45,6 +45,19 @@ function Post({
   const isAlreadyIsolated = String(location.state?.autoOpenPostUid) === String(uid);
   const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts();
 
+  const formatPostDate = (date) => {
+    const postMoment = dayjs(date);
+    const now = dayjs();
+
+    const diffInHours = now.diff(postMoment, 'hour');
+
+    if (diffInHours < 24) {
+      return postMoment.fromNow();
+    }
+
+    return postMoment.format("llll");
+  };
+
   useEffect(() => {
     if (people.avatar) {
       setAvatarUrl(
@@ -207,7 +220,7 @@ function Post({
               <p className="user-name">{people.name}</p>
             </Link>
             <span className="post-date">
-              {dayjs(moment).format("llll")}
+              {formatPostDate(moment)}
             </span>
           </div>
         </div>

@@ -129,6 +129,7 @@ function Editor({
       className={`editor-form editor-form--${type}`} 
       form={form}
       onFinish={types[type].onFinish}
+      onClick={(e) => e.stopPropagation()}
       layout="vertical"
       initialValues={{
         content

@@ -5,6 +5,7 @@ import {ConfigProvider, Layout, notification} from 'antd';
 import antLocale_ptBR from 'antd/lib/locale/pt_BR';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 import classNames from 'classnames';
 
@@ -32,6 +33,7 @@ import './styles/App.less';
 
 dayjs.locale('pt-br');
 dayjs.extend(LocalizedFormat);
+dayjs.extend(relativeTime);
 
 const { Content } = Layout;
 
