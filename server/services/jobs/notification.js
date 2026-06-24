@@ -22,13 +22,13 @@ _db.execute(`
     )
     SELECT
         NEXTVAL('notification_id'),
-        'Novo post da sua instituição',
+        'Membro da sua instituição fez um novo post.',
         post.content,
         originator.id,
         recipient.id,
         NOW(),
         NULL,
-        '',
+        '{ "postUid": "' || post.uid || '" }',
         ${institutionNotificationId}
     FROM post
     INNER JOIN people originator ON post.people_id = originator.id
