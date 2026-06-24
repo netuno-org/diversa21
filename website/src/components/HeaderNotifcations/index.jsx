@@ -1,23 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Popover, List, Typography, Avatar, Button } from 'antd';
 import { BellOutlined, MessageOutlined, SafetyOutlined, NotificationOutlined, FileTextOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
+import _service from '@netuno/service-client';
+
+import usePeople from "../../common/usePeople.js";
+
 import './index.less';
 
 const { Text } = Typography;
 
-const MOCK_NOTIFICATIONS = [
-  { id: 1, type: 'institution_post', title: `@ben10`, desc: 'Fez uma nova publicação na tua instituição.', time: 'Agora mesmo', read: false, postId: 'b3499f27-44b8-4169-92ea-d0a8b6c12148', username: 'ben10' },
-  { id: 2, type: 'message', title: '@test', desc: 'Enviou-te uma nova mensagem.', time: 'Há 5 min', read: false, username: 'test' },
-  { id: 3, type: 'security', title: 'Novo Acesso', desc: 'Sessão iniciada num novo dispositivo.', time: 'Há 2 horas', read: false },
-  { id: 4, type: 'system', title: 'Manutenção', desc: 'O sistema estará offline esta madrugada.', time: 'Ontem', read: true },
-  { id: 5, type: 'system', title: 'Bem-vindo!', desc: 'O teu perfil foi criado com sucesso.', time: 'Há 3 dias', read: true },
-  { id: 6, type: 'system', title: 'Notificação Extra', desc: 'Esta notificação não deve aparecer no header.', time: 'Há 4 dias', read: true },
-];
-
 function HeaderNotifications() {
+  const loggedUser = usePeople();
+
+  const MOCK_NOTIFICATIONS = loggedUser.canChangeUserGroup() ?
+    [
+      {
+        id: 1,
+        type: 'message',
+        title: '@test',
+        desc: 'Enviou-te uma nova mensagem.',
+        time: 'Há 5 min',
+        read: false,
+        username: 'test'
+      },
+      {
+        id: 2,
+        type: 'security',
+        title: 'Novo Acesso',
+        desc: 'Sessão iniciada num novo dispositivo.',
+        time: 'Há 2 horas',
+        read: false
+      },
+      {
+        id: 3,
+        type: 'system',
+        title: 'Manutenção',
+        desc: 'O sistema estará offline esta madrugada.',
+        time: 'Ontem',
+        read: true
+      },
+      {
+        id: 4,
+        type: 'system',
+        title: 'Bem-vindo!',
+        desc: 'O teu perfil foi criado com sucesso.',
+        time: 'Há 3 dias',
+        read: true
+      },
+    ] : [];
+
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -26,6 +60,33 @@ function HeaderNotifications() {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const displayNotifications = notifications.slice(0, 5);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = () => {
+    _service({
+      url: 'notification/list',
+      success: (response) => {
+        const { items } = response.json.data;
+        items.forEach(n => {
+          n.id = n.uid;
+          n.read = Boolean(n.read_at); 
+          n.time = n.sent_at;
+          if (n.type === 'institution-post') {
+            n.desc = n.title;
+            n.title = '@' + n.originator.username;
+            n.username = '@' + n.originator.username;
+            n.postId = n.extra.postUid;
+          }
+        });
+        setNotifications(notifications => [...notifications, ...items]);
+      },
+      fail: () => {
+      }
+    })
+  };
 
   const markAllAsRead = (e) => {
     e.stopPropagation();
@@ -36,7 +97,7 @@ function HeaderNotifications() {
     setNotifications(notifications.map(n => n.id === item.id ? { ...n, read: true } : n));
     setPopoverOpen(false);
 
-    if (item.type === 'institution_post') {
+    if (item.type === 'institution-post') {
       navigate('/posts', { state: { autoOpenPostUid: item.postId } });
     } else if (item.type === 'message') {
       navigate('/messages', {
@@ -47,7 +108,7 @@ function HeaderNotifications() {
 
   const getIconForType = (type) => {
     switch (type) {
-      case 'institution_post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
+      case 'institution-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
       case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} />;
       case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#FDBA3C' }} />;
       default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;

@@ -48,7 +48,6 @@ function HeaderBase({ collapsed }) {
           onClick={onUserMenuClick}
           selectedKeys={menuKeysSelected}
           items={[
-            loggedUser.canChangeUserGroup() &&
             {
               key: "notifications",
               label: <HeaderNotifications />,

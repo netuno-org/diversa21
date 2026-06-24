@@ -4,21 +4,58 @@ import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin 
 import { MessageOutlined, SafetyOutlined, NotificationOutlined, FileTextOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
+import _service from '@netuno/service-client';
+
 import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
+import usePeople from "../../../common/usePeople.js";
 
 import './index.less';
 
+import dayjs from 'dayjs';
+
 const { Text } = Typography;
 
-const INITIAL_NOTIFICATIONS = [
-  { id: 1, type: 'institution_post', title: `@ben10`, desc: 'Fez uma nova publicação na tua instituição.', time: 'Agora mesmo', read: false, postId: 'b3499f27-44b8-4169-92ea-d0a8b6c12148', username: 'ben10' },
-  { id: 2, type: 'message', title: '@test', desc: 'Enviou-te uma nova mensagem.', time: 'Há 5 min', read: false, username: 'test' },
-  { id: 3, type: 'security', title: 'Novo Acesso', desc: 'Sessão iniciada num novo dispositivo.', time: 'Há 2 horas', read: false },
-  { id: 4, type: 'system', title: 'Manutenção', desc: 'O sistema estará offline esta madrugada.', time: 'Ontem', read: true },
-  { id: 5, type: 'system', title: 'Bem-vindo!', desc: 'O teu perfil foi criado com sucesso.', time: 'Há 3 dias', read: true },
-];
-
 function Notifications() {
+  const loggedUser = usePeople();
+
+  const INITIAL_NOTIFICATIONS = loggedUser.canChangeUserGroup() ?
+    [
+      {
+        id: 1,
+        type: 'message',
+        title: '@test',
+        desc: 'Enviou-te uma nova mensagem.',
+        time: 'Há 5 min',
+        read: false,
+        username: 'test'
+      },
+      {
+        id: 2,
+        type: 'security',
+        title: 'Novo Acesso',
+        desc: 'Sessão iniciada num novo dispositivo.',
+        time: 'Há 2 horas',
+        read: false
+      },
+      {
+        id: 3,
+        type: 'system',
+        title: 'Manutenção',
+        desc: 'O sistema estará offline esta madrugada.',
+        time: 'Ontem',
+        read: true
+      },
+      {
+        id: 4,
+        type: 'system',
+        title: 'Bem-vindo!',
+        desc: 'O teu perfil foi criado com sucesso.',
+        time: 'Há 3 dias',
+        read: true
+      },
+    ] : [];
+
+
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const [activeTab, setActiveTab] = useState('all');
@@ -30,14 +67,48 @@ function Notifications() {
     setTimeout(() => setLoading(false), 500);
   }, []);
 
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = () => {
+    setLoading(true);
+    _service({
+      url: 'notification/list',
+      success: (response) => {
+        const { items } = response.json.data;
+        items.forEach(n => {
+          n.id = n.uid;
+          n.read = Boolean(n.read_at); 
+          n.time = n.sent_at;
+          if (n.type === 'institution-post') {
+            n.desc = n.title;
+            n.title = '@' + n.originator.username;
+            n.username = '@' + n.originator.username;
+            n.postId = n.extra.postUid;
+          }
+        });
+        setNotifications(notifications => [...notifications, ...items]);
+        setLoading(false);
+      },
+      fail: () => {
+        setLoading(false);
+      }
+    })
+  };
+
   const markAllAsRead = () => {
+    // const baseFormat = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS');
+    // const extraMicroseconds = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    // const formattedDate = `${baseFormat}${extraMicroseconds}`;
+    // setNotifications(notifications.map(n => ({ ...n, read_at: formattedDate })));
     setNotifications(notifications.map(n => ({ ...n, read: true })));
   };
 
   const handleNotificationClick = (item) => {
     setNotifications(notifications.map(n => n.id === item.id ? { ...n, read: true } : n));
 
-    if (item.type === 'institution_post') {
+    if (item.type === 'institution-post') {
       navigate('/posts', { state: { autoOpenPostUid: item.postId } });
     } else if (item.type === 'message') {
       navigate('/messages', {
@@ -48,7 +119,7 @@ function Notifications() {
 
   const getIconForType = (type) => {
     switch (type) {
-      case 'institution_post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} shape='square' />;
+      case 'institution-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} shape='square' />;
       case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} shape='square' />;
       case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#FDBA3C' }} shape='square' />;
       default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} shape='square' />;

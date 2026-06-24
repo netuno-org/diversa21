@@ -105,10 +105,6 @@ function ReservedArea() {
         return <Messages />;
       }
       if (location.pathname === "/notifications") {
-        if (!people.canChangeUserGroup()) {
-          navigate('/');
-          return;
-        }
         return <Notifications />;
       }
       return <NotFound />;
