@@ -33,11 +33,11 @@ export default function InstitutionForm({
     : () => navigate('/institutions');
   const backAction = onBack || defaultOnBack;
 
-  const [logoPreview, setLogoPreview] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
-  const [initialLogo, setInitialLogo] = useState(null);
+  const [initialAvatar, setInitialAvatar] = useState(null);
   const [initialCover, setInitialCover] = useState(null);
 
   const [cityOptions, setCityOptions] = useState([]);
@@ -59,10 +59,10 @@ export default function InstitutionForm({
         success: ({ json }) => {
           if (json.data) {
             const data = json.data;
-            setLogoPreview(data.logo ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution`) : null);
-            setCoverPreview(data.cover_image ? _service.url(`/asset?uid=${data.uid}&type=banner&entity=institution`) : null);
-            setInitialLogo(data.logo);
-            setInitialCover(data.cover_image);
+            setAvatarPreview(data.avatar ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution`) : null);
+            setCoverPreview(data.banner ? _service.url(`/asset?uid=${data.uid}&type=banner&entity=institution`) : null);
+            setInitialAvatar(data.avatar);
+            setInitialCover(data.banner);
 
             // Pre-populate city select
             if (data.city && data.city.uid) {
@@ -93,10 +93,10 @@ export default function InstitutionForm({
       });
     } else if (initialData) {
       // Use provided initialData
-      setLogoPreview(initialData.logo ? _service.url(`/asset?uid=${initialData.uid}&type=avatar&entity=institution`) : null);
-      setCoverPreview(initialData.cover_image ? _service.url(`/asset?uid=${initialData.uid}&type=banner&entity=institution`) : null);
-      setInitialLogo(initialData.logo);
-      setInitialCover(initialData.cover_image);
+      setAvatarPreview(initialData.avatar ? _service.url(`/asset?uid=${initialData.uid}&type=avatar&entity=institution`) : null);
+      setCoverPreview(initialData.banner ? _service.url(`/asset?uid=${initialData.uid}&type=banner&entity=institution`) : null);
+      setInitialAvatar(initialData.avatar);
+      setInitialCover(initialData.banner);
 
       // Pre-populate city select
       if (initialData.city && initialData.city.uid) {
@@ -147,19 +147,19 @@ export default function InstitutionForm({
     });
   };
 
-  const handleLogoChange = async (info) => {
+  const handleAvatarChange = async (info) => {
     const file = info.file.originFileObj || info.file;
     if (!file) return;
     try {
       await validateImageDimensions(file, {
-        minW: 100, minH: 100, maxW: 400, maxH: 400, label: 'Logotipo'
+        minW: 100, minH: 100, maxW: 400, maxH: 400, label: 'Avatar'
       });
       const reader = new FileReader();
       reader.onload = (e) => {
-        setLogoPreview(e.target.result);
+        setAvatarPreview(e.target.result);
       };
       reader.readAsDataURL(file);
-      setLogoFile(file);
+      setAvatarFile(file);
     } catch (err) {
       message.error(err.message);
     }
@@ -183,9 +183,9 @@ export default function InstitutionForm({
     }
   };
 
-  const removeLogo = () => {
-    setLogoPreview(null);
-    setLogoFile(null);
+  const removeAvatar = () => {
+    setAvatarPreview(null);
+    setAvatarFile(null);
   };
 
   const removeCover = () => {
@@ -251,11 +251,11 @@ export default function InstitutionForm({
     if (website) formData.append('website', website);
 
     // Append files only if changed in edit mode
-    if (logoFile) {
-      formData.append('logo', logoFile);
+    if (avatarFile) {
+      formData.append('avatar', avatarFile);
     }
     if (coverFile) {
-      formData.append('cover_image', coverFile);
+      formData.append('banner', coverFile);
     }
 
     const apiUrl = editIdentifier ? `/institution?${slug ? `slug=${slug}` : `uid=${uid}`}` : '/institution';
@@ -386,19 +386,19 @@ export default function InstitutionForm({
             </Form.Item>
           </Card>
 
-          <Card title="Logotipo e Imagem de Capa" className="form-card">
+          <Card title="Avatar e Banner" className="form-card">
             <Form.Item
-              label="Logotipo"
-              name="logo"
+              label="Avatar"
+              name="avatar"
             >
               <div className="upload-container">
-                {logoPreview ? (
+                {avatarPreview ? (
                   <div className="image-preview">
-                    <img src={logoPreview} alt="Logo" />
+                    <img src={avatarPreview} alt="Avatar" />
                     <Button
                       type="link"
                       danger
-                      onClick={removeLogo}
+                      onClick={removeAvatar}
                       disabled={submitting}
                     >
                       Remover
@@ -408,13 +408,13 @@ export default function InstitutionForm({
                   <Upload
                     showUploadList={false}
                     beforeUpload={(file) => {
-                      handleLogoChange({ file });
+                      handleAvatarChange({ file });
                       return false;
                     }}
                     accept="image/*"
                   >
                     <Button icon={<UploadOutlined />} disabled={submitting}>
-                      Carregar Logotipo
+                      Carregar Avatar
                     </Button>
                   </Upload>
                 )}
@@ -426,7 +426,7 @@ export default function InstitutionForm({
 
             <Form.Item
               label="Imagem de Capa"
-              name="cover_image"
+              name="banner"
             >
               <div className="upload-container">
                 {coverPreview ? (

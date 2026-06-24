@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import { _image, _req, _db, _val, _user, _out } from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -8,7 +8,7 @@ const username = _req.getString("username");
 const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
-const coverImage = _req.getFile("coverImage");
+const banner = _req.getFile("banner");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
@@ -20,12 +20,7 @@ const dbInstitution = _db.queryFirst(`
 `, institutionUid)
 
 if (!dbInstitution) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "institution-not-found")
-  );
-  _exec.stop();
+  response.stopWithInstitutionNotFound();
 }
 
 const dbCity = _db.queryFirst(`
@@ -34,12 +29,7 @@ const dbCity = _db.queryFirst(`
 `, cityUid)
 
 if (!dbCity) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "city-not-found")
-  );
-  _exec.stop();
+  response.stopWithCityNotFound();
 }
 
 const userData = _user.get(_user.id());
@@ -75,7 +65,7 @@ const peopleData = _val.map()
 const institutionId = dbInstitution.getInt("id");
 // fail silently if not super-admin
 if (permissions.canChangeOwnInstitution()) {
-  peopleData 
+  peopleData
     .set("institution_id", institutionId)
 }
 
@@ -83,13 +73,13 @@ if (avatar) {
   peopleData.set("avatar", avatar)
 }
 
-if (coverImage) {
+if (banner) {
   peopleData.set(
-    "cover_image", 
+    "banner",
     _image
-      .init(coverImage)
+      .init(banner)
       .resize(720, 240)
-      .file(coverImage.name(), "jpeg")
+      .file(banner.name(), "jpeg")
   )
 }
 

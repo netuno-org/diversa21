@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col, Divider } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -57,10 +57,10 @@ function ProfileForm({
   useEffect(() => {
     if (people && operation === "edit") {
       if (people.avatar) {
-        setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
+        setAvatarImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`));
       }
-      if (people.coverImage) {
-        setCoverImageURL(_service.url(`/people/banner?uid=${people.uid}`));
+      if (people.banner) {
+        setCoverImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`));
       }
     }
   }, [people, operation]);
@@ -138,7 +138,7 @@ function ProfileForm({
 
     if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
-      data.coverImage = profileBanner?.current?.getImage();
+      data.banner = profileBanner?.current?.getImage();
       if (itsLoggedUserProfile) url += '/me';
       else data.uid = people.uid;
     }

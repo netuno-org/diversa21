@@ -11,12 +11,23 @@
     "type": {
       "type": "string-not-empty",
       "description": "Type of asset.",
-      "example": "avatar"
+      "enum": [
+        "avatar",
+        "banner"
+      ]
     },
     "entity": {
       "type": "string-not-empty",
       "description": "Entity name.",
-      "example": "people"
+      "enum": [
+        "people",
+        "institution"
+      ]
     }
-  }
+  },
+  "required": [
+    "uid",
+    "type",
+    "entity"
+  ]
 }

@@ -30,10 +30,10 @@
     "website": {
       "type": "string"
     },
-    "logo": {
+    "avatar": {
       "type": "file"
     },
-    "cover_image": {
+    "banner": {
       "type": "file"
     }
   },

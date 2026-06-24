@@ -1,4 +1,4 @@
-import {_req, _db, _header, _exec, _out} from "@netuno/server-types"
+import { _req, _db, _header, _exec, _out } from "@netuno/server-types"
 
 let dbInstitution = null;
 
@@ -11,15 +11,15 @@ if (!dbInstitution) {
   _exec.stop();
 }
 
-const dbLogoName = dbInstitution.getString('logo');
+const dbAvatarName = dbInstitution.getString('avatar');
 
-const storageLogoFile = _storage.database(
+const storageAvatarFile = _storage.database(
   'institution',
-  'logo',
-  dbLogoName
+  'avatar',
+  dbAvatarName
 );
 
 _header.contentTypePNG();
 _header.noCache();
 
-_out.copy(storageLogoFile.inputStream());
+_out.copy(storageAvatarFile.inputStream());

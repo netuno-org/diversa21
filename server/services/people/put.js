@@ -11,7 +11,7 @@ const name = _req.getString("name");
 const username = _req.getString("username");
 const email = _req.getString("email");
 const avatar = _req.getFile("avatar");
-const coverImage = _req.getFile("coverImage");
+const banner = _req.getFile("banner");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
@@ -177,13 +177,13 @@ if (avatar) {
   )
 }
 
-if (coverImage) {
+if (banner) {
   peopleData.set(
     "cover_image", 
     _image
-      .init(coverImage)
+      .init(banner)
       .resize(720, 240)
-      .file(coverImage.name(), "jpeg")
+      .file(banner.name(), "jpeg")
   )
 }
 

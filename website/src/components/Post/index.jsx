@@ -61,7 +61,7 @@ function Post({
   useEffect(() => {
     if (people.avatar) {
       setAvatarUrl(
-        _service.url(`/people/avatar?uid=${people.uid}`)
+        _service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`)
       );
     }
   }, []);

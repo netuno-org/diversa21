@@ -31,8 +31,8 @@ let sqlQuery = `
         state.name AS "state",
         country.uid AS "country_uid",
         country.name AS "country",
-        institution.cover_image,
-        institution.logo,
+        institution.banner,
+        institution.avatar,
         institution.active
     FROM institution
     INNER JOIN city ON institution.city_id = city.id
@@ -74,8 +74,8 @@ for (const dbInstitution of dbInstitutions) {
   institutions.add(
     _val.map()
       .set('active', dbInstitution.getString('active'))
-      .set('logo', dbInstitution.getString('logo') !== '')
-      .set('cover_image', dbInstitution.getString('cover_image') !== '')
+      .set('avatar', dbInstitution.getString('avatar') !== '')
+      .set('banner', dbInstitution.getString('banner') !== '')
       .set('uid', dbInstitution.getString('uid'))
       .set('slug', dbInstitution.getString('slug'))
       .set('country',

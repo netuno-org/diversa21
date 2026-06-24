@@ -11,11 +11,11 @@ if (!dbInstitution) {
   _exec.stop();
 }
 
-const dbBannerName = dbInstitution.getString('cover_image');
+const dbBannerName = dbInstitution.getString('banner');
 
 const storageBannerFile = _storage.database(
   'institution',
-  'cover_image',
+  'banner',
   dbBannerName
 );
 

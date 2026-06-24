@@ -145,14 +145,14 @@ function View() {
 
   return (
     <section className="institution-view">
-      <div className="cover-image">
-        {institution.cover_image ? (
+      <div className="banner-image">
+        {institution.banner ? (
           <img
             src={_service.url(`/asset?uid=${institution.uid}&type=banner&entity=institution`)}
-            alt="Cover"
+            alt="Banner"
           />
         ) : (
-          <div className="cover-placeholder" />
+          <div className="banner-placeholder" />
         )}
       </div>
 
@@ -160,7 +160,7 @@ function View() {
         <Col xs={24} lg={8}>
           <Card className="sidebar-card">
             <div className="logo-section">
-              {institution.logo ? (
+              {institution.avatar ? (
                 <Avatar
                   src={_service.url(`/asset?uid=${institution.uid}&type=avatar&entity=institution`)}
                   size={120}

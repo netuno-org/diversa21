@@ -18,7 +18,7 @@ function Message({ friend, data }) {
         <Avatar
           size={36}
           src={friend.avatar
-            ? _service.url(`/people/avatar?uid=${friend.uid}&${new Date().getTime()}`)
+            ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&${new Date().getTime()}`)
             : '/images/profile-default.png'}
           shape="square"
           className="messages__message-avatar"

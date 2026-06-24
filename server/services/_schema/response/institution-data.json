@@ -38,10 +38,10 @@
     "country": {
       "_schema": "response/location-unit"
     },
-    "cover_image": {
+    "banner": {
       "type": "boolean"
     },
-    "logo": {
+    "avatar": {
       "type": "boolean"
     },
     "active": {
@@ -61,8 +61,8 @@
     "city",
     "state",
     "country",
-    "cover_image",
-    "logo",
+    "banner",
+    "avatar",
     "active"
   ]
 }

@@ -13,13 +13,13 @@ if (!dbTable) response.stopWithTableNotFound();
 let dbTableName = dbTable.getString(type);
 
 if (type === 'banner') {
-  dbTableName = dbTable.getString('cover_image');
-  type = 'cover_image';
+  dbTableName = dbTable.getString('banner');
+  type = 'banner';
 }
 
 if (entity === 'institution' && type === 'avatar') {
-  dbTableName = dbTable.getString('logo');
-  type = 'logo';
+  dbTableName = dbTable.getString('avatar');
+  type = 'avatar';
 }
 
 const storageFile = _storage.database(

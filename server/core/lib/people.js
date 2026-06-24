@@ -9,7 +9,7 @@ export default {
           people.description,
           people.email,
           people.avatar,
-          people.cover_image,
+          people.banner,
           people.birth_date,
           city.uid AS "city_uid",
           state.uid AS "state_uid",
@@ -45,7 +45,7 @@ export default {
         )
         .set("email", dbPeople.getString("email"))
         .set("avatar", dbPeople.getString("avatar") !== '')
-        .set("coverImage", dbPeople.getString("cover_image") !== '')
+        .set("banner", dbPeople.getString("banner") !== '')
         .set("birthDate", dbPeople.getString("birth_date"))
         .set("city",
           _val.map()
