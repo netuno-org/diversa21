@@ -17,7 +17,7 @@
     }
   },
   "oneOf": [ 
-    { "required": [peopleUid] },
-    { "required": [institutionUid] }
+    { "required": ["peopleUid"] },
+    { "required": ["institutionUid"] }
   ]
 }
