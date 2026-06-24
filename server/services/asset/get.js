@@ -12,10 +12,14 @@ if (!dbTable) response.stopWithTableNotFound();
 
 let dbTableName = dbTable.getString(type);
 
-if (entity === 'people' && type === 'banner') {
-  console.log("sim");
+if (type === 'banner') {
   dbTableName = dbTable.getString('cover_image');
   type = 'cover_image';
+}
+
+if (entity === 'institution' && type === 'avatar') {
+  dbTableName = dbTable.getString('logo');
+  type = 'logo';
 }
 
 const storageFile = _storage.database(
