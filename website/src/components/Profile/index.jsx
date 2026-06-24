@@ -74,7 +74,6 @@ function Profile({ user }) {
 
     if (isOwnProfile) {
       setCanRequestFriend(false);
-      setFriendStatus("self");
       return;
     }
 
@@ -213,7 +212,6 @@ function Profile({ user }) {
         handleRemoveFriend();
         break;
       default:
-        break;
     }
   };
 
