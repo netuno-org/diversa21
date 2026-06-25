@@ -2,10 +2,64 @@ import { _db } from "@netuno/server-types"
 
 // _log.info("Job de notificações")
 
-const institutionNotificationId = _db.queryFirst(`
+const friendRequestNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'friend-request'
+`).getInt("id");
+
+const friendRequestAcceptedNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'friend-request-accepted'
+`).getInt("id");
+
+const friendPostNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'friend-post'
+`).getInt("id");
+
+const friendLikeNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'friend-like'
+`).getInt("id");
+
+const friendCommentNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'friend-comment'
+`).getInt("id");
+
+const institutionPostNotificationTypeId = _db.queryFirst(`
     SELECT id
     FROM notification_type
     WHERE code = 'institution-post'
+`).getInt("id");
+
+const institutionCommentNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'institution-comment'
+`).getInt("id");
+
+const institutionLikeNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'institution-like'
+`).getInt("id");
+
+const myPostLikeNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'my-post-like'
+`).getInt("id");
+
+const myPostCommentNotificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'my-post-comment'
 `).getInt("id");
 
 _db.execute(`
@@ -29,13 +83,13 @@ _db.execute(`
         NOW(),
         NULL,
         '{ "postUid": "' || post.uid || '" }',
-        ${institutionNotificationId}
+        ${institutionPostNotificationTypeId}
     FROM post
     INNER JOIN people originator ON post.people_id = originator.id
     INNER JOIN people recipient ON recipient.institution_id = originator.institution_id
     LEFT JOIN notification_opt_out
         ON notification_opt_out.people_id = recipient.id
-        AND notification_opt_out.type_id = ${institutionNotificationId} 
+        AND notification_opt_out.type_id = ${institutionPostNotificationTypeId} 
     WHERE 1 = 1
       AND moment >= NOW() - INTERVAL '11 seconds'
       AND originator.id <> recipient.id
