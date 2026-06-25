@@ -1,18 +1,22 @@
-import { useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "antd";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Button, Spin } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import Editor from "../../../components/Post/Editor";
 import PostList from "../../../components/Post/List";
+import _service from "@netuno/service-client";
 
 import "./index.less";
 
 function Posts() {
   const refPostList = useRef(null);
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const isolatedUid = location.state?.autoOpenPostUid;
+  const { uid } = useParams();
+  const [searchParams] = useSearchParams();
+  const commentUid = searchParams.get('c');
+
+  const isolatedUid = uid === "undefined" ? null : uid;
 
   const onCreated = (post) => {
     if (refPostList.current) {
@@ -21,7 +25,7 @@ function Posts() {
   };
 
   const handleClearIsolation = () => {
-    navigate('/posts', { replace: true, state: {} });
+    navigate('/posts');
   };
 
   return (
@@ -44,6 +48,7 @@ function Posts() {
       <PostList
         ref={refPostList}
         isolatedUid={isolatedUid}
+        isolatedCommentUid={commentUid}
         key={isolatedUid || 'all'}
       />
     </div>

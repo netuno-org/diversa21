@@ -22,7 +22,8 @@ function Post({
   liked,
   people,
   onRemovePost,
-  onEditPost
+  onEditPost,
+  isolatedCommentUid
 }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [showEditor, setShowEditor] = useState(false);
@@ -42,7 +43,7 @@ function Post({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isAlreadyIsolated = String(location.state?.autoOpenPostUid) === String(uid);
+  const isAlreadyIsolated = location.pathname === `/p/${uid}`;
   const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts();
 
   const formatPostDate = (date) => {
@@ -82,16 +83,21 @@ function Post({
     }
   }, [location.state, uid, countComments, showComments]);
 
+  useEffect(() => {
+    if (isolatedCommentUid && countComments > 0 && !showComments) {
+      setShowComments(true);
+      setLoadingComments(true);
+    }
+  }, [isolatedCommentUid, countComments]);
+
   const handleCardClick = (e) => {
     if (isAlreadyIsolated || editMode) return;
 
-    if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.ant-popover') || e.target.closest('.ant-popconfirm')) {
+    if (e.target.closest('.post-actions-wrapper') || e.target.closest('.user-info-actions') || e.target.closest('a')) {
       return;
     }
 
-    navigate('/posts', {
-      state: { autoOpenPostUid: uid }
-    });
+    navigate(`/p/${uid}`);
   };
 
   const onCommentRemoved = () => {
@@ -330,6 +336,7 @@ function Post({
             <PostList
               ref={refPostList}
               parent={uid}
+              isolatedCommentUid={isolatedCommentUid}
               onLoaded={onCommentsLoaded}
               onItemRemoved={onCommentRemoved}
             />

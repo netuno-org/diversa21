@@ -30,7 +30,13 @@ function HeaderNotifications() {
     setPopoverOpen(false);
 
     if (item.type === 'institution-post') {
-      navigate('/posts', { state: { autoOpenPostUid: item.postId } });
+      if (item.parentUid && item.commentUid) {
+        navigate(`/p/${item.parentUid}?c=${item.commentUid}`);
+      } else if (item.parentUid) {
+        navigate(`/p/${item.parentUid}`);
+      } else {
+        navigate('/posts');
+      }
     } else if (item.type === 'message') {
       navigate('/messages', {
         state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }

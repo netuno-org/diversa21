@@ -60,8 +60,14 @@ function useNotifications(loggedUser) {
           n.username = n.originator.username;
           n.read = Boolean(n.read_at);
 
-          if (n.type === 'institution-post') {
-            n.postId = n.extra.postUid;
+          if (n.type === 'institution-post' && n.extra) {
+            if (n.extra.parentUid && n.extra.parentUid !== '') {
+              n.parentUid = n.extra.parentUid;
+              n.commentUid = n.extra.postUid;
+            } else {
+              n.parentUid = n.extra.postUid;
+              n.commentUid = null;
+            }
           }
 
           const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;

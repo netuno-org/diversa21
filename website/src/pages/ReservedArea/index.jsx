@@ -59,7 +59,10 @@ function ReservedArea() {
       if (location.pathname === "/profile/view") {
         return <ProfileView />;
       }
-      if (location.pathname === "/posts") {
+      if (location.pathname === "/profile/view") {
+        return <ProfileView />;
+      }
+      if (location.pathname === "/posts" || location.pathname.startsWith("/p/")) {
         return <Posts />;
       }
       if (location.pathname.startsWith("/u/")) {
