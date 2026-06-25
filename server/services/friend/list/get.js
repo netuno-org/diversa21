@@ -20,6 +20,9 @@ if (!loggedUser) {
 
 const profileUid = _req.getString("uid");
 const name = _req.getString("name");
+const cityUid = _req.getUID('cityUid');
+const stateUid = _req.getUID('stateUid');
+const countryUid = _req.getUID('countryUid');
 
 const loggedId = loggedUser.getInt("id");
 let targetId = loggedId;
@@ -52,10 +55,27 @@ let sqlQuery = `
                 ELSE f.people_id
             END
         )
+        LEFT JOIN city ON p.city_id = city.id
+        LEFT JOIN state ON city.state_id = state.id
+        LEFT JOIN country ON state.country_id = country.id
         INNER JOIN netuno_user ON p.people_user_id = netuno_user.id
     WHERE (f.people_id = ? OR f.friend_id = ?)
         AND f.accepted_at IS NOT NULL
         AND p.name ILIKE ?::varchar
+`;
+
+if (cityUid) {
+  sqlQuery += ` AND city.uid = ?::uuid `;
+  params.add(cityUid);
+} else if (stateUid) {
+  sqlQuery += ` AND state.uid = ?::uuid `;
+  params.add(stateUid);
+} else if (countryUid) {
+  sqlQuery += ` AND country.uid = ?::uuid `;
+  params.add(countryUid);
+}
+
+sqlQuery += `
     ORDER BY p.name ASC
     LIMIT 10
     OFFSET ?::int

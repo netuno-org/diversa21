@@ -73,6 +73,14 @@ function SiderMenu({ collapsed, onCollapse }) {
   const loggedUser = usePeople();
   const location = useLocation();
   const navigate = useNavigate();
+  const blockedGroups = [
+    "super-admin",
+    "management",
+    "review"
+  ];
+  const loggedUserGroupCode = loggedUser.data?.group?.code;
+  const canShowFriendsMenu =
+  loggedUserGroupCode && !blockedGroups.includes(loggedUserGroupCode);
 
   useEffect(() => {
     const menuItem = menuItems.find((i) => location.pathname === i.link);
@@ -88,7 +96,6 @@ function SiderMenu({ collapsed, onCollapse }) {
     if (menuItem) {
       setSelectedMenuKeys([menuItem.key]);
       navigate(menuItem.link);
-
       if (sideMenuMobileMode && !collapsed) {
         onCollapse(true);
       }
@@ -121,6 +128,9 @@ function SiderMenu({ collapsed, onCollapse }) {
 
                 if (restrictedKeys.includes(item.key)) {
                   return loggedUser.canManageInstitution();
+                }
+                if (item.key === "friends") {
+                  return canShowFriendsMenu;
                 }
 
                 return true;

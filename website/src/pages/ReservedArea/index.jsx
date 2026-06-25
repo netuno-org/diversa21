@@ -75,7 +75,7 @@ function ReservedArea() {
         return <People />;
       }
       if (location.pathname === "/friends") {
-        return <FriendsList />;
+          return <FriendsList />;
       }
       if (location.pathname === "/people/create/user") {
         if (!(people.canCreateAnyUser() || people.canCreateMember(people.data?.institution))) {
