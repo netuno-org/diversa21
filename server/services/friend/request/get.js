@@ -11,7 +11,10 @@ if (page > 0) {
 }
 
 const loggedUser = people.getLogged();
-if (!loggedUser) response.stopWithPermissionDenied();
+
+if (!loggedUser) {
+  response.stopWithPermissionDenied();
+}
 
 const loggedId = loggedUser.getInt("id");
 

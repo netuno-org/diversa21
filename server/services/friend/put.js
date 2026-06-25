@@ -3,7 +3,10 @@ import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
 const loggedUser = people.getLogged();
-if (!loggedUser) response.stopWithPermissionDenied();
+
+if (!loggedUser) {
+  response.stopWithPermissionDenied();
+}
 
 const uid = _req.getString("uid");
 const loggedId = loggedUser.getInt("id");
@@ -16,10 +19,14 @@ const dbFriendship = _db.queryFirst(`
     AND f.friend_id = ?::int
 `, uid, loggedId);
 
-if (!dbFriendship) response.stopWithBadRequest("invalid_request");
+if (!dbFriendship) {
+  response.stopWithBadRequest("invalid_request");
+}
 
 const acceptedAt = dbFriendship.getString("accepted_at");
-if (acceptedAt && acceptedAt !== "") response.stopWithBadRequest("already_accepted");
+if (acceptedAt && acceptedAt !== "") {
+  response.stopWithBadRequest("already_accepted");
+}
 
 const currentTimestamp = _db.timestamp();
 _db.update("friend", dbFriendship.getInt("id"), _val.map()

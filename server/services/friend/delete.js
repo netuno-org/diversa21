@@ -3,12 +3,22 @@ import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
 const loggedUser = people.getLogged();
-if (!loggedUser) response.stopWithPermissionDenied();
+
+if (!loggedUser) {
+  response.stopWithPermissionDenied();
+}
 
 const friendUid = _req.getString("uid");
 
-const dbFriend = _db.queryFirst("SELECT id FROM people WHERE uid = ?::uuid", friendUid);
-if (!dbFriend) response.stopWithUserNotFound();
+const dbFriend = _db.queryFirst(`
+  SELECT id
+  FROM people
+  WHERE uid = ?::uuid
+`, friendUid);
+
+if (!dbFriend) {
+  response.stopWithUserNotFound();
+}
 
 const loggedId = loggedUser.getInt("id");
 const friendId = dbFriend.getInt("id");
@@ -20,7 +30,9 @@ const dbFriendship = _db.queryFirst(`
      OR (people_id = ? AND friend_id = ?)
 `, loggedId, friendId, friendId, loggedId);
 
-if (!dbFriendship) response.stopWithBadRequest("invalid_request");
+if (!dbFriendship) {
+  response.stopWithBadRequest("invalid_request");
+}
 
 _db.delete("friend", dbFriendship.getInt("id"));
 
