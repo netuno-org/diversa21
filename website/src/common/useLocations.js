@@ -9,7 +9,7 @@ const CONFIGS = {
   city: { url: 'location/city', label: 'cidades' },
 };
 
-export default function useLocations() {
+function useLocations() {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -135,3 +135,5 @@ export default function useLocations() {
     setFilters
   };
 }
+
+export default useLocation;
