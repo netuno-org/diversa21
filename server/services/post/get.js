@@ -9,7 +9,7 @@ const loggedUserPeopleId = people.getLogged().getInt("id");
 
 const dbPost = _db.queryFirst(`
     SELECT count(*) over() as total_count,
-        post.uid, post.moment, post.content, post.comments, post.likes,
+        post.uid, post.moment, post.content, post.comments, post.likes, parent.uid as parent_uid,
         people.name AS "people_name", people.uid AS "people_uid",
         netuno_user.user AS "people_user",
         people.avatar AS "people_avatar",
@@ -17,6 +17,7 @@ const dbPost = _db.queryFirst(`
     FROM post
         INNER JOIN people ON post.people_id = people.id
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+        LEFT JOIN post parent ON post.parent_id = parent.id
     WHERE post.uid = ?::uuid 
     `,
   loggedUserPeopleId, postUid);
@@ -27,6 +28,7 @@ if (!dbPost) {
 
 const post = _val.map()
   .set("uid", dbPost.getString("uid"))
+  .set("parent", dbPost.getString("parent_uid"))
   .set("moment", dbPost.getString("moment"))
   .set("content", dbPost.getString("content"))
   .set("comments", dbPost.getInt("comments", 0))
