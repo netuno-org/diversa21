@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Typography, Card, Spin, Button, Row, Col,
   Divider, Avatar, Space, Empty, Pagination, Tabs
@@ -112,10 +112,12 @@ function View() {
               <Card key={user.uid} className="user-card">
                 <div className="user-card__content">
                   <div className="user-card__info">
-                    <UserProfileDisplay
-                      user={user}
-                      avatarStyle={{ width: 64, height: 64 }}
-                    />
+                    <Link to={`/u/${user.username}`} style={{ color: "inherit" }}>
+                      <UserProfileDisplay
+                        user={user}
+                        avatarStyle={{ width: 64, height: 64 }}
+                      />
+                    </Link>
                   </div>
                 </div>
               </Card>
