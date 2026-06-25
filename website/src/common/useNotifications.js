@@ -61,9 +61,8 @@ function useNotifications(loggedUser) {
           const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
           n.time = dayjs(deatTimeUrl).fromNow();
 
+          n.desc = n.content;
           if (n.type === 'institution-post') {
-            n.desc = n.title;
-            n.title = '@' + n.originator.username;
             n.username = '@' + n.originator.username;
             n.postId = n.extra.postUid;
           }

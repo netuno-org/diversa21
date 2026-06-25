@@ -76,8 +76,8 @@ _db.execute(`
     )
     SELECT
         NEXTVAL('notification_id'),
+        '@' || originator_user.user AS originator_username,
         'Membro da sua instituição fez um novo post.',
-        post.content,
         originator.id,
         recipient.id,
         NOW(),
@@ -87,6 +87,7 @@ _db.execute(`
     FROM post
     INNER JOIN people originator ON post.people_id = originator.id
     INNER JOIN people recipient ON recipient.institution_id = originator.institution_id
+    INNER JOIN netuno_user originator_user ON originator.people_user_id = originator_user.id
     LEFT JOIN notification_opt_out
         ON notification_opt_out.people_id = recipient.id
         AND notification_opt_out.type_id = ${institutionPostNotificationTypeId} 
