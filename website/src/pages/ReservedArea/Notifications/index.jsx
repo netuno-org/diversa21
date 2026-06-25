@@ -30,7 +30,6 @@ function Notifications() {
     } else if (item.type === 'friend-request') {
       navigate(`/u/${item.username}`);
     } else if (item.type === 'message') {
-    } else if (item.type === 'message') {
       navigate('/messages', {
         state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }
       });
