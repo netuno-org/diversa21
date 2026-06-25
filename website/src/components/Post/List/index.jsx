@@ -50,17 +50,14 @@ function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref)
           fetchedItems = fetchedItems.filter(p => String(p.uid) === String(isolatedUid));
         }
 
-        setPosts([...posts, ...fetchedItems]);
-      },
-      fail: (e) => {
-        if (onLoaded) {
-          onLoaded();
-        }
-        setLoadingPosts(false);
-        notification.error({
-          title: `Falha ao carregar ${parent ? "comentários" : "posts"}`,
+        fetchedItems = fetchedItems.map(p => {
+          if (p.moment && !p.moment.endsWith('Z')) {
+            p.moment = `${p.moment}Z`;
+          }
+          return p;
         });
-        console.error("Service Error", e);
+
+        setPosts([...posts, ...fetchedItems]);
       },
     });
   };

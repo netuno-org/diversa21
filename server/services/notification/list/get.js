@@ -34,7 +34,7 @@ const dbNotifications = _db.query(`
     INNER JOIN netuno_user recipient_user ON recipient.people_user_id = recipient_user.id
     INNER JOIN notification_type ON notification.type_id = notification_type.id
     WHERE recipient.uid = ?::uuid
-    ORDER BY notification.sent_at 
+    ORDER BY notification.sent_at DESC
     LIMIT ?::int OFFSET ?::int
   `, loggedUserUid, pageSize, offset
 );

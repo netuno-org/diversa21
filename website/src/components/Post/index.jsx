@@ -194,10 +194,10 @@ function Post({
   return (
     <Card
       className={`post-container 
-        ${isHighlighted.valueOf
-          ? 'post-container--highlight'.valueOf
+        ${isHighlighted
+          ? 'post-container--highlight'
           : ''} 
-        ${!isAlreadyIsolated
+      ${!isAlreadyIsolated
           ? 'post-container--clickable'
           : ''}`}
       ref={postCardRef}
@@ -220,7 +220,7 @@ function Post({
               <p className="user-name">{people.name}</p>
             </Link>
             <span className="post-date">
-              {formatPostDate(moment)}
+              {dayjs(moment).fromNow()}
             </span>
           </div>
         </div>
