@@ -136,4 +136,4 @@ function useLocations() {
   };
 }
 
-export default useLocation;
+export default useLocations;
