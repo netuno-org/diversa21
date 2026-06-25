@@ -32,7 +32,7 @@ function Notifications() {
       } else {
         navigate('/posts');
       }
-    } else if (item.type === 'friend-request') {
+    } else if (item.type === 'friend-request' || item.type === 'friend-request-accepted') {
       navigate(`/u/${item.username}`);
     } else if (item.type === 'message') {
       navigate('/messages', {

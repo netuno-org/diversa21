@@ -37,6 +37,8 @@ function HeaderNotifications() {
       } else {
         navigate('/posts');
       }
+    } else if (item.type === 'friend-request' || item.type === 'friend-request-accepted') {
+      navigate(`/u/${item.username}`);
     } else if (item.type === 'message') {
       navigate('/messages', {
         state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }
