@@ -57,7 +57,7 @@ function useNotifications(loggedUser) {
         items.forEach(n => {
           n.id = n.uid;
           n.desc = n.content;
-          n.username = '@' + n.originator.username;
+          n.username = n.originator.username;
           n.read = Boolean(n.read_at);
 
           if (n.type === 'institution-post') {

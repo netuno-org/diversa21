@@ -27,6 +27,9 @@ function Notifications() {
     if (item.type === 'institution-post') {
       navigate('/posts', { state: { autoOpenPostUid: item.postId } });
       // navigate(`/post/${item.postId}`);
+    } else if (item.type === 'friend-request') {
+      navigate(`/u/${item.username}`);
+    } else if (item.type === 'message') {
     } else if (item.type === 'message') {
       navigate('/messages', {
         state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }
