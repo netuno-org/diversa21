@@ -44,22 +44,21 @@ const dbRequests = _db.query(sqlQuery, params);
 const requests = _val.list();
 for (const dbRequest of dbRequests) {
   requests.add(
-    _val.map()
-      .set("uid", dbRequest.getString("friend_uid"))
-      .set("name", dbRequest.getString("friend_name"))
-      .set("user", dbRequest.getString("friend_user"))
-      .set("avatar", dbRequest.getString("friend_avatar") !== "")
-  )
+    people.getData(dbRequest.getUID("friend_uid"))
+  );
 }
 
 const result = _val.map();
 
-if (dbRequests.length === 0) {
-  result.set("totalCount", 0);
-} else {
-  result.set("totalCount", dbRequests[0].getInt("total_count"));
+let totalCount = 0;
+if (dbRequests.length > 0) {
+  totalCount = dbRequests[0].getInt("total_count");
 }
+
 result.set("items", requests);
-result.set("pageSize", pageSize);
+result.set("pagination", _val.map()
+  .set("pageSize", pageSize)
+  .set("totalCount", totalCount)
+);
 
 response.successWithData(result);

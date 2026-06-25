@@ -74,12 +74,15 @@ for (const dbFriend of dbFriends) {
 
 const result = _val.map();
 
-if (dbFriends.length === 0) {
-  result.set("totalCount", 0);
-} else {
-  result.set("totalCount", dbFriends[0].getInt("total_count"));
+let totalCount = 0;
+if (dbFriends.length > 0) {
+  totalCount = dbFriends[0].getInt("total_count");
 }
+
 result.set("items", friends);
-result.set("pageSize", pageSize);
+result.set("pagination", _val.map()
+  .set("pageSize", pageSize)
+  .set("totalCount", totalCount)
+);
 
 response.successWithData(result)
