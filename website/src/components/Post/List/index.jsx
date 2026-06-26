@@ -20,11 +20,21 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
     setLoadingPosts(true);
     const data = {};
 
-    if (parent) data.parent = parent;
-    if (author) data.peopleUid = author;
+    if (parent) {
+      data.parent = parent;
+    }
 
-    if (!parent && isolatedUid) data.uid = isolatedUid;
-    if (parent && isolatedCommentUid) data.uid = isolatedCommentUid;
+    if (author) {
+      data.peopleUid = author;
+    }
+
+    if (!parent && isolatedUid) {
+      data.uid = isolatedUid;
+    }
+
+    if (parent && isolatedCommentUid) {
+      data.uid = isolatedCommentUid;
+    }
 
     data.page = page;
 
@@ -32,7 +42,9 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
       url: "post/list",
       data,
       success: ({ json }) => {
-        if (onLoaded) onLoaded();
+        if (onLoaded) {
+          onLoaded();
+        }
 
         setLoadingPosts(false);
         let fetchedItems = json?.data?.items || [];
@@ -55,7 +67,9 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
         setPosts([...posts, ...fetchedItems]);
       },
       fail: (e) => {
-        if (onLoaded) onLoaded();
+        if (onLoaded) {
+          onLoaded();
+        }
         setLoadingPosts(false);
         notification.error({
           title: `Falha ao carregar ${parent ? "comentários" : "posts"}`,
@@ -71,7 +85,9 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
 
   const onRemovePost = (uid) => {
     setPosts(posts.filter((post) => post.uid !== uid));
-    if (onItemRemoved) onItemRemoved();
+    if (onItemRemoved) {
+      onItemRemoved();
+    }
   };
 
   const onEditPost = (uid, content) => {

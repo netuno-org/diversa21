@@ -43,10 +43,16 @@ const list = _val.list();
 
 for (const dbNotification of dbNotifications) {
   const extraField = dbNotification.getString("extra");
-  let extra;
-  if (extraField) {
-    extra = JSON.parse(extraField);
+  let extra = null;
+
+  if (extraField && extraField.trim() !== "") {
+    try {
+      extra = JSON.parse(extraField);
+    } catch (e) {
+      extra = null;
+    }
   }
+
   const notification = _val.map()
     .set("uid", dbNotification.getUID("uid"))
     .set("type", dbNotification.getString("type"))

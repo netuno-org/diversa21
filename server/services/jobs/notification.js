@@ -157,11 +157,10 @@ _db.execute(`
         '{ "postUid": "' || post.uid || '" }',
         ${institutionPostNotificationTypeId}
     FROM post
-    INNER JOIN post parent ON post.parent_id = parent.id 
     INNER JOIN people originator ON post.people_id = originator.id
     INNER JOIN people recipient
         ON recipient.institution_id = originator.institution_id
-        AND recipient.id <> parent.people_id
+        AND recipient.id <> originator.id
     INNER JOIN netuno_user originator_user ON originator.people_user_id = originator_user.id
     LEFT JOIN notification_opt_out
         ON notification_opt_out.people_id = recipient.id

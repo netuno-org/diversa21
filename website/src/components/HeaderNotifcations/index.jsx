@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Popover, Typography, Avatar, Button, Spin, Empty } from 'antd';
-import { BellOutlined, MessageOutlined, SafetyOutlined, NotificationOutlined, FileTextOutlined } from '@ant-design/icons';
+import { BellOutlined, MessageOutlined, SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
 import usePeople from "../../common/usePeople.js";
@@ -20,6 +20,17 @@ function HeaderNotifications() {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const getIconForType = (type) => {
+    switch (type) {
+      case 'institution-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
+      case 'my-post-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
+      case 'friend-request': return <Avatar icon={<UserAddOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
+      case 'friend-request-accepted': return <Avatar icon={<TeamOutlined />} style={{ backgroundColor: '#52c41a' }} />;
+      case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} />;
+      default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;
+    }
+  };
+
   const handleMarkAll = (e) => {
     e.stopPropagation();
     markAllAsRead();
@@ -28,15 +39,6 @@ function HeaderNotifications() {
   const handleNotificationClick = (item) => {
     setPopoverOpen(false);
     onNotificationClick(item, navigate);
-  };
-
-  const getIconForType = (type) => {
-    switch (type) {
-      case 'institution-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
-      case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} />;
-      case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#FDBA3C' }} />;
-      default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;
-    }
   };
 
   const handleOpenNotifications = () => {

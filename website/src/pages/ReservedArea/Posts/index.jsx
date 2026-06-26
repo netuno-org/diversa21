@@ -14,8 +14,9 @@ function Posts() {
 
   const { uid } = useParams();
   const [searchParams] = useSearchParams();
-  const commentUid = searchParams.get('c');
-
+  
+  const rawC = searchParams.get('c');
+  const commentUid = rawC === "undefined" ? null : rawC;
   const isolatedUid = uid === "undefined" ? null : uid;
 
   const onCreated = (post) => {

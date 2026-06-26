@@ -60,20 +60,21 @@ function useNotifications(loggedUser) {
           n.username = n.originator.username;
           n.read = Boolean(n.read_at);
 
-          if (n.type === 'institution-post' && n.extra) {
-            n.postId = n.extra?.postUid;
+          if ((n.type === 'institution-post' || n.type === 'my-post-comment') && n.extra) {
+            n.postId = n.extra.postUid;
           }
 
           const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
           n.time = dayjs(deatTimeUrl).fromNow();
         });
 
-        setNotifications(prev => [...items, ...prev]);
+        setNotifications(prev => {
+          const combined = [...items, ...prev];
+          return combined.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+        });
         setLoading(false);
       },
-      fail: () => {
-        setLoading(false);
-      }
+      fail: () => setLoading(false)
     });
   };
 
@@ -88,11 +89,14 @@ function useNotifications(loggedUser) {
   const onNotificationClick = (item, navigate) => {
     markAsRead(item.id);
 
-    if (item.type === 'institution-post') {
-      if (!item.postId) return navigate('/posts');
+    if (item.type === 'institution-post' || item.type === 'my-post-comment') {
+      if (!item.postId) {
+        return navigate('/posts');
+      }
 
       _service({
         url: 'post',
+        method: 'GET',
         data: { uid: item.postId },
         success: (response) => {
           const post = response.json.data;
@@ -102,7 +106,8 @@ function useNotifications(loggedUser) {
             navigate(`/p/${item.postId}`);
           }
         },
-        fail: () => {
+        fail: (e) => {
+          console.error("Falha ao abrir post:", e);
           navigate('/posts');
         }
       });
@@ -111,7 +116,14 @@ function useNotifications(loggedUser) {
       navigate(`/u/${item.username}`);
     } else if (item.type === 'message') {
       navigate('/messages', {
-        state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }
+        state:
+        {
+          autoOpenFriend: {
+            uid: item.senderUid,
+            name: item.title,
+            username: item.username
+          }
+        }
       });
     }
   };

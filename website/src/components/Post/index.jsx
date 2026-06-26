@@ -91,7 +91,9 @@ function Post({
   }, [isolatedCommentUid, countComments]);
 
   const handleCardClick = (e) => {
-    if (isAlreadyIsolated || editMode) return;
+    if (isAlreadyIsolated || editMode) {
+      return;
+    }
 
     if (e.target.closest('.post-actions-wrapper') || e.target.closest('.user-info-actions') || e.target.closest('a')) {
       return;
