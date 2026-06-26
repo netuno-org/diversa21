@@ -1,18 +1,15 @@
 import { _req, _db, _val, _out, _header, _exec, _group } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
+import notifications from "#core/lib/notifications.js";
+
+const friendUid = _req.getString("uid");
 
 const loggedUser = people.getLogged();
-
-if (!loggedUser) {
-  response.stopWithPermissionDenied();
-}
 
 if (_group.code() !== "member") {
   response.stopWithPermissionDenied();
 }
-
-const friendUid = _req.getString("uid");
 
 const dbFriend = _db.queryFirst(`
   SELECT id, name
@@ -66,26 +63,16 @@ const notificationTypeId = _db.queryFirst(`
     WHERE code = 'friend-request'
 `).getInt("id");
 
-const isNotificationBlocked = _db.queryFirst(`
-    SELECT *
-    FROM notification_opt_out
-    WHERE people_id = ?::int
-    AND type_id = ?::int
-  `, friendId, notificationTypeId)
-
 const loggedUserName = people.getData(loggedUser.getUID("uid")).getString("username");
 
-if (!isNotificationBlocked) {
-  _db.insert("notification",
-    _val.map()
-      .set("title", "@" + loggedUserName)
-      .set("content", 'Quer ser seu amigo.')
-      .set("originator_id", loggedId)
-      .set("recipient_id", friendId) 
-      .set("sent_at", currentTimestamp)
-      .set("read_at", null)
-      .set("extra", "")
-      .set("type_id", notificationTypeId)
+if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
+  notifications.sendNotification(
+    "@" + loggedUserName,
+    "Quer ser seu amigo.",
+    loggedId,
+    friendId,
+    '',
+    notificationTypeId
   );
 }
 

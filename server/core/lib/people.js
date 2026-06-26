@@ -77,7 +77,7 @@ export default {
       .where(_db.where("people_user_id").equal(_user.id))
       .first();
   },
-  getByUID: (uid) => {
+  getByUid: (uid) => {
     return _db.form("people")
       .where(_db.where("uid").equal(uid))
       .first();
