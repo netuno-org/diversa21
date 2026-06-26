@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import _service from '@netuno/service-client';
+import React from 'react'
 import { Card, Grid, Empty, Typography, Spin, Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
 import ListHeaderFilters from '../../../components/ListHeaderFilters';
+import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
 
 import './index.less';
 
@@ -11,14 +11,17 @@ const { useBreakpoint } = Grid;
 const { Text } = Typography;
 
 function FriendsList() {
-  const [friendsList, setFriendsList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    size: 10,
-    total: 0,
-    term: '',
-    location: null
+  const {
+    items: friendsList,
+    loading,
+    pagination,
+    handlePaginationChange,
+    handleSearch,
+    handleLocationChange,
+    handleLocationClear,
+    handleSearchClear,
+  } = useFilteredPaginatedList({
+    serviceUrl: 'friend/list',
   });
 
   const screens = useBreakpoint();
@@ -32,69 +35,12 @@ function FriendsList() {
           ? 90
           : 70
 
-  useEffect(() => {
-    fetchPeopleList('', null, 1);
-  }, []);
-
-  const fetchPeopleList = (term, location, page) => {
-    setLoading(true);
-    _service({
-      url: 'friend/list',
-      data: {
-        name: term,
-        ...(location && { [location.type + "Uid"]: location.uid }),
-        page,
-      },
-      success: (response) => {
-        const { items, pagination } = response.json.data;
-        setFriendsList(items);
-        setPagination((currentPagination) => ({
-          ...currentPagination,
-          current: page,
-          term,
-          location,
-          total: pagination.totalCount,
-          size: pagination.pageSize
-        }));
-        setLoading(false);
-      },
-      fail: () => {
-        setLoading(false);
-      }
-    })
-  };
-
-  const handlePaginationChange = (page, pageSize) => {
-    setPagination({ ...pagination, current: page, size: pageSize });
-    fetchPeopleList(pagination.term, pagination.location, page);
-  };
-
-  const handleFriendsSearch = (term) => {
-    setPagination({ ...pagination, current: 1, term });
-    fetchPeopleList(term, pagination.location, 1);
-  };
-
-  const handleLocationChange = (option) => {
-    setPagination({ ...pagination, current: 1, location: option });
-    fetchPeopleList(pagination.term, option, 1);
-  };
-
-  const handleLocationClear = () => {
-    setPagination({ ...pagination, current: 1, location: null });
-    fetchPeopleList(pagination.term, null, 1);
-  };
-
-  const handleSearchClear = () => {
-    setPagination({ ...pagination, current: 1, term: '' });
-    fetchPeopleList('', pagination.location, 1);
-  };
-
   return (
     <div className="friends-list">
       <div className="friends-list__header">
         <ListHeaderFilters
           title="Amigos"
-          onSearch={handleFriendsSearch}
+          onSearch={handleSearch}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}

@@ -1,46 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, Empty, Spin, Pagination } from 'antd';
 import { Link } from 'react-router-dom';
-import _service from '@netuno/service-client';
 import UserProfileDisplay from '../../UserProfileDisplay';
+import ListHeaderFilters from '../../ListHeaderFilters';
+import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
 import './index.less';
 
 function FriendList({ userUid }) {
-  const [friendsList, setFriendsList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    size: 10,
-    total: 0
+  const {
+    items: friendsList,
+    loading,
+    pagination,
+    handlePaginationChange,
+    handleSearch,
+    handleLocationChange,
+    handleLocationClear,
+    handleSearchClear,
+  } = useFilteredPaginatedList({
+    serviceUrl: 'friend/list',
   });
-
-  useEffect(() => {
-    fetchFriends(1);
-  }, [userUid]);
-
-  const fetchFriends = (page) => {
-    setLoading(true);
-    _service({
-      url: 'friend/list',
-      data: {
-        uid: userUid,
-        page,
-      },
-      success: (response) => {
-        const { items, pagination: respPagination } = response.json.data;
-        setFriendsList(items || []);
-        setPagination({
-          current: page,
-          size: respPagination.pageSize || 10,
-          total: respPagination.totalCount || 0
-        });
-        setLoading(false);
-      },
-      fail: () => {
-        setLoading(false);
-      }
-    });
-  };
 
   if (loading && friendsList.length === 0) {
     return (
@@ -49,9 +27,16 @@ function FriendList({ userUid }) {
       </div>
     );
   }
-
   return (
     <div className="friend-list">
+      <div className="friend-list__header">
+        <ListHeaderFilters
+         onSearch={handleSearch}
+         onLocationChange={handleLocationChange}
+         onLocationClear={handleLocationClear}
+         onSearchClear={handleSearchClear}
+        />
+      </div>
       <div className="friend-list__items">
         {friendsList.map((friend) => (
           <Card key={friend.uid} className="friend-list__card" hoverable>
@@ -61,20 +46,19 @@ function FriendList({ userUid }) {
           </Card>
         ))}
       </div>
-
       {friendsList.length === 0 && !loading && (
         <Empty description="Nenhum amigo encontrado." />
       )}
-
       {friendsList.length > 0 && (
         <div className="friend-list__pagination">
           <Pagination
-            current={pagination.current}
-            pageSize={pagination.size}
-            total={pagination.total}
-            onChange={fetchFriends}
-            showSizeChanger={false}
-          />
+          className={`friends-list__pagination ${friendsList.length === 0 && !loading ? 'friends-list__pagination--hidden' : ''}`}
+          align='center'
+          total={pagination.total}
+          current={pagination.current}
+          pageSize={pagination.size}
+          onChange={handlePaginationChange}
+        />
         </div>
       )}
     </div>

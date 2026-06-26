@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, message, Switch, Tag } from 'antd';
 import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import _service from '@netuno/service-client';
 
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
 
 import usePeople from "../../../common/usePeople.js";
+import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
 
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
 
@@ -18,14 +18,18 @@ const { useBreakpoint } = Grid;
 
 function People() {
   const loggedUser = usePeople();
-  const [loading, setLoading] = useState(true);
-  const [peopleList, setPeopleList] = useState([]);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    size: 10,
-    total: 0,
-    term: '',
-    location: null
+  const {
+    items: peopleList,
+    loading,
+    pagination,
+    handlePaginationChange,
+    handleSearch,
+    handleLocationChange,
+    handleLocationClear,
+    handleSearchClear,
+    refresh,
+  } = useFilteredPaginatedList({
+    serviceUrl: 'people/list',
   });
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
@@ -40,68 +44,11 @@ function People() {
           ? 90
           : 70
 
-  useEffect(() => {
-    fetchPeopleList('', null, 1);
-  }, []);
-
-  const fetchPeopleList = (term, location, page) => {
-    setLoading(true);
-    _service({
-      url: 'people/list',
-      data: {
-        name: term,
-        ...(location && { [location.type + "Uid"]: location.uid }),
-        page,
-      },
-      success: (response) => {
-        const { items, pagination } = response.json.data;
-        setPeopleList(items);
-        setPagination((currentPagination) => ({
-          ...currentPagination,
-          current: page,
-          term,
-          location,
-          total: pagination.totalCount,
-          size: pagination.pageSize
-        }));
-        setLoading(false);
-      },
-      fail: () => {
-        setLoading(false);
-      }
-    })
-  };
-
-  const handlePaginationChange = (page, pageSize) => {
-    setPagination({ ...pagination, current: page, size: pageSize });
-    fetchPeopleList(pagination.term, pagination.location, page);
-  }
-
-  const handlePeopleSearch = (term) => {
-    setPagination({ ...pagination, current: 1, term });
-    fetchPeopleList(term, pagination.location, 1);
-  };
-
-  const handleLocationChange = (option) => {
-    setPagination({ ...pagination, current: 1, location: option });
-    fetchPeopleList(pagination.term, option, 1);
-  };
-
-  const handleLocationClear = () => {
-    setPagination({ ...pagination, current: 1, location: null });
-    fetchPeopleList(pagination.term, null, 1);
-  }
-
-  const handleSearchClear = () => {
-    setPagination({ ...pagination, current: 1, term: '' });
-    fetchPeopleList('', pagination.location, 1);
-  }
-
   const handleDeleteUser = (uid) => {
     loggedUser.remove(uid, {
       onSuccess: () => {
         messageApi.success('Utilizador apagado com sucesso.');
-        fetchPeopleList(pagination.term, pagination.location, pagination.current);
+        refresh();
       }
     });
   };
@@ -120,7 +67,7 @@ function People() {
             text: "Criar usuário",
             onClick: () => navigate('/people/create/user'),
           }}
-          onSearch={handlePeopleSearch}
+          onSearch={handleSearch}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}

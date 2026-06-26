@@ -4,7 +4,6 @@ import { Typography, Button, Input, Select, Row, Col } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
-
 import usePeople from "../../common/usePeople.js";
 
 import './index.less'
@@ -22,6 +21,7 @@ function ListHeaderFilters({
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
+  const hasHeaderTitle = title || createButton;
 
   // const loggedUser = usePeople();
 
@@ -58,29 +58,32 @@ function ListHeaderFilters({
   const handleLocationClear = () => {
     setLocationOptions([]);
     onLocationClear && onLocationClear();
-  }
+  };
 
   return (
     <div>
-      <div className="list-header-filters__header">
-        <Row align="middle" gutter={[16, 16]}>
-          <Col xs={12} sm={12}>
-            <Title>{title}</Title>
-          </Col>
-
-          {createButton && (
-            <Col xs={12} sm={12}>
-              <Button
-                type="primary"
-                icon={(createButton && createButton.icon) || <PlusOutlined />}
-                onClick={createButton && createButton.onClick}
-              >
-                {(createButton && createButton.text) || 'Adicionar Novo'}
-              </Button>
-            </Col>
-          )}
-        </Row>
-      </div>
+      {hasHeaderTitle && (
+        <div className="list-header-filters__header">
+          <Row align="middle" gutter={[16, 16]}>
+            {title && (
+              <Col xs={12} sm={12}>
+                <Title>{title}</Title>
+              </Col>
+            )}
+            {createButton && (
+              <Col xs={12} sm={12}>
+                <Button
+                  type="primary"
+                  icon={(createButton && createButton.icon) || <PlusOutlined />}
+                  onClick={createButton && createButton.onClick}
+                >
+                  {(createButton && createButton.text) || 'Adicionar Novo'}
+                </Button>
+              </Col>
+            )}
+          </Row>
+        </div>
+      )}
       {!hideInputs && (
         <div className="list-header-filters__inputs">
           <Row gutter={[16, 16]}>
@@ -94,7 +97,6 @@ function ListHeaderFilters({
                 allowClear
                 value={searchTerm} />
             </Col>
-            
             <Col xs={24} md={12}>
               <Select style={{ width: '100%' }}
                 notFoundContent={null}
