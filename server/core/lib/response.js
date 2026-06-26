@@ -69,4 +69,6 @@ export default {
   stopWithUserNotCreated: () => stopWithNotCreated("user"),
   stopWithPostNotCreated: () => stopWithNotCreated("post"),
   stopWithLikeNotCreated: () => stopWithNotCreated("like"),
+
+  stopWithTextTooLarge: () => stopWithError(413, "text-too-large"),
 }
