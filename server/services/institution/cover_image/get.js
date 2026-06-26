@@ -11,15 +11,15 @@ if (!dbInstitution) {
   _exec.stop();
 }
 
-const dbBannerName = dbInstitution.getString('banner');
+const dbCoverName = dbInstitution.getString('cover_image');
 
-const storageBannerFile = _storage.database(
+const storageCoverFile = _storage.database(
   'institution',
-  'banner',
-  dbBannerName
+  'cover_image',
+  dbCoverName
 );
 
 _header.contentTypePNG();
 _header.noCache();
 
-_out.copy(storageBannerFile.inputStream());
+_out.copy(storageCoverFile.inputStream());

@@ -13,7 +13,7 @@ if (_service.path === 'people/avatar/get') {
   _service.allow();
 }
 
-if (_service.path === 'people/banner/get') {
+if (_service.path === 'people/cover_image/get') {
   _service.allow();
 }
 
@@ -21,6 +21,6 @@ if (_service.path === 'institution/avatar/get') {
   _service.allow();
 }
 
-if (_service.path === 'institution/banner/get') {
+if (_service.path === 'institution/cover_image/get') {
   _service.allow();
 }

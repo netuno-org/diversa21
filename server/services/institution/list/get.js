@@ -31,7 +31,7 @@ let sqlQuery = `
         state.name AS "state",
         country.uid AS "country_uid",
         country.name AS "country",
-        institution.banner,
+        institution.cover_image,
         institution.avatar,
         institution.active
     FROM institution
@@ -75,7 +75,7 @@ for (const dbInstitution of dbInstitutions) {
     _val.map()
       .set('active', dbInstitution.getString('active'))
       .set('avatar', dbInstitution.getString('avatar') !== '')
-      .set('banner', dbInstitution.getString('banner') !== '')
+      .set('cover_image', dbInstitution.getString('cover_image') !== '')
       .set('uid', dbInstitution.getString('uid'))
       .set('slug', dbInstitution.getString('slug'))
       .set('country',

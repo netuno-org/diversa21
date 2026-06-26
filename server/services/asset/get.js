@@ -12,9 +12,9 @@ if (!dbTable) response.stopWithTableNotFound();
 
 let dbTableName = dbTable.getString(type);
 
-if (type === 'banner') {
-  dbTableName = dbTable.getString('banner');
-  type = 'banner';
+if (type === 'cover_image') {
+  dbTableName = dbTable.getString('cover_image');
+  type = 'cover_image';
 }
 
 if (entity === 'institution' && type === 'avatar') {

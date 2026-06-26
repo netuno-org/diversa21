@@ -60,9 +60,9 @@ export default function InstitutionForm({
           if (json.data) {
             const data = json.data;
             setAvatarPreview(data.avatar ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution`) : null);
-            setCoverPreview(data.banner ? _service.url(`/asset?uid=${data.uid}&type=banner&entity=institution`) : null);
+            setCoverPreview(data.cover_image ? _service.url(`/asset?uid=${data.uid}&type=cover_image&entity=institution`) : null);
             setInitialAvatar(data.avatar);
-            setInitialCover(data.banner);
+            setInitialCover(data.cover_image);
 
             // Pre-populate city select
             if (data.city && data.city.uid) {
@@ -94,9 +94,9 @@ export default function InstitutionForm({
     } else if (initialData) {
       // Use provided initialData
       setAvatarPreview(initialData.avatar ? _service.url(`/asset?uid=${initialData.uid}&type=avatar&entity=institution`) : null);
-      setCoverPreview(initialData.banner ? _service.url(`/asset?uid=${initialData.uid}&type=banner&entity=institution`) : null);
+      setCoverPreview(initialData.cover_image ? _service.url(`/asset?uid=${initialData.uid}&type=cover_image&entity=institution`) : null);
       setInitialAvatar(initialData.avatar);
-      setInitialCover(initialData.banner);
+      setInitialCover(initialData.cover_image);
 
       // Pre-populate city select
       if (initialData.city && initialData.city.uid) {
@@ -255,7 +255,7 @@ export default function InstitutionForm({
       formData.append('avatar', avatarFile);
     }
     if (coverFile) {
-      formData.append('banner', coverFile);
+      formData.append('cover_image', coverFile);
     }
 
     const apiUrl = editIdentifier ? `/institution?${slug ? `slug=${slug}` : `uid=${uid}`}` : '/institution';
@@ -386,7 +386,7 @@ export default function InstitutionForm({
             </Form.Item>
           </Card>
 
-          <Card title="Avatar e Banner" className="form-card">
+          <Card title="Avatar e Foto de Capa" className="form-card">
             <Form.Item
               label="Avatar"
               name="avatar"
@@ -426,7 +426,7 @@ export default function InstitutionForm({
 
             <Form.Item
               label="Imagem de Capa"
-              name="banner"
+              name="cover_image"
             >
               <div className="upload-container">
                 {coverPreview ? (

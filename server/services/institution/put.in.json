@@ -39,7 +39,7 @@
     "avatar": {
       "type": "file"
     },
-    "banner": {
+    "cover_image": {
       "type": "file"
     }
   },

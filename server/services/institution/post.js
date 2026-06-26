@@ -14,7 +14,7 @@ const post_code = _req.getString("post_code");
 const cityUid = _req.getUID("city");
 const website = _req.getString("website");
 const avatar = _req.getFile("avatar");
-const banner = _req.getFile("banner");
+const cover_image = _req.getFile("cover_image");
 if (!cityUid) response.stopWithCityNotFound();
 
 const dbCity = _db.queryFirst(`SELECT id FROM city WHERE uid = ?::uuid`, cityUid);
@@ -52,8 +52,8 @@ if (website) {
 if (avatar) {
   institutionData.set("avatar", avatar);
 }
-if (banner) {
-  institutionData.set("banner", banner);
+if (cover_image) {
+  institutionData.set("cover_image", cover_image);
 }
 
 const uid = _db.insert("institution", institutionData);

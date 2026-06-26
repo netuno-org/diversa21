@@ -11,15 +11,15 @@ if (!dbPeople) {
   _exec.stop();
 }
 
-const dbBannerName = dbPeople.getString('banner');
+const dbCoverName = dbPeople.getString('cover_image');
 
-const storageBannerFile = _storage.database(
+const storageCoverFile = _storage.database(
   'people',
-  'banner',
-  dbBannerName
+  'cover_image',
+  dbCoverName
 );
 
 _header.contentTypePNG();
 _header.noCache();
 
-_out.copy(storageBannerFile.inputStream());
+_out.copy(storageCoverFile.inputStream());

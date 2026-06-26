@@ -27,7 +27,7 @@ function ProfileForm({
 
   const profileForm = useRef(null);
   const profileAvatar = useRef(null);
-  const profileBanner = useRef(null);
+  const profileCover = useRef(null);
   const [form] = Form.useForm();
   const descriptionValue = Form.useWatch("description", form) || "";
 
@@ -59,7 +59,7 @@ function ProfileForm({
       if (people.avatar) {
         setAvatarImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`));
       }
-      if (people.banner) {
+      if (people.cover_image) {
         setCoverImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`));
       }
     }
@@ -138,7 +138,7 @@ function ProfileForm({
 
     if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
-      data.banner = profileBanner?.current?.getImage();
+      data.cover_image = profileCover?.current?.getImage();
       if (itsLoggedUserProfile) url += '/me';
       else data.uid = people.uid;
     }
@@ -292,7 +292,7 @@ function ProfileForm({
 
               <Card title={`Imagem de Capa`} className="profile-form__card">
                 <CoverImage
-                  ref={profileBanner}
+                  ref={profileCover}
                   currentImage={coverImageURL}
                   onRemove={() => {
                     setCoverImageURL(null);

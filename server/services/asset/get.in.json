@@ -13,7 +13,7 @@
       "description": "Type of asset.",
       "enum": [
         "avatar",
-        "banner"
+        "cover_image"
       ]
     },
     "entity": {

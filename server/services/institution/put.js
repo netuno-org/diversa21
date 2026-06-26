@@ -13,7 +13,7 @@ const post_code = _req.getString("post_code");
 const cityUid = _req.getUID("city");
 const website = _req.getString("website");
 const avatar = _req.getFile("avatar");
-const banner = _req.getFile("banner");
+const cover_image = _req.getFile("cover_image");
 
 if (!uid && !slug) response.stopWithInstitutionNotFound();
 if (!cityUid) response.stopWithCityNotFound();
@@ -68,8 +68,8 @@ if (website) {
 if (avatar) {
   institutionData.set("avatar", avatar);
 }
-if (banner) {
-  institutionData.set("banner", banner);
+if (cover_image) {
+  institutionData.set("cover_image", cover_image);
 }
 
 _db.update("institution", dbInstitution.getInt("id"), institutionData);

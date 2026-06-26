@@ -30,7 +30,7 @@ function Profile({ user }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-  const [bannerUrl, setBannerUrl] = useState();
+  const [coverUrl, setCoverUrl] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [friendStatus, setFriendStatus] = useState(null);
   const [canRequestFriend, setCanRequestFriend] = useState(false);
@@ -64,7 +64,7 @@ function Profile({ user }) {
   useEffect(() => {
     if (user) {
       user.avatar && setAvatarUrl(_service.url(`/asset?uid=${user.uid}&type=avatar&entity=people&${new Date().getTime()}`));
-      user.banner && setBannerUrl(_service.url(`/asset?uid=${user.uid}&type=banner&entity=people&${new Date().getTime()}`));
+      user.cover_image && setCoverUrl(_service.url(`/asset?uid=${user.uid}&type=cover_image&entity=people&${new Date().getTime()}`));
     }
   }, [user]);
 
@@ -280,8 +280,8 @@ function Profile({ user }) {
   return (
     <section className="profile">
       <div className="profile__cover">
-        {bannerUrl ? (
-          <img src={bannerUrl} alt="Capa de perfil" className="profile__cover-image" />
+        {coverUrl ? (
+          <img src={coverUrl} alt="Capa de perfil" className="profile__cover-image" />
         ) : (
           <div className="profile__cover-placeholder" />
         )}

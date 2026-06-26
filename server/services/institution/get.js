@@ -23,7 +23,7 @@ let sqlQuery = `
         state.name AS "state",
         country.uid AS "country_uid",
         country.name AS "country",
-        institution.banner,
+        institution.cover_image,
         institution.avatar,
         institution.active
     FROM institution
@@ -62,7 +62,7 @@ const data = _val.map()
       .set('uid', dbInstitution.getString('country_uid'))
       .set('name', dbInstitution.getString('country'))
   )
-  .set('banner', dbInstitution.getString('banner') !== '')
+  .set('cover_image', dbInstitution.getString('cover_image') !== '')
   .set('avatar', dbInstitution.getString('avatar') !== '')
   .set('active', dbInstitution.getString('active'));
 
