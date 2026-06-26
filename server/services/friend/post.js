@@ -60,6 +60,35 @@ const requestId = _db.insert("friend", _val.map()
   .set("accepted_at", null)
 );
 
+const notificationTypeId = _db.queryFirst(`
+    SELECT id
+    FROM notification_type
+    WHERE code = 'friend-request'
+`).getInt("id");
+
+const isNotificationBlocked = _db.queryFirst(`
+    SELECT *
+    FROM notification_opt_out
+    WHERE people_id = ?::int
+    AND type_id = ?::int
+  `, friendId, notificationTypeId)
+
+const loggedUserName = people.getData(loggedUser.getUID("uid")).getString("username");
+
+if (!isNotificationBlocked) {
+  _db.insert("notification",
+    _val.map()
+      .set("title", "@" + loggedUserName)
+      .set("content", 'Quer ser seu amigo.')
+      .set("originator_id", loggedId)
+      .set("recipient_id", friendId) 
+      .set("sent_at", currentTimestamp)
+      .set("read_at", null)
+      .set("extra", "")
+      .set("type_id", notificationTypeId)
+  );
+}
+
 const dbRequest = _db.get("friend", requestId);
 _out.json(
   _val.map()
