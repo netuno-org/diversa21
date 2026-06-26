@@ -11,7 +11,7 @@ if (_group.code() !== "member") {
 }
 
 const loggedUser = people.getLogged();
-const loggedId = loggedUser.getInt("id");
+const loggedUserId = loggedUser.getInt("id");
 
 const dbFriendship = _db.queryFirst(`
   SELECT f.id, f.accepted_at
@@ -19,7 +19,7 @@ const dbFriendship = _db.queryFirst(`
     INNER JOIN people p ON f.people_id = p.id
   WHERE p.uid = ?::uuid
     AND f.friend_id = ?::int
-`, friendUid, loggedId);
+`, friendUid, loggedUserId);
 
 if (!dbFriendship) {
   response.stopWithBadRequest("invalid_request");
@@ -35,20 +35,16 @@ _db.update("friend", dbFriendship.getInt("id"), _val.map()
   .set("accepted_at", currentTimestamp)
 );
 
-const notificationTypeId = _db.queryFirst(`
-    SELECT id
-    FROM notification_type
-    WHERE code = 'friend-request-accepted'
-`).getInt("id");
+const notificationTypeId = notifications.getNotificationTypeId('friend-request-accepted');
 
-const loggedUserName = people.getData(loggedUser.getUID("uid")).getString("username");
+const loggedUsername = people.getData(loggedUser.getUID("uid")).getString("username");
 const friendId = people.getByUid(friendUid).getInt("id");
 
 if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
   notifications.sendNotification(
-    "@" + loggedUserName,
+    "@" + loggedUsername,
     "Aceitou seu pedido de amizade.",
-    loggedId,
+    loggedUserId,
     friendId,
     '',
     notificationTypeId

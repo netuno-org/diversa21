@@ -1,6 +1,14 @@
 import { _db, _group, _user, _val, _ws } from "@netuno/server-types";
 
 export default {
+  getNotificationTypeId: (code) => {
+    return _db.queryFirst(`
+        SELECT id
+        FROM notification_type
+        WHERE code = '${code}'
+    `).getInt("id");
+  },
+
   isNotificationBlocked: (peopleId, notificationTypeId) => {
     return _db.queryFirst(`
       SELECT *

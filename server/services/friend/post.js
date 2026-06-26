@@ -21,10 +21,10 @@ if (!dbFriend) {
   response.stopWithUserNotFound();
 }
 
-const loggedId = loggedUser.getInt("id");
+const loggedUserId = loggedUser.getInt("id");
 const friendId = dbFriend.getInt("id");
 
-if (loggedId === friendId) {
+if (loggedUserId === friendId) {
   response.stopWithBadRequest("cannot_add_self");
 }
 
@@ -33,7 +33,7 @@ const dbExisting = _db.queryFirst(`
   FROM friend
   WHERE (people_id = ? AND friend_id = ?)
      OR (people_id = ? AND friend_id = ?)
-`, loggedId, friendId, friendId, loggedId);
+`, loggedUserId, friendId, friendId, loggedUserId);
 
 if (dbExisting) {
   const acceptedAt = dbExisting.getString("accepted_at");
@@ -42,7 +42,7 @@ if (dbExisting) {
   }
 
   const initiatorId = dbExisting.getInt("people_id");
-  if (initiatorId === loggedId) {
+  if (initiatorId === loggedUserId) {
     response.stopWithBadRequest("request_already_sent");
   } else {
     response.stopWithBadRequest("request_already_received");
@@ -51,25 +51,21 @@ if (dbExisting) {
 
 const currentTimestamp = _db.timestamp();
 const requestId = _db.insert("friend", _val.map()
-  .set("people_id", loggedId)
+  .set("people_id", loggedUserId)
   .set("friend_id", friendId)
   .set("request_at", currentTimestamp)
   .set("accepted_at", null)
 );
 
-const notificationTypeId = _db.queryFirst(`
-    SELECT id
-    FROM notification_type
-    WHERE code = 'friend-request'
-`).getInt("id");
+const notificationTypeId = notifications.getNotificationTypeId('friend-request');
 
-const loggedUserName = people.getData(loggedUser.getUID("uid")).getString("username");
+const loggedUsername = people.getData(loggedUser.getUID("uid")).getString("username");
 
 if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
   notifications.sendNotification(
-    "@" + loggedUserName,
+    "@" + loggedUsername,
     "Quer ser seu amigo.",
-    loggedId,
+    loggedUserId,
     friendId,
     '',
     notificationTypeId
