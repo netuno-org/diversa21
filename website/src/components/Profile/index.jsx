@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
 
 import ActivityList from "../Activity/List";
+import Friend from "../Friend";
 
 import PostList from '../Post/List';
 import usePeople from "../../common/usePeople.js";
@@ -276,6 +277,18 @@ function Profile({ user }) {
       ),
     },
   ];
+
+  if (loggedUser?.data?.group?.code === "member" && user?.group?.code === "member") {
+    tabItems.push({
+      key: 'friends',
+      label: 'Amigos',
+      children: (
+        <div className="profile__tabs-content">
+          <Friend userUid={user.uid} isOwnProfile={isOwnProfile} />
+        </div>
+      ),
+    });
+  }
 
   return (
     <section className="profile">

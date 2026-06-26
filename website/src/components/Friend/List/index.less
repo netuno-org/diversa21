@@ -1,0 +1,42 @@
+.friend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__card {
+    &.ant-card {
+      .ant-card-body {
+        padding: 16px;
+      }
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+    color: inherit;
+    flex-grow: 1;
+
+    &:hover, &:focus, &:active {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+  }
+}
