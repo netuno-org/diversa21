@@ -17,29 +17,9 @@ function Notifications() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
-  const { notifications, loading, markAllAsRead, markAsRead } = useNotifications(loggedUser);
+  const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
 
   const unreadCount = notifications.filter(n => !n.read).length;
-
-  const handleNotificationClick = (item) => {
-    markAsRead(item.id);
-
-    if (item.type === 'institution-post') {
-      if (item.parentUid && item.commentUid) {
-        navigate(`/p/${item.parentUid}?c=${item.commentUid}`);
-      } else if (item.parentUid) {
-        navigate(`/p/${item.parentUid}`);
-      } else {
-        navigate('/posts');
-      }
-    } else if (item.type === 'friend-request' || item.type === 'friend-request-accepted') {
-      navigate(`/u/${item.username}`);
-    } else if (item.type === 'message') {
-      navigate('/messages', {
-        state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }
-      });
-    }
-  };
 
   const getIconForType = (type) => {
     switch (type) {
@@ -81,11 +61,11 @@ function Notifications() {
       <Card className="notifications-page__card" variant="borderless">
         <div className="notifications-page__list">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <div className="notifications-page__loading">
               <Spin />
             </div>
           ) : filteredNotifications.length === 0 ? (
-            <div style={{ padding: '40px 0' }}>
+            <div className="notifications-page__filter">
               <Empty description="Não há notificações neste momento." />
             </div>
           ) : (
@@ -93,7 +73,7 @@ function Notifications() {
               <div
                 key={item.id}
                 className={`notifications-page__item ${!item.read ? 'notifications-page__item--unread' : ''}`}
-                onClick={() => handleNotificationClick(item)}
+                onClick={() => onNotificationClick(item, navigate)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="notifications-page__item-meta">

@@ -16,7 +16,7 @@ function HeaderNotifications() {
   const navigate = useNavigate();
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  const { notifications, loading, markAllAsRead, markAsRead } = useNotifications(loggedUser);
+  const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -26,24 +26,8 @@ function HeaderNotifications() {
   };
 
   const handleNotificationClick = (item) => {
-    markAsRead(item.id);
     setPopoverOpen(false);
-
-    if (item.type === 'institution-post') {
-      if (item.parentUid && item.commentUid) {
-        navigate(`/p/${item.parentUid}?c=${item.commentUid}`);
-      } else if (item.parentUid) {
-        navigate(`/p/${item.parentUid}`);
-      } else {
-        navigate('/posts');
-      }
-    } else if (item.type === 'friend-request' || item.type === 'friend-request-accepted') {
-      navigate(`/u/${item.username}`);
-    } else if (item.type === 'message') {
-      navigate('/messages', {
-        state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }
-      });
-    }
+    onNotificationClick(item, navigate);
   };
 
   const getIconForType = (type) => {

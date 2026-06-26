@@ -61,13 +61,7 @@ function useNotifications(loggedUser) {
           n.read = Boolean(n.read_at);
 
           if (n.type === 'institution-post' && n.extra) {
-            if (n.extra.parentUid && n.extra.parentUid !== '') {
-              n.parentUid = n.extra.parentUid;
-              n.commentUid = n.extra.postUid;
-            } else {
-              n.parentUid = n.extra.postUid;
-              n.commentUid = null;
-            }
+            n.postId = n.extra?.postUid;
           }
 
           const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
@@ -91,11 +85,42 @@ function useNotifications(loggedUser) {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
+  const onNotificationClick = (item, navigate) => {
+    markAsRead(item.id);
+
+    if (item.type === 'institution-post') {
+      if (!item.postId) return navigate('/posts');
+
+      _service({
+        url: 'post',
+        data: { uid: item.postId },
+        success: (response) => {
+          const post = response.json.data;
+          if (post.parent) {
+            navigate(`/p/${post.parent}?c=${item.postId}`);
+          } else {
+            navigate(`/p/${item.postId}`);
+          }
+        },
+        fail: () => {
+          navigate('/posts');
+        }
+      });
+
+    } else if (item.type === 'friend-request' || item.type === 'friend-request-accepted') {
+      navigate(`/u/${item.username}`);
+    } else if (item.type === 'message') {
+      navigate('/messages', {
+        state: { autoOpenFriend: { uid: item.senderUid, name: item.title, username: item.username } }
+      });
+    }
+  };
+
   return {
     notifications,
     loading,
     markAllAsRead,
-    markAsRead
+    onNotificationClick
   };
 }
 
