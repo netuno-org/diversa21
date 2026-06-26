@@ -1,4 +1,4 @@
-import { _req, _db, _val, _user, _out } from "@netuno/server-types"
+import { _req, _db, _val, _user, _out, _group } from "@netuno/server-types"
 
 import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
@@ -15,6 +15,10 @@ if (page > 0) {
 const loggedUser = people.getLogged();
 
 if (!loggedUser) {
+  response.stopWithPermissionDenied();
+}
+
+if (_group.code() !== "member") {
   response.stopWithPermissionDenied();
 }
 
