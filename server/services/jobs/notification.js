@@ -44,12 +44,6 @@ const myPostLikeNotificationTypeId = _db.queryFirst(`
     WHERE code = 'my-post-like'
 `).getInt("id");
 
-const myPostCommentNotificationTypeId = _db.queryFirst(`
-    SELECT id
-    FROM notification_type
-    WHERE code = 'my-post-comment'
-`).getInt("id");
-
 _db.execute(`
     INSERT INTO notification (
         id,
@@ -86,41 +80,4 @@ _db.execute(`
         AND originator.id <> recipient.id
         AND notification_opt_out.id IS NULL
     ORDER BY post.moment DESC;
-`);
-
-_db.execute(`
-    INSERT INTO notification (
-        id,
-        title,
-        content,
-        originator_id,
-        recipient_id,
-        sent_at,
-        read_at,
-        extra,
-        type_id
-    )
-    SELECT
-        NEXTVAL('notification_id'),
-        '@' || originator_user.user AS originator_username,
-        'Comentou em um post seu.',
-        originator.id,
-        recipient.id,
-        NOW(),
-        NULL,
-        '{ "postUid": "' || comment.uid || '" }',
-        ${myPostCommentNotificationTypeId} 
-    FROM post comment
-    INNER JOIN post parent ON comment.parent_id = parent.id 
-    INNER JOIN people originator ON comment.people_id = originator.id
-    INNER JOIN people recipient ON recipient.id = parent.people_id
-    INNER JOIN netuno_user originator_user ON originator.people_user_id = originator_user.id
-    LEFT JOIN notification_opt_out
-        ON notification_opt_out.people_id = recipient.id
-        AND notification_opt_out.type_id = ${myPostCommentNotificationTypeId} 
-    WHERE 1 = 1
-        AND comment.moment >= NOW() - INTERVAL '11 seconds'
-        AND originator.id <> recipient.id
-        AND notification_opt_out.id IS NULL
-    ORDER BY comment.moment DESC;
 `);

@@ -1,6 +1,9 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
+import people from "#core/lib/people.js";
+import notifications from "#core/lib/notifications.js";
 import response from "#core/lib/response.js";
+
 const content = _req.getString('content')
 const parent = _req.getString('parent')
 
@@ -8,29 +11,26 @@ if (content.length > 500) {
   response.stopWithTextTooLarge();
 }
 
-const dbPeople = _db.queryFirst(`
-    SELECT *
-    FROM people
-    WHERE people_user_id = ?::int
-`, _user.id);
+const loggedUser = people.getLogged();
+const loggedUserId = loggedUser.getInt('id');
+const loggedUsername = people.getData(loggedUser.getUID("uid")).getString("username");
 
-let dbParentPost = _val.map()
+let dbParentPost = _val.map();
 
-if (parent !== '') {
-  dbParentPost = _db.get(`post`, parent)
+if (parent) {
+  dbParentPost = _db.get(`post`, parent);
 }
-const peopleId = dbPeople.getInt('id')
 
 const postId = _db.insert(
   `post`,
   _val.map()
     .set('content', content)
     .set('moment', _db.timestamp())
-    .set('people_id', peopleId)
+    .set('people_id', loggedUserId)
     .set('parent_id', dbParentPost.getInt('id', 0)) 
     .set('comments', 0)
     .set('likes', 0)
-)
+);
 
 if (!dbParentPost.isEmpty()) {
   _db.update(
@@ -38,14 +38,26 @@ if (!dbParentPost.isEmpty()) {
     dbParentPost.getInt("id"),
     _val.map()
       .set("comments", dbParentPost.getInt("comments", 0) + 1)
-    )
+    );
+
+  const notificationTypeId = notifications.getNotificationTypeId('my-post-comment');
+  const friendId = dbParentPost.getInt("people_id");
+  if (loggedUserId !== friendId && !notifications.isNotificationBlocked(friendId, notificationTypeId)) {
+    notifications.sendNotification(
+      "@" + loggedUsername,
+      'Comentou em um post seu.',
+      loggedUserId,
+      friendId,
+      '',
+      notificationTypeId);
+  }
 }
 
 const dbPost = _db.queryFirst(`
     SELECT uid, content, moment
     FROM post 
     WHERE id = ?
-`, postId)
+`, postId);
 
 const post = _val.map()
   .set("uid", dbPost.getString("uid"))
@@ -54,9 +66,9 @@ const post = _val.map()
   .set(
     "people",
     _val.map()
-      .set("uid", dbPeople.getString("uid"))
-      .set("name", dbPeople.getString("name"))
-      .set("avatar", dbPeople.getString("avatar") !== "")
-  )
+      .set("uid", loggedUser.getString("uid"))
+      .set("name", loggedUser.getString("name"))
+      .set("avatar", loggedUser.getString("avatar") !== "")
+  );
 
-_out.json(post)
+_out.json(post);
