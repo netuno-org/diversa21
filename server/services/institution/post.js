@@ -6,7 +6,13 @@ import response from "#core/lib/response.js";
 if (!permissions.canCreateInstitutions()) response.stopWithPermissionDenied();
 
 const name = _req.getString("name");
+
 const description = _req.getString("description");
+
+if (description && description.length > 2000) {
+  response.stopWithTextTooLarge();
+}
+
 const email = _req.getString("email");
 const telephone = _req.getString("telephone");
 const address = _req.getString("address");
