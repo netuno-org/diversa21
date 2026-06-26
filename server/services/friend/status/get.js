@@ -4,10 +4,6 @@ import response from "#core/lib/response.js";
 
 const loggedUser = people.getLogged();
 
-if (!loggedUser) {
-  response.stopWithPermissionDenied();
-}
-
 const friendUid = _req.getString("uid");
 
 const dbFriend = _db.queryFirst(`

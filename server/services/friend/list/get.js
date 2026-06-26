@@ -14,10 +14,6 @@ if (page > 0) {
 
 const loggedUser = people.getLogged();
 
-if (!loggedUser) {
-  response.stopWithPermissionDenied();
-}
-
 if (_group.code() !== "member") {
   response.stopWithPermissionDenied();
 }
