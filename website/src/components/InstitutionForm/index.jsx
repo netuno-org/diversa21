@@ -118,70 +118,28 @@ export default function InstitutionForm({
     }
   }, [uid, slug, initialData, form]);
 
-  const validateImageDimensions = (file, { minW, minH, maxW, maxH, label }) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        const { width, height } = img;
-        if (width > maxW || height > maxH) {
-          reject(new Error(
-            `A imagem "${file.name}" excede as dimensões máximas permitidas (${maxW}x${maxH}px). ` +
-            `As dimensões da sua imagem são ${width}x${height}px.`
-          ));
-        } else if (width < minW || height < minH) {
-          reject(new Error(
-            `A imagem "${file.name}" é demasiado pequena. Dimensões mínimas aceites: ${minW}x${minH}px. ` +
-            `As dimensões da sua imagem são ${width}x${height}px.`
-          ));
-        } else {
-          resolve();
-        }
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error(`Não foi possível ler a imagem "${file.name}". Tente outro ficheiro.`));
-      };
-      img.src = url;
-    });
-  };
 
-  const handleAvatarChange = async (info) => {
-    const file = info.file.originFileObj || info.file;
-    if (!file) return;
-    try {
-      await validateImageDimensions(file, {
-        minW: 100, minH: 100, maxW: 400, maxH: 400, label: 'Avatar'
-      });
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setAvatarPreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
-      setAvatarFile(file);
-    } catch (err) {
-      message.error(err.message);
-    }
+  const handleAvatarChange = (info) => {
+  const file = info.file.originFileObj || info.file;
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    setAvatarPreview(e.target.result);
   };
+  reader.readAsDataURL(file);
+  setAvatarFile(file);
+};
 
-  const handleCoverChange = async (info) => {
-    const file = info.file.originFileObj || info.file;
-    if (!file) return;
-    try {
-      await validateImageDimensions(file, {
-        minW: 600, minH: 200, maxW: 2400, maxH: 800, label: 'Imagem de Capa'
-      });
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCoverPreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
-      setCoverFile(file);
-    } catch (err) {
-      message.error(err.message);
-    }
+  const handleCoverChange = (info) => {
+  const file = info.file.originFileObj || info.file;
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    setCoverPreview(e.target.result);
   };
+  reader.readAsDataURL(file);
+  setCoverFile(file);
+};
 
   const removeAvatar = () => {
     setAvatarPreview(null);
