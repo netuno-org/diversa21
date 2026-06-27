@@ -45,6 +45,15 @@
   },
   "required": [
     "name",
-    "email"
+    "description",
+    "email",
+    "telephone",
+    "address",
+    "post_code",
+    "city"
+  ],
+  "oneOf": [ 
+    { "required": ["uid"] },
+    { "required": ["slug"] }
   ]
 }

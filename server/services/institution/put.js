@@ -1,17 +1,12 @@
 import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
+
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
 const uid = _req.getUID('uid');
 const slug = _req.getString('slug');
 const name = _req.getString("name");
-
 const description = _req.getString("description");
-
-if (description && description.length > 2000) {
-  response.stopWithTextTooLarge();
-}
-
 const email = _req.getString("email");
 const telephone = _req.getString("telephone");
 const address = _req.getString("address");
@@ -21,13 +16,17 @@ const website = _req.getString("website");
 const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
 
-if (!uid && !slug) response.stopWithInstitutionNotFound();
-if (!cityUid) response.stopWithCityNotFound();
+if (description.length > 2000) {
+  response.stopWithTextTooLarge();
+}
 
 const dbCity = _db.queryFirst(`
     SELECT id FROM city WHERE uid = ?::uuid
 `, cityUid);
-if (!dbCity) response.stopWithCityNotFound();
+
+if (!dbCity) {
+  response.stopWithCityNotFound();
+}
 
 const cityId = dbCity.getInt("id");
 
@@ -44,7 +43,9 @@ if (slug) {
     `, uid);
 }
 
-if (!dbInstitution) response.stopWithInstitutionNotFound();
+if (!dbInstitution) {
+  response.stopWithInstitutionNotFound();
+}
 
 // Verify permissions
 const targetInstitutionUid = dbInstitution.getString("uid");
@@ -56,18 +57,12 @@ if (!permissions.canManageInstitution(targetInstitutionUid)) {
 const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
-  .set("email", email);
+  .set("email", email)
+  .set("telephone", telephone.replace(/\s/g, ''))
+  .set("address", address)
+  .set("post_code", post_code)
+  .set("city_id", cityId);
 
-if (telephone) {
-  institutionData.set("telephone", telephone.replace(/\s/g, ''));
-}
-if (address) {
-  institutionData.set("address", address);
-}
-if (post_code) {
-  institutionData.set("post_code", post_code);
-}
-institutionData.set("city_id", cityId);
 if (website) {
   institutionData.set("website", website);
 }

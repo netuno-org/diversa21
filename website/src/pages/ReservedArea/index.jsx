@@ -95,7 +95,11 @@ function ReservedArea() {
       }
       if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
         const slug = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
-        return <InstitutionForm slug={slug} onSuccess={() => navigate(`/institutions/${slug}`)} onCancel={() => navigate(`/institutions/${slug}`)} />;
+        return <InstitutionForm
+          slug={slug}
+          onSuccess={() => navigate(`/institutions/${slug}`)}
+          onCancel={() => navigate(`/institutions/${slug}`)}
+        />;
       }
       if (location.pathname === "/locations") {
         if (!people.canManageLocations()) {
