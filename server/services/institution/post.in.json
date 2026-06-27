@@ -44,7 +44,6 @@
     "telephone",
     "address",
     "post_code",
-    "city",
-
+    "city"
   ]
 }
