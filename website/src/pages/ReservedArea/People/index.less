@@ -1,3 +1,5 @@
+@import '../../../styles/variables.less';
+
 .people-list {
   &__loading {
     display: flex;
@@ -18,14 +20,8 @@
     width: 100%;
   }
 
-  &__pagination {
-    &--hidden {
-      display: none;
-    }
-  }
-
-  &__card:first-child {
-    margin-top: 16px;
+  &__pagination--hidden {
+    display: none;
   }
 
   &__card {
@@ -34,19 +30,21 @@
     margin-bottom: 16px;
     transition: all 0.2s ease;
 
-    @media (max-width: 480px) {
-      .ant-card-body {
-        padding: 10px;
-      }
+    &:first-child {
+      margin-top: 16px;
     }
 
     &:hover {
       background-color: #fafafa;
-      border-color: #8A6AA2;
+      border-color: @primary-color;
     }
 
     .ant-card-body {
-      padding: 16px 24px;
+      padding: 24px;
+
+      @media (max-width: 480px) {
+        padding: 16px;
+      }
     }
 
     .ant-avatar {
@@ -61,12 +59,6 @@
     justify-content: space-between;
     align-items: flex-start;
     width: 100%;
-
-    @media (max-width: 420px) {
-      .ant-avatar {
-        flex-shrink: 0;
-      }
-    }
   }
 
   &__card-info {
@@ -106,10 +98,10 @@
     line-height: 1;
     display: flex;
     align-items: center;
-    color: #8A6AA2;
+    color: @primary-color;
 
     &:hover {
-      color: #6D4F8A;
+      color: darken(@primary-color, 10%);
     }
   }
 }

@@ -51,8 +51,8 @@
     justify-content: center;
 
     &:hover {
-      color: #8A6AA2 !important;
-      background-color: rgba(138, 106, 162, 0.08) !important;
+      color: @primary-color !important;
+      background-color: fade(@primary-color, 8%) !important;
     }
   }
 
@@ -93,7 +93,7 @@
 
     &:focus-within {
       background-color: #ffffff;
-      box-shadow: 0 0 0 1px #8A6AA2;
+      box-shadow: 0 0 0 1px @primary-color;
     }
   }
 
@@ -117,13 +117,13 @@
   }
 
   &-send-btn {
-    background-color: #8A6AA2;
-    border-color: #8A6AA2;
+    background-color: @primary-color;
+    border-color: @primary-color;
 
     &:hover,
     &:focus {
-      background-color: #6D4F8A !important;
-      border-color: #6D4F8A !important;
+      background-color: darken(@primary-color, 10%) !important;
+      border-color: darken(@primary-color, 10%) !important;
     }
   }
 }

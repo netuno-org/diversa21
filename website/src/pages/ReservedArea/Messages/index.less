@@ -7,8 +7,9 @@
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 768px) {
-    padding: 16px 8px;
+  @media (max-width: @md) {
+    padding: 16px;
+    height: 100vh;
   }
 
   &__header {
@@ -31,9 +32,12 @@
     background: #ffffff;
     flex: 1;
     min-height: 550px;
-
     display: flex;
     flex-direction: column;
+
+    @media (max-width: @md) {
+      height: calc(100vh - 120px);
+    }
 
     .ant-card-body {
       padding: 0 !important;
@@ -50,6 +54,10 @@
     flex-wrap: nowrap;
     height: 100%;
     min-height: 0;
+
+    @media (max-width: @md) {
+      flex-direction: column;
+    }
   }
 
   &__sidebar {
@@ -60,6 +68,12 @@
     background-color: #fafafa;
     min-height: 0;
     overflow: hidden;
+
+    @media (max-width: @md) {
+      height: 35%;
+      border-right: none;
+      border-bottom: 1px solid #f0f0f0;
+    }
   }
 
   &__chat-area {
@@ -67,33 +81,8 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-  }
-}
 
-@media (max-width: 768px) {
-  .messages {
-    padding: 16px;
-    height: 100vh;
-
-    &__header {
-      margin-bottom: 16px;
-    }
-
-    &__card {
-      height: calc(100vh - 120px);
-    }
-
-    &__row {
-      flex-direction: column;
-    }
-
-    &__sidebar {
-      height: 35%;
-      border-right: none;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    &__chat-area {
+    @media (max-width: @md) {
       height: 65%;
     }
   }
