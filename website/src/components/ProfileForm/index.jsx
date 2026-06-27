@@ -9,8 +9,8 @@ import isNetworkError from "is-network-error";
 
 import globalNotification from "../../common/globalNotification.js";
 import usePeople from "../../common/usePeople.js";
-import Avatar from './Avatar';
-import CoverImage from './CoverImage';
+import Avatar from '../Avatar/index.jsx';
+import CoverImage from '../CoverImage/index.jsx';
 import './index.less';
 
 function ProfileForm({

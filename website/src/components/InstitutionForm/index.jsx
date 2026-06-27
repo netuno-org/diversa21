@@ -1,57 +1,43 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  Typography, Form, Input, Button, Divider,
-  Upload, Card, message, Spin, Select
-} from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React, { useState, useRef, useEffect } from 'react';
+import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col } from 'antd';
 import { useNavigate } from 'react-router-dom';
-
 import _service from '@netuno/service-client';
+
+import Avatar from '../Avatar';
+import CoverImage from '../CoverImage';
 import "./index.less";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { TextArea } = Input;
 
 export default function InstitutionForm({
   uid = null,
   slug = null,
   initialData = null,
-  onSuccess = () => { },
-  onCancel = () => { },
+  onSuccess,
+  onCancel,
   submitText = null,
   title = null,
-  showBackButton = true,
-  onBack
+  showBackButton = true
 }) {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState((!!uid || !!slug) && !initialData);
   const [form] = Form.useForm();
 
-  const defaultOnBack = slug
-    ? () => navigate(`/institutions/${slug}`)
-    : () => navigate('/institutions');
-  const backAction = onBack || defaultOnBack;
+  const profileAvatar = useRef(null);
+  const profileCover = useRef(null);
 
-  const [avatarPreview, setAvatarPreview] = useState(null);
-  const [coverPreview, setCoverPreview] = useState(null);
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [coverFile, setCoverFile] = useState(null);
-  const [initialAvatar, setInitialAvatar] = useState(null);
-  const [initialCover, setInitialCover] = useState(null);
-
+  const [avatarImageURL, setAvatarImageURL] = useState(null);
+  const [coverImageURL, setCoverImageURL] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
-  const debounceTimer = useRef(null);
 
-  // Use slug for edit mode if available, otherwise fallback to uid
   const editIdentifier = slug || uid;
   const isEditMode = !!editIdentifier;
 
-  // Load institution data if in edit mode and no initialData provided
   useEffect(() => {
     if (editIdentifier && !initialData) {
-      // Use slug if available, otherwise fallback to uid
       const identifierParam = slug ? `slug=${slug}` : `uid=${uid}`;
       _service({
         url: `/institution?${identifierParam}`,
@@ -59,16 +45,15 @@ export default function InstitutionForm({
         success: ({ json }) => {
           if (json.data) {
             const data = json.data;
-            setAvatarPreview(data.avatar ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution`) : null);
-            setCoverPreview(data.cover_image ? _service.url(`/asset?uid=${data.uid}&type=cover_image&entity=institution`) : null);
-            setInitialAvatar(data.avatar);
-            setInitialCover(data.cover_image);
+            setAvatarImageURL(data.avatar ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution&t=${Date.now()}`) : null);
+            setCoverImageURL(data.cover_image ? _service.url(`/asset?uid=${data.uid}&type=cover_image&entity=institution&t=${Date.now()}`) : null);
 
-            // Pre-populate city select
-            if (data.city && data.city.uid) {
-              const cityLabel = [data.country?.name, data.state?.name, data.city?.name].filter(Boolean).join(' > ');
-              setSelectedCity({ uid: data.city.uid, label: cityLabel });
-              setCityOptions([{ value: data.city.uid, label: cityLabel, uid: data.city.uid }]);
+            let cityObject = undefined;
+            if (data.city) {
+              const label = `${data.country?.name} > ${data.state?.name} > ${data.city?.name}`;
+              cityObject = { label, value: data.city.uid };
+              setSelectedCity({ uid: data.city.uid, label });
+              setCityOptions([{ value: data.city.uid, label, uid: data.city.uid }]);
             }
 
             form.setFieldsValue({
@@ -78,401 +63,156 @@ export default function InstitutionForm({
               telephone: data.telephone,
               address: data.address,
               post_code: data.post_code,
-              city: data.city?.uid,
+              city: cityObject,
               website: data.website
             });
-          } else {
-            message.error('Instituição não encontrada.');
           }
-          setLoading(false);
-        },
-        fail: () => {
-          message.error('Erro ao carregar dados da instituição.');
           setLoading(false);
         }
       });
-    } else if (initialData) {
-      // Use provided initialData
-      setAvatarPreview(initialData.avatar ? _service.url(`/asset?uid=${initialData.uid}&type=avatar&entity=institution`) : null);
-      setCoverPreview(initialData.cover_image ? _service.url(`/asset?uid=${initialData.uid}&type=cover_image&entity=institution`) : null);
-      setInitialAvatar(initialData.avatar);
-      setInitialCover(initialData.cover_image);
-
-      // Pre-populate city select
-      if (initialData.city && initialData.city.uid) {
-        const cityLabel = [initialData.country?.name, initialData.state?.name, initialData.city?.name].filter(Boolean).join(' > ');
-        setSelectedCity({ uid: initialData.city.uid, label: cityLabel });
-        setCityOptions([{ value: initialData.city.uid, label: cityLabel, uid: initialData.city.uid }]);
-      }
-
-      form.setFieldsValue({
-        name: initialData.name,
-        description: initialData.description,
-        email: initialData.email,
-        telephone: initialData.telephone,
-        address: initialData.address,
-        post_code: initialData.post_code,
-        city: initialData.city?.uid,
-        website: initialData.website
-      });
     }
-  }, [uid, slug, initialData, form]);
+  }, [editIdentifier, initialData, form, slug, uid]);
 
-
-  const handleAvatarChange = (info) => {
-  const file = info.file.originFileObj || info.file;
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    setAvatarPreview(e.target.result);
-  };
-  reader.readAsDataURL(file);
-  setAvatarFile(file);
-};
-
-  const handleCoverChange = (info) => {
-  const file = info.file.originFileObj || info.file;
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    setCoverPreview(e.target.result);
-  };
-  reader.readAsDataURL(file);
-  setCoverFile(file);
-};
-
-  const removeAvatar = () => {
-    setAvatarPreview(null);
-    setAvatarFile(null);
-  };
-
-  const removeCover = () => {
-    setCoverPreview(null);
-    setCoverFile(null);
-  };
-
-  const handleCitySearch = useCallback((value) => {
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-
-    if (!value || value.trim() === '') {
+  const handleCitySearch = (value) => {
+    if (!value) {
       setCityOptions([]);
       return;
     }
-
-    debounceTimer.current = setTimeout(() => {
-      _service({
-        url: `location/city/search?name=${encodeURIComponent(value)}`,
-        success: (response) => {
-          const options = (response.json.data || []).map(city => ({
-            value: city.uid,
-            label: city.label,
-            uid: city.uid,
-          }));
-          setCityOptions(options);
-        },
-        fail: () => {
-          setCityOptions([]);
-        }
-      });
-    }, 300);
-  }, []);
-
-  const handleCityChange = (value, option) => {
-    setSelectedCity(option);
+    _service({
+      url: `location/city/search?name=${value}`,
+      success: ({ json }) => {
+        setCityOptions(json.data.map(city => ({ label: city.label, value: city.uid, uid: city.uid })));
+      },
+      fail: () => setCityOptions([])
+    });
   };
 
-  const handleCityClear = () => {
-    setCityOptions([]);
-    setSelectedCity(null);
-  };
-
-  function onFinish(values) {
+  const onFinish = (values) => {
     setSubmitting(true);
-
-    const {
-      name, description, email, telephone, address,
-      post_code, website
-    } = values;
-
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('description', description || '');
-    formData.append('email', email);
 
-    // Only append optional fields if they have values
-    if (telephone) formData.append('telephone', telephone);
-    if (address) formData.append('address', address);
-    if (post_code) formData.append('post_code', post_code);
-    if (selectedCity?.uid) formData.append('city', selectedCity.uid);
-    if (website) formData.append('website', website);
+    Object.keys(values).forEach(key => {
+      if (values[key] !== undefined && values[key] !== null && key !== 'city') {
+        formData.append(key, values[key]);
+      }
+    });
 
-    // Append files only if changed in edit mode
-    if (avatarFile) {
-      formData.append('avatar', avatarFile);
-    }
-    if (coverFile) {
-      formData.append('cover_image', coverFile);
+    if (selectedCity?.uid) {
+      formData.append('city', selectedCity.uid);
     }
 
-    const apiUrl = editIdentifier ? `/institution?${slug ? `slug=${slug}` : `uid=${uid}`}` : '/institution';
-    const apiMethod = editIdentifier ? 'PUT' : 'POST';
+    const avatar = profileAvatar?.current?.getImage();
+    const cover = profileCover?.current?.getImage();
+
+    if (avatar) formData.append('avatar', avatar);
+    if (cover) formData.append('cover_image', cover);
 
     _service({
-      method: apiMethod,
-      url: apiUrl,
+      method: isEditMode ? 'PUT' : 'POST',
+      url: isEditMode ? `/institution?${slug ? `slug=${slug}` : `uid=${uid}`}` : '/institution',
       data: formData,
-      success: (response) => {
-        if (response.json.result) {
-          const successSlug = slug || response.json.data?.slug;
-          const successUid = uid || response.json.data?.uid;
-          onSuccess(successSlug || successUid, response.json.data);
+      success: (res) => {
+        if (res.json.result) {
+          if (onSuccess) onSuccess(slug || uid, res.json.data);
         } else {
-          message.error(response.json.error || 'Erro ao guardar.');
+          message.error(res.json.error || 'Erro ao guardar.');
           setSubmitting(false);
         }
       },
       fail: () => {
-        message.error('Ocorreu um erro ao guardar. Tente novamente.');
+        message.error('Erro de conexão.');
         setSubmitting(false);
       }
     });
-  }
+  };
 
-  function onFinishFailed(errorInfo) {
-    console.log('Failed:', errorInfo);
-  }
+  const handleCancelClick = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      navigate(-1);
+    }
+  };
 
-  // Determine titles
-  const pageTitle = title || (isEditMode ? 'Editar Instituição' : 'Nova Instituição');
-  const buttonText = submitText || (isEditMode ? 'Guardar Alterações' : 'Criar Instituição');
-
-  // Always render form even during loading to avoid useForm warning
-  // (shows spinner inside form while loading)
   return (
     <div className="institution-form">
-      {showBackButton && (
-        <div className="content-title">
-          <Button
-            className="go-back-btn"
-            type="link"
-            onClick={backAction}
-          >
-            ← Voltar atrás
-          </Button>
-        </div>
-      )}
+      <div className="institution-form__body">
+        <Title level={2}>{title || (isEditMode ? 'Editar Instituição' : 'Nova Instituição')}</Title>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          {loading ? (
+            <div className="institution-form__loading"><Spin size="large" /></div>
+          ) : (
+            <>
+              {isEditMode && (
+                <>
+                  <Card title="Avatar" className="institution-form__card">
+                    <Avatar ref={profileAvatar} currentImage={avatarImageURL} onRemove={() => setAvatarImageURL(null)} />
+                  </Card>
+                  <Card title="Capa" className="institution-form__card">
+                    <CoverImage ref={profileCover} currentImage={coverImageURL} onRemove={() => setCoverImageURL(null)} />
+                  </Card>
+                </>
+              )}
+              <Card title="Informações Gerais" className="institution-form__card">
+                <Form.Item name="name" label="Nome" rules={[{ required: true }]}><Input disabled={submitting} /></Form.Item>
+                <Form.Item name="description" label="Descrição"><TextArea rows={4} disabled={submitting} /></Form.Item>
 
-      <div className="content-title">
-        <Title level={2}>{pageTitle}</Title>
-      </div>
+                <Row gutter={16}>
+                  <Col xs={24} md={12}><Form.Item name="email" label="E-mail"><Input disabled={submitting} /></Form.Item></Col>
+                  <Col xs={24} md={12}><Form.Item name="telephone" label="Telefone"><Input disabled={submitting} /></Form.Item></Col>
+                </Row>
 
-      <div className="content-body">
-        <Form
-          form={form}
-          layout="vertical"
-          name="institution_form"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          initialValues={{}}
-        >
-          {loading && (
-            <div className="institution-form-loading">
-              <Spin size="large" />
-            </div>
+                <Row gutter={16}>
+                  <Col xs={24} md={12}>
+                    <Form.Item name="city" label="Cidade" rules={[{ required: true }]}>
+                      <Select
+                        labelInValue
+                        showSearch
+                        filterOption={false}
+                        options={cityOptions}
+                        onSearch={handleCitySearch}
+                        onChange={(opt) => setSelectedCity(opt)}
+                        allowClear
+                        disabled={submitting}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <Form.Item name="website" label="Website">
+                      <Input placeholder="https://" disabled={submitting} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
+
+              <div className="institution-form__actions">
+                <Form.Item className="institution-form__action-item">
+                  <Button
+                    type="default"
+                    onClick={handleCancelClick}
+                    size="large"
+                    block
+                    className="institution-form__btn institution-form__btn--cancel"
+                  >
+                    Cancelar
+                  </Button>
+                </Form.Item>
+
+                <Form.Item className="institution-form__action-item">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={submitting}
+                    size="large"
+                    block
+                    className="institution-form__btn institution-form__btn--submit"
+                  >
+                    {submitText || (isEditMode ? 'Atualizar Instituição' : 'Criar Instituição')}
+                  </Button>
+                </Form.Item>
+              </div>
+            </>
           )}
-
-          <Card title="Informações Principais" className="form-card">
-            <Form.Item
-              label="Nome"
-              name="name"
-              rules={[
-                { required: true, message: 'Insira o nome da instituição.' },
-                { type: 'string', max: 250, message: 'Nome não pode exceder 250 caracteres.' }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={250} />
-            </Form.Item>
-
-            <Form.Item
-              label="Descrição"
-              name="description"
-              rules={[
-                { required: true, message: 'Insira a descrição da instituição.' }
-              ]}
-            >
-              <TextArea
-                style={{ resize: 'none' }}
-                rows={4}
-                disabled={submitting}
-                maxLength={2000}
-                showCount
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="E-mail"
-              name="email"
-              rules={[
-                { type: 'email', message: 'E-mail inválido.' },
-                { required: true, message: 'Insira o e-mail.' }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={250} />
-            </Form.Item>
-
-            <Form.Item
-              label="Telefone"
-              name="telephone"
-            >
-              <Input disabled={submitting} maxLength={20} />
-            </Form.Item>
-
-            <Form.Item
-              label="Website"
-              name="website"
-              rules={[
-                { type: 'url', message: 'URL inválida.' }
-              ]}
-            >
-              <Input
-                disabled={submitting}
-                maxLength={500}
-                placeholder="https://"
-              />
-            </Form.Item>
-          </Card>
-
-          <Card title="Avatar e Foto de Capa" className="form-card">
-            <Form.Item
-              label="Avatar"
-              name="avatar"
-            >
-              <div className="upload-container">
-                {avatarPreview ? (
-                  <div className="image-preview">
-                    <img src={avatarPreview} alt="Avatar" />
-                    <Button
-                      type="link"
-                      danger
-                      onClick={removeAvatar}
-                      disabled={submitting}
-                    >
-                      Remover
-                    </Button>
-                  </div>
-                ) : (
-                  <Upload
-                    showUploadList={false}
-                    beforeUpload={(file) => {
-                      handleAvatarChange({ file });
-                      return false;
-                    }}
-                    accept="image/*"
-                  >
-                    <Button icon={<UploadOutlined />} disabled={submitting}>
-                      Carregar Avatar
-                    </Button>
-                  </Upload>
-                )}
-                <Text type="secondary" className="upload-hint">
-                  Formato: JPG, PNG. Tamanho recomendado: 200x200px
-                </Text>
-              </div>
-            </Form.Item>
-
-            <Form.Item
-              label="Imagem de Capa"
-              name="cover_image"
-            >
-              <div className="upload-container">
-                {coverPreview ? (
-                  <div className="image-preview cover-preview">
-                    <img src={coverPreview} alt="Cover" />
-                    <Button
-                      type="link"
-                      danger
-                      onClick={removeCover}
-                      disabled={submitting}
-                    >
-                      Remover
-                    </Button>
-                  </div>
-                ) : (
-                  <Upload
-                    showUploadList={false}
-                    beforeUpload={(file) => {
-                      handleCoverChange({ file });
-                      return false;
-                    }}
-                    accept="image/*"
-                  >
-                    <Button icon={<UploadOutlined />} disabled={submitting}>
-                      Carregar Imagem de Capa
-                    </Button>
-                  </Upload>
-                )}
-                <Text type="secondary" className="upload-hint">
-                  Formato: JPG, PNG. Tamanho recomendado: 1200x400px
-                </Text>
-              </div>
-            </Form.Item>
-          </Card>
-
-          <Card title="Localização" className="form-card">
-            <Form.Item
-              label="Endereço"
-              name="address"
-            >
-              <TextArea style={{ resize: 'none' }} rows={2} disabled={submitting} />
-            </Form.Item>
-
-            <Form.Item
-              label="Código Postal"
-              name="post_code"
-              rules={[
-                { type: 'string', max: 20, message: 'Código postal inválido.' }
-              ]}
-            >
-              <Input disabled={submitting} maxLength={20} />
-            </Form.Item>
-
-            <Form.Item
-              label="Cidade"
-              name="city"
-              rules={[
-                { required: true, message: 'Selecione a cidade.' }
-              ]}
-            >
-              <Select
-                showSearch
-                notFoundContent={null}
-                filterOption={false}
-                placeholder="Pesquisar cidade..."
-                options={cityOptions}
-                onSearch={handleCitySearch}
-                onChange={handleCityChange}
-                onClear={handleCityClear}
-                allowClear
-                disabled={submitting}
-              />
-            </Form.Item>
-          </Card>
-
-          <Divider />
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={submitting}
-              size="large"
-              block
-            >
-              {buttonText}
-            </Button>
-          </Form.Item>
         </Form>
       </div>
     </div>

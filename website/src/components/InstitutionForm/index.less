@@ -1,130 +1,71 @@
+@import '../../styles/variables.less';
+
 .institution-form {
-  min-height: calc(100vh - 140px);
-  padding: 16px 0;
+  margin: 0 auto;
+  max-width: 800px;
 
-  .content-title {
+  &__body {
+    width: 100%;
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 100px 0;
+  }
+
+  &__card {
+    margin-bottom: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    .ant-card-head-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  .ant-form-item {
     margin-bottom: 16px;
+  }
 
-    .go-back-btn {
-      padding: 0;
-      font-size: 14px;
-    }
+  &__actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+  }
 
-    .ant-typography {
-      margin: 0;
+  &__action-item {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .ant-btn-primary {
+    background-color: @primary-color;
+    border-color: @primary-color;
+
+    &:hover {
+      background-color: darken(@primary-color, 10%);
+      border-color: darken(@primary-color, 10%);
     }
   }
 
-  .content-body {
-    .form-card {
-      margin-bottom: 16px;
-
-      .ant-card-head-title {
-        font-weight: 600;
-      }
+  @media screen and (max-width: 450px) {
+    &__actions {
+      flex-direction: column-reverse;
+      gap: 12px;
     }
 
-    .upload-container {
-      .image-preview {
-        position: relative;
-        display: inline-block;
+    &__card {
 
-        img {
-          width: 120px;
-          height: 120px;
-          object-fit: cover;
-          border-radius: 8px;
-          border: 1px solid #d9d9d9;
-        }
-
-        .ant-btn {
-          display: block;
-          margin-top: 8px;
-        }
+      .ant-card-head-title,
+      .ant-card-body {
+        text-align: center;
       }
 
-      .cover-preview img {
-        width: 200px;
-        height: 100px;
-      }
-
-      .upload-hint {
-        display: block;
-        margin-top: 8px;
-        font-size: 12px;
+      .ant-card-body>.ant-row {
+        justify-content: center;
       }
     }
-
-    .ant-form-item {
-      margin-bottom: 16px;
-    }
-
-    .ant-divider {
-      margin: 24px 0 16px;
-    }
-
-    .ant-btn-primary {
-      background-color: #8A6AA2;
-      border-color: #8A6AA2;
-
-      &:hover,
-      &:focus {
-        background-color: #7A5A92;
-        border-color: #7A5A92;
-      }
-    }
-  }
-}
-
-.institution-form-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-@media (max-width: 768px) {
-  .institution-form {
-    padding: 12px 0;
-
-    .upload-container {
-      .image-preview img {
-        width: 100px;
-        height: 100px;
-      }
-
-      .cover-preview img {
-        width: 160px;
-        height: 80px;
-      }
-    }
-  }
-}
-
-@media (max-width: 576px) {
-  .institution-form {
-    padding: 8px 0;
-
-    .content-title {
-      margin-bottom: 12px;
-
-      .ant-typography {
-        font-size: 20px;
-      }
-    }
-
-    .content-body {
-      .form-card {
-        margin-bottom: 12px;
-      }
-
-      .ant-form-item {
-        margin-bottom: 12px;
-      }
-    }
-  }
-
-  .institution-form-loading {
-    min-height: 40vh;
   }
 }
