@@ -45,7 +45,6 @@ sqlQuery += `
         INNER JOIN people ON post_like.people_id = people.id
 `;
 
-
 if (institutionUid) {
   sqlQuery += `
         INNER JOIN institution i ON people.institution_id = i.id
@@ -87,15 +86,15 @@ if (institutionUid) {
   params
     .add(institutionUid)
     .add(institutionUid)
-    .add(loggedUserPeopleId)
-    .add(offset);
 } else {
   params
     .add(peopleUid)
     .add(peopleUid)
-    .add(loggedUserPeopleId)
-    .add(offset);
 }
+
+params
+  .add(loggedUserPeopleId)
+  .add(offset);
 
 const dbPosts = _db.query(sqlQuery, params);
 
