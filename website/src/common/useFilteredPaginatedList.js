@@ -86,6 +86,11 @@ function useFilteredPaginatedList({ serviceUrl }) {
   };
 
   const handleLocationChange = (location) => {
+    if (!location) {
+      handleLocationClear();
+      return;
+    }
+
     setPagination((currentPagination) => ({
       ...currentPagination,
       current: 1,
