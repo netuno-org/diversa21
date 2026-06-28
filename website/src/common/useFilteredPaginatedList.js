@@ -14,51 +14,63 @@ function useFilteredPaginatedList({ serviceUrl }) {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState(defaultPagination);
 
-  const fetchList = useCallback(({
-    term = pagination.term,
-    location = pagination.location,
-    page = pagination.current
-  } = {}) => {
+  const fetchList = useCallback(
+    ({
+      term = '',
+      location = null,
+      page = 1,
+    } = {}) => {
+      setLoading(true);
 
-    setLoading(true);
+      _service({
+        url: serviceUrl,
+        data: {
+          name: term,
+          ...(location && {
+            [`${location.type}Uid`]: location.uid,
+          }),
+          page,
+        },
 
-    _service({
-      url: serviceUrl,
-      data: {
-        name: term,
-        ...(location && {
-          [`${location.type}Uid`]: location.uid
-        }),
-        page,
-      },
+        success: (response) => {
 
-      success: (response) => {
-        const { items, pagination: responsePagination } = response.json.data;
+          const { items, pagination: responsePagination } =
+            response.json.data;
 
-        setItems(items);
+          setItems(items);
 
-        setPagination((currentPagination) => ({
-          ...currentPagination,
-          current: page,
-          term,
-          location,
-          total: responsePagination.totalCount,
-          size: responsePagination.pageSize,
-        }));
+          setPagination((currentPagination) => ({
+            ...currentPagination,
+            current: page,
+            term,
+            location,
+            total: responsePagination.totalCount,
+            size: responsePagination.pageSize,
+          }));
 
-        setLoading(false);
-      },
+          setLoading(false);
+        },
 
-      fail: () => {
-        setLoading(false);
-      }
-    });
-
-  }, [serviceUrl, pagination]);
+        fail: () => {
+          setLoading(false);
+        },
+      });
+    },
+    [serviceUrl]
+  );
 
   useEffect(() => {
-    fetchList();
-  }, []);
+    fetchList({
+      term: pagination.term,
+      location: pagination.location,
+      page: pagination.current,
+    });
+  }, [
+    pagination.current,
+    pagination.term,
+    pagination.location,
+    fetchList,
+  ]);
 
   const handlePaginationChange = (page, pageSize) => {
     setPagination((currentPagination) => ({
@@ -66,10 +78,6 @@ function useFilteredPaginatedList({ serviceUrl }) {
       current: page,
       size: pageSize,
     }));
-
-    fetchList({
-      page,
-    });
   };
 
   const handleSearch = (term) => {
@@ -78,29 +86,14 @@ function useFilteredPaginatedList({ serviceUrl }) {
       current: 1,
       term,
     }));
-
-    fetchList({
-      term,
-      page: 1,
-    });
   };
 
   const handleLocationChange = (location) => {
-    if (!location) {
-      handleLocationClear();
-      return;
-    }
-
     setPagination((currentPagination) => ({
       ...currentPagination,
       current: 1,
       location,
     }));
-
-    fetchList({
-      location,
-      page: 1,
-    });
   };
 
   const handleLocationClear = () => {
@@ -109,11 +102,6 @@ function useFilteredPaginatedList({ serviceUrl }) {
       current: 1,
       location: null,
     }));
-
-    fetchList({
-      location: null,
-      page: 1,
-    });
   };
 
   const handleSearchClear = () => {
@@ -122,16 +110,16 @@ function useFilteredPaginatedList({ serviceUrl }) {
       current: 1,
       term: '',
     }));
-
-    fetchList({
-      term: '',
-      page: 1,
-    });
   };
 
   const refresh = () => {
-    fetchList();
+    fetchList({
+      term: pagination.term,
+      location: pagination.location,
+      page: pagination.current,
+    });
   };
+
   return {
     items,
     loading,
