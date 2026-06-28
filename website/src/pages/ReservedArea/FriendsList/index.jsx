@@ -34,6 +34,7 @@ function FriendsList() {
         : screens.sm
           ? 90
           : 70
+  const isLoading = loading && friendsList.length === 0;
 
   return (
     <div className="friends-list">
@@ -44,46 +45,51 @@ function FriendsList() {
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
+          searchValue={pagination.term}
         />
       </div>
-      {loading && (
+      {isLoading && (
         <div className="friends-list__loading">
           <Spin size="large" />
         </div>
       )}
-      <div className="friends-list__count">
-        <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'amigos' : 'amigo'} encontrado{pagination.total !== 1 ? 's' : ''}
-        </Text>
-      </div>
-      <div className="friends-list__items">
-        {!loading && friendsList.map((user) => (
-          <Card key={user.uid} className="friends-list__card">
-            <div className="friends-list__card-content">
-              <div className="friends-list__card-info">
-                <Link to={`/u/${user.username}`} className={`friends-list__card-link ${!user.active && isSuperAdmin ? 'friends-list__card-link--inactive' : ''}`}>
-                  <UserProfileDisplay user={user} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
-                </Link>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-      <div className="friends-list__footer">
-        <Pagination
-          className={`friends-list__pagination ${friendsList.length === 0 && !loading ? 'friends-list__pagination--hidden' : ''}`}
-          align='center'
-          total={pagination.total}
-          current={pagination.current}
-          pageSize={pagination.size}
-          onChange={handlePaginationChange}
-        />
-        {friendsList.length === 0 && !loading && (
-          <div className="friends-list__empty">
-            <Empty description="Nenhum amigo encontrado corresponde aos filtros aplicados." />
+      {!isLoading && (
+        <>
+          <div className="friends-list__count">
+            <Text type="secondary">
+              {pagination.total} {pagination.total !== 1 ? 'amigos' : 'amigo'} encontrado{pagination.total !== 1 ? 's' : ''}
+            </Text>
           </div>
-        )}
-      </div>
+          <div className="friends-list__items">
+            {!loading && friendsList.map((user) => (
+              <Card key={user.uid} className="friends-list__card">
+                <div className="friends-list__card-content">
+                  <div className="friends-list__card-info">
+                    <Link to={`/u/${user.username}`} className={`friends-list__card-link ${!user.active && isSuperAdmin ? 'friends-list__card-link--inactive' : ''}`}>
+                      <UserProfileDisplay user={user} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
+                    </Link>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+          <div className="friends-list__footer">
+            <Pagination
+              className={`friends-list__pagination ${friendsList.length === 0 && !loading ? 'friends-list__pagination--hidden' : ''}`}
+              align='center'
+              total={pagination.total}
+              current={pagination.current}
+              pageSize={pagination.size}
+              onChange={handlePaginationChange}
+            />
+            {friendsList.length === 0 && !loading && (
+              <div className="friends-list__empty">
+                <Empty description="Nenhum amigo encontrado corresponde aos filtros aplicados." />
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

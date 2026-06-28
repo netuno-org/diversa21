@@ -1,12 +1,25 @@
-import React from 'react';
-import { Card, Empty, Spin, Pagination } from 'antd';
+import React, { useMemo } from 'react';
+import { Card, Empty, Spin, Pagination, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 import UserProfileDisplay from '../../UserProfileDisplay';
 import ListHeaderFilters from '../../ListHeaderFilters';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
 import './index.less';
 
+const { Text } = Typography;
+
 function FriendList({ userUid }) {
+  
+  const requestData = useMemo(() => {
+    if (!userUid) {
+      return {};
+    }
+  
+    return {
+      uid: userUid,
+    };
+  }, [userUid]);
+
   const {
     items: friendsList,
     loading,
@@ -18,6 +31,7 @@ function FriendList({ userUid }) {
     handleSearchClear,
   } = useFilteredPaginatedList({
     serviceUrl: 'friend/list',
+    requestData,
   });
 
   if (loading && friendsList.length === 0) {
@@ -35,7 +49,13 @@ function FriendList({ userUid }) {
          onLocationChange={handleLocationChange}
          onLocationClear={handleLocationClear}
          onSearchClear={handleSearchClear}
+         searchValue={pagination.term}
         />
+      </div>
+      <div className="friend-list__count">
+        <Text type="secondary">
+          {pagination.total} {pagination.total !== 1 ? 'amigos' : 'amigo'} encontrado{pagination.total !== 1 ? 's' : ''}
+        </Text>
       </div>
       <div className="friend-list__items">
         {friendsList.map((friend) => (

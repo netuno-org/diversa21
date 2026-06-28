@@ -9,6 +9,12 @@
     padding: 40px 0;
   }
 
+  &__count,
+  &__pagination,
+  &__empty {
+    padding-left: 24px;
+  }
+
   &__items {
     display: flex;
     flex-direction: column;
@@ -28,15 +34,11 @@
     color: inherit;
     flex-grow: 1;
 
-    &:hover, &:focus, &:active {
+    &:hover,
+    &:focus,
+    &:active {
       color: inherit;
       text-decoration: none;
     }
-  }
-
-  &__pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 16px;
   }
 }

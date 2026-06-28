@@ -9,7 +9,7 @@ const defaultPagination = {
   location: null,
 };
 
-function useFilteredPaginatedList({ serviceUrl }) {
+function useFilteredPaginatedList({ serviceUrl, requestData }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState(defaultPagination);
@@ -26,6 +26,7 @@ function useFilteredPaginatedList({ serviceUrl }) {
         url: serviceUrl,
         data: {
           name: term,
+          ...requestData,
           ...(location && {
             [`${location.type}Uid`]: location.uid,
           }),
@@ -56,7 +57,7 @@ function useFilteredPaginatedList({ serviceUrl }) {
         },
       });
     },
-    [serviceUrl]
+    [requestData, serviceUrl]
   );
 
   useEffect(() => {

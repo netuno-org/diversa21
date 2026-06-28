@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Typography, Button, Input, Select, Row, Col } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
@@ -17,13 +17,20 @@ function ListHeaderFilters({
   onLocationChange /* () => { ... } */,
   onLocationClear /* () => { ... } */,
   onSearchClear,
-  hideInputs
+  hideInputs,
+  searchValue,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
   const hasHeaderTitle = title || createButton;
 
   // const loggedUser = usePeople();
+
+  useEffect(() => {
+    if (searchValue !== undefined) {
+      setSearchTerm(searchValue);
+    }
+  }, [searchValue]);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;

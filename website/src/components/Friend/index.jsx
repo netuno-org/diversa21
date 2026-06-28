@@ -5,7 +5,7 @@ import './index.less';
 function Friend({ userUid }) {
   return (
     <div className="friend-container">
-      <FriendList userUid={userUid} />
+      <FriendList key={userUid} userUid={userUid} />
     </div>
   );
 }
