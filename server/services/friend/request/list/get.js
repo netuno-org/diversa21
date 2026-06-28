@@ -3,6 +3,7 @@ import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
 
 let page = _req.getInt('page', 1);
+const name = _req.getString('name');
 const pageSize = 10;
 
 let offset = 0;
@@ -19,7 +20,7 @@ if (_group.code() !== "member") {
 const loggedId = loggedUser.getInt("id");
 
 const params = _val.list();
-params.add(loggedId);
+params.add(loggedId).add(`%${name}%`);
 
 const sqlQuery = `
     SELECT count(*) over() as total_count,
@@ -32,6 +33,7 @@ const sqlQuery = `
         INNER JOIN netuno_user ON p.people_user_id = netuno_user.id
     WHERE f.friend_id = ?
         AND f.accepted_at IS NULL
+        AND p.name ILIKE ?::varchar
     ORDER BY p.name ASC
     LIMIT 10
     OFFSET ?::int

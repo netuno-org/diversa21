@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom';
 import UserProfileDisplay from '../../UserProfileDisplay';
 import ListHeaderFilters from '../../ListHeaderFilters';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
+
 import './index.less';
 
 const { Text } = Typography;
 
-function FriendList({ userUid }) {
-  
+function FriendList({ userUid, title }) {
+
   const requestData = useMemo(() => {
     if (!userUid) {
       return {};
@@ -45,12 +46,13 @@ function FriendList({ userUid }) {
     <div className="friend-list">
       <div className="friend-list__header">
         <ListHeaderFilters
+         title={title}
          onSearch={handleSearch}
          onLocationChange={handleLocationChange}
          onLocationClear={handleLocationClear}
          onSearchClear={handleSearchClear}
          searchValue={pagination.term}
-        />
+         />
       </div>
       <div className="friend-list__count">
         <Text type="secondary">

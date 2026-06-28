@@ -8,6 +8,9 @@
     "page": {
       "type": "string",
       "pattern": "^\\d+$"
+    },
+    "name": {
+      "type": "string"
     }
   }
 }

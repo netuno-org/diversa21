@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
 
 import ActivityList from "../Activity/List";
-import Friend from "../Friend";
+import FriendList from "../Friend/List";
 
 import PostList from '../Post/List';
 import usePeople from "../../common/usePeople.js";
@@ -284,7 +284,7 @@ function Profile({ user }) {
       label: 'Amigos',
       children: (
         <div className="profile__tabs-content">
-          <Friend userUid={user.uid} isOwnProfile={isOwnProfile} />
+          <FriendList userUid={user.uid} />
         </div>
       ),
     });

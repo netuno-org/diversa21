@@ -58,7 +58,6 @@ function People() {
   return (
     <div className="people-list">
       {contextHolder}
-
       <div className="people-list__header">
         <ListHeaderFilters
           title="Pessoas"
@@ -73,24 +72,20 @@ function People() {
           onSearchClear={handleSearchClear}
         />
       </div>
-
       {loading && (
         <div className="people-list__loading">
           <Spin size="large" />
         </div>
       )}
-
       <div className="people-list__count">
         <Text type="secondary">
           {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
         </Text>
       </div>
-
       <div className="people-list__items">
         {!loading && peopleList.map((person) => (
           <Card key={person.uid} className="people-list__card">
             <div className="people-list__card-content">
-
               <div className="people-list__card-info">
                 <Link
                   to={`/u/${person.username}`}
@@ -99,7 +94,6 @@ function People() {
                   <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
                 </Link>
               </div>
-
               {loggedUser.canManageUser(person) && (
                 <div className="people-list__card-actions">
                   {person.active === false && (
@@ -107,7 +101,6 @@ function People() {
                       Inativo
                     </Tag>
                   )}
-
                   <Button
                     type="link"
                     onClick={() => navigate(`/e/${person.username}`)}
@@ -117,12 +110,10 @@ function People() {
                   </Button>
                 </div>
               )}
-
             </div>
           </Card>
         ))}
       </div>
-
       <div className="people-list__footer">
         <Pagination
           className={`people-list__pagination ${peopleList.length === 0 && !loading ? 'people-list__pagination--hidden' : ''}`}
