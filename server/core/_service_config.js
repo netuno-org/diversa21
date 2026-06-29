@@ -8,19 +8,3 @@ import { _service } from "@netuno/server-types";
 if (_service.path === 'asset/get') {
   _service.allow();
 }
-
-if (_service.path === 'people/avatar/get') {
-  _service.allow();
-}
-
-if (_service.path === 'people/cover_image/get') {
-  _service.allow();
-}
-
-if (_service.path === 'institution/avatar/get') {
-  _service.allow();
-}
-
-if (_service.path === 'institution/cover_image/get') {
-  _service.allow();
-}
