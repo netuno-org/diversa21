@@ -12,7 +12,6 @@ import ListHeaderFilters from "../../../components/ListHeaderFilters";
 
 import "./index.less";
 
-
 const { Text, Title } = Typography;
 const { useBreakpoint } = Grid;
 
@@ -27,7 +26,6 @@ function People() {
     handleLocationChange,
     handleLocationClear,
     handleSearchClear,
-    refresh,
   } = useFilteredPaginatedList({
     serviceUrl: 'people/list',
   });
@@ -48,7 +46,6 @@ function People() {
     loggedUser.remove(uid, {
       onSuccess: () => {
         messageApi.success('Utilizador apagado com sucesso.');
-        refresh();
       }
     });
   };

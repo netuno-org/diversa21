@@ -18,7 +18,6 @@ function FriendRequests() {
     loading,
     pagination,
     handlePaginationChange,
-    refresh,
   } = useFilteredPaginatedList({
     serviceUrl: 'friend/request/list',
   });

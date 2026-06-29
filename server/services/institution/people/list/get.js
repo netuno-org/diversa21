@@ -6,15 +6,6 @@ import response from "#core/lib/response.js";
 const uid = _req.getString('uid');
 const page = _req.getInt('page', 1);
 
-if (!uid) {
-  _header.status(400);
-  _out.json(
-    _val.map()
-      .set("error", "uid-required")
-  );
-  _exec.stop();
-}
-
 const institution = _db.queryFirst(
   "SELECT id FROM institution WHERE uid = ?::uuid",
   uid

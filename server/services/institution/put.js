@@ -36,11 +36,11 @@ let dbInstitution = null;
 
 if (slug) {
   dbInstitution = _db.queryFirst(`
-        SELECT id, slug FROM institution WHERE slug = ?::text
+        SELECT id, uid, slug FROM institution WHERE LOWER(slug) = LOWER(?::text)
     `, slug);
 } else if (uid) {
   dbInstitution = _db.queryFirst(`
-        SELECT id, slug FROM institution WHERE uid = ?::uuid
+        SELECT id, uid, slug FROM institution WHERE uid = ?::uuid
     `, uid);
 }
 
