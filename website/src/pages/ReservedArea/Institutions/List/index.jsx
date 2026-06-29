@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid } from 'antd';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Tag } from 'antd';
 import { UserAddOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
@@ -127,13 +127,25 @@ function ListInstitution() {
           <Card key={institution.uid} className="institutions-list__card">
             <div className="institutions-list__card-content">
               <div className="institutions-list__card-info">
-                <Link to={`/institutions/${institution.slug}`} className="institutions-list__card-link">
-                  <InstitutionDisplay 
-                    institution={institution} 
-                    avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} 
+                <Link
+                  to={`/institutions/${institution.slug}`}
+                  className={`institutions-list__card-link ${(!institution.active || institution.active === "false") ? 'institutions-list__card-link--inactive' : ''}`}
+                >
+                  <InstitutionDisplay
+                    institution={institution}
+                    avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }}
                   />
                 </Link>
               </div>
+              {(loggedUser.canManageInstitution(institution.uid) || loggedUser.canCreateInstitutions()) && (
+                <div className="institutions-list__card-actions">
+                  {(institution.active === false || institution.active === "false") && (
+                    <Tag variant="filled" color="error" className="institutions-list__card-status-tag">
+                      Inativa
+                    </Tag>
+                  )}
+                </div>
+              )}
             </div>
           </Card>
         ))}

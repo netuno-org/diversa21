@@ -200,9 +200,16 @@ function View() {
         </div>
 
         <div className="institution-view__info">
-          <Title level={2} className="institution-view__name">
-            {institution.name}
-          </Title>
+          <div className="institution-view__name-wrapper">
+            <Title level={2} className="institution-view__name">
+              {institution.name}
+            </Title>
+            {(institution.active === false || institution.active === "false") && (
+              <Tag bordered={false} color="error" className="institution-view__status-tag">
+                Instituição Inativa
+              </Tag>
+            )}
+          </div>
 
           <Space size="large" className="institution-view__details" wrap>
             {(institution.city?.name || institution.country?.name || institution.state?.name) && (
