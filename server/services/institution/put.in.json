@@ -41,6 +41,9 @@
     },
     "cover_image": {
       "type": "file"
+    },
+    "active": {
+      "type": "boolean"
     }
   },
   "required": [

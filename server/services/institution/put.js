@@ -15,6 +15,7 @@ const cityUid = _req.getUID("city");
 const website = _req.getString("website");
 const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
+const activeStr = _req.getString("active");
 
 if (description.length > 2000) {
   response.stopWithTextTooLarge();
@@ -71,6 +72,9 @@ if (avatar) {
 }
 if (cover_image) {
   institutionData.set("cover_image", cover_image);
+}
+if (activeStr !== null && activeStr !== "") {
+  institutionData.set("active", _req.getBoolean("active"));
 }
 
 _db.update("institution", dbInstitution.getInt("id"), institutionData);
