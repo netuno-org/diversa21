@@ -62,16 +62,38 @@ activityQuery += `
         SELECT
             post.id, post.uid, post.moment, post.content, post.comments, post.likes,
             parent.uid AS "parent_uid",
-            people.name AS "people_name", people.uid AS "people_uid",
+            author.name AS "people_name", author.uid AS "people_uid",
             netuno_user.user AS "people_user",
-            people.avatar AS "people_avatar",
-            post_like.id AS "post_like_id",
+            author.avatar AS "people_avatar",
+            (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id",
             'like' AS "type"
         FROM post_like
         INNER JOIN post ON post_like.post_id = post.id
         LEFT JOIN post parent ON post.parent_id = parent.id
-        INNER JOIN people ON post.people_id = people.id
-        INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+        INNER JOIN people liker ON post_like.people_id = liker.id
+        INNER JOIN people author ON post.people_id = author.id
+        INNER JOIN netuno_user ON author.people_user_id = netuno_user.id
+`;
+
+activityQueryParams
+  .add(loggedUserPeopleId);
+
+if (institutionUid) {
+  activityQuery += `
+        INNER JOIN institution i ON liker.institution_id = i.id
+        WHERE i.uid = ?::uuid
+  `;
+  activityQueryParams
+    .add(institutionUid)
+} else {
+  activityQuery += `
+        WHERE liker.uid = ?::uuid
+  `;
+  activityQueryParams
+    .add(peopleUid)
+}
+
+activityQuery += `
     ) AS combined_data
     ORDER BY combined_data.moment DESC
     LIMIT 10
