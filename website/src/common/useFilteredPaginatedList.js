@@ -113,14 +113,6 @@ function useFilteredPaginatedList({ serviceUrl, requestData }) {
     }));
   };
 
-  const refresh = () => {
-    fetchList({
-      term: pagination.term,
-      location: pagination.location,
-      page: pagination.current,
-    });
-  };
-
   return {
     items,
     loading,
@@ -131,7 +123,6 @@ function useFilteredPaginatedList({ serviceUrl, requestData }) {
     handleLocationChange,
     handleLocationClear,
     handleSearchClear,
-    refresh,
   };
 }
 
