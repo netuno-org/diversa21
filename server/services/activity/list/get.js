@@ -112,6 +112,7 @@ for (const dbPost of dbActivities) {
           SELECT id, parent_id, uid
           FROM post
           WHERE id = ?::int
+          AND parent_id != 0
 
           UNION
 
@@ -136,7 +137,7 @@ for (const dbPost of dbActivities) {
       .set("liked", dbPost.getInt("post_like_id", 0) > 0)
       .set("likes", dbPost.getInt("likes"))
       .set("type", dbPost.getString("type"))
-      .set("rootUid", dbRoot.getString("root_uid"))
+      .set("rootUid", dbRoot ? dbRoot.getString("root_uid") : '')
       .set("parentUid", dbPost.getString("parent_uid"))
       .set(
         "people",
