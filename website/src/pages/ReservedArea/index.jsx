@@ -18,7 +18,7 @@ import InstitutionsList from "./Institutions/List";
 import InstitutionView from "./Institutions/View/index.jsx";
 import InstitutionForm from "../../components/InstitutionForm";
 import LocationList from "./Locations/List";
-import FriendsList from "./FriendsList/index.jsx";
+import MyConnections from "./MyConnections/index.jsx";
 import Messages from "./Messages";
 import Notifications from "./Notifications";
 
@@ -79,7 +79,7 @@ function ReservedArea() {
         return <People />;
       }
       if (location.pathname === "/friends") {
-        return <FriendsList />;
+        return <MyConnections />;
       }
       if (location.pathname === "/people/create/user") {
         if (!(people.canCreateAnyUser() || people.canCreateMember(people.data?.institution))) {

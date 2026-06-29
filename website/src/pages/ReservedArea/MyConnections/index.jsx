@@ -5,7 +5,7 @@ import FriendRequests from './FriendRequests';
 
 import './index.less';
 
-function FriendsList() {
+function MyConnections() {
   const items = [
     {
       key: 'friends',
@@ -32,4 +32,4 @@ function FriendsList() {
     </div>
   );
 }
-export default FriendsList;
+export default MyConnections;

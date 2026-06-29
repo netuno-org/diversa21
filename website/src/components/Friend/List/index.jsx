@@ -15,7 +15,7 @@ function FriendList({ userUid, title }) {
     if (!userUid) {
       return {};
     }
-
+    
     return {
       uid: userUid,
     };
