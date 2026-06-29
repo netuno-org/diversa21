@@ -205,7 +205,7 @@ function View() {
               {institution.name}
             </Title>
             {(institution.active === false || institution.active === "false") && (
-              <Tag bordered={false} color="error" className="institution-view__status-tag">
+              <Tag variant="filled" color="error" className="institution-view__status-tag">
                 Instituição Inativa
               </Tag>
             )}
