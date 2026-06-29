@@ -8,5 +8,8 @@
       "type": "integer"
     }
   },
-  "required": ["pageSize", "totalCount"]
+  "required": [
+    "pageSize",
+    "totalCount"
+  ]
 }

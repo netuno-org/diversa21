@@ -17,7 +17,10 @@
           "_schema": "response/pagination"
         }
       },
-      "required": ["items", "pagination"]
+      "required": [
+        "items",
+        "pagination"
+      ]
     }
   },
   "required": [
