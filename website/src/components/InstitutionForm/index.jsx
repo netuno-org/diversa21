@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col } from 'antd';
+import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import _service from '@netuno/service-client';
 
@@ -24,6 +24,7 @@ export default function InstitutionForm({
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState((!!uid || !!slug) && !initialData);
   const [form] = Form.useForm();
+  const [institution, setInstitution] = useState(initialData);
 
   const profileAvatar = useRef(null);
   const profileCover = useRef(null);
@@ -45,6 +46,7 @@ export default function InstitutionForm({
         success: ({ json }) => {
           if (json.data) {
             const data = json.data;
+            setInstitution(data);
             setAvatarImageURL(data.avatar ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution&t=${Date.now()}`) : null);
             setCoverImageURL(data.cover_image ? _service.url(`/asset?uid=${data.uid}&type=cover_image&entity=institution&t=${Date.now()}`) : null);
 
@@ -64,7 +66,8 @@ export default function InstitutionForm({
               address: data.address,
               post_code: data.post_code,
               city: cityObject,
-              website: data.website
+              website: data.website,
+              active: data.active === "true" || data.active === true
             });
           }
           setLoading(false);
@@ -87,18 +90,43 @@ export default function InstitutionForm({
     });
   };
 
-  const onFinish = (values) => {
+  const onFinish = () => {
     setSubmitting(true);
     const formData = new FormData();
 
-    Object.keys(values).forEach(key => {
-      if (values[key] !== undefined && values[key] !== null && key !== 'city') {
-        formData.append(key, values[key]);
+    const formValues = form.getFieldsValue();
+    const allValues = {
+      address: institution?.address || "",
+      post_code: institution?.post_code || "",
+      telephone: institution?.telephone || "",
+      website: institution?.website || "",
+      description: institution?.description || "",
+      active: institution?.active !== undefined ? String(institution.active) : "true",
+      ...formValues
+    };
+
+    Object.keys(allValues).forEach(key => {
+      if (key !== 'city') {
+        let val = allValues[key];
+        if (typeof val === 'boolean') {
+          val = String(val);
+        }
+        formData.append(key, val !== undefined && val !== null ? val : "");
       }
     });
 
-    if (selectedCity?.uid) {
-      formData.append('city', selectedCity.uid);
+    const cityFieldValue = formValues.city;
+    let cityUid = null;
+    if (cityFieldValue) {
+      cityUid = typeof cityFieldValue === 'object' ? cityFieldValue.value : cityFieldValue;
+    } else if (selectedCity?.uid) {
+      cityUid = selectedCity.uid;
+    } else if (institution?.city?.uid) {
+      cityUid = institution.city.uid;
+    }
+
+    if (cityUid) {
+      formData.append('city', cityUid);
     }
 
     const avatar = profileAvatar?.current?.getImage();
@@ -183,6 +211,19 @@ export default function InstitutionForm({
                     </Form.Item>
                   </Col>
                 </Row>
+                {isEditMode && (
+                  <Row gutter={16}>
+                    <Col xs={24} md={12}>
+                      <Form.Item
+                        name="active"
+                        label="Estado"
+                        valuePropName="checked"
+                      >
+                        <Switch checkedChildren="Ativo" unCheckedChildren="Inativo" disabled={submitting} />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                )}
               </Card>
 
               <div className="institution-form__actions">
