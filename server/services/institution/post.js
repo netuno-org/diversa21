@@ -47,10 +47,22 @@ if (website) {
   institutionData.set("website", website);
 }
 if (avatar) {
-  institutionData.set("avatar", avatar);
+  institutionData.set(
+    "avatar",
+    _image
+      .init(avatar)
+      .resize(500, 500)
+      .file(avatar.name(), "jpeg")
+  )
 }
 if (cover_image) {
-  institutionData.set("cover_image", cover_image);
+  institutionData.set(
+    "cover_image",
+    _image
+      .init(cover_image)
+      .resize(1200, 400)
+      .file(cover_image.name(), "jpeg")
+  )
 }
 
 // TODO: acho que dá pra inserir a instituição passando o UID como se fosse ID
