@@ -60,7 +60,7 @@ activityQuery += `
         UNION ALL
 
         SELECT
-            post.id, post.uid, post.moment, post.content, post.comments, post.likes,
+            post.id, post.uid, post_like.moment, post.content, post.comments, post.likes,
             parent.uid AS "parent_uid",
             author.name AS "people_name", author.uid AS "people_uid",
             netuno_user.user AS "people_user",
