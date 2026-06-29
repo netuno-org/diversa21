@@ -30,7 +30,7 @@ let sqlQuery = `
     INNER JOIN city ON institution.city_id = city.id
     INNER JOIN state ON city.state_id = state.id
     INNER JOIN country ON state.country_id = country.id
-    WHERE institution.slug = ?::text
+    WHERE LOWER(institution.slug) = LOWER(?::text)
 `;
 
 const dbInstitution = _db.queryFirst(sqlQuery, slug);

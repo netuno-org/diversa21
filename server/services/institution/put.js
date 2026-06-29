@@ -21,6 +21,10 @@ if (description.length > 2000) {
   response.stopWithTextTooLarge();
 }
 
+if (!cityUid) {
+  response.stopWithCityNotFound();
+}
+
 const dbCity = _db.queryFirst(`
     SELECT id FROM city WHERE uid = ?::uuid
 `, cityUid);
@@ -36,11 +40,11 @@ let dbInstitution = null;
 
 if (slug) {
   dbInstitution = _db.queryFirst(`
-        SELECT id, slug FROM institution WHERE slug = ?::text
+        SELECT id, uid, slug FROM institution WHERE LOWER(slug) = LOWER(?::text)
     `, slug);
 } else if (uid) {
   dbInstitution = _db.queryFirst(`
-        SELECT id, slug FROM institution WHERE uid = ?::uuid
+        SELECT id, uid, slug FROM institution WHERE uid = ?::uuid
     `, uid);
 }
 
@@ -59,7 +63,7 @@ const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
   .set("email", email)
-  .set("telephone", telephone.replace(/\s/g, ''))
+  .set("telephone", telephone ? telephone.replace(/\s/g, '') : "")
   .set("address", address)
   .set("post_code", post_code)
   .set("city_id", cityId);

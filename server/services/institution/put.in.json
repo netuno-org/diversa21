@@ -43,7 +43,7 @@
       "type": "file"
     },
     "active": {
-      "type": "boolean"
+      "type": "string"
     }
   },
   "required": [
