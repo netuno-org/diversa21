@@ -122,7 +122,8 @@ function Post({
     setLoadingComments(false);
   };
 
-  const onDeletePost = () => {
+  const onDeletePost = (e) => {
+    e.stopPropagation();
     _service({
       url: "/post",
       method: "DELETE",
