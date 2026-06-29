@@ -50,15 +50,10 @@
       "type": "string"
     },
     "read_at": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "format": "date-time"
+      "type": "string"
     },
     "sent_at": {
-      "type": "string",
-      "format": "date-time"
+      "type": "string"
     }
   },
   "required": [
