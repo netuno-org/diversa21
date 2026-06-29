@@ -60,7 +60,7 @@ function ProfileForm({
         setAvatarImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`));
       }
       if (people.cover_image) {
-        setCoverImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`));
+        setCoverImageURL(_service.url(`/asset?uid=${people.uid}&type=cover_image&entity=people`));
       }
     }
   }, [people, operation]);
