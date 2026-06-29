@@ -2,6 +2,7 @@ import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import people from "#core/lib/people.js";
+import response from "#core/lib/response.js";
 
 
 // Validate user input
@@ -18,6 +19,10 @@ const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");
 const active = _req.getBoolean("active");
 const description = _req.getString("description");
+
+if (description && description.length > 1000) {
+  response.stopWithTextTooLarge();
+}
 
 const groups = ["member", "review", "management", "super-admin"];
 
