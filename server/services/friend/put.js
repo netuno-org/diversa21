@@ -35,19 +35,35 @@ _db.update("friend", dbFriendship.getInt("id"), _val.map()
   .set("accepted_at", currentTimestamp)
 );
 
-const notificationTypeId = notifications.getNotificationTypeId('friend-request-accepted');
-
-const loggedUsername = people.getData(loggedUser.getUID("uid")).getString("username");
+const requestNotificationTypeId = notifications.getNotificationTypeId('friend-request');
 const friendId = people.getByUid(friendUid).getInt("id");
 
-if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
+const dbRequestNotification = _db.queryFirst(`
+    SELECT id 
+    FROM notification
+    WHERE type_id = ?::int
+    AND (
+      (originator_id = ?::int AND recipient_id = ?::int)
+      OR (originator_id = ?::int AND recipient_id = ?::int)
+    )
+  `, 
+  requestNotificationTypeId,
+  loggedUserId, friendId,
+  friendId, loggedUserId);
+
+_db.delete("notification", dbRequestNotification.getInt("id"));
+
+const acceptedNotificationTypeId = notifications.getNotificationTypeId('friend-request-accepted');
+const loggedUsername = people.getData(loggedUser.getUID("uid")).getString("username");
+
+if (!notifications.isNotificationBlocked(friendId, acceptedNotificationTypeId)) {
   notifications.sendNotification(
     "@" + loggedUsername,
     "Aceitou seu pedido de amizade.",
     loggedUserId,
     friendId,
     '',
-    notificationTypeId
+    acceptedNotificationTypeId
   );
 }
 
