@@ -8,10 +8,7 @@ const page = _req.getInt('page', 1);
 
 const pageSize = 5;
 
-let offset = 0;
-if (page > 0) {
-  offset = (page - 1) * pageSize;
-}
+const offset = page > 0 ? (page - 1) * pageSize : 0
 
 const dbNotifications = _db.query(`
     SELECT

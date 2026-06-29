@@ -1,0 +1,73 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "type": {
+      "type": "string-not-empty"
+    },
+    "title": {
+      "type": "string"
+    },
+    "originator": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string-not-empty"
+        },
+        "username": {
+          "type": "string-not-empty"
+        }
+      },
+      "required": [
+        "uid",
+        "username"
+      ]
+    },
+    "recipient": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string-not-empty"
+        },
+        "username": {
+          "type": "string-not-empty"
+        }
+      },
+      "required": [
+        "uid",
+        "username"
+      ]
+    },
+    "extra": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "content": {
+      "type": "string"
+    },
+    "read_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "uid",
+    "type",
+    "title",
+    "originator",
+    "recipient",
+    "content",
+    "sent_at"
+  ]
+}

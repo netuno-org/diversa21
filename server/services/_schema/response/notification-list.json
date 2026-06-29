@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "_schema": "response/notification-data"
+          }
+        },
+        "pagination": {
+          "_schema": "response/pagination"
+        }
+      },
+      "required": [
+        "items",
+        "pagination"
+      ]
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

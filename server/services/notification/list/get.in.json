@@ -1,0 +1,13 @@
+{
+  "tags": [
+    "notification"
+  ],
+  "summary": "List user notifications",
+  "description": "Retrieve paginated notifications for the logged-in user.",
+  "properties": {
+    "page": {
+      "type": "integer",
+      "description": "Page number (default: 1)"
+    }
+  }
+}
