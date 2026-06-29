@@ -49,7 +49,7 @@ if (!dbInstitution) {
 }
 
 // Verify permissions
-const targetInstitutionUid = dbInstitution.getString("uid");
+const targetInstitutionUid = dbInstitution.getUID("uid");
 
 if (!permissions.canManageInstitution(targetInstitutionUid)) {
   response.stopWithPermissionDenied();
