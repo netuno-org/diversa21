@@ -19,17 +19,21 @@ const loggedUserPeopleId = people.getLogged().getInt("id");
 let activityQueryParams = _val.list();
 
 let activityQuery = `
-        SELECT count(*) over() as total_count,
+    SELECT count(*) over() as total_count, *
+    FROM (
+        SELECT
             post.id, post.uid, post.moment, post.content, post.comments, post.likes,
-            parent.uid as "parent_uid",
+            parent.uid AS "parent_uid",
             people.name AS "people_name", people.uid AS "people_uid",
             netuno_user.user AS "people_user",
             people.avatar AS "people_avatar",
-            (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id"
+            (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id",
+            'comment' AS "type"
         FROM post
         INNER JOIN post parent ON post.parent_id = parent.id
         INNER JOIN people ON post.people_id = people.id
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+
     `;
 
 activityQueryParams
@@ -53,7 +57,23 @@ if (institutionUid) {
 }
 
 activityQuery += `
-    ORDER BY post.moment DESC
+        UNION ALL
+
+        SELECT
+            post.id, post.uid, post.moment, post.content, post.comments, post.likes,
+            parent.uid AS "parent_uid",
+            people.name AS "people_name", people.uid AS "people_uid",
+            netuno_user.user AS "people_user",
+            people.avatar AS "people_avatar",
+            post_like.id AS "post_like_id",
+            'like' AS "type"
+        FROM post_like
+        INNER JOIN post ON post_like.post_id = post.id
+        LEFT JOIN post parent ON post.parent_id = parent.id
+        INNER JOIN people ON post.people_id = people.id
+        INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+    ) AS combined_data
+    ORDER BY combined_data.moment DESC
     LIMIT 10
     OFFSET ?::int
 `;
@@ -93,6 +113,7 @@ for (const dbPost of dbActivities) {
       .set("comments", dbPost.getInt("comments", 0))
       .set("liked", dbPost.getInt("post_like_id", 0) > 0)
       .set("likes", dbPost.getInt("likes"))
+      .set("type", dbPost.getString("type"))
       .set("rootUid", dbRoot.getString("root_uid"))
       .set("parentUid", dbPost.getString("parent_uid"))
       .set(
