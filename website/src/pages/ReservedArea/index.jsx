@@ -9,6 +9,7 @@ import NotFound from "../NotFound";
 import ProfileEdit from "./MyProfile/Edit";
 import ProfileView from "./MyProfile/View";
 import Posts from "./Posts";
+import PostPage from "./PostPage";
 import UserProfile from "./UserProfile/View";
 import UserProfileEdit from "./UserProfile/Edit";
 import People from "./People";
@@ -62,8 +63,11 @@ function ReservedArea() {
       if (location.pathname === "/profile/view") {
         return <ProfileView />;
       }
-      if (location.pathname === "/posts" || location.pathname.startsWith("/p/")) {
+      if (location.pathname === "/posts") {
         return <Posts />;
+      }
+      if (location.pathname.startsWith("/p/")) {
+        return <PostPage uid={params.uid}/>;
       }
       if (location.pathname.startsWith("/u/")) {
         return <UserProfile username={params.username} />;

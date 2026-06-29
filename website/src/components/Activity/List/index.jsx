@@ -104,7 +104,6 @@ function ActivityList({ author, parent, institution, onLoaded, onItemRemoved }, 
           <Post
             key={post.uid}
             {...post}
-            parentUid={post.parentUid}
             onRemovePost={onRemovePost}
             onEditPost={onEditPost}
           />

@@ -9,7 +9,7 @@ const loggedUserPeopleId = people.getLogged().getInt("id");
 
 const dbPost = _db.queryFirst(`
     SELECT count(*) over() as total_count,
-        post.uid, post.moment, post.content, post.comments, post.likes, parent.uid as parent_uid,
+        post.id, post.uid, post.moment, post.content, post.comments, post.likes, parent.uid as parent_uid,
         people.name AS "people_name", people.uid AS "people_uid",
         netuno_user.user AS "people_user",
         people.avatar AS "people_avatar",
@@ -26,9 +26,30 @@ if (!dbPost) {
   response.stopWithPostNotFound();
 }
 
+const dbRoot = _db.queryFirst(`
+    WITH RECURSIVE rec AS (
+        SELECT id, parent_id, uid
+        FROM post
+        WHERE id = ?::int
+
+        UNION
+
+        SELECT post.id, post.parent_id, post.uid
+        FROM post
+        INNER JOIN rec ON rec.parent_id = post.id
+    )
+
+    SELECT uid as root_uid
+    FROM rec
+    WHERE parent_id = 0
+  `,
+  dbPost.getInt("id")
+);
+
 const post = _val.map()
   .set("uid", dbPost.getString("uid"))
-  .set("parent", dbPost.getString("parent_uid"))
+  .set("parentUid", dbPost.getString("parent_uid"))
+  .set("rootUid", dbRoot.getString("root_uid"))
   .set("moment", dbPost.getString("moment"))
   .set("content", dbPost.getString("content"))
   .set("comments", dbPost.getInt("comments", 0))

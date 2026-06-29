@@ -93,7 +93,7 @@ for (const dbPost of dbActivities) {
       .set("comments", dbPost.getInt("comments", 0))
       .set("liked", dbPost.getInt("post_like_id", 0) > 0)
       .set("likes", dbPost.getInt("likes"))
-      .set("root", dbRoot.getString("root_uid"))
+      .set("rootUid", dbRoot.getString("root_uid"))
       .set("parentUid", dbPost.getString("parent_uid"))
       .set(
         "people",

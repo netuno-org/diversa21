@@ -16,7 +16,7 @@ import usePeople from "../../common/usePeople.js";
 function Post({
   uid,
   parentUid,
-  root,
+  rootUid,
   moment,
   content,
   comments,
@@ -330,8 +330,8 @@ function Post({
                 Pai 
               </Button>
             )}
-            {root && (
-              <Button className="btn-reply" onClick={() => { navigate(`/p/${root}`); } }>
+            {rootUid && (
+              <Button className="btn-reply" onClick={() => { navigate(`/p/${rootUid}`); } }>
                 Raíz 
               </Button>
             )}
