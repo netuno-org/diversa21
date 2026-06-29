@@ -6,7 +6,7 @@
   "description": "Retrieve paginated notifications for the logged-in user.",
   "properties": {
     "page": {
-      "type": "integer",
+      "type": "string",
       "description": "Page number (default: 1)"
     }
   }
