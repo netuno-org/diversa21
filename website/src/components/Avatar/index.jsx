@@ -55,7 +55,7 @@ function Avatar({ currentImage, onRemove }, ref) {
 
           <AntAvatar
             src={currentImage}
-            size={160}
+            size={240}
             shape="square"
             className="avatar-editor__preview"
           />
@@ -65,11 +65,11 @@ function Avatar({ currentImage, onRemove }, ref) {
               onClick={open}
               type="primary"
               icon={<UploadOutlined />}
-              size="large"
+              size='large'
               className="avatar-editor__btn-upload"
               style={{ margin: 0 }}
             >
-              Carregar Nova Imagem
+              Carregar Nova Foto
             </Button>
 
             {currentImage && currentImage !== '/images/profile-default.png' && (
@@ -78,6 +78,7 @@ function Avatar({ currentImage, onRemove }, ref) {
                 danger
                 icon={<DeleteOutlined />}
                 onClick={onRemove}
+                size='large'
                 className="avatar-editor__btn-remove"
               >
                 Remover Foto Atual
@@ -98,10 +99,10 @@ function Avatar({ currentImage, onRemove }, ref) {
               <AvatarEditor
                 ref={refAvatarEditor}
                 image={image}
-                width={220}
-                height={220}
+                width={240}
+                height={240}
                 border={20}
-                borderRadius={16}
+                borderRadius={8}
                 backgroundColor={color}
                 scale={scale}
                 rotate={rotate}
@@ -115,7 +116,7 @@ function Avatar({ currentImage, onRemove }, ref) {
               <Space orientation="vertical" size="large" className="avatar-editor__controls-wrapper">
                 <Button
                   onClick={open}
-                  type="default"
+                  type='primary'
                   icon={<UploadOutlined />}
                   className="avatar-editor__btn-swap"
                 >

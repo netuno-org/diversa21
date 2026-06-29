@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  Typography, Card, Spin, Button, Divider, Avatar, Space, Empty, Pagination, Tabs
+  Typography, Card, Spin, Button, Divider, Avatar, Space, Empty, Pagination, Tabs, Tag
 } from "antd";
 import {
   EditOutlined, MailOutlined, TeamOutlined,
@@ -147,7 +147,7 @@ function View() {
     </div>
   );
 
-  const membersCount = usersLoading ? '' : ` (${usersPagination.total})`;
+  const membersCount = usersLoading ? '' : ` ${usersPagination.total}`;
 
   return (
     <section className="institution-view">
@@ -276,7 +276,7 @@ function View() {
               label: (
                 <Space>
                   <TeamOutlined style={{ fontSize: 18 }} />
-                  <span>{`Membros${membersCount}`}</span>
+                  <span>Membros <Tag color="#8A6AA2" variant='solid' style={{ borderRadius: '32px' }}>{membersCount}</Tag></span>
                 </Space>
               ),
               children: membersTab

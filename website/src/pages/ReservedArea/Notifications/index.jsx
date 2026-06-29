@@ -50,7 +50,7 @@ function Notifications() {
           className="notifications-page__tabs"
           items={[
             { key: 'all', label: 'Todas' },
-            { key: 'unread', label: <Space size="small">Não Lidas<Tag color="#8A6AA2" variant='solid'>{unreadCount}</Tag></Space> }
+            { key: 'unread', label: <Space size="small">Não Lidas<Tag color="#8A6AA2" variant='solid' style={{ borderRadius: '32px' }}>{unreadCount}</Tag></Space> }
           ]}
         />
 

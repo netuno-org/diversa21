@@ -13,6 +13,7 @@ import FriendItem from "./FriendItem";
 import "./index.less";
 
 const { Text } = Typography;
+const { Search } = Input;
 
 function FriendsList({ onFriendSelected }) {
   const loggedUser = usePeople();
@@ -82,11 +83,12 @@ function FriendsList({ onFriendSelected }) {
   return (
     <div className="messages__friends-list">
       <div className="messages__friends-header">
-        <Input
-          placeholder="Pesquisar..."
-          prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-          variant="filled"
+        <Search
           className="messages__friends-search"
+          placeholder="Pesquisar..."
+          enterButton={true}
+          allowClear
+          variant="filled"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

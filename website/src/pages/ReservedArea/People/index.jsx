@@ -97,7 +97,7 @@ function People() {
               {loggedUser.canManageUser(person) && (
                 <div className="people-list__card-actions">
                   {person.active === false && (
-                    <Tag variant="filled" color="error" className="people-list__card-status-tag">
+                    <Tag variant="filled" color="error" className="people-list__card-status-tag" style={{ borderRadius: '32px' }}>
                       Inativo
                     </Tag>
                   )}

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Typography, Avatar, Empty } from "antd";
 import { SendOutlined, CloseOutlined } from "@ant-design/icons";
 
+import _service from "@netuno/service-client";
+
 // import _ws from "@netuno/ws-client";
 // import globalNotification from "../../../../common/globalNotification.js";
 
@@ -92,7 +94,14 @@ function Chat({ friend, onClose }) {
     <div className="messages__chat">
       <div className="messages__chat-header">
         <div className="messages__chat-header-user">
-          <Avatar src={friend.avatar || "/images/profile-default.png"} size="large" shape="square"/>
+          <Avatar
+            src={friend.avatar
+              ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&${new Date().getTime()}`)
+              : '/images/profile-default.png'}
+            size="large"
+            shape="square"
+            className="messages__chat-header-avatar"
+          />
           <div className="messages__chat-header-info">
             <Text strong className="messages__chat-name">{friend.name || "Utilizador"}</Text>
             {friend.username && <Text type="secondary" className="messages__chat-username">@{friend.username}</Text>}

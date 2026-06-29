@@ -70,7 +70,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
               className="cover-editor__btn-upload"
               style={{ margin: 0 }}
             >
-              Carregar Imagem de Capa
+              Carregar Nova Capa
             </Button>
 
             {currentImage && currentImage !== '/images/profile-default.png' && (
@@ -79,6 +79,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
                 danger
                 icon={<DeleteOutlined />}
                 onClick={onRemove}
+                size="large"
                 className="cover-editor__btn-remove"
               >
                 Remover Capa Atual
@@ -102,7 +103,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
                 width={740}
                 height={240}
                 border={20}
-                borderRadius={12}
+                borderRadius={8}
                 backgroundColor={color}
                 scale={scale}
                 rotate={rotate}
