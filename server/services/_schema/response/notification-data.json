@@ -8,7 +8,7 @@
       "type": "string-not-empty"
     },
     "title": {
-      "type": "string"
+      "type": "string-not-empty"
     },
     "originator": {
       "type": "object",
@@ -47,13 +47,13 @@
       ]
     },
     "content": {
-      "type": "string"
+      "type": "string-not-empty"
     },
     "read_at": {
       "type": "string"
     },
     "sent_at": {
-      "type": "string"
+      "type": "string-not-empty"
     }
   },
   "required": [
@@ -63,6 +63,7 @@
     "originator",
     "recipient",
     "content",
-    "sent_at"
+    "sent_at",
+    "read_at"
   ]
 }
