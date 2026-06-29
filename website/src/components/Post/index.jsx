@@ -15,6 +15,8 @@ import usePeople from "../../common/usePeople.js";
 
 function Post({
   uid,
+  parentUid,
+  root,
   moment,
   content,
   comments,
@@ -321,6 +323,16 @@ function Post({
             {!showEditor && (
               <Button className="btn-reply" onClick={() => setShowEditor(true)}>
                 <RiArrowGoBackLine /> Responder
+              </Button>
+            )}
+            {parentUid && (
+              <Button className="btn-reply" onClick={() => { navigate(`/p/${parentUid}`); } }>
+                Pai 
+              </Button>
+            )}
+            {root && (
+              <Button className="btn-reply" onClick={() => { navigate(`/p/${root}`); } }>
+                Raíz 
               </Button>
             )}
           </div>
