@@ -15,7 +15,7 @@ function FriendList({ userUid, title }) {
     if (!userUid) {
       return {};
     }
-  
+
     return {
       uid: userUid,
     };
@@ -46,13 +46,13 @@ function FriendList({ userUid, title }) {
     <div className="friend-list">
       <div className="friend-list__header">
         <ListHeaderFilters
-         title={title}
-         onSearch={handleSearch}
-         onLocationChange={handleLocationChange}
-         onLocationClear={handleLocationClear}
-         onSearchClear={handleSearchClear}
-         searchValue={pagination.term}
-         />
+          title={title}
+          onSearch={handleSearch}
+          onLocationChange={handleLocationChange}
+          onLocationClear={handleLocationClear}
+          onSearchClear={handleSearchClear}
+          searchValue={pagination.term}
+        />
       </div>
       <div className="friend-list__count">
         <Text type="secondary">
@@ -74,13 +74,13 @@ function FriendList({ userUid, title }) {
       {friendsList.length > 0 && (
         <div className="friend-list__pagination">
           <Pagination
-          className={`friends-list__pagination ${friendsList.length === 0 && !loading ? 'friends-list__pagination--hidden' : ''}`}
-          align='center'
-          total={pagination.total}
-          current={pagination.current}
-          pageSize={pagination.size}
-          onChange={handlePaginationChange}
-        />
+            className={`friends-list__pagination ${friendsList.length === 0 && !loading ? 'friends-list__pagination--hidden' : ''}`}
+            align='center'
+            total={pagination.total}
+            current={pagination.current}
+            pageSize={pagination.size}
+            onChange={handlePaginationChange}
+          />
         </div>
       )}
     </div>

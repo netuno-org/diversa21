@@ -1,4 +1,4 @@
-import { _req, _db, _val, _user, _out } from "@netuno/server-types";
+import { _req, _db, _val, _user, _out, _group } from "@netuno/server-types";
 
 import response from "#core/lib/response.js";
 
@@ -10,6 +10,8 @@ let cityUid = _req.getString('cityUid');
 
 const pageSize = 10;
 const offset = (page - 1) * pageSize;
+
+const isAdmin = _group.code() === "super-admin";
 
 let params = _val.list();
 
@@ -40,6 +42,10 @@ let sqlQuery = `
     INNER JOIN country ON state.country_id = country.id
     WHERE 1 = 1
 `;
+
+if (!isAdmin) {
+  sqlQuery += " AND institution.active = true ";
+}
 
 if (name) {
   sqlQuery += " AND institution.name ILIKE ?::text ";
