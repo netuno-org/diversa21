@@ -19,7 +19,7 @@ const loggedUserPeopleId = people.getLogged().getInt("id");
 let activityQueryParams = _val.list();
 
 let activityQuery = `
-        SELECT
+        SELECT count(*) over() as total_count,
             post.id, post.uid, post.moment, post.content, post.comments, post.likes,
             parent.uid as "parent_uid",
             people.name AS "people_name", people.uid AS "people_uid",
