@@ -97,4 +97,20 @@ export default {
     }
     return order;
   },
+  wsSendService: (dbPeople, message) => {
+    const dbSessions = _db.form("people_ws_session")
+      .where(_db.where("people_id").equal(dbPeople.getInt("id")))
+      .all();
+    for (const dbSession of dbSessions) {
+      _ws.sendService(dbSession.getString("session_id"), message);
+    }
+  },
+  wsSendAsService: (dbPeople, message) => {
+    const dbSessions = _db.form("people_ws_session")
+      .where(_db.where("people_id").equal(dbPeople.getInt("id")))
+      .all();
+    for (const dbSession of dbSessions) {
+      _ws.sendAsService(dbSession.getString("session_id"), message);
+    }
+  }
 }
