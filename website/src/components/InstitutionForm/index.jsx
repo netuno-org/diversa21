@@ -211,6 +211,12 @@ export default function InstitutionForm({
                     </Form.Item>
                   </Col>
                 </Row>
+
+                <Row gutter={16}>
+                  <Col xs={24} md={12}><Form.Item name="address" label="Endereço"><Input disabled={submitting} /></Form.Item></Col>
+                  <Col xs={24} md={12}><Form.Item name="post_code" label="Código Postal"><Input disabled={submitting} /></Form.Item></Col>
+                </Row>
+
                 {isEditMode && (
                   <Row gutter={16}>
                     <Col xs={24} md={12}>
@@ -224,6 +230,8 @@ export default function InstitutionForm({
                     </Col>
                   </Row>
                 )}
+
+
               </Card>
 
               <div className="institution-form__actions">
