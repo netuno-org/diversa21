@@ -11,12 +11,21 @@
         "name": "notification",
         "config": "0/10 * * * * ?",
         "url": "/services/jobs/notification"
+      },
+      {
+        "name": "ws-sessions",
+        "config": "0 0/15 * * * ?",
+        "url": "/services/jobs/ws-sessions"
       }
     ]
   },
   "settings": {
     "api": {
       "endpoint": "http://localhost:9000/services/"
+    },
+    "websocket": {
+      "url": "ws://localhost:9000/ws/private/",
+      "servicesPrefix": "/services"
     },
     "public": {}
   },
@@ -87,6 +96,20 @@
       ]
     }
   ],
+  "ws": {
+    "endpoints": [
+      {
+        "name": "user",
+        "enabled": true,
+        "sendTimeout": 10000,
+        "idleTimeout": 0,
+        "maxText": 15000,
+        "public": "/ws/private",
+        "path": "/",
+        "service": "/services/ws/private"
+      }
+    ]
+  },
   "openapi": {
     "host": "http://localhost:9000",
     "basePath": "/services",
