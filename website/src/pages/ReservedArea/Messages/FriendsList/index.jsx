@@ -5,8 +5,9 @@ import { SearchOutlined } from "@ant-design/icons";
 import _service from "@netuno/service-client";
 import usePeople from "../../../../common/usePeople.js";
 
-// import _ws from "@netuno/ws-client";
-// import useWS from "../../../../common/useWS.js";
+import _ws from "@netuno/ws-client";
+import useWS from "../../../../common/useWS.js";
+import globalNotification from "../../../../common/globalNotification.js";
 
 import FriendItem from "./FriendItem";
 
@@ -15,70 +16,85 @@ import "./index.less";
 const { Text } = Typography;
 const { Search } = Input;
 
-function FriendsList({ onFriendSelected }) {
-  const loggedUser = usePeople();
-
+function FriendsList({onFriendSelected}) {
   const [loading, setLoading] = useState(true);
-  const [list, setList] = useState([]);
-  const [activeUid, setActiveUid] = useState(null);
+  const [list, setList] = useState(null);
+  const [searchValue, setSearchValue] = useState('');
 
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // const ws = useWS();
+  const ws = useWS();
 
   useEffect(() => {
-    setLoading(true);
-
-    _service({
-      url: "people/list",
-      data: { page: 1 },
-      success: ({ json }) => {
-        const items = json.data?.items || [];
-
-        const filteredPeople = items.filter(
-          (person) => person.uid !== loggedUser.data.uid
-        );
-
-        setList(filteredPeople);
-        setLoading(false);
+    const listenerList = _ws.addListener({
+      service: "friend/list",
+      start: () => {
+        setLoading(true);
       },
-      fail: () => {
-        setList([]);
+      success: (data) => {
+        setList(data.items);
+      },
+      fail: (error) => {
+        console.error(error);
+        globalNotification.serviceFail({
+          title: "Lista de Amigos",
+          description: "Houve uma falha ao tentar atualizar a listagem de amigos.",
+        });
+      },
+      end: ()=> {
         setLoading(false);
       }
     });
+    _ws.sendService({
+      service: "friend/list"
+    });
 
-    /*
-      const listenerRef = _ws.addListener({
-        service: "friend/list",
-        success: (data) => {
-          setList(data.content);
-          setLoading(false);
-        },
-        fail: (error) => {
-          setLoading(false);
-        }
-      });
-      _ws.sendService({
-        service: "friend/list"
-      });
-      return () => {
-        _ws.removeListener(listenerRef);
+    const listenerStatusChanged = _ws.addListener({
+      service: "friend/status/changed",
+      success: ({content}) => {
+        setList((prev) =>
+          prev.map((item) => {
+            if (item.uid === content.uid) {
+              return {...item, ...content}
+            }
+            return item;
+          })
+        );
       }
-    */
-  }, [loggedUser.data.uid]);
+    });
+    const listenerNewMessage = _ws.addListener({
+      method: "POST",
+      service: "message/new",
+      success: ({data}) => {
+        setList((prev) =>
+          prev.map((item) => {
+            if (item.uid === data.with) {
+              return {...item, unread_messages: item.unread_messages + 1}
+            }
+            return item;
+          })
+        );
+      }
+    });
+    const listenerMessageReadMark = _ws.addListener({
+      service: "message/read/mark",
+      success: ({ data }) => {
+        setList((prev) =>
+          prev.map((item) => {
+            if (item.uid === data.from) {
+              return {...item, unread_messages: item.unread_messages - 1}
+            }
+            return item;
+          })
+        );
+      }
+    });
 
-  const handleSelectFriend = (friend) => {
-    setActiveUid(friend.uid);
-    if (onFriendSelected) {
-      onFriendSelected(friend);
+    return () => {
+      _ws.removeListener(listenerList);
+      _ws.removeListener(listenerStatusChanged);
+      _ws.removeListener(listenerNewMessage);
+      _ws.removeListener(listenerMessageReadMark);
     }
-  };
-
-  const filteredList = list.filter((friend) =>
-    friend.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (friend.username && friend.username.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  }, [ws.data]);
 
   return (
     <div className="messages__friends-list">
@@ -89,26 +105,26 @@ function FriendsList({ onFriendSelected }) {
           enterButton={true}
           allowClear
           variant="filled"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onSearch={(value) => setSearchValue(value)}
         />
       </div>
-
       {loading ? (
         <div className="messages__friends-loading">
           <Spin />
         </div>
       ) : (
         <ul className="messages__friends-ul">
-          {filteredList.length > 0 ? (
-            filteredList.map((friend) => (
+          {list && list.length > 0 ? (
+            list.map((friend) => (
               <FriendItem
                 key={friend.uid}
                 uid={friend.uid}
                 name={friend.name}
                 avatar={friend.avatar}
-                isActive={activeUid === friend.uid}
-                onClick={() => handleSelectFriend(friend)}
+                isActive={ws.data?.uid === friend.uid}
+                onClick={() => onFriendSelected && onFriendSelected(friend)}
               />
             ))
           ) : (

@@ -14,7 +14,7 @@ if (page > 0) {
 
 const loggedUser = people.getLogged();
 
-if (_group.code() !== "member") {
+if (_group.code() !== "member" && _group.code() !== "management" && _group.code() !== "review" && _group.code() !== "super-admin") {
   response.stopWithPermissionDenied();
 }
 

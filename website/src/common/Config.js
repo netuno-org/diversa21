@@ -20,6 +20,16 @@ class Config {
     return config.auth.providers;
   }
 
+  static websocketURL() {
+    const { config } = window.reauthkit;
+    return config.websocket.url;
+  }
+
+  static websocketServicesPrefix() {
+    const { config } = window.reauthkit;
+    return config.websocket.servicesPrefix;
+  }
+
   static authAltcha() {
     const { config } = window.reauthkit;
     return !!config.auth.altcha;

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+
 import { useLocation } from "react-router-dom";
 import { Row, Col, Card, Modal, Select, Spin, Typography, Avatar, Space, Empty } from "antd";
 import { LuMessageSquarePlus } from "react-icons/lu";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople";
+import useWS from "../../../common/useWS.js";
 
 import Chat from "./Chat";
 import FriendsList from "./FriendsList/index.jsx";
@@ -16,7 +18,6 @@ const { Text } = Typography;
 
 function Messages() {
   const [chatFriend, setChatFriend] = useState(null);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [peopleList, setPeopleList] = useState([]);
   const [fetchingPeople, setFetchingPeople] = useState(false);
@@ -24,6 +25,13 @@ function Messages() {
 
   const loggedUser = usePeople();
   const location = useLocation();
+
+  const ws = useWS();
+
+  useEffect(() => {
+    ws.load();
+    return () => ws.close();
+  }, []);
 
   useEffect(() => {
     if (location.state?.autoOpenFriend) {
