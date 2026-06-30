@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Popover, Typography, Avatar, Button, Spin, Empty } from 'antd';
-import { BellOutlined, MessageOutlined, SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  BellOutlined, FileTextOutlined, CommentOutlined,
+  HeartOutlined, NotificationOutlined, SafetyOutlined
+} from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
+import _service from '@netuno/service-client';
 import usePeople from "../../common/usePeople.js";
 import useNotifications from "../../common/useNotifications.js";
 
@@ -18,18 +22,33 @@ function HeaderNotifications() {
 
   const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const generalNotifications = notifications.filter(n =>
+    !['message', 'friend-request', 'friend-request-accepted'].includes(n.type)
+  );
 
-  const getIconForType = (type) => {
+  const unreadCount = generalNotifications.filter(n => !n.read).length;
+
+  const getTypeBadge = (type) => {
+    let icon;
+    let color;
     switch (type) {
-      case 'institution-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
-      case 'my-post-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
-      case 'friend-request': return <Avatar icon={<UserAddOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
-      case 'friend-request-accepted': return <Avatar icon={<TeamOutlined />} style={{ backgroundColor: '#52c41a' }} />;
-      case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} />;
-      case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
-      default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;
+      case 'institution-post':
+      case 'friend-post':
+        icon = <FileTextOutlined style={{ fontSize: 10 }} />; color = '#50a063'; break;
+      case 'my-post-comment':
+      case 'institution-comment':
+      case 'friend-comment':
+        icon = <CommentOutlined style={{ fontSize: 10 }} />; color = '#1890ff'; break;
+      case 'my-post-like':
+      case 'institution-like':
+      case 'friend-like':
+        icon = <HeartOutlined style={{ fontSize: 10 }} />; color = '#eb2f96'; break;
+      case 'security':
+        icon = <SafetyOutlined style={{ fontSize: 10 }} />; color = '#fa8c16'; break;
+      default:
+        icon = <NotificationOutlined style={{ fontSize: 10 }} />; color = '#bfbfbf'; break;
     }
+    return <Avatar size={18} style={{ backgroundColor: color, border: '2px solid #fff' }} icon={icon} />;
   };
 
   const handleMarkAll = (e) => {
@@ -40,11 +59,6 @@ function HeaderNotifications() {
   const handleNotificationClick = (item) => {
     setPopoverOpen(false);
     onNotificationClick(item, navigate);
-  };
-
-  const handleOpenNotifications = () => {
-    setPopoverOpen(false);
-    navigate('/notifications');
   };
 
   const popoverContent = (
@@ -60,23 +74,29 @@ function HeaderNotifications() {
 
       <div className="header-notifications__list">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '24px 0' }}>
-            <Spin />
-          </div>
-        ) : notifications.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '24px 0' }}><Spin /></div>
+        ) : generalNotifications.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '24px 0', color: '#999' }}>
-            <Empty description="Não há notificações neste momento." />
+            <Empty description="Não há notificações." image={Empty.PRESENTED_IMAGE_SIMPLE} />
           </div>
         ) : (
-          notifications.map((item) => (
+          generalNotifications.map((item) => (
             <div
               key={item.id}
               className={`header-notifications__item ${!item.read ? 'header-notifications__item--unread' : ''}`}
               onClick={() => handleNotificationClick(item)}
-              style={{ cursor: 'pointer' }}
             >
               <div className="header-notifications__item-avatar">
-                {getIconForType(item.type)}
+                <Badge count={getTypeBadge(item.type)} offset={[-4, 32]}>
+                  <Avatar
+                    size={40}
+                    src={
+                      item.originator?.uid
+                        ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people&${new Date().getTime()}`)
+                        : "/images/profile-default.png"
+                    }
+                  />
+                </Badge>
               </div>
               <div className="header-notifications__item-content">
                 <div className="header-notifications__item-title-row">
@@ -92,12 +112,9 @@ function HeaderNotifications() {
           ))
         )}
       </div>
-
       <div className="header-notifications__footer">
-        <Button
-          type="link"
-          onClick={handleOpenNotifications}
-          block>Ver todas as notificações
+        <Button type="link" onClick={() => { setPopoverOpen(false); navigate('/notifications'); }} block>
+          Ver todas
         </Button>
       </div>
     </div>
@@ -105,13 +122,9 @@ function HeaderNotifications() {
 
   return (
     <Popover
-      content={popoverContent}
-      trigger="click"
-      placement="bottomRight"
-      overlayClassName="header-notifications__popover"
-      arrow={false}
-      open={popoverOpen}
-      onOpenChange={setPopoverOpen}
+      content={popoverContent} trigger="click" placement="bottomRight"
+      overlayClassName="header-notifications__popover" arrow={false}
+      open={popoverOpen} onOpenChange={setPopoverOpen}
     >
       <div className="header-notifications__trigger">
         <Badge count={unreadCount} size="small" offset={[-2, 4]} color="#FDBA3C">
