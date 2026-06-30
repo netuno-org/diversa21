@@ -22,17 +22,17 @@ _form.createIfNotExists(
 		.set("export_xls", true)
 		.set("export_xml", true)
 		.set("firebase", "")
-		.set("name", "notification_opt_out")
-		.set("parent_uid", "d395b86d-9985-472e-9b02-ae1c8dcd1c38")
+		.set("name", "people_ws_session")
+		.set("parent_uid", "0028953a-b610-4e37-9f25-87bdad2e37dd")
 		.set("reorder", 0)
 		.set("report", false)
 		.set("report_behaviour", 0)
 		.set("show_id", true)
-		.set("title", "Bloqueios")
-		.set("uid", "b881807d-7f60-45b9-888d-81695755a1ea")
+		.set("title", "Sess\u00E3o WS")
+		.set("uid", "3cfcbb8a-7f88-47c7-9287-3c747daac2dc")
 );
 _form.createComponentIfNotExists(
-	"b881807d-7f60-45b9-888d-81695755a1ea",
+	"3cfcbb8a-7f88-47c7-9287-3c747daac2dc",
 	_val.map()
 		.set("colspan", 0)
 		.set("description", "")
@@ -49,7 +49,7 @@ _form.createComponentIfNotExists(
 		.set("tdwidth", 0)
 		.set("title", "Pessoa")
 		.set("type", "select")
-		.set("uid", "9180094f-d5d4-438a-9387-796ef15cd045")
+		.set("uid", "44a38240-8141-4aaf-8d3b-81a94b704c2e")
 		.set("unique", false)
 		.set("user_id", 0)
 		.set("whenedit", true)
@@ -63,7 +63,7 @@ _form.createComponentIfNotExists(
 		.set("y", 1)
 );
 _form.createComponentIfNotExists(
-	"b881807d-7f60-45b9-888d-81695755a1ea",
+	"3cfcbb8a-7f88-47c7-9287-3c747daac2dc",
 	_val.map()
 		.set("colspan", 0)
 		.set("description", "")
@@ -73,14 +73,14 @@ _form.createComponentIfNotExists(
 		.set("mandatory", true)
 		.set("max", 0)
 		.set("min", 0)
-		.set("name", "type_id")
-		.set("properties", "{\"COLUMN_SEPARATOR\":{\"default\":\" - \",\"type\":\"LINK_SEPARATOR\",\"value\":\" - \"},\"LINK\":{\"default\":\"\",\"type\":\"LINK\",\"value\":\"notification_type:code,name\"},\"MAX_COLUMN_LENGTH\":{\"default\":\"0\",\"type\":\"INTEGER\",\"value\":\"0\"},\"ONLY_ACTIVES\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"SERVICE\":{\"default\":\"com/Select.netuno\",\"type\":\"STRING\",\"value\":\"com/Select.netuno\"}}")
+		.set("name", "session_id")
+		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
 		.set("rowspan", 0)
 		.set("tdheight", 0)
 		.set("tdwidth", 0)
-		.set("title", "Tipo")
-		.set("type", "select")
-		.set("uid", "a42ae71c-301a-428d-9260-6255a0c97fbe")
+		.set("title", "Sess\u00E3o ID")
+		.set("type", "text")
+		.set("uid", "36ee66dc-4fb6-4e98-8333-4291ef920018")
 		.set("unique", false)
 		.set("user_id", 0)
 		.set("whenedit", true)
@@ -91,5 +91,5 @@ _form.createComponentIfNotExists(
 		.set("whenview", true)
 		.set("width", 0)
 		.set("x", 1)
-		.set("y", 3)
+		.set("y", 2)
 );
