@@ -1,4 +1,4 @@
-import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
+import { _image, _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -15,6 +15,10 @@ const cityUid = _req.getUID("city");
 const website = _req.getString("website");
 const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
+
+const removeAvatar = _req.getBoolean("remove_avatar");
+const removeCoverImage = _req.getBoolean("remove_cover_image");
+
 const activeStr = _req.getString("active");
 
 if (description.length > 2000) {
@@ -67,6 +71,7 @@ const institutionData = _val.map()
 if (website) {
   institutionData.set("website", website);
 }
+
 if (avatar) {
   institutionData.set(
     "avatar",
@@ -75,7 +80,10 @@ if (avatar) {
       .resize(500, 500)
       .file(avatar.name(), "jpeg")
   )
+} else if (removeAvatar) {
+  institutionData.set("avatar", "");
 }
+
 if (cover_image) {
   institutionData.set(
     "cover_image",
@@ -84,7 +92,10 @@ if (cover_image) {
       .resize(1200, 400)
       .file(cover_image.name(), "jpeg")
   )
+} else if (removeCoverImage) {
+  institutionData.set("cover_image", "");
 }
+
 if (activeStr !== null && activeStr !== "") {
   institutionData.set("active", _req.getBoolean("active"));
 }

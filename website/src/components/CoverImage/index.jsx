@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { Row, Col, Button, Slider, Divider, Space, Typography } from 'antd';
-import { UploadOutlined, ZoomInOutlined, ZoomOutOutlined, UndoOutlined, FormatPainterOutlined, PictureOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  UploadOutlined, ZoomInOutlined, ZoomOutOutlined,
+  UndoOutlined, FormatPainterOutlined, PictureOutlined, DeleteOutlined
+} from '@ant-design/icons';
 import { useDropzone } from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
 
@@ -8,14 +11,36 @@ import './index.less';
 
 const { Text } = Typography;
 
+const DEFAULT_COVER = null;
+
 function CoverImage({ currentImage, onRemove }, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
   const [position, setPosition] = useState(undefined);
   const [color, setColor] = useState('#ffffff');
+  const [removed, setRemoved] = useState(false);
 
   const refAvatarEditor = useRef(null);
+
+  const imageEditing = image && typeof image !== 'string';
+
+  useEffect(() => {
+    setImage(null);
+    const t = setTimeout(() => setImage(currentImage), 250);
+    return () => clearTimeout(t);
+  }, [currentImage]);
+
+  useImperativeHandle(ref, () => ({
+    getImage: () => imageEditing ? refAvatarEditor?.current?.getImage().toDataURL() : null,
+    isRemoved: () => removed,
+  }), [imageEditing, removed]);
+
+  const handleRemove = () => {
+    setImage(DEFAULT_COVER);
+    setRemoved(true);
+    if (onRemove) onRemove();
+  };
 
   const { getRootProps, getInputProps, open } = useDropzone({
     noClick: true,
@@ -26,19 +51,9 @@ function CoverImage({ currentImage, onRemove }, ref) {
       setScale(1.0);
       setRotate(0);
       setPosition(undefined);
+      setRemoved(false);
     }
   });
-
-  useEffect(() => {
-    setImage(null);
-    setTimeout(() => setImage(currentImage), 250);
-  }, [currentImage]);
-
-  useImperativeHandle(ref, () => ({
-    getImage: () => imageEditing ? refAvatarEditor?.current?.getImage().toDataURL() : null
-  }));
-
-  const imageEditing = image && typeof (image) !== 'string';
 
   const handleUndo = () => {
     setImage(currentImage);
@@ -47,14 +62,16 @@ function CoverImage({ currentImage, onRemove }, ref) {
     setPosition(undefined);
   };
 
+  const displayImage = removed ? DEFAULT_COVER : (image || currentImage);
+
   return (
     <div className="cover-editor">
       {!imageEditing ? (
         <div className="cover-editor__view" {...getRootProps()}>
           <input {...getInputProps()} />
 
-          {currentImage && currentImage !== '/images/profile-default.png' ? (
-            <img src={currentImage} alt="Capa" className="cover-editor__preview" />
+          {displayImage ? (
+            <img src={displayImage} alt="Capa" className="cover-editor__preview" />
           ) : (
             <div className="cover-editor__preview cover-editor__preview--empty">
               <PictureOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
@@ -73,12 +90,12 @@ function CoverImage({ currentImage, onRemove }, ref) {
               Carregar Nova Capa
             </Button>
 
-            {currentImage && currentImage !== '/images/profile-default.png' && (
+            {!removed && currentImage && (
               <Button
                 type="dashed"
                 danger
                 icon={<DeleteOutlined />}
-                onClick={onRemove}
+                onClick={handleRemove}
                 size="large"
                 className="cover-editor__btn-remove"
               >
@@ -118,7 +135,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
               <Space orientation="vertical" size="large" className="cover-editor__controls-wrapper">
                 <Button
                   onClick={open}
-                  type="default"
+                  type="primary"
                   icon={<UploadOutlined />}
                   className="cover-editor__btn-swap"
                 >
