@@ -58,8 +58,8 @@ const requestId = _db.insert("friend", _val.map()
 );
 
 const notificationTypeId = notifications.getNotificationTypeId('friend-request');
-
-const loggedUsername = people.getData(loggedUser.getUID("uid")).getString("username");
+const loggedUserUid = loggedUser.getUID("uid");
+const loggedUsername = people.getData(loggedUserUid).getString("username");
 
 if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
   notifications.sendNotification(
@@ -71,6 +71,30 @@ if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
     notificationTypeId
   );
 }
+
+people.wsSendAsService(
+  dbFriend,
+  _val.map()
+    .set("method", "POST")
+    .set("service", "notification/new")
+    .set(
+      "data",
+      _val.map()
+        .set("with", loggedUserUid)
+    )
+    .set(
+      "content",
+      _val.map()
+        .set("title", "@" + loggedUsername)
+        .set("content", "Quer ser seu amigo.")
+        .set("originator_id", loggedUserId)
+        .set("recipient_id", friendId)
+        .set("sent_at", currentTimestamp)
+        .set("read_at", null)
+        .set("extra", "")
+        .set("type_id", notificationTypeId)
+    )
+);
 
 const dbRequest = _db.get("friend", requestId);
 _out.json(
