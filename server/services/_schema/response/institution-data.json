@@ -41,11 +41,11 @@
     "cover_image": {
       "type": "boolean"
     },
-    "logo": {
+    "avatar": {
       "type": "boolean"
     },
     "active": {
-      "type": "string"
+      "type": "boolean"
     }
   },
   "required": [
@@ -62,7 +62,7 @@
     "state",
     "country",
     "cover_image",
-    "logo",
+    "avatar",
     "active"
   ]
 }

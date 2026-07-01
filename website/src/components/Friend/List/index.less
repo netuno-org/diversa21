@@ -1,0 +1,65 @@
+.friend-list {
+  display: flex;
+  flex-direction: column;
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+  }
+
+  &__count,
+  &__pagination,
+  &__empty {
+    padding-left: 24px;
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+  }
+
+  &__card {
+    margin-bottom: 24px;
+    &.ant-card {
+      .ant-card-body {
+        padding: 16px 24px;
+      }
+    }
+  }
+
+  &__card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__card-actions {
+    flex-shrink: 0;
+    align-self: center;
+
+    @media (max-width: 640px) {
+      align-self: stretch;
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+    color: inherit;
+    flex-grow: 1;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+}

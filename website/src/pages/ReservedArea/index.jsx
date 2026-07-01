@@ -4,11 +4,13 @@ import { Button, Result, Spin } from "antd";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import usePeople from "../../common/usePeople.js";
+import useWS from "../../common/useWS.js";
 
 import NotFound from "../NotFound";
 import ProfileEdit from "./MyProfile/Edit";
 import ProfileView from "./MyProfile/View";
 import Posts from "./Posts";
+import PostPage from "./PostPage";
 import UserProfile from "./UserProfile/View";
 import UserProfileEdit from "./UserProfile/Edit";
 import People from "./People";
@@ -17,6 +19,7 @@ import InstitutionsList from "./Institutions/List";
 import InstitutionView from "./Institutions/View/index.jsx";
 import InstitutionForm from "../../components/InstitutionForm";
 import LocationList from "./Locations/List";
+import MyConnections from "./MyConnections/index.jsx";
 import Messages from "./Messages";
 import Notifications from "./Notifications";
 
@@ -30,17 +33,32 @@ function ReservedArea() {
     const [loading, setLoading] = useState(true);
     const people = usePeople();
 
+    const ws = useWS();
+
     useEffect(() => {
-      if (people.data == null) {
+      if (people.isUnloaded()) {
+        ws.close();
+        _auth.logout();
+        navigate("/login");
+        return;
+      }
+      if (!people.data) {
         people.load((result) => {
           if (result) {
-            setLoading(false);
+            ws.load(() => {
+              setLoading(false);
+            });
           } else {
             navigate("/login");
           }
         });
-      } else {
-        setLoading(false);
+        return;
+      }
+      if(loading === true && !ws.isConnecting()) {
+        ws.load(() => {
+          setLoading(false);
+        });
+        return;
       }
     }, [people.data]);
 
@@ -58,8 +76,14 @@ function ReservedArea() {
       if (location.pathname === "/profile/view") {
         return <ProfileView />;
       }
+      if (location.pathname === "/profile/view") {
+        return <ProfileView />;
+      }
       if (location.pathname === "/posts") {
         return <Posts />;
+      }
+      if (location.pathname.startsWith("/p/")) {
+        return <PostPage uid={params.uid} />;
       }
       if (location.pathname.startsWith("/u/")) {
         return <UserProfile username={params.username} />;
@@ -69,6 +93,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/people") {
         return <People />;
+      }
+      if (location.pathname === "/friends") {
+        return <MyConnections />;
       }
       if (location.pathname === "/people/create/user") {
         if (!(people.canCreateAnyUser() || people.canCreateMember(people.data?.institution))) {
@@ -88,7 +115,11 @@ function ReservedArea() {
       }
       if (location.pathname.match(/^\/institutions\/[\w-]+\/edit$/)) {
         const slug = location.pathname.match(/^\/institutions\/([\w-]+)\/edit$/)?.[1];
-        return <InstitutionForm slug={slug} onSuccess={() => navigate(`/institutions/${slug}`)} onCancel={() => navigate(`/institutions/${slug}`)} />;
+        return <InstitutionForm
+          slug={slug}
+          onSuccess={() => navigate(`/institutions/${slug}`)}
+          onCancel={() => navigate(`/institutions/${slug}`)}
+        />;
       }
       if (location.pathname === "/locations") {
         if (!people.canManageLocations()) {
@@ -105,10 +136,6 @@ function ReservedArea() {
         return <Messages />;
       }
       if (location.pathname === "/notifications") {
-        if (!people.canChangeUserGroup()) {
-          navigate('/');
-          return;
-        }
         return <Notifications />;
       }
       return <NotFound />;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { useLocation } from "react-router-dom";
 import { Row, Col, Card, Modal, Select, Spin, Typography, Avatar, Space, Empty } from "antd";
 import { LuMessageSquarePlus } from "react-icons/lu";
@@ -16,7 +17,6 @@ const { Text } = Typography;
 
 function Messages() {
   const [chatFriend, setChatFriend] = useState(null);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [peopleList, setPeopleList] = useState([]);
   const [fetchingPeople, setFetchingPeople] = useState(false);
@@ -43,9 +43,10 @@ function Messages() {
       },
       success: ({ json }) => {
         const items = json.data?.items || [];
+        const loggedUserUid = loggedUser.data?.uid;
 
         const filteredPeople = items.filter(
-          (person) => person.uid !== loggedUser.data.uid
+          (person) => !loggedUserUid || person.uid !== loggedUserUid
         );
 
         const options = filteredPeople.map((person) => ({
@@ -64,7 +65,6 @@ function Messages() {
     });
   };
 
-
   useEffect(() => {
     if (isModalVisible) {
       fetchPeopleForModal("");
@@ -74,7 +74,6 @@ function Messages() {
       setSearchTerm("");
     }
   }, [isModalVisible]);
-
 
   const handleModalSearch = (value) => {
     setSearchTerm(value);
@@ -103,14 +102,12 @@ function Messages() {
           }}
         />
       </div>
-
       <div className="messages__body">
         <Card className="messages__card" variant="borderless">
           <Row className="messages__row">
             <Col xs={24} md={8} className="messages__sidebar">
               <FriendsList onFriendSelected={onFriendSelected} />
             </Col>
-
             <Col xs={24} md={16} className="messages__chat-area">
               <Chat
                 friend={chatFriend}
@@ -120,7 +117,6 @@ function Messages() {
           </Row>
         </Card>
       </div>
-
       <Modal
         title="Nova Conversa"
         open={isModalVisible}
@@ -132,7 +128,6 @@ function Messages() {
           <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
             Pesquise e selecione uma pessoa para iniciar uma troca de mensagens.
           </Text>
-
           <Select
             showSearch
             style={{ width: '100%' }}

@@ -35,8 +35,21 @@
           "type": "boolean"
         }
       },
-      "required": ["uid", "name", "user", "avatar"]
+      "required": [
+        "uid",
+        "name",
+        "user",
+        "avatar"
+      ]
     }
   },
-  "required": ["uid", "moment", "content", "comments", "likes", "liked", "people"]
+  "required": [
+    "uid",
+    "moment",
+    "content",
+    "comments",
+    "likes",
+    "liked",
+    "people"
+  ]
 }

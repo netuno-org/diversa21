@@ -3,10 +3,11 @@ import _service from "@netuno/service-client";
 import { Button, Col, notification, Row, Spin, Empty } from "antd";
 import Post from "..";
 
-function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref) {
+function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, onItemRemoved }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     getPosts();
@@ -18,7 +19,6 @@ function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref)
 
   const getPosts = () => {
     setLoadingPosts(true);
-
     const data = {};
 
     if (parent) {
@@ -29,8 +29,12 @@ function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref)
       data.peopleUid = author;
     }
 
-    if (isolatedUid) {
+    if (!parent && isolatedUid) {
       data.uid = isolatedUid;
+    }
+
+    if (parent && isolatedCommentUid) {
+      data.uid = isolatedCommentUid;
     }
 
     data.page = page;
@@ -46,11 +50,23 @@ function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref)
         setLoadingPosts(false);
         let fetchedItems = json?.data?.items || [];
 
-        if (isolatedUid) {
+        if (!parent && isolatedUid) {
           fetchedItems = fetchedItems.filter(p => String(p.uid) === String(isolatedUid));
         }
 
+        if (parent && isolatedCommentUid) {
+          fetchedItems = fetchedItems.filter(p => String(p.uid) === String(isolatedCommentUid));
+        }
+
+        fetchedItems = fetchedItems.map(p => {
+          if (p.moment && !p.moment.endsWith('Z')) {
+            p.moment = `${p.moment}Z`;
+          }
+          return p;
+        });
+
         setPosts([...posts, ...fetchedItems]);
+        setTotalCount(json?.data?.pagination?.totalCount || 0);
       },
       fail: (e) => {
         if (onLoaded) {
@@ -65,13 +81,9 @@ function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref)
     });
   };
 
-  useImperativeHandle(ref, () => ({
-    newPost
-  }));
+  useImperativeHandle(ref, () => ({ newPost }));
 
-  const onLoadMorePosts = () => {
-    setPage(page + 1);
-  };
+  const onLoadMorePosts = () => setPage(page + 1);
 
   const onRemovePost = (uid) => {
     setPosts(posts.filter((post) => post.uid !== uid));
@@ -81,40 +93,26 @@ function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref)
   };
 
   const onEditPost = (uid, content) => {
-    setPosts(posts.map((post) => {
-      if (post.uid === uid) {
-        return {
-          ...post,
-          content
-        };
-      }
-
-      return post;
-    }));
+    setPosts(posts.map((post) => post.uid === uid ? { ...post, content } : post));
   }
 
   if ((!parent && loadingPosts) && page === 0) {
     return (
-      <Row style={{ marginTop: 20 }} justify="center">
-        <Col>
-          <Spin size="large" />
-        </Col>
-      </Row>
+      <Row style={{ marginTop: 20 }} justify="center"><Col><Spin size="large" /></Col></Row>
     );
   }
 
   return (
     <div>
-      {
-        posts.map((post) => (
-          <Post
-            key={post.uid}
-            {...post}
-            onRemovePost={onRemovePost}
-            onEditPost={onEditPost}
-          />
-        ))
-      }
+      {posts.map((post) => (
+        <Post
+          key={post.uid}
+          {...post}
+          isolatedCommentUid={isolatedCommentUid}
+          onRemovePost={onRemovePost}
+          onEditPost={onEditPost}
+        />
+      ))}
 
       {!loadingPosts && posts.length === 0 && (
         <div style={{ padding: '40px 20px', background: '#fff', borderRadius: '8px', border: '1px solid #f0f0f0' }}>
@@ -125,21 +123,12 @@ function PostList({ author, parent, isolatedUid, onLoaded, onItemRemoved }, ref)
         </div>
       )}
 
-      {!loadingPosts && parent && posts.length >= 10 && !isolatedUid && (
-        <Button
-          type="link"
-          onClick={onLoadMorePosts}
-        >
-          Mostrar mais
-        </Button>
+      {!loadingPosts && posts.length < totalCount && !isolatedUid && !isolatedCommentUid && (
+        <Button type="link" onClick={onLoadMorePosts}>Mostrar mais</Button>
       )}
 
       {loadingPosts && page > 0 && (
-        <Row justify="center" style={{ marginTop: 20 }}>
-          <Col>
-            <Spin size="large" />
-          </Col>
-        </Row>
+        <Row justify="center" style={{ marginTop: 20 }}><Col><Spin size="large" /></Col></Row>
       )}
     </div>
   );

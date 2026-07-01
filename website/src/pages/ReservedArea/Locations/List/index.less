@@ -4,6 +4,10 @@
   width: 100%;
   box-sizing: border-box;
 
+  @media (max-width: @xs) {
+    padding: 16px;
+  }
+
   &__search {
     width: 100%;
   }
@@ -11,10 +15,21 @@
   &__results {
     margin-top: 16px;
     padding-left: 24px;
+
+    @media (max-width: @xs) {
+      margin: 16px 0;
+      padding-left: 0;
+      text-align: center;
+
+      .ant-typography {
+        font-size: 13px;
+      }
+    }
   }
 
   &__content {
     margin-top: 16px;
+    border-radius: 8px !important;
 
     .ant-tabs {
       width: 100%;
@@ -22,32 +37,15 @@
       .ant-tabs-nav {
         margin-left: 24px;
         margin-right: 24px;
+
+        @media (max-width: @xs) {
+          margin-left: 0;
+          margin-right: 0;
+        }
       }
 
       .ant-tabs-content {
         margin-top: 8px;
-      }
-    }
-  }
-}
-
-@media (max-width: @xs) {
-  .locations-list {
-    padding: 16px;
-
-    &__results {
-      margin: 16px 0;
-      text-align: center;
-
-      .ant-typography {
-        font-size: 13px;
-      }
-    }
-
-    &__content {
-      .ant-tabs-nav {
-        margin-left: 0;
-        margin-right: 0;
       }
     }
   }

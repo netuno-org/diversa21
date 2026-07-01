@@ -15,6 +15,8 @@ import usePeople from "../../common/usePeople.js";
 
 function Post({
   uid,
+  parentUid,
+  rootUid,
   moment,
   content,
   comments,
@@ -22,7 +24,8 @@ function Post({
   liked,
   people,
   onRemovePost,
-  onEditPost
+  onEditPost,
+  isolatedCommentUid
 }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [showEditor, setShowEditor] = useState(false);
@@ -42,13 +45,26 @@ function Post({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isAlreadyIsolated = String(location.state?.autoOpenPostUid) === String(uid);
-  const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts();
+  const isAlreadyIsolated = location.pathname === `/p/${uid}`;
+  const canViewDeletePostButton = people.uid === loggedUser.data?.uid || loggedUser.canManagePosts();
+
+  const formatPostDate = (date) => {
+    const postMoment = dayjs(date);
+    const now = dayjs();
+
+    const diffInHours = now.diff(postMoment, 'hour');
+
+    if (diffInHours < 24) {
+      return postMoment.fromNow();
+    }
+
+    return postMoment.format("llll");
+  };
 
   useEffect(() => {
     if (people.avatar) {
       setAvatarUrl(
-        _service.url(`/people/avatar?uid=${people.uid}`)
+        _service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`)
       );
     }
   }, []);
@@ -69,16 +85,23 @@ function Post({
     }
   }, [location.state, uid, countComments, showComments]);
 
-  const handleCardClick = (e) => {
-    if (isAlreadyIsolated || editMode) return;
+  useEffect(() => {
+    if (isolatedCommentUid && countComments > 0 && !showComments) {
+      setShowComments(true);
+      setLoadingComments(true);
+    }
+  }, [isolatedCommentUid, countComments]);
 
-    if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.ant-popover') || e.target.closest('.ant-popconfirm')) {
+  const handleCardClick = (e) => {
+    if (isAlreadyIsolated || editMode) {
       return;
     }
 
-    navigate('/posts', {
-      state: { autoOpenPostUid: uid }
-    });
+    if (e.target.closest('.post-actions-wrapper') || e.target.closest('.user-info-actions') || e.target.closest('a')) {
+      return;
+    }
+
+    navigate(`/p/${uid}`);
   };
 
   const onCommentRemoved = () => {
@@ -99,7 +122,8 @@ function Post({
     setLoadingComments(false);
   };
 
-  const onDeletePost = () => {
+  const onDeletePost = (e) => {
+    e.stopPropagation();
     _service({
       url: "/post",
       method: "DELETE",
@@ -181,10 +205,10 @@ function Post({
   return (
     <Card
       className={`post-container 
-        ${isHighlighted.valueOf
-          ? 'post-container--highlight'.valueOf
+        ${isHighlighted
+          ? 'post-container--highlight'
           : ''} 
-        ${!isAlreadyIsolated
+      ${!isAlreadyIsolated
           ? 'post-container--clickable'
           : ''}`}
       ref={postCardRef}
@@ -207,7 +231,7 @@ function Post({
               <p className="user-name">{people.name}</p>
             </Link>
             <span className="post-date">
-              {dayjs(moment).format("llll")}
+              {dayjs(moment).fromNow()}
             </span>
           </div>
         </div>
@@ -289,7 +313,7 @@ function Post({
                 ) : (
                   <Space size="small">
                     Ver comentários
-                    <Tag color="#8A6AA2" variant="solid" style={{ margin: 0 }}>
+                    <Tag color="#8A6AA2" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
                       {countComments}
                     </Tag>
                   </Space>
@@ -300,6 +324,16 @@ function Post({
             {!showEditor && (
               <Button className="btn-reply" onClick={() => setShowEditor(true)}>
                 <RiArrowGoBackLine /> Responder
+              </Button>
+            )}
+            {parentUid && (
+              <Button className="btn-reply" onClick={() => { navigate(`/p/${parentUid}`); } }>
+                Pai 
+              </Button>
+            )}
+            {rootUid && (
+              <Button className="btn-reply" onClick={() => { navigate(`/p/${rootUid}`); } }>
+                Raíz 
               </Button>
             )}
           </div>
@@ -317,6 +351,7 @@ function Post({
             <PostList
               ref={refPostList}
               parent={uid}
+              isolatedCommentUid={isolatedCommentUid}
               onLoaded={onCommentsLoaded}
               onItemRemoved={onCommentRemoved}
             />

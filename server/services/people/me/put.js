@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import { _image, _req, _db, _val, _user, _out } from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -8,7 +8,11 @@ const username = _req.getString("username");
 const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
-const coverImage = _req.getFile("coverImage");
+const cover_image = _req.getFile("cover_image");
+// Adicionados os recetores das flags de remoção:
+const removeAvatar = _req.getBoolean("remove_avatar");
+const removeCoverImage = _req.getBoolean("remove_cover_image");
+
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
@@ -20,12 +24,7 @@ const dbInstitution = _db.queryFirst(`
 `, institutionUid)
 
 if (!dbInstitution) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "institution-not-found")
-  );
-  _exec.stop();
+  response.stopWithInstitutionNotFound();
 }
 
 const dbCity = _db.queryFirst(`
@@ -34,12 +33,7 @@ const dbCity = _db.queryFirst(`
 `, cityUid)
 
 if (!dbCity) {
-  _header.status(404);
-  _out.json(
-    _val.map()
-      .set("error", "city-not-found")
-  );
-  _exec.stop();
+  response.stopWithCityNotFound();
 }
 
 const userData = _user.get(_user.id());
@@ -75,22 +69,32 @@ const peopleData = _val.map()
 const institutionId = dbInstitution.getInt("id");
 // fail silently if not super-admin
 if (permissions.canChangeOwnInstitution()) {
-  peopleData 
+  peopleData
     .set("institution_id", institutionId)
 }
 
 if (avatar) {
-  peopleData.set("avatar", avatar)
+  peopleData.set(
+    "avatar",
+    _image
+      .init(avatar)
+      .resize(500, 500)
+      .file(avatar.name(), "jpeg")
+  );
+} else if (removeAvatar) {
+  peopleData.set("avatar", "");
 }
 
-if (coverImage) {
+if (cover_image) {
   peopleData.set(
-    "cover_image", 
+    "cover_image",
     _image
-      .init(coverImage)
+      .init(cover_image)
       .resize(720, 240)
-      .file(coverImage.name(), "jpeg")
+      .file(cover_image.name(), "jpeg")
   )
+} else if (removeCoverImage) {
+  peopleData.set("cover_image", "");
 }
 
 const dbPeople = _db.queryFirst(`

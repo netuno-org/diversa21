@@ -1,4 +1,5 @@
-import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
+import { _image, _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
+
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
@@ -12,16 +13,25 @@ const address = _req.getString("address");
 const post_code = _req.getString("post_code");
 const cityUid = _req.getUID("city");
 const website = _req.getString("website");
-const logo = _req.getFile("logo");
+const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
 
-if (!uid && !slug) response.stopWithInstitutionNotFound();
-if (!cityUid) response.stopWithCityNotFound();
+const removeAvatar = _req.getBoolean("remove_avatar");
+const removeCoverImage = _req.getBoolean("remove_cover_image");
+
+const activeStr = _req.getString("active");
+
+if (description.length > 2000) {
+  response.stopWithTextTooLarge();
+}
 
 const dbCity = _db.queryFirst(`
     SELECT id FROM city WHERE uid = ?::uuid
 `, cityUid);
-if (!dbCity) response.stopWithCityNotFound();
+
+if (!dbCity) {
+  response.stopWithCityNotFound();
+}
 
 const cityId = dbCity.getInt("id");
 
@@ -30,18 +40,20 @@ let dbInstitution = null;
 
 if (slug) {
   dbInstitution = _db.queryFirst(`
-        SELECT id, slug FROM institution WHERE slug = ?::text
+        SELECT id, uid, slug FROM institution WHERE LOWER(slug) = LOWER(?::text)
     `, slug);
 } else if (uid) {
   dbInstitution = _db.queryFirst(`
-        SELECT id, slug FROM institution WHERE uid = ?::uuid
+        SELECT id, uid, slug FROM institution WHERE uid = ?::uuid
     `, uid);
 }
 
-if (!dbInstitution) response.stopWithInstitutionNotFound();
+if (!dbInstitution) {
+  response.stopWithInstitutionNotFound();
+}
 
 // Verify permissions
-const targetInstitutionUid = dbInstitution.getString("uid");
+const targetInstitutionUid = dbInstitution.getUID("uid");
 
 if (!permissions.canManageInstitution(targetInstitutionUid)) {
   response.stopWithPermissionDenied();
@@ -50,26 +62,42 @@ if (!permissions.canManageInstitution(targetInstitutionUid)) {
 const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
-  .set("email", email);
+  .set("email", email)
+  .set("telephone", telephone.replace(/\s/g, ''))
+  .set("address", address)
+  .set("post_code", post_code)
+  .set("city_id", cityId);
 
-if (telephone) {
-  institutionData.set("telephone", telephone.replace(/\s/g, ''));
-}
-if (address) {
-  institutionData.set("address", address);
-}
-if (post_code) {
-  institutionData.set("post_code", post_code);
-}
-institutionData.set("city_id", cityId);
 if (website) {
   institutionData.set("website", website);
 }
-if (logo) {
-  institutionData.set("logo", logo);
+
+if (avatar) {
+  institutionData.set(
+    "avatar",
+    _image
+      .init(avatar)
+      .resize(500, 500)
+      .file(avatar.name(), "jpeg")
+  )
+} else if (removeAvatar) {
+  institutionData.set("avatar", "");
 }
+
 if (cover_image) {
-  institutionData.set("cover_image", cover_image);
+  institutionData.set(
+    "cover_image",
+    _image
+      .init(cover_image)
+      .resize(1200, 400)
+      .file(cover_image.name(), "jpeg")
+  )
+} else if (removeCoverImage) {
+  institutionData.set("cover_image", "");
+}
+
+if (activeStr !== null && activeStr !== "") {
+  institutionData.set("active", _req.getBoolean("active"));
 }
 
 _db.update("institution", dbInstitution.getInt("id"), institutionData);

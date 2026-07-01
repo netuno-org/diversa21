@@ -4,25 +4,28 @@
   margin-top: 24px;
   border-radius: 8px;
   transition: all 0.2s ease;
-  // transition: background-color 0.2s ease;
+
+  &:first-child{
+    margin-top: 0;
+  }
+
+  .ant-card-body {
+    padding: 24px;
+
+    @media (max-width: @mobile-width) {
+      padding: 16px;
+    }
+  }
 
   &--clickable {
     &:hover {
       border-color: @primary-color;
       box-shadow: 0 4px 12px fade(@primary-color, 15%);
-      // background-color: fade(@primary-color, 4%);
     }
   }
 
   .post-container {
     margin-top: 24px;
-    /*
-    background-color: #ffffff;
-
-    &:hover {
-      background-color: fade(@primary-color, 4%);
-    }
-    */
   }
 
   .header-user-info-container {

@@ -6,6 +6,8 @@ import _auth from "@netuno/auth-client";
 
 const MEMBER = "member";
 
+let unloaded = false;
+
 function usePeople() {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.people.data);
@@ -31,6 +33,7 @@ function usePeople() {
   }
 
   const load = (onFinish) => {
+    unloaded = false;
     _service({
       method: 'GET',
       url: 'people/me',
@@ -118,12 +121,15 @@ function usePeople() {
   return {
     data,
     set: (data) => {
+      unloaded = false;
       dispatch(peopleLoadAction(data));
     },
     load,
     unload: () => {
+      unloaded = true;
       dispatch(peopleLoadAction(null));
     },
+    isUnloaded: () => unloaded,
     reload: () => {
       dispatch(peopleLoadAction(null));
       load();

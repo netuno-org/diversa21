@@ -129,6 +129,7 @@ function Editor({
       className={`editor-form editor-form--${type}`} 
       form={form}
       onFinish={types[type].onFinish}
+      onClick={(e) => e.stopPropagation()}
       layout="vertical"
       initialValues={{
         content
@@ -136,13 +137,13 @@ function Editor({
     >
       <Form.Item
         name="content"
-        rules={[{ required: true }]}
         label={types[type].title}
       >
         <TextArea
           className="editor-form__text-area"
           maxLength={500}
           rows={4} 
+          placeholder="Escreva o seu post"
         />
       </Form.Item>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col, Divider } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -9,8 +9,8 @@ import isNetworkError from "is-network-error";
 
 import globalNotification from "../../common/globalNotification.js";
 import usePeople from "../../common/usePeople.js";
-import Avatar from './Avatar';
-import CoverImage from './CoverImage';
+import Avatar from '../Avatar/index.jsx';
+import CoverImage from '../CoverImage/index.jsx';
 import './index.less';
 
 function ProfileForm({
@@ -27,7 +27,7 @@ function ProfileForm({
 
   const profileForm = useRef(null);
   const profileAvatar = useRef(null);
-  const profileBanner = useRef(null);
+  const profileCover = useRef(null);
   const [form] = Form.useForm();
   const descriptionValue = Form.useWatch("description", form) || "";
 
@@ -57,31 +57,19 @@ function ProfileForm({
   useEffect(() => {
     if (people && operation === "edit") {
       if (people.avatar) {
-        setAvatarImageURL(_service.url(`/people/avatar?uid=${people.uid}`));
+        setAvatarImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people&t=${Date.now()}`));
       }
-      if (people.coverImage) {
-        setCoverImageURL(_service.url(`/people/banner?uid=${people.uid}`));
+      if (people.cover_image) {
+        setCoverImageURL(_service.url(`/asset?uid=${people.uid}&type=cover_image&entity=people&t=${Date.now()}`));
       }
     }
   }, [people, operation]);
 
   const groupOptions = [
-    {
-      label: "Membro",
-      value: "member"
-    },
-    {
-      label: "Revisão",
-      value: "review"
-    },
-    {
-      label: "Gestão",
-      value: "management"
-    },
-    {
-      label: "Super Administrador",
-      value: "super-admin"
-    },
+    { label: "Membro", value: "member" },
+    { label: "Revisão", value: "review" },
+    { label: "Gestão", value: "management" },
+    { label: "Super Administrador", value: "super-admin" },
   ];
 
   const handleCitySearch = value => {
@@ -138,9 +126,16 @@ function ProfileForm({
 
     if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
-      data.coverImage = profileBanner?.current?.getImage();
-      if (itsLoggedUserProfile) url += '/me';
-      else data.uid = people.uid;
+      data.remove_avatar = profileAvatar?.current?.isRemoved() ?? false;
+
+      data.cover_image = profileCover?.current?.getImage();
+      data.remove_cover_image = profileCover?.current?.isRemoved() ?? false;
+
+      if (itsLoggedUserProfile) {
+        url += '/me';
+      } else {
+        data.uid = people.uid;
+      }
     }
 
     const method = operation === "edit" ? "PUT" : "POST";
@@ -189,8 +184,7 @@ function ProfileForm({
         if (e.error && isNetworkError(e.error)) {
           return api.error({
             title: 'Conexão',
-            description:
-              'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+            description: 'Há problemas de conexão com o servidor, tente novamente mais tarde.',
           });
         }
         if (e && e.status === 409 && e.json && e.json.error) {
@@ -245,7 +239,6 @@ function ProfileForm({
           ref={profileForm}
           layout="vertical"
           name="basic"
-
           initialValues={
             operation === "edit" ? {
               name: people.name,
@@ -269,8 +262,6 @@ function ProfileForm({
             }
               : operation === "create" && !loggedUser.canCreateAnyUser() ? {
                 group: { value: "member", label: "Membro" },
-
-
                 institution: loggedUser.data.institution.name,
               }
                 : {}
@@ -283,20 +274,13 @@ function ProfileForm({
                 <Avatar
                   ref={profileAvatar}
                   currentImage={avatarImageURL}
-                  onRemove={() => {
-                    setAvatarImageURL('/images/profile-default.png');
-                  }}
-                  shape="square"
                 />
               </Card>
 
               <Card title={`Imagem de Capa`} className="profile-form__card">
                 <CoverImage
-                  ref={profileBanner}
+                  ref={profileCover}
                   currentImage={coverImageURL}
-                  onRemove={() => {
-                    setCoverImageURL(null);
-                  }}
                 />
               </Card>
             </>

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Typography, Avatar, Empty } from "antd";
 import { SendOutlined, CloseOutlined } from "@ant-design/icons";
 
-// import _ws from "@netuno/ws-client";
-// import globalNotification from "../../../../common/globalNotification.js";
+import _service from "@netuno/service-client";
+
+import _ws from "@netuno/ws-client";
+import globalNotification from "../../../../common/globalNotification.js";
 
 import History from "./History";
 
@@ -12,66 +14,38 @@ import "./index.less";
 const { TextArea } = Input;
 const { Text } = Typography;
 
-function Chat({ friend, onClose }) {
+function Chat({ friend }) {
   const [form] = Form.useForm();
   const [messageSubmitting, setMessageSubmitting] = useState(false);
   const [historyReload, setHistoryReload] = useState(0);
 
   useEffect(() => {
     setHistoryReload(0);
-    form.resetFields();
-  }, [friend, form]);
+  }, [friend]);
 
-  // Placeholder values
-  const onFinish = ({ message }) => {
-    setMessageSubmitting(true);
-
-    setTimeout(() => {
-      setMessageSubmitting(false);
-      setHistoryReload((prev) => prev + 1);
-      form.resetFields();
-    }, 500);
+  const onFinish = ({message}) => {
+    _ws.sendService({
+      method: "POST",
+      service: "message",
+      data: {
+        to: friend.uid,
+        message
+      },
+      start: () => setMessageSubmitting(true),
+      success: () => {
+        form.resetFields([["message"]]);
+        setHistoryReload((prev) => prev + 1);
+      },
+      fail: (error) => {
+        console.error(error);
+        globalNotification.serviceFail({
+          title: 'Enviar Mensagem',
+          description: 'Ocorreu um erro no envio da mensagem, por favor contacte-nos através do suporte ou tente novamente mais tarde.',
+        })
+      },
+      end: () => setMessageSubmitting(false),
+    });
   };
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape" && friend && onClose) {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [friend, onClose]);
-
-  // const onFinish = ({ message }) => {
-  //   setMessageSubmitting(true);
-  //   const listenerMessagePostRef = _ws.addListener({
-  //     method: "POST",
-  //     service: "message",
-  //     success: (data) => {
-  //       setMessageSubmitting(false);
-  //       setHistoryReload(historyReload + 1);
-  //       _ws.removeListener(listenerMessagePostRef);
-  //     },
-  //     fail: (error) => {
-  //       setMessageSubmitting(false);
-  //       _ws.removeListener(listenerMessagePostRef);
-  //       globalNotification.serviceFail({
-  //         title: 'Enviar Mensagem',
-  //         description: 'Ocorreu um erro no envio da mensagem, por favor contacte-nos através do suporte ou tente novamente mais tarde.',
-  //       })
-  //     }
-  //   });
-  //   _ws.sendService({
-  //     method: "POST",
-  //     service: "message",
-  //     data: {
-  //       to: friend.uid,
-  //       message
-  //     }
-  //   });
-  // };
 
   if (!friend) {
     return (
@@ -92,7 +66,14 @@ function Chat({ friend, onClose }) {
     <div className="messages__chat">
       <div className="messages__chat-header">
         <div className="messages__chat-header-user">
-          <Avatar src={friend.avatar || "/images/profile-default.png"} size="large" shape="square"/>
+          <Avatar
+            src={friend.avatar
+              ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&${new Date().getTime()}`)
+              : '/images/profile-default.png'}
+            size="large"
+            shape="square"
+            className="messages__chat-header-avatar"
+          />
           <div className="messages__chat-header-info">
             <Text strong className="messages__chat-name">{friend.name || "Utilizador"}</Text>
             {friend.username && <Text type="secondary" className="messages__chat-username">@{friend.username}</Text>}
@@ -102,7 +83,6 @@ function Chat({ friend, onClose }) {
         <Button
           type="text"
           icon={<CloseOutlined />}
-          onClick={onClose}
           className="messages__chat-close-btn"
         />
 

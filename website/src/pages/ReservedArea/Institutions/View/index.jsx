@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  Typography, Card, Spin, Button, Row, Col,
-  Divider, Avatar, Space, Empty, Pagination, Tabs
+  Typography, Card, Spin, Button, Divider, Avatar, Space, Empty, Pagination, Tabs, Tag
 } from "antd";
 import {
   EditOutlined, MailOutlined, TeamOutlined,
@@ -11,8 +10,8 @@ import {
 import _service from '@netuno/service-client';
 
 import UserProfileDisplay from '../../../../components/UserProfileDisplay';
-
 import ActivityList from "../../../../components/Activity/List";
+import usePeople from "../../../../common/usePeople.js";
 
 import "./index.less";
 
@@ -20,6 +19,7 @@ const { Title, Text, Paragraph } = Typography;
 
 function View() {
   const navigate = useNavigate();
+  const loggedUser = usePeople();
   const { slug } = useParams();
   const [institution, setInstitution] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -76,10 +76,12 @@ function View() {
 
   const handleEdit = () => navigate(`/institutions/${slug}/edit`);
 
+  const canEditInstitution = loggedUser.canManageInstitution(institution?.uid);
+
   if (loading) {
     return (
       <div className="institution-view">
-        <div className="loading-wrapper">
+        <div className="institution-view__loading">
           <Spin size="large" />
         </div>
       </div>
@@ -89,33 +91,37 @@ function View() {
   if (error || !institution) {
     return (
       <div className="institution-view">
-        <div className="error-wrapper">
+        <div className="institution-view__error">
           <Empty description={error || "Instituição não encontrada."} />
-          <Button type="primary" onClick={() => navigate('/institutions')}>
-            Voltar à listagem
-          </Button>
+          {canEditInstitution &&
+            <Button type="primary" onClick={() => navigate('/institutions')}>
+              Voltar à listagem
+            </Button>
+          }
         </div>
       </div>
     );
   }
 
   const membersTab = (
-    <>
+    <div className="institution-view__tabs-content">
       {usersLoading ? (
-        <div className="users-loading-wrapper">
+        <div className="institution-view__users-loading">
           <Spin size="large" />
         </div>
       ) : users.length > 0 ? (
         <>
-          <div className="users-list">
+          <div className="institution-view__users-list">
             {users.map((user) => (
-              <Card key={user.uid} className="user-card">
-                <div className="user-card__content">
-                  <div className="user-card__info">
-                    <UserProfileDisplay
-                      user={user}
-                      avatarStyle={{ width: 64, height: 64 }}
-                    />
+              <Card key={user.uid} className="institution-view__users-card">
+                <div className="institution-view__users-card-content">
+                  <div className="institution-view__users-card-info">
+                    <Link to={`/u/${user.username}`} style={{ color: "inherit" }}>
+                      <UserProfileDisplay
+                        user={user}
+                        avatarStyle={{ width: 64, height: 64 }}
+                      />
+                    </Link>
                   </div>
                 </div>
               </Card>
@@ -124,7 +130,7 @@ function View() {
 
           {usersPagination.total > 10 && (
             <Pagination
-              className="users-pagination"
+              className="institution-view__users-pagination"
               align="center"
               total={usersPagination.total}
               current={usersPagination.current}
@@ -134,165 +140,150 @@ function View() {
           )}
         </>
       ) : (
-        <div className="users-empty-wrapper">
+        <div className="institution-view__users-empty">
           <Empty description="Nenhum membro encontrado nesta instituição." />
         </div>
       )}
-    </>
+    </div>
   );
 
-  const membersCount = usersLoading ? '' : ` (${usersPagination.total})`;
+  const membersCount = usersLoading ? '' : ` ${usersPagination.total}`;
 
   return (
     <section className="institution-view">
-      <div className="cover-image">
+      <div className="institution-view__cover">
         {institution.cover_image ? (
           <img
-            src={_service.url(`/asset?uid=${institution.uid}&type=banner&entity=institution`)}
-            alt="Cover"
+            src={_service.url(`/asset?uid=${institution.uid}&type=cover_image&entity=institution`)}
+            alt="Capa da Instituição"
+            className="institution-view__cover-image"
           />
         ) : (
-          <div className="cover-placeholder" />
+          <div className="institution-view__cover-placeholder" />
         )}
       </div>
 
-      <Row gutter={[32, 24]}>
-        <Col xs={24} lg={8}>
-          <Card className="sidebar-card">
-            <div className="logo-section">
-              {institution.logo ? (
-                <Avatar
-                  src={_service.url(`/asset?uid=${institution.uid}&type=avatar&entity=institution`)}
-                  size={120}
-                  shape="square"
-                  style={{ backgroundColor: '#fff' }}
-                />
-              ) : (
-                <Avatar
-                  size={120}
-                  shape="square"
-                  style={{ backgroundColor: '#8A6AA2', fontSize: 48 }}
+      <Card className="institution-view__card">
+        <div className="institution-view__header">
+          <div className="institution-view__avatar">
+            {institution.avatar ? (
+              <Avatar
+                src={_service.url(`/asset?uid=${institution.uid}&type=avatar&entity=institution`)}
+                size={120}
+                shape="square"
+                style={{ backgroundColor: '#fff' }}
+              />
+            ) : (
+              <Avatar
+                size={120}
+                shape="square"
+                style={{ backgroundColor: '#8A6AA2', fontSize: 48 }}
+              >
+                {institution.name?.[0]}
+              </Avatar>
+            )}
+          </div>
+          <div className="institution-view__actions">
+            {canEditInstitution && (
+              <div className="institution-view__action-buttons">
+                <Button
+                  type="primary"
+                  className="institution-view__edit-btn"
+                  icon={<EditOutlined />}
+                  onClick={handleEdit}
                 >
-                  {institution.name?.[0]}
-                </Avatar>
-              )}
-            </div>
+                  Editar Instituição
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
 
-            <Title level={2} className="institution-name">
+        <div className="institution-view__info">
+          <div className="institution-view__name-wrapper">
+            <Title level={2} className="institution-view__name">
               {institution.name}
             </Title>
+            {(institution.active === false || institution.active === "false") && (
+              <Tag variant="filled" color="error" className="institution-view__status-tag">
+                Instituição Inativa
+              </Tag>
+            )}
+          </div>
 
-            <Space direction="vertical" size={4} className="location-info">
-              {(institution.city?.name || institution.country?.name) && (
+          <Space size="large" className="institution-view__details" wrap>
+            {(institution.city?.name || institution.country?.name || institution.state?.name) && (
+              <div className="institution-view__detail-item">
+                <EnvironmentOutlined />
                 <Text type="secondary">
-                  <EnvironmentOutlined /> {institution.city?.name}
-                  {institution.city?.name && institution.country?.name && ', '}
-                  {institution.country?.name}
+                  {institution.city?.name}{institution.city?.name && (institution.state?.name || institution.country?.name) && ', '}
+                  {institution.state?.name || institution.country?.name}
                 </Text>
-              )}
-              {institution.state?.name && (
-                <Text type="secondary">{institution.state?.name}</Text>
-              )}
-            </Space>
+              </div>
+            )}
 
-            <Divider />
+            {(institution.address || institution.post_code) && (
+              <div className="institution-view__detail-item">
+                <EnvironmentOutlined />
+                <Text type="secondary">
+                  {institution.address}
+                  {institution.address && institution.post_code && ', '}
+                  {institution.post_code}
+                </Text>
+              </div>
+            )}
 
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              size="large"
-              block
-              onClick={handleEdit}
-              style={{ marginTop: 24 }}
-            >
-              Editar Instituição
-            </Button>
-          </Card>
-        </Col>
+            {institution.email && (
+              <div className="institution-view__detail-item">
+                <MailOutlined />
+                <a href={`mailto:${institution.email}`} className="institution-view__detail-link">{institution.email}</a>
+              </div>
+            )}
 
-        <Col xs={24} lg={16}>
-          <Card className="details-card">
-            <Title level={3}>Sobre</Title>
-            <Paragraph>
-              {institution.description || 'Sem descrição disponível.'}
-            </Paragraph>
+            {institution.telephone && (
+              <div className="institution-view__detail-item">
+                <PhoneOutlined />
+                <a href={`tel:${institution.telephone}`} className="institution-view__detail-link">{institution.telephone}</a>
+              </div>
+            )}
 
-            <Divider titlePlacement="left">Informações de Contacto</Divider>
+            {institution.website && (
+              <div className="institution-view__detail-item">
+                <GlobalOutlined />
+                <a
+                  href={institution.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="institution-view__detail-link"
+                >
+                  Website
+                </a>
+              </div>
+            )}
+          </Space>
+        </div>
 
-            <div className="contact-info">
-              {institution.email && (
-                <div className="contact-item">
-                  <MailOutlined />
-                  <div className="contact-details">
-                    <Text type="secondary">E-mail</Text>
-                    <a href={`mailto:${institution.email}`}>{institution.email}</a>
-                  </div>
-                </div>
-              )}
+        <Divider />
 
-              {institution.telephone && (
-                <div className="contact-item">
-                  <PhoneOutlined />
-                  <div className="contact-details">
-                    <Text type="secondary">Telefone</Text>
-                    <a href={`tel:${institution.telephone}`}>{institution.telephone}</a>
-                  </div>
-                </div>
-              )}
+        <div className="institution-view__about">
+          <Title level={4}>Sobre</Title>
+          <Paragraph className="institution-view__about-text">
+            {institution.description || 'Esta instituição ainda não adicionou uma descrição.'}
+          </Paragraph>
+        </div>
+      </Card>
 
-              {(institution.address || institution.post_code) && (
-                <div className="contact-item">
-                  <EnvironmentOutlined />
-                  <div className="contact-details">
-                    <Text type="secondary">Endereço</Text>
-                    <Text>
-                      {institution.address}
-                      {institution.address && institution.post_code && ', '}
-                      {institution.post_code}
-                    </Text>
-                  </div>
-                </div>
-              )}
-
-              {institution.website && (
-                <div className="contact-item">
-                  <GlobalOutlined />
-                  <div className="contact-details">
-                    <Text type="secondary">Website</Text>
-                    {institution.website ? (
-                      <a
-                        href={institution.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {institution.website}
-                      </a>
-                    ) : (
-                      <Text type="secondary">Website indisponível</Text>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {(!institution.email && !institution.telephone &&
-              !institution.address && !institution.website) && (
-                <Text type="secondary">Sem informações de contacto disponíveis.</Text>
-              )}
-          </Card>
-        </Col>
-      </Row>
-
-      <div className="users-section">
+      <div className="institution-view__tabs">
         <Tabs
           defaultActiveKey="members"
+          size="large"
           items={[
             {
               key: 'members',
               label: (
                 <Space>
-                  <TeamOutlined />
-                  <span>{`Membros${membersCount}`}</span>
+                  <TeamOutlined style={{ fontSize: 18 }} />
+                  <span>Membros <Tag color="#8A6AA2" variant='solid' style={{ borderRadius: '32px' }}>{membersCount}</Tag></span>
                 </Space>
               ),
               children: membersTab
@@ -300,7 +291,11 @@ function View() {
             {
               key: 'activity',
               label: 'Atividade',
-              children: (<ActivityList institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />)
+              children: (
+                <div className="institution-view__tabs-content">
+                  <ActivityList institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />
+                </div>
+              )
             }
           ]}
         />

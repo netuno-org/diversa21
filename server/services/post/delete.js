@@ -33,19 +33,28 @@ const dbParentPost = _db.get('post', dbPost.getInt('parent_id'));
 
 const result = _db.execute(`
     WITH RECURSIVE post_tree AS (
-        SELECT id 
+        SELECT id, uid
         FROM post 
         WHERE id = ? 
         
         UNION ALL
         
-        SELECT post.id 
+        SELECT post.id, post.uid
         FROM post
         JOIN post_tree ON post.parent_id = post_tree.id
     ),
     deleted_likes AS (
         DELETE FROM post_like
         WHERE post_id IN (SELECT id FROM post_tree)
+    ),
+    deleted_notifications AS (
+        DELETE FROM notification
+        WHERE id IN (
+            SELECT notification.id
+            FROM post_tree
+            INNER JOIN notification
+            ON notification.extra = '{ "postUid": "' || post_tree.uid || '" }'
+        )
     )
     DELETE FROM post
     WHERE id IN (SELECT id FROM post_tree);

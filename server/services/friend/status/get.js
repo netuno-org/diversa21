@@ -1,9 +1,8 @@
-import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
+import { _req, _db, _val, _out, _header, _exec, _group } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
 const loggedUser = people.getLogged();
-if (!loggedUser) response.stopWithPermissionDenied();
 
 const friendUid = _req.getString("uid");
 
@@ -14,7 +13,10 @@ const dbFriend = _db.queryFirst(`
   INNER JOIN netuno_group g ON u.group_id = g.id
   WHERE p.uid = ?::uuid
 `, friendUid);
-if (!dbFriend) response.stopWithUserNotFound();
+
+if (!dbFriend) {
+  response.stopWithUserNotFound();
+}
 
 const loggedId = loggedUser.getInt("id");
 const friendId = dbFriend.getInt("id");

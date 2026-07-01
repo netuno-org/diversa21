@@ -2,13 +2,7 @@
 
 .profile {
   min-height: calc(100vh - 140px);
-  padding: 16px 0;
-  max-width: 900px;
   margin: 0 auto;
-
-  @media (max-width: 768px) {
-    padding: 12px 0;
-  }
 
   &__loading {
     display: flex;
@@ -23,10 +17,11 @@
     height: 240px;
     border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     background: #f0f0f0;
+    border-radius: 8px;
 
-    @media (max-width: 768px) {
+    @media (max-width: @md) {
       height: 180px;
       border-radius: 0;
       margin: 0 -16px 40px;
@@ -49,12 +44,13 @@
 
   &__card {
     margin-bottom: 24px;
+    border-radius: 8px;
 
     .ant-card-body {
-      padding: 0 32px 32px;
+      padding: 0 24px 24px;
 
-      @media (max-width: 768px) {
-        padding: 0 20px 24px;
+      @media (max-width: @md) {
+        padding: 0 16px 16px;
       }
     }
   }
@@ -64,7 +60,7 @@
     justify-content: space-between;
     align-items: flex-start;
 
-    @media (max-width: 576px) {
+    @media (max-width: @sm) {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -72,41 +68,58 @@
 
   &__actions {
     display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 7px;
+
+    @media (max-width: @sm) {
+      width: 100%;
+      align-items: stretch;
+    }
+  }
+
+  &__action-buttons {
+    display: flex;
     align-items: flex-end;
     gap: 12px;
 
-    @media (max-width: 576px) {
+    @media (max-width: @sm) {
       flex-direction: column;
       width: 100%;
       align-items: stretch;
     }
   }
 
+  &__footer-title,
+  p {
+    margin-top: 0px;
+  }
 
   &__avatar {
     margin-top: -70px;
 
+    @media (max-width: @md) {
+      margin-top: -60px;
+    }
+
     .ant-avatar {
       border: 4px solid #fff;
+      border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-      @media (max-width: 768px) {
+      @media (max-width: @md) {
         width: 100px !important;
         height: 100px !important;
         line-height: 100px !important;
         border-width: 3px;
       }
     }
-
-    @media (max-width: 768px) {
-      margin-top: -60px;
-    }
   }
 
   &__edit-btn {
     margin-top: 24px;
 
-    @media (max-width: 576px) {
+    @media (max-width: @sm) {
       margin-top: 16px;
       width: 100%;
     }
@@ -118,13 +131,27 @@
     background-color: transparent;
     padding: 0 16px !important;
 
-    @media (max-width: 576px) {
+    @media (max-width: @sm) {
       width: 100%;
     }
   }
 
   &__info {
     margin-top: 16px;
+  }
+
+  &__friend-request-text {
+    font-size: 14px;
+    margin: auto;
+    color: rgba(0, 0, 0, 0.65);
+
+    @media (max-width: @sm) {
+      font-size: 16px;
+    }
+
+    &__name {
+      font-weight: 700;
+    }
   }
 
   &__name {
@@ -161,7 +188,7 @@
     font-weight: 500;
     background: rgba(0, 0, 0, 0.03);
     padding: 4px 12px;
-    border-radius: 16px;
+    border-radius: 32px;
     margin: 0;
   }
 
@@ -199,10 +226,10 @@
 
   &__tabs {
     .ant-tabs-nav {
-      padding: 0 32px;
+      padding: 0 24px;
       margin-bottom: 24px;
 
-      @media (max-width: 768px) {
+      @media (max-width: @md) {
         padding: 0 20px;
       }
 
@@ -214,12 +241,5 @@
 
   &__tabs-content {
     padding-bottom: 40px;
-  }
-
-  &__tabs-empty {
-    background: #fff;
-    padding: 40px 20px;
-    border-radius: 8px;
-    border: 1px solid #f0f0f0;
   }
 }

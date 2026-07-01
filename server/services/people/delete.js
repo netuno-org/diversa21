@@ -22,9 +22,15 @@ if (username) {
 }
 
 if (dbPeople) {
+  const personId = dbPeople.getInt("id");
+  _db.execute(`
+    DELETE FROM friend
+    WHERE people_id = ? OR friend_id = ?
+  `, personId, personId);
+
   _db.delete(
     "people",
-    dbPeople.getInt("id")
+    personId
   );
   _user.remove(dbPeople.getInt("people_user_id"));
   _out.json(

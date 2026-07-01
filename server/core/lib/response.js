@@ -1,3 +1,7 @@
+/*
+  * Utilities to handle HTTP responses
+  */
+
 import { _header, _out, _val, _exec } from "@netuno/server-types";
 
 const stopWithError = (code, message) => {
@@ -32,10 +36,19 @@ export default {
     );
   },
 
-  stopWithNotExist: () => stopWithError(404, "not-exist"),
-  stopWithPermissionDenied: () => stopWithError(403, "permission-denied"),
   stopWithBadRequest: (message) => stopWithError(400, message),
 
+  // This is not to be used when the user is not logged
+  // That is handled by Netuno login system
+  // This is for the logged user permissions
+  // e.g. the user is logged but doens't have permission to edit an institution
+  stopWithPermissionDenied: () => stopWithError(403, "permission-denied"),
+
+  // These are not for when the API user didn't pass a certain parameter
+  // That is automatically handled by OpenAPI
+  // So we don't need to handle that kind of error
+  // These are for when the database was queried and no register was found
+  stopWithNotExist: () => stopWithError(404, "not-exist"),
   stopWithUserNotFound: () => stopWithNotFound("user"),
   stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithTableNotFound: () => stopWithNotFound("table"),
@@ -56,4 +69,6 @@ export default {
   stopWithUserNotCreated: () => stopWithNotCreated("user"),
   stopWithPostNotCreated: () => stopWithNotCreated("post"),
   stopWithLikeNotCreated: () => stopWithNotCreated("like"),
+
+  stopWithTextTooLarge: () => stopWithError(413, "text-too-large"),
 }

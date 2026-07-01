@@ -2,6 +2,7 @@ import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import people from "#core/lib/people.js";
+import response from "#core/lib/response.js";
 
 
 // Validate user input
@@ -11,13 +12,20 @@ const name = _req.getString("name");
 const username = _req.getString("username");
 const email = _req.getString("email");
 const avatar = _req.getFile("avatar");
-const coverImage = _req.getFile("coverImage");
+const cover_image = _req.getFile("cover_image");
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");
 const active = _req.getBoolean("active");
 const description = _req.getString("description");
+
+const removeAvatar = _req.getBoolean("remove_avatar");
+const removeCoverImage = _req.getBoolean("remove_cover_image");
+
+if (description && description.length > 1000) {
+  response.stopWithTextTooLarge();
+}
 
 const groups = ["member", "review", "management", "super-admin"];
 
@@ -169,22 +177,28 @@ const peopleData = _val.map()
 
 if (avatar) {
   peopleData.set(
-    "avatar", 
+    "avatar",
     _image
       .init(avatar)
       .resize(500, 500)
       .file(avatar.name(), "jpeg")
-  )
+  );
+} else if (removeAvatar) {
+  peopleData.set("avatar", "");
 }
 
-if (coverImage) {
+_log.info(`>>> removeAvatar recebido: ${removeAvatar}, avatar: ${avatar ? 'sim' : 'não'}`);
+
+if (cover_image) {
   peopleData.set(
     "cover_image", 
     _image
-      .init(coverImage)
+      .init(cover_image)
       .resize(720, 240)
-      .file(coverImage.name(), "jpeg")
-  )
+      .file(cover_image.name(), "jpeg")
+  );
+} else if (removeCoverImage) {
+  peopleData.set("cover_image", "");
 }
 
 _db.update(

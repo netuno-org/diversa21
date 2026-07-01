@@ -30,7 +30,7 @@
     "website": {
       "type": "string"
     },
-    "logo": {
+    "avatar": {
       "type": "file"
     },
     "cover_image": {
@@ -39,6 +39,11 @@
   },
   "required": [
     "name",
-    "email"
+    "description",
+    "email",
+    "telephone",
+    "address",
+    "post_code",
+    "city"
   ]
 }

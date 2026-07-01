@@ -16,112 +16,118 @@ if (page > 0) {
 
 const loggedUserPeopleId = people.getLogged().getInt("id");
 
-let params = _val.list();
+let activityQueryParams = _val.list();
 
-let sqlQuery = "";
-
-if (institutionUid) {
-  sqlQuery = `
-    WITH RECURSIVE activity AS (
-      SELECT post.id, post.content, post.parent_id
-      FROM post
-      INNER JOIN people ON post.people_id = people.id
-      INNER JOIN institution i ON people.institution_id = i.id
-      WHERE post.parent_id != 0
-        AND i.uid = ?::uuid
-
-      UNION
-
-      SELECT post.id, post.content, post.parent_id
-      FROM post_like
-      INNER JOIN post ON post.id = post_like.post_id
-      INNER JOIN people ON post_like.people_id = people.id
-      INNER JOIN institution i ON people.institution_id = i.id
-      WHERE i.uid = ?::uuid
-
-      UNION
-
-      SELECT p.id, p.content, p.parent_id
-      FROM post p
-      INNER JOIN activity a ON a.parent_id = p.id
-    )
-
-    SELECT count(*) over() as total_count,
-      post.uid, post.moment, post.content, post.comments, post.likes,
-      people.name AS "people_name", people.uid AS "people_uid",
-      netuno_user.user AS "people_user",
-      people.avatar AS "people_avatar",
-      (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id"
-    FROM post
-      INNER JOIN people ON post.people_id = people.id
-      INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
-      INNER JOIN activity ON activity.id = post.id
-    WHERE activity.parent_id = 0
-    ORDER BY post.moment DESC
-    LIMIT 10
-    OFFSET ?::int
-  `;
-
-  params
-    .add(institutionUid)
-    .add(institutionUid)
-    .add(loggedUserPeopleId)
-    .add(offset);
-}
-else {
-  sqlQuery = `
-    WITH RECURSIVE activity AS (
-      SELECT post.id, post.content, post.parent_id
-      FROM post
-      INNER JOIN people ON post.people_id = people.id
-      WHERE post.parent_id != 0
-        AND people.uid = ?::uuid
-
-        UNION
-
-        SELECT post.id, post.content, post.parent_id
-        FROM post_like
-        INNER JOIN post
-        ON post.id = post_like.post_id
-        INNER JOIN people
-        ON post_like.people_id = people.id
-        WHERE people.uid = ?::uuid
-
-        UNION
-
-        SELECT p.id, p.content, p.parent_id
-        FROM post p
-        INNER JOIN activity a
-        ON a.parent_id = p.id
-    )
-
-    SELECT count(*) over() as total_count,
-        post.uid, post.moment, post.content, post.comments, post.likes,
-        people.name AS "people_name", people.uid AS "people_uid",
-        netuno_user.user AS "people_user",
-        people.avatar AS "people_avatar",
-        (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id"
-    FROM post
+let activityQuery = `
+    SELECT count(*) over() as total_count, *
+    FROM (
+        SELECT
+            post.id, post.uid, post.moment, post.content, post.comments, post.likes,
+            parent.uid AS "parent_uid",
+            people.name AS "people_name", people.uid AS "people_uid",
+            netuno_user.user AS "people_user",
+            people.avatar AS "people_avatar",
+            (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id",
+            'comment' AS "type"
+        FROM post
+        INNER JOIN post parent ON post.parent_id = parent.id
         INNER JOIN people ON post.people_id = people.id
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
-        INNER JOIN activity ON activity.id = post.id
-    WHERE activity.parent_id = 0
-    ORDER BY post.moment DESC
-    LIMIT 10
-    OFFSET ?::int
-  `;
 
-  params
+    `;
+
+activityQueryParams
+  .add(loggedUserPeopleId);
+    
+if (institutionUid) {
+  activityQuery += `
+        INNER JOIN institution i ON people.institution_id = i.id
+        WHERE post.parent_id != 0
+            AND i.uid = ?::uuid
+  `;
+  activityQueryParams
+    .add(institutionUid)
+} else {
+  activityQuery += `
+        WHERE post.parent_id != 0
+            AND people.uid = ?::uuid
+  `;
+  activityQueryParams
     .add(peopleUid)
-    .add(peopleUid)
-    .add(loggedUserPeopleId)
-    .add(offset);
 }
 
-const dbPosts = _db.query(sqlQuery, params);
+activityQuery += `
+        UNION ALL
+
+        SELECT
+            post.id, post.uid, post_like.moment, post.content, post.comments, post.likes,
+            parent.uid AS "parent_uid",
+            author.name AS "people_name", author.uid AS "people_uid",
+            netuno_user.user AS "people_user",
+            author.avatar AS "people_avatar",
+            (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id",
+            'like' AS "type"
+        FROM post_like
+        INNER JOIN post ON post_like.post_id = post.id
+        LEFT JOIN post parent ON post.parent_id = parent.id
+        INNER JOIN people liker ON post_like.people_id = liker.id
+        INNER JOIN people author ON post.people_id = author.id
+        INNER JOIN netuno_user ON author.people_user_id = netuno_user.id
+`;
+
+activityQueryParams
+  .add(loggedUserPeopleId);
+
+if (institutionUid) {
+  activityQuery += `
+        INNER JOIN institution i ON liker.institution_id = i.id
+        WHERE i.uid = ?::uuid
+  `;
+  activityQueryParams
+    .add(institutionUid)
+} else {
+  activityQuery += `
+        WHERE liker.uid = ?::uuid
+  `;
+  activityQueryParams
+    .add(peopleUid)
+}
+
+activityQuery += `
+    ) AS combined_data
+    ORDER BY combined_data.moment DESC
+    LIMIT 10
+    OFFSET ?::int
+`;
+
+activityQueryParams
+  .add(offset);
+
+const dbActivities = _db.query(activityQuery, activityQueryParams);
 
 const posts = _val.list();
-for (const dbPost of dbPosts) {
+for (const dbPost of dbActivities) {
+  const dbRoot = _db.queryFirst(`
+      WITH RECURSIVE rec AS (
+          SELECT id, parent_id, uid
+          FROM post
+          WHERE id = ?::int
+          AND parent_id != 0
+
+          UNION
+
+          SELECT post.id, post.parent_id, post.uid
+          FROM post
+          INNER JOIN rec ON rec.parent_id = post.id
+      )
+
+      SELECT uid as root_uid
+      FROM rec
+      WHERE parent_id = 0
+    `,
+    dbPost.getInt("id")
+  );
+
   posts.add(
     _val.map()
       .set("uid", dbPost.getString("uid"))
@@ -130,6 +136,9 @@ for (const dbPost of dbPosts) {
       .set("comments", dbPost.getInt("comments", 0))
       .set("liked", dbPost.getInt("post_like_id", 0) > 0)
       .set("likes", dbPost.getInt("likes"))
+      .set("type", dbPost.getString("type"))
+      .set("rootUid", dbRoot ? dbRoot.getString("root_uid") : '')
+      .set("parentUid", dbPost.getString("parent_uid"))
       .set(
         "people",
         _val.map()
@@ -142,7 +151,7 @@ for (const dbPost of dbPosts) {
 }
 
 const result = _val.map();
-const totalCount = dbPosts.length === 0 ? 0 : dbPosts[0].getInt("total_count");
+const totalCount = dbActivities.length === 0 ? 0 : dbActivities[0].getInt("total_count");
 result.set("items", posts);
 result.set("pagination", { pageSize, totalCount });
 

@@ -1,6 +1,7 @@
 import request from "supertest";
 
 import { NETUNO_URL } from '../config.js';
+import { username } from './usernames.js';
 
 const loginAs = async (name) => {
   const loginResponse = await request(NETUNO_URL)
@@ -20,4 +21,5 @@ export default {
   asTest: () => loginAs("test"),
   asSuperAdmin: () => loginAs("super"),
   asReview: () => loginAs("review"),
+  asBen: () => loginAs(username.ben),
 }

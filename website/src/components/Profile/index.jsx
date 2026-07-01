@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty, Tag, notification } from 'antd';
+import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty, Tag, notification, Popconfirm } from 'antd';
 import {
   EditOutlined,
   EnvironmentOutlined,
@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
 
 import ActivityList from "../Activity/List";
+import FriendList from "../Friend/List";
 
 import PostList from '../Post/List';
 import usePeople from "../../common/usePeople.js";
@@ -30,7 +31,7 @@ function Profile({ user }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-  const [bannerUrl, setBannerUrl] = useState();
+  const [coverUrl, setCoverUrl] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [friendStatus, setFriendStatus] = useState(null);
   const [canRequestFriend, setCanRequestFriend] = useState(false);
@@ -40,9 +41,9 @@ function Profile({ user }) {
 
   const friendshipStatus = {
     none: { label: "Adicionar amigo", action: "request" },
-    pending: { label: "Cancelar pedido", action: "cancel" },
-    received: { label: "Confirmar", action: "accept" },
-    friends: { label: "Amigos", action: "remove" }
+    pending: { label: "Cancelar pedido", action: "cancel", title: "Deseja cancelar o pedido de amizade?" },
+    received: { label: "Confirmar", action: "accept", title: "Deseja aceitar o pedido de amizade?" },
+    friends: { label: "Amigos", action: "remove", title: "Deseja desfazer a amizade?" }
   };
   const currentFriendship = friendshipStatus[friendStatus];
   let buttonIcon = undefined;
@@ -64,13 +65,15 @@ function Profile({ user }) {
   useEffect(() => {
     if (user) {
       user.avatar && setAvatarUrl(_service.url(`/asset?uid=${user.uid}&type=avatar&entity=people&${new Date().getTime()}`));
-      user.coverImage && setBannerUrl(_service.url(`/asset?uid=${user.uid}&type=banner&entity=people&${new Date().getTime()}`));
+      user.cover_image && setCoverUrl(_service.url(`/asset?uid=${user.uid}&type=cover_image&entity=people&${new Date().getTime()}`));
     }
   }, [user]);
 
 
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     if (isOwnProfile) {
       setCanRequestFriend(false);
@@ -197,7 +200,10 @@ function Profile({ user }) {
   };
 
   const handleFriendAction = () => {
-    if (!currentFriendship?.action) return;
+    if (!currentFriendship?.action) {
+      return;
+    }
+
     switch (currentFriendship.action) {
       case "request":
         handleSendFriendRequest();
@@ -226,7 +232,9 @@ function Profile({ user }) {
   }
 
   const renderGroupInfo = () => {
-    if (user.group.code === "member") return null;
+    if (user.group.code === "member") {
+      return null
+    };
 
     let Icon = RiFileEditLine;
     let color = "#d0990f"; // Review
@@ -270,11 +278,23 @@ function Profile({ user }) {
     },
   ];
 
+  if (loggedUser?.data?.group?.code === "member" && user?.group?.code === "member") {
+    tabItems.push({
+      key: 'friends',
+      label: 'Amigos',
+      children: (
+        <div className="profile__tabs-content">
+          <FriendList userUid={user.uid} />
+        </div>
+      ),
+    });
+  }
+
   return (
     <section className="profile">
       <div className="profile__cover">
-        {bannerUrl ? (
-          <img src={bannerUrl} alt="Capa de perfil" className="profile__cover-image" />
+        {coverUrl ? (
+          <img src={coverUrl} alt="Capa de perfil" className="profile__cover-image" />
         ) : (
           <div className="profile__cover-placeholder" />
         )}
@@ -285,26 +305,62 @@ function Profile({ user }) {
             <Avatar src={avatarUrl} size={120} shape="square" />
           </div>
           <div className="profile__actions">
-            {(canEditProfile || showAddFriendButton) && (
-              <Button
-                type="primary"
-                className={`profile__edit-btn ${friendStatus === "friends" ||
-                  friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
-                icon={buttonIcon}
-                onClick={canEditProfile ? handleEdit : handleFriendAction}
-                loading={isLoading}
-              >
-                {canEditProfile ? "Editar Perfil" : currentFriendship.label}
-              </Button>
-            )}
+            <div className="profile__action-buttons">
+              {(canEditProfile || showAddFriendButton) && (
+                friendStatus === "none" || canEditProfile ? (
+                  <Button
+                    type="primary"
+                    className={`profile__edit-btn ${friendStatus === "friends" ||
+                      friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
+                    icon={buttonIcon}
+                    onClick={canEditProfile ? handleEdit : handleFriendAction}
+                    loading={isLoading}
+                  >
+                    {canEditProfile ? "Editar Perfil" : currentFriendship.label}
+                  </Button>
+                ) : (
+                  <Popconfirm
+                    title={currentFriendship.title}
+                    onConfirm={handleFriendAction}
+                    okText="Sim"
+                    cancelText="Não"
+                  >
+                    <Button
+                      type="primary"
+                      className={`profile__edit-btn ${friendStatus === "friends" ||
+                        friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
+                      icon={buttonIcon}
+                      loading={isLoading}
+                    >
+                      {canEditProfile ? "Editar Perfil" : currentFriendship.label}
+                    </Button>
+                  </Popconfirm>
+                )
+              )}
+              {showAddFriendButton && friendStatus === "received" && (
+                <Popconfirm
+                  title="Deseja recusar o pedido de amizade?"
+                  onConfirm={handleRejectFriendRequest}
+                  okText="Sim"
+                  cancelText="Não"
+                >
+                  <Button
+                    className="profile__secondary-btn"
+                    loading={isLoading}
+                  >
+                    <CloseOutlined />Recusar
+                  </Button>
+                </Popconfirm>
+              )}
+            </div>
             {showAddFriendButton && friendStatus === "received" && (
-              <Button
-                className="profile__secondary-btn"
-                onClick={handleRejectFriendRequest}
-                loading={isLoading}
-              >
-                <CloseOutlined />Recusar
-              </Button>
+              <div className="profile__friend-request-text">
+                Deseja aceitar o pedido de amizade de
+                <span className="profile__friend-request-text__name">
+                  {" " + user.name}
+                </span>
+                ?
+              </div>
             )}
           </div>
         </div>
@@ -318,7 +374,7 @@ function Profile({ user }) {
             </Text>
             {renderGroupInfo()}
             {user.active === false && (
-              <Tag bordered={false} color="error" className="profile__status-tag">
+              <Tag bordered={false} color="error" className="profile__status-tag" style={{ borderRadius: '32px' }}>
                 Conta Inativa
               </Tag>
             )}

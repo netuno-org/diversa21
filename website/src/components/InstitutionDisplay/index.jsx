@@ -13,7 +13,7 @@ import './index.less';
 function InstitutionDisplay({ institution, avatarStyle, children }) {
   if (!institution) return null;
 
-  const avatarUrl = institution.logo
+  const avatarUrl = institution.avatar
     ? _service.url(`/asset?uid=${institution.uid}&type=avatar&entity=institution`)
     : null;
 

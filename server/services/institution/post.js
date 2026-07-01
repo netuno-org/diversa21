@@ -3,8 +3,6 @@ import { _req, _db, _val, _out, _header, _exec, _convert } from "@netuno/server-
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
-if (!permissions.canCreateInstitutions()) response.stopWithPermissionDenied();
-
 const name = _req.getString("name");
 const description = _req.getString("description");
 const email = _req.getString("email");
@@ -13,58 +11,74 @@ const address = _req.getString("address");
 const post_code = _req.getString("post_code");
 const cityUid = _req.getUID("city");
 const website = _req.getString("website");
-const logo = _req.getFile("logo");
+const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
-if (!cityUid) response.stopWithCityNotFound();
+
+if (!permissions.canCreateInstitutions()) {
+  response.stopWithPermissionDenied();
+}
+
+if (description.length > 2000) {
+  response.stopWithTextTooLarge();
+}
 
 const dbCity = _db.queryFirst(`SELECT id FROM city WHERE uid = ?::uuid`, cityUid);
 
-if (!dbCity) response.stopWithCityNotFound();
+if (!dbCity) {
+  response.stopWithCityNotFound();
+}
 
 const cityId = dbCity.getInt("id");
 
-if (!name) response.stopWithNameNotFound();
-
 const slug = _convert.slug(name);
-
-if (!email) response.stopWithEmailNotFound();
 
 const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
   .set("email", email)
   .set("active", "true")
-  .set("slug", slug);
+  .set("slug", slug)
+  .set("telephone", telephone.replace(/\s/g, ''))
+  .set("address", address)
+  .set("post_code", post_code)
+  .set("city_id", cityId);
 
-if (telephone) {
-  institutionData.set("telephone", telephone.replace(/\s/g, ''));
-}
-if (address) {
-  institutionData.set("address", address);
-}
-if (post_code) {
-  institutionData.set("post_code", post_code);
-}
-institutionData.set("city_id", cityId);
 if (website) {
   institutionData.set("website", website);
 }
-if (logo) {
-  institutionData.set("logo", logo);
+if (avatar) {
+  institutionData.set(
+    "avatar",
+    _image
+      .init(avatar)
+      .resize(500, 500)
+      .file(avatar.name(), "jpeg")
+  )
 }
 if (cover_image) {
-  institutionData.set("cover_image", cover_image);
+  institutionData.set(
+    "cover_image",
+    _image
+      .init(cover_image)
+      .resize(1200, 400)
+      .file(cover_image.name(), "jpeg")
+  )
 }
 
-const uid = _db.insert("institution", institutionData);
+// TODO: acho que dá pra inserir a instituição passando o UID como se fosse ID
+// assim evitaria-se essa query
+const institutionId = _db.insert("institution", institutionData);
 
-_db.execute("UPDATE institution SET slug = ? WHERE id = ?", slug, uid);
+_db.execute("UPDATE institution SET slug = ? WHERE id = ?", slug, institutionId);
 
 const dbInstitution = _db.queryFirst(`
-SELECT uid, slug FROM institution WHERE id = ?
-`, uid);
+    SELECT uid, slug FROM institution WHERE id = ?
+`, institutionId);
 
-if (!dbInstitution) response.stopWithInstitutionNotFound();
+if (!dbInstitution) {
+  response.stopWithInstitutionNotFound();
+}
+
 const data = _val.map()
   .set("uid", dbInstitution.getString("uid"))
   .set("slug", dbInstitution.getString("slug"));

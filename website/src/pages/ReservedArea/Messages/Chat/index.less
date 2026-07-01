@@ -31,6 +31,14 @@
     background-color: #ffffff;
     border-bottom: 1px solid #f0f0f0;
 
+    &-avatar {
+
+      &,
+      img {
+        border-radius: 8px !important;
+      }
+    }
+
     &-user {
       display: flex;
       align-items: center;
@@ -51,8 +59,8 @@
     justify-content: center;
 
     &:hover {
-      color: #8A6AA2 !important;
-      background-color: rgba(138, 106, 162, 0.08) !important;
+      color: @primary-color !important;
+      background-color: fade(@primary-color, 8%) !important;
     }
   }
 
@@ -87,20 +95,18 @@
     align-items: center;
     gap: 12px;
     background-color: #f5f5f5;
-    padding: 8px 12px;
-    border-radius: 24px;
+    padding: 6px 6px 6px 20px;
+    border-radius: 32px;
     transition: all 0.3s;
 
     &:focus-within {
       background-color: #ffffff;
-      box-shadow: 0 0 0 1px #8A6AA2;
+      box-shadow: 0 0 0 1px @primary-color;
     }
   }
 
   &-textarea {
-    background: transparent !important;
-    resize: none !important;
-    padding: 4px 8px !important;
+    padding: 0 !important;
 
     &:focus {
       box-shadow: none !important;
@@ -117,13 +123,23 @@
   }
 
   &-send-btn {
-    background-color: #8A6AA2;
-    border-color: #8A6AA2;
+    background-color: @primary-color;
+    border-color: @primary-color;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .anticon {
+      margin-left: -2px;
+      margin-top: 1px;
+    }
 
     &:hover,
     &:focus {
-      background-color: #6D4F8A !important;
-      border-color: #6D4F8A !important;
+      background-color: darken(@primary-color, 10%) !important;
+      border-color: darken(@primary-color, 10%) !important;
     }
   }
 }
