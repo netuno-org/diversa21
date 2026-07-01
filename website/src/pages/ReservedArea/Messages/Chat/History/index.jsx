@@ -21,7 +21,7 @@ function History({ friend, reload }) {
         setLoading(true);
       },
       success: ({ content }) => {
-        setMessages(content);
+        setMessages(Array.isArray(content) ? content : []);
       },
       fail: (error) => {
         console.error(error);
@@ -47,7 +47,7 @@ function History({ friend, reload }) {
               from: friend.uid
             },
             success: () => {
-              setMessages((prev) => [...prev, content]);
+              setMessages((prev) => [...(Array.isArray(prev) ? prev : []), content]);
             }
           });
         }
@@ -63,7 +63,9 @@ function History({ friend, reload }) {
   }, [friend]);
 
   useEffect(() => {
-    refList.current.scrollTo({ top: refList.current.scrollHeight });
+    if (refList.current) {
+      refList.current.scrollTo({ top: refList.current.scrollHeight });
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -73,6 +75,11 @@ function History({ friend, reload }) {
   }, [reload]);
 
   const onLoad = () => {
+    if (!friend?.uid) {
+      setLoading(false);
+      setMessages([]);
+      return;
+    }
     _ws.sendService({
       method: "POST",
       service: "message/list",

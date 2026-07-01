@@ -51,9 +51,10 @@ function Messages() {
       },
       success: ({ json }) => {
         const items = json.data?.items || [];
+        const loggedUserUid = loggedUser.data?.uid;
 
         const filteredPeople = items.filter(
-          (person) => person.uid !== loggedUser.data.uid
+          (person) => !loggedUserUid || person.uid !== loggedUserUid
         );
 
         const options = filteredPeople.map((person) => ({

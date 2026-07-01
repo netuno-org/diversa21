@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Spin, Input, Typography, Empty } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
-import _service from "@netuno/service-client";
 import usePeople from "../../../../common/usePeople.js";
 
 import _ws from "@netuno/ws-client";
@@ -18,7 +17,7 @@ const { Search } = Input;
 
 function FriendsList({onFriendSelected}) {
   const [loading, setLoading] = useState(true);
-  const [list, setList] = useState(null);
+  const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = useState('');
 
   const ws = useWS();
@@ -30,7 +29,7 @@ function FriendsList({onFriendSelected}) {
         setLoading(true);
       },
       success: (data) => {
-        setList(data.items);
+        setList(Array.isArray(data?.items) ? data.items : []);
       },
       fail: (error) => {
         console.error(error);
@@ -50,41 +49,44 @@ function FriendsList({onFriendSelected}) {
     const listenerStatusChanged = _ws.addListener({
       service: "friend/status/changed",
       success: ({content}) => {
-        setList((prev) =>
-          prev.map((item) => {
+        setList((prev) => {
+          const safePrev = Array.isArray(prev) ? prev : [];
+          return safePrev.map((item) => {
             if (item.uid === content.uid) {
               return {...item, ...content}
             }
             return item;
-          })
-        );
+          });
+        });
       }
     });
     const listenerNewMessage = _ws.addListener({
       method: "POST",
       service: "message/new",
       success: ({data}) => {
-        setList((prev) =>
-          prev.map((item) => {
+        setList((prev) => {
+          const safePrev = Array.isArray(prev) ? prev : [];
+          return safePrev.map((item) => {
             if (item.uid === data.with) {
               return {...item, unread_messages: item.unread_messages + 1}
             }
             return item;
-          })
-        );
+          });
+        });
       }
     });
     const listenerMessageReadMark = _ws.addListener({
       service: "message/read/mark",
       success: ({ data }) => {
-        setList((prev) =>
-          prev.map((item) => {
+        setList((prev) => {
+          const safePrev = Array.isArray(prev) ? prev : [];
+          return safePrev.map((item) => {
             if (item.uid === data.from) {
               return {...item, unread_messages: item.unread_messages - 1}
             }
             return item;
-          })
-        );
+          });
+        });
       }
     });
 
@@ -116,7 +118,7 @@ function FriendsList({onFriendSelected}) {
         </div>
       ) : (
         <ul className="messages__friends-ul">
-          {list && list.length > 0 ? (
+          {list.length > 0 ? (
             list.map((friend) => (
               <FriendItem
                 key={friend.uid}
