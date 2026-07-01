@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
+import _ws from '@netuno/ws-client';
 
 import dayjs from 'dayjs';
 
 function useNotifications(loggedUser) {
   const MOCK_NOTIFICATIONS = loggedUser.canChangeUserGroup() ?
     [
+      // {
+      //   id: 1,
+      //   type: 'message',
+      //   title: '@test',
+      //   desc: 'Enviou-te uma nova mensagem.',
+      //   time: 'Há 5 min',
+      //   read: false,
+      //   username: 'test'
+      // },
       {
         id: 1,
-        type: 'message',
-        title: '@test',
-        desc: 'Enviou-te uma nova mensagem.',
-        time: 'Há 5 min',
-        read: false,
-        username: 'test'
-      },
-      {
-        id: 2,
         type: 'security',
         title: 'Novo Acesso',
         desc: 'Sessão iniciada num novo dispositivo.',
@@ -24,7 +25,7 @@ function useNotifications(loggedUser) {
         read: false
       },
       {
-        id: 3,
+        id: 2,
         type: 'system',
         title: 'Manutenção',
         desc: 'O sistema estará offline esta madrugada.',
@@ -32,7 +33,7 @@ function useNotifications(loggedUser) {
         read: true
       },
       {
-        id: 4,
+        id: 3,
         type: 'system',
         title: 'Bem-vindo!',
         desc: 'O teu perfil foi criado com sucesso.',
