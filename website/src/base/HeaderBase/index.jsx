@@ -53,13 +53,6 @@ function HeaderBase({ collapsed }) {
           selectedKeys={menuKeysSelected}
           items={[
             {
-              key: "friendRequests",
-              label: <HeaderFriendsRequests />,
-              className: "notifications-menu",
-              popupClassName: "notifications-menu-popup",
-              style: { padding: 0 }
-            },
-            {
               key: "messages",
               label: <HeaderMessages />,
               className: "notifications-menu",
@@ -69,6 +62,13 @@ function HeaderBase({ collapsed }) {
             {
               key: "generalNotifications",
               label: <HeaderNotifications />,
+              className: "notifications-menu",
+              popupClassName: "notifications-menu-popup",
+              style: { padding: 0 }
+            },
+            {
+              key: "friendRequests",
+              label: <HeaderFriendsRequests />,
               className: "notifications-menu",
               popupClassName: "notifications-menu-popup",
               style: { padding: 0 }
