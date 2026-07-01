@@ -4,6 +4,7 @@ import { Button, Result, Spin } from "antd";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import usePeople from "../../common/usePeople.js";
+import useWS from "../../common/useWS.js";
 
 import NotFound from "../NotFound";
 import ProfileEdit from "./MyProfile/Edit";
@@ -32,17 +33,32 @@ function ReservedArea() {
     const [loading, setLoading] = useState(true);
     const people = usePeople();
 
+    const ws = useWS();
+
     useEffect(() => {
-      if (people.data == null) {
+      if (people.isUnloaded()) {
+        ws.close();
+        _auth.logout();
+        navigate("/login");
+        return;
+      }
+      if (!people.data) {
         people.load((result) => {
           if (result) {
-            setLoading(false);
+            ws.load(() => {
+              setLoading(false);
+            });
           } else {
             navigate("/login");
           }
         });
-      } else {
-        setLoading(false);
+        return;
+      }
+      if(loading === true && !ws.isConnecting()) {
+        ws.load(() => {
+          setLoading(false);
+        });
+        return;
       }
     }, [people.data]);
 
@@ -67,7 +83,7 @@ function ReservedArea() {
         return <Posts />;
       }
       if (location.pathname.startsWith("/p/")) {
-        return <PostPage uid={params.uid}/>;
+        return <PostPage uid={params.uid} />;
       }
       if (location.pathname.startsWith("/u/")) {
         return <UserProfile username={params.username} />;

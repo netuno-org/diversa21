@@ -46,7 +46,7 @@ function Post({
   const navigate = useNavigate();
 
   const isAlreadyIsolated = location.pathname === `/p/${uid}`;
-  const canViewDeletePostButton = people.uid === loggedUser.data.uid || loggedUser.canManagePosts();
+  const canViewDeletePostButton = people.uid === loggedUser.data?.uid || loggedUser.canManagePosts();
 
   const formatPostDate = (date) => {
     const postMoment = dayjs(date);

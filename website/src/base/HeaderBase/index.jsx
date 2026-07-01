@@ -16,6 +16,7 @@ const { Header } = Layout;
 
 function HeaderBase({ collapsed }) {
   const [menuKeysSelected, setMenuKeysSelected] = useState([]);
+
   const location = useLocation();
   const navigate = useNavigate();
   const loggedUser = usePeople();
@@ -32,7 +33,7 @@ function HeaderBase({ collapsed }) {
     if (key === "profileEdit") {
       navigate("/profile/edit");
     } else if (key === "logout") {
-      _auth.logout();
+      loggedUser.unload();
     }
   }
 
