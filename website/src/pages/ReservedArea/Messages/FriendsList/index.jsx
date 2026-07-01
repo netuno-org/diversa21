@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Spin, Input, Typography, Empty } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 
 import usePeople from "../../../../common/usePeople.js";
 
@@ -11,14 +10,15 @@ import globalNotification from "../../../../common/globalNotification.js";
 import FriendItem from "./FriendItem";
 
 import "./index.less";
+import { data } from "react-router-dom";
+import _service from "@netuno/service-client";
 
 const { Text } = Typography;
 const { Search } = Input;
 
-function FriendsList({onFriendSelected}) {
+function FriendsList({ onFriendSelected }) {
   const [loading, setLoading] = useState(true);
-  const [list, setList] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
+  const [peopleList, setPeopleList] = useState([]);
 
   const ws = useWS();
 
@@ -28,8 +28,8 @@ function FriendsList({onFriendSelected}) {
       start: () => {
         setLoading(true);
       },
-      success: (data) => {
-        setList(Array.isArray(data?.items) ? data.items : []);
+      success: ({ content }) => {
+        setPeopleList(content.data.items);
       },
       fail: (error) => {
         console.error(error);
@@ -38,7 +38,7 @@ function FriendsList({onFriendSelected}) {
           description: "Houve uma falha ao tentar atualizar a listagem de amigos.",
         });
       },
-      end: ()=> {
+      end: () => {
         setLoading(false);
       }
     });
@@ -46,57 +46,80 @@ function FriendsList({onFriendSelected}) {
       service: "friend/list"
     });
 
-    const listenerStatusChanged = _ws.addListener({
-      service: "friend/status/changed",
-      success: ({content}) => {
-        setList((prev) => {
-          const safePrev = Array.isArray(prev) ? prev : [];
-          return safePrev.map((item) => {
-            if (item.uid === content.uid) {
-              return {...item, ...content}
-            }
-            return item;
-          });
-        });
-      }
-    });
-    const listenerNewMessage = _ws.addListener({
-      method: "POST",
-      service: "message/new",
-      success: ({data}) => {
-        setList((prev) => {
-          const safePrev = Array.isArray(prev) ? prev : [];
-          return safePrev.map((item) => {
-            if (item.uid === data.with) {
-              return {...item, unread_messages: item.unread_messages + 1}
-            }
-            return item;
-          });
-        });
-      }
-    });
-    const listenerMessageReadMark = _ws.addListener({
-      service: "message/read/mark",
-      success: ({ data }) => {
-        setList((prev) => {
-          const safePrev = Array.isArray(prev) ? prev : [];
-          return safePrev.map((item) => {
-            if (item.uid === data.from) {
-              return {...item, unread_messages: item.unread_messages - 1}
-            }
-            return item;
-          });
-        });
-      }
-    });
+    // const listenerStatusChanged = _ws.addListener({
+    //   service: "friend/status/changed",
+    //   success: ({ content }) => {
+    //     setList((prev) => {
+    //       const safePrev = Array.isArray(prev) ? prev : [];
+    //       return safePrev.map((item) => {
+    //         if (item.uid === content.uid) {
+    //           return { ...item, ...content }
+    //         }
+    //         return item;
+    //       });
+    //     });
+    //   }
+    // });
+    // const listenerNewMessage = _ws.addListener({
+    //   method: "POST",
+    //   service: "message/new",
+    //   success: ({ content }) => {
+    //     setList((prev) => {
+    //       const safePrev = Array.isArray(prev) ? prev : [];
+    //       return safePrev.map((item) => {
+    //         if (item.uid === data.with) {
+    //           return { ...item, unread_messages: item.unread_messages + 1 }
+    //         }
+    //         return item;
+    //       });
+    //     });
+    //   }
+    // });
+    // const listenerMessageReadMark = _ws.addListener({
+    //   service: "message/read/mark",
+    //   success: ({ content }) => {
+    //     peopleList((prev) => {
+    //       const safePrev = Array.isArray(prev) ? prev : [];
+    //       return safePrev.map((item) => {
+    //         if (item.uid === data.from) {
+    //           return { ...item, unread_messages: item.unread_messages - 1 }
+    //         }
+    //         return item;
+    //       });
+    //     });
+    //   }
+    // });
 
     return () => {
       _ws.removeListener(listenerList);
-      _ws.removeListener(listenerStatusChanged);
-      _ws.removeListener(listenerNewMessage);
-      _ws.removeListener(listenerMessageReadMark);
+      // _ws.removeListener(listenerStatusChanged);
+      // _ws.removeListener(listenerNewMessage);
+      // _ws.removeListener(listenerMessageReadMark);
     }
   }, [ws.data]);
+
+  const fetchFriendListMessage = (value) => {
+    setLoading(true)
+
+    _service({
+      url: "friend/list",
+      data: {
+        name: value
+      },
+      success: ({ json }) => {
+        setPeopleList(json.data?.items || [])
+        setLoading(false)
+      },
+      fail: (error) => {
+        setLoading(false)
+        console.log(error)
+      }
+    });
+  }
+
+  const handleSearch = (value) => {
+    fetchFriendListMessage(value)
+  }
 
   return (
     <div className="messages__friends-list">
@@ -107,9 +130,7 @@ function FriendsList({onFriendSelected}) {
           enterButton={true}
           allowClear
           variant="filled"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={(value) => setSearchValue(value)}
+          onSearch={handleSearch}
         />
       </div>
       {loading ? (
@@ -118,8 +139,8 @@ function FriendsList({onFriendSelected}) {
         </div>
       ) : (
         <ul className="messages__friends-ul">
-          {list.length > 0 ? (
-            list.map((friend) => (
+          {peopleList.length > 0 ? (
+            peopleList.map((friend) => (
               <FriendItem
                 key={friend.uid}
                 uid={friend.uid}

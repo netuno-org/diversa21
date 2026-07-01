@@ -54,7 +54,7 @@ function ReservedArea() {
         });
         return;
       }
-      if(loading === true && !ws.isConnecting()) {
+      if (loading === true && !ws.isConnecting()) {
         ws.load(() => {
           setLoading(false);
         });
@@ -129,10 +129,6 @@ function ReservedArea() {
         return <LocationList />;
       }
       if (location.pathname === "/messages") {
-        if (!people.canChangeUserGroup()) {
-          navigate('/');
-          return;
-        }
         return <Messages />;
       }
       if (location.pathname === "/notifications") {

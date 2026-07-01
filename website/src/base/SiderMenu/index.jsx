@@ -124,7 +124,7 @@ function SiderMenu({ collapsed, onCollapse }) {
             mode="inline"
             items={
               menuItems.filter((item) => {
-                const restrictedKeys = ['locations', 'messages'];
+                const restrictedKeys = ['locations'];
 
                 if (restrictedKeys.includes(item.key)) {
                   return loggedUser.canManageInstitution();

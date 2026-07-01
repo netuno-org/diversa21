@@ -36,7 +36,7 @@ function Messages() {
     setFetchingPeople(true);
 
     _service({
-      url: "people/list",
+      url: "friend/list",
       data: {
         name: term,
         page: 1,
