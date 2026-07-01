@@ -57,31 +57,19 @@ function ProfileForm({
   useEffect(() => {
     if (people && operation === "edit") {
       if (people.avatar) {
-        setAvatarImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`));
+        setAvatarImageURL(_service.url(`/asset?uid=${people.uid}&type=avatar&entity=people&t=${Date.now()}`));
       }
       if (people.cover_image) {
-        setCoverImageURL(_service.url(`/asset?uid=${people.uid}&type=cover_image&entity=people`));
+        setCoverImageURL(_service.url(`/asset?uid=${people.uid}&type=cover_image&entity=people&t=${Date.now()}`));
       }
     }
   }, [people, operation]);
 
   const groupOptions = [
-    {
-      label: "Membro",
-      value: "member"
-    },
-    {
-      label: "Revisão",
-      value: "review"
-    },
-    {
-      label: "Gestão",
-      value: "management"
-    },
-    {
-      label: "Super Administrador",
-      value: "super-admin"
-    },
+    { label: "Membro", value: "member" },
+    { label: "Revisão", value: "review" },
+    { label: "Gestão", value: "management" },
+    { label: "Super Administrador", value: "super-admin" },
   ];
 
   const handleCitySearch = value => {
@@ -138,9 +126,16 @@ function ProfileForm({
 
     if (operation === "edit" && people && loggedUser) {
       data.avatar = profileAvatar?.current?.getImage();
+      data.remove_avatar = profileAvatar?.current?.isRemoved() ?? false;
+
       data.cover_image = profileCover?.current?.getImage();
-      if (itsLoggedUserProfile) url += '/me';
-      else data.uid = people.uid;
+      data.remove_cover_image = profileCover?.current?.isRemoved() ?? false;
+
+      if (itsLoggedUserProfile) {
+        url += '/me';
+      } else {
+        data.uid = people.uid;
+      }
     }
 
     const method = operation === "edit" ? "PUT" : "POST";
@@ -189,8 +184,7 @@ function ProfileForm({
         if (e.error && isNetworkError(e.error)) {
           return api.error({
             title: 'Conexão',
-            description:
-              'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+            description: 'Há problemas de conexão com o servidor, tente novamente mais tarde.',
           });
         }
         if (e && e.status === 409 && e.json && e.json.error) {
@@ -245,7 +239,6 @@ function ProfileForm({
           ref={profileForm}
           layout="vertical"
           name="basic"
-
           initialValues={
             operation === "edit" ? {
               name: people.name,
@@ -269,8 +262,6 @@ function ProfileForm({
             }
               : operation === "create" && !loggedUser.canCreateAnyUser() ? {
                 group: { value: "member", label: "Membro" },
-
-
                 institution: loggedUser.data.institution.name,
               }
                 : {}
@@ -283,10 +274,6 @@ function ProfileForm({
                 <Avatar
                   ref={profileAvatar}
                   currentImage={avatarImageURL}
-                  onRemove={() => {
-                    setAvatarImageURL('/images/profile-default.png');
-                  }}
-                  shape="square"
                 />
               </Card>
 
@@ -294,9 +281,6 @@ function ProfileForm({
                 <CoverImage
                   ref={profileCover}
                   currentImage={coverImageURL}
-                  onRemove={() => {
-                    setCoverImageURL(null);
-                  }}
                 />
               </Card>
             </>

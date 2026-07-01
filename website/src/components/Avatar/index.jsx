@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar } from 'antd';
-import { UploadOutlined, ZoomInOutlined, ZoomOutOutlined, UndoOutlined, FormatPainterOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  UploadOutlined, ZoomInOutlined, ZoomOutOutlined,
+  UndoOutlined, FormatPainterOutlined, DeleteOutlined
+} from '@ant-design/icons';
 import { useDropzone } from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
 
@@ -8,14 +11,36 @@ import './index.less';
 
 const { Text } = Typography;
 
+const DEFAULT_IMAGE = '/images/profile-default.png';
+
 function Avatar({ currentImage, onRemove }, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
   const [position, setPosition] = useState(undefined);
   const [color, setColor] = useState('#ffffff');
+  const [removed, setRemoved] = useState(false);
 
   const refAvatarEditor = useRef(null);
+
+  const imageEditing = image && typeof image !== 'string';
+
+  useEffect(() => {
+    setImage(null);
+    const t = setTimeout(() => setImage(currentImage), 250);
+    return () => clearTimeout(t);
+  }, [currentImage]);
+
+  useImperativeHandle(ref, () => ({
+    getImage: () => imageEditing ? refAvatarEditor?.current?.getImage().toDataURL() : null,
+    isRemoved: () => removed,
+  }), [imageEditing, removed]);
+
+    const handleRemove = () => {
+    setImage(DEFAULT_IMAGE);
+    setRemoved(true);
+    if (onRemove) onRemove();
+  };
 
   const { getRootProps, getInputProps, open } = useDropzone({
     noClick: true,
@@ -26,19 +51,9 @@ function Avatar({ currentImage, onRemove }, ref) {
       setScale(1.0);
       setRotate(0);
       setPosition(undefined);
+      setRemoved(false);
     }
   });
-
-  useEffect(() => {
-    setImage(null);
-    setTimeout(() => setImage(currentImage), 250);
-  }, [currentImage]);
-
-  useImperativeHandle(ref, () => ({
-    getImage: () => imageEditing ? refAvatarEditor?.current?.getImage().toDataURL() : null
-  }));
-
-  const imageEditing = image && typeof (image) !== 'string';
 
   const handleUndo = () => {
     setImage(currentImage);
@@ -54,7 +69,7 @@ function Avatar({ currentImage, onRemove }, ref) {
           <input {...getInputProps()} />
 
           <AntAvatar
-            src={currentImage}
+            src={removed ? DEFAULT_IMAGE : (image || DEFAULT_IMAGE)}
             size={240}
             shape="square"
             className="avatar-editor__preview"
@@ -65,20 +80,20 @@ function Avatar({ currentImage, onRemove }, ref) {
               onClick={open}
               type="primary"
               icon={<UploadOutlined />}
-              size='large'
+              size="large"
               className="avatar-editor__btn-upload"
               style={{ margin: 0 }}
             >
               Carregar Nova Foto
             </Button>
 
-            {currentImage && currentImage !== '/images/profile-default.png' && (
+            {!removed && currentImage && currentImage !== DEFAULT_IMAGE && (
               <Button
                 type="dashed"
                 danger
                 icon={<DeleteOutlined />}
-                onClick={onRemove}
-                size='large'
+                onClick={handleRemove}
+                size="large"
                 className="avatar-editor__btn-remove"
               >
                 Remover Foto Atual
@@ -94,7 +109,6 @@ function Avatar({ currentImage, onRemove }, ref) {
         <div className="avatar-editor__edit" {...getRootProps()}>
           <input {...getInputProps()} />
           <Row gutter={[32, 24]} align="middle">
-
             <Col xs={24} md={10} className="avatar-editor__canvas-wrapper">
               <AvatarEditor
                 ref={refAvatarEditor}
@@ -116,7 +130,7 @@ function Avatar({ currentImage, onRemove }, ref) {
               <Space orientation="vertical" size="large" className="avatar-editor__controls-wrapper">
                 <Button
                   onClick={open}
-                  type='primary'
+                  type="primary"
                   icon={<UploadOutlined />}
                   className="avatar-editor__btn-swap"
                 >

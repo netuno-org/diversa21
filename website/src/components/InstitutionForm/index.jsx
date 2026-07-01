@@ -90,11 +90,10 @@ export default function InstitutionForm({
     });
   };
 
-  const onFinish = () => {
+  const onFinish = (values) => {
     setSubmitting(true);
     const formData = new FormData();
 
-    const formValues = form.getFieldsValue();
     const allValues = {
       address: institution?.address || "",
       post_code: institution?.post_code || "",
@@ -102,7 +101,7 @@ export default function InstitutionForm({
       website: institution?.website || "",
       description: institution?.description || "",
       active: institution?.active !== undefined ? String(institution.active) : "true",
-      ...formValues
+      ...values
     };
 
     Object.keys(allValues).forEach(key => {
@@ -115,7 +114,7 @@ export default function InstitutionForm({
       }
     });
 
-    const cityFieldValue = formValues.city;
+    const cityFieldValue = values.city;
     let cityUid = null;
     if (cityFieldValue) {
       cityUid = typeof cityFieldValue === 'object' ? cityFieldValue.value : cityFieldValue;
@@ -132,8 +131,15 @@ export default function InstitutionForm({
     const avatar = profileAvatar?.current?.getImage();
     const cover = profileCover?.current?.getImage();
 
-    if (avatar) formData.append('avatar', avatar);
-    if (cover) formData.append('cover_image', cover);
+    if (avatar) {
+      formData.append('avatar', avatar);
+    }
+    formData.append('remove_avatar', profileAvatar?.current?.isRemoved() ? "true" : "false");
+
+    if (cover) {
+      formData.append('cover_image', cover);
+    }
+    formData.append('remove_cover_image', profileCover?.current?.isRemoved() ? "true" : "false");
 
     _service({
       method: isEditMode ? 'PUT' : 'POST',
@@ -174,10 +180,10 @@ export default function InstitutionForm({
               {isEditMode && (
                 <>
                   <Card title="Avatar" className="institution-form__card">
-                    <Avatar ref={profileAvatar} currentImage={avatarImageURL} onRemove={() => setAvatarImageURL(null)} />
+                    <Avatar ref={profileAvatar} currentImage={avatarImageURL} />
                   </Card>
                   <Card title="Capa" className="institution-form__card">
-                    <CoverImage ref={profileCover} currentImage={coverImageURL} onRemove={() => setCoverImageURL(null)} />
+                    <CoverImage ref={profileCover} currentImage={coverImageURL} />
                   </Card>
                 </>
               )}
@@ -211,6 +217,12 @@ export default function InstitutionForm({
                     </Form.Item>
                   </Col>
                 </Row>
+
+                <Row gutter={16}>
+                  <Col xs={24} md={12}><Form.Item name="address" label="Endereço"><Input disabled={submitting} /></Form.Item></Col>
+                  <Col xs={24} md={12}><Form.Item name="post_code" label="Código Postal"><Input disabled={submitting} /></Form.Item></Col>
+                </Row>
+
                 {isEditMode && (
                   <Row gutter={16}>
                     <Col xs={24} md={12}>
@@ -224,6 +236,8 @@ export default function InstitutionForm({
                     </Col>
                   </Row>
                 )}
+
+
               </Card>
 
               <div className="institution-form__actions">

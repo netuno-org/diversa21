@@ -20,6 +20,9 @@ const groupCode = _req.getString("group");
 const active = _req.getBoolean("active");
 const description = _req.getString("description");
 
+const removeAvatar = _req.getBoolean("remove_avatar");
+const removeCoverImage = _req.getBoolean("remove_cover_image");
+
 if (description && description.length > 1000) {
   response.stopWithTextTooLarge();
 }
@@ -174,13 +177,17 @@ const peopleData = _val.map()
 
 if (avatar) {
   peopleData.set(
-    "avatar", 
+    "avatar",
     _image
       .init(avatar)
       .resize(500, 500)
       .file(avatar.name(), "jpeg")
-  )
+  );
+} else if (removeAvatar) {
+  peopleData.set("avatar", "");
 }
+
+_log.info(`>>> removeAvatar recebido: ${removeAvatar}, avatar: ${avatar ? 'sim' : 'não'}`);
 
 if (cover_image) {
   peopleData.set(
@@ -189,7 +196,9 @@ if (cover_image) {
       .init(cover_image)
       .resize(720, 240)
       .file(cover_image.name(), "jpeg")
-  )
+  );
+} else if (removeCoverImage) {
+  peopleData.set("cover_image", "");
 }
 
 _db.update(

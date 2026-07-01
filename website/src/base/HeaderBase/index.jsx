@@ -1,13 +1,17 @@
 import classNames from "classnames";
 import _auth from "@netuno/auth-client";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Button, Layout, Menu } from "antd";
-import HeaderUserInfo from "../../components/HeaderUserInfo/index.jsx";
-import { EditOutlined, LogoutOutlined } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+
+import { EditOutlined } from "@ant-design/icons";
 import { MdLogout } from "react-icons/md";
 import React, { useEffect, useState } from "react";
 
+import HeaderUserInfo from "../../components/HeaderUserInfo";
 import HeaderNotifications from "../../components/HeaderNotifcations";
+import HeaderFriendsRequests from "../../components/HeaderFriendsRequests";
+import HeaderMessages from "../../components/HeaderMessages";
+
 import usePeople from "../../common/usePeople.js";
 
 import "./index.less";
@@ -50,8 +54,22 @@ function HeaderBase({ collapsed }) {
           selectedKeys={menuKeysSelected}
           items={[
             {
-              key: "notifications",
+              key: "messages",
+              label: <HeaderMessages />,
+              className: "notifications-menu",
+              popupClassName: "notifications-menu-popup",
+              style: { padding: 0 }
+            },
+            {
+              key: "generalNotifications",
               label: <HeaderNotifications />,
+              className: "notifications-menu",
+              popupClassName: "notifications-menu-popup",
+              style: { padding: 0 }
+            },
+            {
+              key: "friendRequests",
+              label: <HeaderFriendsRequests />,
               className: "notifications-menu",
               popupClassName: "notifications-menu-popup",
               style: { padding: 0 }

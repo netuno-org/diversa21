@@ -9,6 +9,10 @@ const email = _req.getString("email");
 const password = _req.getString("password");
 const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
+// Adicionados os recetores das flags de remoção:
+const removeAvatar = _req.getBoolean("remove_avatar");
+const removeCoverImage = _req.getBoolean("remove_cover_image");
+
 const birthDate = _req.getString("birthDate");
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
@@ -70,7 +74,15 @@ if (permissions.canChangeOwnInstitution()) {
 }
 
 if (avatar) {
-  peopleData.set("avatar", avatar)
+  peopleData.set(
+    "avatar",
+    _image
+      .init(avatar)
+      .resize(500, 500)
+      .file(avatar.name(), "jpeg")
+  );
+} else if (removeAvatar) {
+  peopleData.set("avatar", "");
 }
 
 if (cover_image) {
@@ -81,6 +93,8 @@ if (cover_image) {
       .resize(720, 240)
       .file(cover_image.name(), "jpeg")
   )
+} else if (removeCoverImage) {
+  peopleData.set("cover_image", "");
 }
 
 const dbPeople = _db.queryFirst(`

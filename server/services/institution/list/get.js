@@ -1,6 +1,7 @@
 import { _req, _db, _val, _group } from "@netuno/server-types";
 import { mapInstitution } from "#core/lib/institution.js";
 import response from "#core/lib/response.js";
+import people from "#core/lib/people.js";
 
 let page = _req.getInt('page', 1);
 let name = _req.getString('name');
@@ -46,7 +47,20 @@ let sqlQuery = `
 `;
 
 if (!isAdmin) {
-  sqlQuery += " AND institution.active = true ";
+  const isManager = _group.code() === "management";
+  if (isManager) {
+    const dbPeople = people.getLogged();
+    const dbPeopleData = dbPeople ? people.getData(dbPeople.getUID("uid")) : null;
+    const loggedUserInstitutionUid = dbPeopleData ? dbPeopleData.getValues("institution")?.getUID("uid") : null;
+    if (loggedUserInstitutionUid) {
+      sqlQuery += " AND (institution.active = true OR institution.uid = ?::uuid) ";
+      params.add(loggedUserInstitutionUid);
+    } else {
+      sqlQuery += " AND institution.active = true ";
+    }
+  } else {
+    sqlQuery += " AND institution.active = true ";
+  }
 }
 
 if (name) {

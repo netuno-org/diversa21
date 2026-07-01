@@ -77,7 +77,7 @@ _db.execute(`
         AND notification_opt_out.type_id = ${institutionPostNotificationTypeId} 
     WHERE 1 = 1
         AND post.moment >= NOW() - INTERVAL '11 seconds'
-        AND originator.id <> recipient.id
+        AND post.parent_id = 0
         AND notification_opt_out.id IS NULL
     ORDER BY post.moment DESC;
 `);
