@@ -7,6 +7,7 @@ function ActivityList({ author, parent, institution, onLoaded, onItemRemoved }, 
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     getPosts();
@@ -45,6 +46,7 @@ function ActivityList({ author, parent, institution, onLoaded, onItemRemoved }, 
 
         setLoadingPosts(false);
         setPosts([...posts, ...response.json.data.items]);
+        setTotalCount(response.json.data.pagination.totalCount);
       },
       fail: (e) => {
         if (onLoaded) {
@@ -119,7 +121,7 @@ function ActivityList({ author, parent, institution, onLoaded, onItemRemoved }, 
         </div>
       )}
 
-      {!loadingPosts && parent && posts.length >= 10 && (
+      {!loadingPosts && posts.length < totalCount && (
         <Button
           type="link"
           onClick={onLoadMorePosts}
