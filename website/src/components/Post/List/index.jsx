@@ -7,6 +7,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     getPosts();
@@ -65,6 +66,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
         });
 
         setPosts([...posts, ...fetchedItems]);
+        setTotalCount(json?.data?.pagination?.totalCount || 0);
       },
       fail: (e) => {
         if (onLoaded) {
@@ -121,7 +123,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
         </div>
       )}
 
-      {!loadingPosts && parent && posts.length >= 10 && !isolatedUid && !isolatedCommentUid && (
+      {!loadingPosts && posts.length < totalCount && !isolatedUid && !isolatedCommentUid && (
         <Button type="link" onClick={onLoadMorePosts}>Mostrar mais</Button>
       )}
 
