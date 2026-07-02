@@ -1,0 +1,15 @@
+{
+  "tags": [
+    "notification"
+  ],
+  "summary": "Remove notification opt-out",
+  "description": "Re-enable a notification type for the logged-in user by removing the opt-out block.",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Notification type code to unblock."
+    }
+  },
+  "required": ["type"]
+}
