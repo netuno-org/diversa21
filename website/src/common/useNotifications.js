@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import _service from '@netuno/service-client';
 import _ws from '@netuno/ws-client';
 
+import useWS from "./useWS.js";
+
 import dayjs from 'dayjs';
 
 function useNotifications(loggedUser) {
@@ -42,42 +44,114 @@ function useNotifications(loggedUser) {
       },
     ] : [];
 
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const ws = useWS();
+
+  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // useEffect(() => {
+  //   fetchNotifications();
+  // }, []);
+
+  const NO_DATA = 0;
+  const CONNECTED = 1;
+  const NOT_CONNECTED = -1;
+
+  const [connected, setConnected] = useState(NO_DATA);
+  const [count, setCount] = useState(0);
+
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    setCount(0);
+    if (!ws.data) {
+      setConnected(NO_DATA);
+    }
+    if (ws.data?.connected) {
+      setConnected(CONNECTED);
+    } else if (ws.data?.connected === false) {
+      setConnected(NOT_CONNECTED);
+    }
+  }, [ws.data]);
 
-  const fetchNotifications = () => {
-    setLoading(true);
-    _service({
-      url: 'notification/list',
-      success: (response) => {
-        const { items } = response.json.data;
-        items.forEach(n => {
-          n.id = n.uid;
-          n.desc = n.content;
-          n.username = n.originator.username;
-          n.read = Boolean(n.read_at);
+  useEffect(() => {
+    if (connected === CONNECTED) {
+      // setLoading(true);
+      const listenerNotificationCount = _ws.addListener({
+        method: "GET",
+        service: 'notification/list',
+        success: (data) => {
+          setCount(data.content.data.pagination.totalCount);
+        }
+      });
+      const listenerNotification = _ws.addListener({
+        method: "GET",
+        service: 'notification/list',
+        success: (data) => {
+          const items = data.content.data.items;
 
-          if ((n.type === 'institution-post' || n.type === 'my-post-comment') && n.extra) {
-            n.postId = n.extra.postUid;
-          }
+          items.forEach(n => {
+            n.id = n.uid;
+            n.desc = n.content;
+            n.username = n.originator.username;
+            n.read = Boolean(n.read_at);
 
-          const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
-          n.time = dayjs(deatTimeUrl).fromNow();
-        });
+            if ((n.type === 'institution-post' || n.type === 'my-post-comment') && n.extra) {
+              n.postId = n.extra.postUid;
+            }
 
-        setNotifications(prev => {
-          const combined = [...items, ...prev];
-          return combined.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
-        });
-        setLoading(false);
-      },
-      fail: () => setLoading(false)
-    });
-  };
+            const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
+            n.time = dayjs(deatTimeUrl).fromNow();
+          });
+
+          // setNotifications(prev => {
+          //   const combined = [...items, ...prev];
+          //   return combined.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+          // });
+          setNotifications(items);
+          setLoading(false);
+
+        }
+      });
+      _ws.sendService({
+        method: "GET",
+        service: "notification/list"
+      });
+      // _ws.sendService({
+      //   method: "GET",
+      //   service: "notification"
+      // });
+      const listenerNewNotification = _ws.addListener({
+        method: "POST",
+        service: "notification/new",
+        success: (data) => {
+          const newNotification = data.content;
+          setNotifications(prev => [...prev, newNotification]); 
+          setCount((prev) => prev + 1);
+        }
+      });
+      // const listenerMessageReadMark = _ws.addListener({
+      //   service: "message/read/mark",
+      //   success: () => {
+      //     setUnreadCount((prev) => prev - 1);
+      //   }
+      // });
+      return () => {
+        _ws.removeListener(listenerNotificationCount);
+        _ws.removeListener(listenerNotification);
+        _ws.removeListener(listenerNewNotification);
+        // _ws.removeListener(listenerMessageReadMark);
+      }
+    }
+  }, [connected]);
+
+  // const fetchNotifications = () => {
+  //   setLoading(true);
+  //   _service({
+  //     url: 'notification/list',
+  //     success: (response) => {
+  //     },
+  //     fail: () => setLoading(false)
+  //   });
+  // };
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
@@ -133,7 +207,8 @@ function useNotifications(loggedUser) {
     notifications,
     loading,
     markAllAsRead,
-    onNotificationClick
+    onNotificationClick,
+    count
   };
 }
 

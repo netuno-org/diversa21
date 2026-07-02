@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Popover, Typography, Avatar, Button, Spin, Empty } from 'antd';
 import {
@@ -8,93 +8,25 @@ import {
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
 import _service from '@netuno/service-client';
-import _ws from '@netuno/ws-client';
 import usePeople from "../../common/usePeople.js";
 import useNotifications from "../../common/useNotifications.js";
-import useWS from "../../common/useWS.js";
 
 import './index.less';
 
 const { Text } = Typography;
 
 function HeaderNotifications() {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const ws = useWS();
-  const [state, setState] = useState(0);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  useEffect(() => {
-    setUnreadCount(0);
-    if (!ws.data) {
-      setState(0);
-    }
-    if (ws.data?.connected) {
-      setState(1);
-    } else if (ws.data?.connected == false) {
-      setState(-1);
-    }
-  }, [ws.data]);
-
-  useEffect(() => {
-    if (state === 1) {
-      const listenerMessageUnreadCount = _ws.addListener({
-        method: "GET",
-        service: 'notification/list',
-        success: (data) => {
-          setUnreadCount(data.content.data.pagination.totalCount);
-        }
-      });
-      const listenerMessageUnread = _ws.addListener({
-        method: "GET",
-        service: 'notification/list',
-        success: (data) => {
-          setNotifications(data.content.data.items);
-        }
-      });
-      _ws.sendService({
-        method: "GET",
-        service: "notification/list"
-      });
-      _ws.sendService({
-        method: "GET",
-        service: "notification"
-      });
-      const listenerNewNotification = _ws.addListener({
-        method: "POST",
-        service: "notification/new",
-        success: () => {
-          setUnreadCount((prev) => prev + 1);
-        }
-      });
-      // const listenerMessageReadMark = _ws.addListener({
-      //   service: "message/read/mark",
-      //   success: () => {
-      //     setUnreadCount((prev) => prev - 1);
-      //   }
-      // });
-      return () => {
-        _ws.removeListener(listenerMessageUnreadCount);
-        _ws.removeListener(listenerMessageUnread);
-        _ws.removeListener(listenerNewNotification);
-        // _ws.removeListener(listenerMessageReadMark);
-      }
-    }
-  }, [state]);
-
-
   const loggedUser = usePeople();
   const navigate = useNavigate();
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  // const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
+  const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
 
   const generalNotifications = notifications.filter(n =>
     !['message', 'friend-request', 'friend-request-accepted'].includes(n.type)
   );
 
-  // const unreadCount = generalNotifications.filter(n => !n.read).length;
+  const unreadCount = generalNotifications.filter(n => !n.read).length;
 
   const getTypeBadge = (type) => {
     let icon;
