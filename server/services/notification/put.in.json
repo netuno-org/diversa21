@@ -1,0 +1,14 @@
+{
+  "tags": [
+    "notification"
+  ],
+  "summary": "Mark notification as read",
+  "description": "Mark a notification as read by setting the read_at timestamp.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": ["uid"]
+}
