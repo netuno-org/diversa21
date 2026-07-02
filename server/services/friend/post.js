@@ -70,31 +70,41 @@ if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
     '',
     notificationTypeId
   );
-}
 
-people.wsSendAsService(
-  dbFriend,
-  _val.map()
-    .set("method", "POST")
-    .set("service", "notification/new")
-    .set(
-      "data",
-      _val.map()
-        .set("with", loggedUserUid)
-    )
-    .set(
-      "content",
-      _val.map()
-        .set("title", "@" + loggedUsername)
-        .set("content", "Quer ser seu amigo.")
-        .set("originator_id", loggedUserId)
-        .set("recipient_id", friendId)
-        .set("sent_at", currentTimestamp)
-        .set("read_at", null)
-        .set("extra", "")
-        .set("type_id", notificationTypeId)
-    )
-);
+  const friendUsername = people.getByUid(friendUid).getString("username");
+
+  people.wsSendAsService(
+    dbFriend,
+    _val.map()
+      .set("method", "POST")
+      .set("service", "notification/new")
+      .set(
+        "data",
+        _val.map()
+          .set("with", loggedUserUid)
+      )
+      .set(
+        "content",
+        _val.map()
+          .set("title", "@" + loggedUsername)
+          .set("content", "Quer ser seu amigo.")
+          .set("originator", 
+            _val.map()
+              .set("uid", loggedUserUid)
+              .set("username", loggedUsername)
+          )
+          .set("recipient", 
+            _val.map()
+              .set("uid", friendUid)
+              .set("username", friendUsername)
+          )
+          .set("sent_at", currentTimestamp)
+          .set("read_at", null)
+          .set("extra", "")
+          .set("type", "friend-request")
+      )
+  );
+}
 
 const dbRequest = _db.get("friend", requestId);
 _out.json(
