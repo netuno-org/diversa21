@@ -29,7 +29,6 @@ Table institution {
   cover_image text [note: 'Imagem de Capa']
   description text [not null, note: 'Descrição']
   email varchar(250) [not null, note: 'E-mail']
-  logo text [note: 'Logotipo']
   name varchar(250) [not null, note: 'Nome']
   post_code varchar(250) [not null, unique, note: 'Código Postal']
   telephone int [not null, note: 'Telefone']
