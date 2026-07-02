@@ -1,18 +1,27 @@
 import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
 
-const postUid = _req.getString('uid');
-const dbPost = _db.get('post', postUid);
+import people from "#core/lib/people.js";
+import notifications, { notificationTypes, notificationMessages } from "#core/lib/notifications.js";
 
-const peopleId = _db.queryFirst(`
-    SELECT id
-    FROM people 
-    WHERE people_user_id = ?::int
-`, _user.id).getInt("id");
+const postUid = _req.getString('uid');
+
+const dbPost = _db.queryFirst(`
+    SELECT post.id AS id, post.likes, author.id AS author_id
+    FROM post
+    INNER JOIN people author
+    ON post.people_id = author.id
+    WHERE post.uid = ?::uuid`
+  , postUid);
 
 if (!dbPost) {
   _header.status(400);
   _exec.stop();
 }
+
+const loggedUser = people.getLogged();
+const loggedUserId = loggedUser.getInt('id');
+const loggedUserUid = loggedUser.getUID("uid");
+const loggedUsername = people.getData(loggedUserUid).getString("username");
 
 const dbLike = _db.queryFirst(`
     SELECT id 
@@ -20,7 +29,7 @@ const dbLike = _db.queryFirst(`
     WHERE 1 = 1
         AND post_id = ?::int
         AND people_id = ?::int
-`, dbPost.getInt('id'), peopleId);
+`, dbPost.getInt('id'), loggedUserId);
 
 if (dbLike) {
   _header.status(400);
@@ -31,7 +40,7 @@ _db.insert(
   'post_like',
   _val.map()
     .set('post_id', dbPost.getInt('id'))
-    .set('people_id', peopleId)
+    .set('people_id', loggedUserId)
     .set('moment', _db.timestamp())
 );
 
@@ -41,6 +50,19 @@ _db.update(
   _val.map()
     .set('likes', dbPost.getInt('likes') + 1)
 );
+
+const notificationTypeId = notifications.getNotificationTypeId(notificationTypes.MY_POST_LIKE);
+const postAuthorId = dbPost.getInt("author_id");
+
+if (loggedUserId !== postAuthorId && !notifications.isNotificationBlocked(postAuthorId, notificationTypeId)) {
+  notifications.sendNotification(
+    "@" + loggedUsername,
+    notificationMessages.MY_POST_LIKE,
+    loggedUserId,
+    postAuthorId,
+    `{ "postUid": "${postUid}" }`,
+    notificationTypeId);
+}
 
 _out.json(
   _val.map()

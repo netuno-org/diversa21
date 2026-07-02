@@ -133,7 +133,7 @@ function useNotifications(loggedUser) {
       n.username = n.originator.username;
       n.read = Boolean(n.read_at);
 
-      if ((n.type === 'institution-post' || n.type === 'my-post-comment') && n.extra) {
+      if (["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
         n.postId = n.extra.postUid;
       }
 
@@ -152,7 +152,7 @@ function useNotifications(loggedUser) {
   const onNotificationClick = (item, navigate) => {
     markAsRead(item.id);
 
-    if (item.type === 'institution-post' || item.type === 'my-post-comment') {
+    if (["post", "comment", "like"].some(k => item.type.includes(k))) {
       if (!item.postId) {
         return navigate('/posts');
       }

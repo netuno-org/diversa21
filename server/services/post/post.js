@@ -13,7 +13,8 @@ if (content.length > 500) {
 
 const loggedUser = people.getLogged();
 const loggedUserId = loggedUser.getInt('id');
-const loggedUsername = people.getData(loggedUser.getUID("uid")).getString("username");
+const loggedUserUid = loggedUser.getUID("uid");
+const loggedUsername = people.getData(loggedUserUid).getString("username");
 
 let dbParentPost = _val.map();
 
@@ -48,13 +49,14 @@ if (!dbParentPost.isEmpty()) {
 
   const notificationTypeId = notifications.getNotificationTypeId(notificationTypes.MY_POST_COMMENT);
   const friendId = dbParentPost.getInt("people_id");
+  const postUid = dbPost.getUID("uid");
   if (loggedUserId !== friendId && !notifications.isNotificationBlocked(friendId, notificationTypeId)) {
     notifications.sendNotification(
       "@" + loggedUsername,
       notificationMessages.MY_POST_COMMENT,
       loggedUserId,
       friendId,
-      '',
+      `{ "postUid": "${postUid}" }`,
       notificationTypeId);
 
     const loggedUserUid = loggedUser.getUID("uid");
