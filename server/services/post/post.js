@@ -1,7 +1,7 @@
 import {_req, _db, _val, _user, _out} from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
-import notifications from "#core/lib/notifications.js";
+import notifications, { notificationTypes, notificationMessages } from "#core/lib/notifications.js";
 import response from "#core/lib/response.js";
 
 const content = _req.getString('content')
@@ -46,12 +46,12 @@ if (!dbParentPost.isEmpty()) {
       .set("comments", dbParentPost.getInt("comments", 0) + 1)
   );
 
-  const notificationTypeId = notifications.getNotificationTypeId('my-post-comment');
+  const notificationTypeId = notifications.getNotificationTypeId(notificationTypes.MY_POST_COMMENT);
   const friendId = dbParentPost.getInt("people_id");
   if (loggedUserId !== friendId && !notifications.isNotificationBlocked(friendId, notificationTypeId)) {
     notifications.sendNotification(
       "@" + loggedUsername,
-      "Comentou em um post seu.",
+      notificationMessages.MY_POST_COMMENT,
       loggedUserId,
       friendId,
       '',
@@ -82,7 +82,7 @@ if (!dbParentPost.isEmpty()) {
           "content",
           _val.map()
             .set("title", "@" + loggedUsername)
-            .set("content", "Comentou em um post seu.")
+            .set("content", notificationMessages.MY_POST_COMMENT)
             .set("originator", 
               _val.map()
                 .set("uid", loggedUserUid)
@@ -98,7 +98,7 @@ if (!dbParentPost.isEmpty()) {
             .set("extra", _val.map()
               .set("postUid", dbPost.getUID("uid"))
             )
-            .set("type", "my-post-comment")
+            .set("type", notificationTypes.MY_POST_COMMENT)
         )
     );
   }

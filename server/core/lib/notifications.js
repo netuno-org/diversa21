@@ -10,6 +10,7 @@ export const notificationTypes = {
 export const notificationMessages = {
   FRIEND_REQUEST: "Quer ser seu amigo.",
   FRIEND_REQUEST_ACCEPTED: "Aceitou seu pedido de amizade.",
+  MY_POST_COMMENT: "Comentou em um post seu.",
 };
 
 export default {
