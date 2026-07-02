@@ -74,7 +74,6 @@ function useNotifications(loggedUser) {
 
   useEffect(() => {
     if (connected === CONNECTED) {
-      // setLoading(true);
       const listenerNotificationCount = _ws.addListener({
         method: "GET",
         service: 'notification/list',
@@ -86,29 +85,13 @@ function useNotifications(loggedUser) {
         method: "GET",
         service: 'notification/list',
         success: (data) => {
+          setLoading(true);
           const items = data.content.data.items;
-
           items.forEach(n => {
-            n.id = n.uid;
-            n.desc = n.content;
-            n.username = n.originator.username;
-            n.read = Boolean(n.read_at);
-
-            if ((n.type === 'institution-post' || n.type === 'my-post-comment') && n.extra) {
-              n.postId = n.extra.postUid;
-            }
-
-            const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
-            n.time = dayjs(deatTimeUrl).fromNow();
+            processNotification(n)
           });
-
-          // setNotifications(prev => {
-          //   const combined = [...items, ...prev];
-          //   return combined.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
-          // });
           setNotifications(items);
           setLoading(false);
-
         }
       });
       _ws.sendService({
@@ -124,6 +107,7 @@ function useNotifications(loggedUser) {
         service: "notification/new",
         success: (data) => {
           const newNotification = data.content;
+          processNotification(newNotification);
           setNotifications(prev => [...prev, newNotification]); 
           setCount((prev) => prev + 1);
         }
@@ -143,15 +127,19 @@ function useNotifications(loggedUser) {
     }
   }, [connected]);
 
-  // const fetchNotifications = () => {
-  //   setLoading(true);
-  //   _service({
-  //     url: 'notification/list',
-  //     success: (response) => {
-  //     },
-  //     fail: () => setLoading(false)
-  //   });
-  // };
+  const processNotification = (n) => {
+      n.id = n.uid;
+      n.desc = n.content;
+      n.username = n.originator.username;
+      n.read = Boolean(n.read_at);
+
+      if ((n.type === 'institution-post' || n.type === 'my-post-comment') && n.extra) {
+        n.postId = n.extra.postUid;
+      }
+
+      const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
+      n.time = dayjs(deatTimeUrl).fromNow();
+  }
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
