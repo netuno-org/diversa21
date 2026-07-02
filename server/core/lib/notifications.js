@@ -28,7 +28,7 @@ export default {
         .set("recipient_id", recipientId) 
         .set("sent_at", currentTimestamp)
         .set("read_at", null)
-        .set("extra", "")
+        .set("extra", extra)
         .set("type_id", notificationTypeId)
     );
   }
