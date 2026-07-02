@@ -32,41 +32,86 @@ const postId = _db.insert(
     .set('likes', 0)
 );
 
-if (!dbParentPost.isEmpty()) {
-  _db.update(
-    "post",
-    dbParentPost.getInt("id"),
-    _val.map()
-      .set("comments", dbParentPost.getInt("comments", 0) + 1)
-    );
-
-  const notificationTypeId = notifications.getNotificationTypeId('my-post-comment');
-  const friendId = dbParentPost.getInt("people_id");
-  if (loggedUserId !== friendId && !notifications.isNotificationBlocked(friendId, notificationTypeId)) {
-    notifications.sendNotification(
-      "@" + loggedUsername,
-      'Comentou em um post seu.',
-      loggedUserId,
-      friendId,
-      '',
-      notificationTypeId);
-  }
-}
-
 const dbPost = _db.queryFirst(`
     SELECT uid, content, moment
     FROM post 
     WHERE id = ?
 `, postId);
 
+if (!dbParentPost.isEmpty()) {
+  _db.update(
+    "post",
+    dbParentPost.getInt("id"),
+    _val.map()
+      .set("comments", dbParentPost.getInt("comments", 0) + 1)
+  );
+
+  const notificationTypeId = notifications.getNotificationTypeId('my-post-comment');
+  const friendId = dbParentPost.getInt("people_id");
+  if (loggedUserId !== friendId && !notifications.isNotificationBlocked(friendId, notificationTypeId)) {
+    notifications.sendNotification(
+      "@" + loggedUsername,
+      "Comentou em um post seu.",
+      loggedUserId,
+      friendId,
+      '',
+      notificationTypeId);
+
+    const loggedUserUid = loggedUser.getUID("uid");
+    const dbFriend = _db.queryFirst(`
+        SELECT people.id, people.uid, netuno_user.user
+        FROM people
+        JOIN netuno_user
+        ON people.people_user_id = netuno_user.id
+        WHERE people.id = ?::int
+      `, friendId);
+    const friendUid = dbFriend.getUID("uid");
+    const friendUsername = dbFriend.getString("user");
+
+    people.wsSendAsService(
+      dbFriend,
+      _val.map()
+        .set("method", "POST")
+        .set("service", "notification/new")
+        .set(
+          "data",
+          _val.map()
+            .set("with", loggedUserUid)
+        )
+        .set(
+          "content",
+          _val.map()
+            .set("title", "@" + loggedUsername)
+            .set("content", "Comentou em um post seu.")
+            .set("originator", 
+              _val.map()
+                .set("uid", loggedUserUid)
+                .set("username", loggedUsername)
+            )
+            .set("recipient", 
+              _val.map()
+                .set("uid", friendUid)
+                .set("username", friendUsername)
+            )
+            .set("sent_at", _db.timestamp())
+            .set("read_at", null)
+            .set("extra", _val.map()
+              .set("postUid", dbPost.getUID("uid"))
+            )
+            .set("type", "my-post-comment")
+        )
+    );
+  }
+}
+
 const post = _val.map()
-  .set("uid", dbPost.getString("uid"))
+  .set("uid", dbPost.getUID("uid"))
   .set("content", dbPost.getString("content"))
   .set("moment", dbPost.getString("moment"))
   .set(
     "people",
     _val.map()
-      .set("uid", loggedUser.getString("uid"))
+      .set("uid", loggedUser.getUID("uid"))
       .set("name", loggedUser.getString("name"))
       .set("avatar", loggedUser.getString("avatar") !== "")
   );
