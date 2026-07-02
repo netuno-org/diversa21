@@ -1,7 +1,7 @@
 import { _req, _db, _val, _out, _header, _exec, _group } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
-import notifications from "#core/lib/notifications.js";
+import notifications, { notificationTypes, notificationMessages } from "#core/lib/notifications.js";
 
 const friendUid = _req.getString("uid");
 
@@ -57,14 +57,14 @@ const requestId = _db.insert("friend", _val.map()
   .set("accepted_at", null)
 );
 
-const notificationTypeId = notifications.getNotificationTypeId('friend-request');
+const notificationTypeId = notifications.getNotificationTypeId(notificationTypes.FRIEND_REQUEST);
 const loggedUserUid = loggedUser.getUID("uid");
 const loggedUsername = people.getData(loggedUserUid).getString("username");
 
 if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
   notifications.sendNotification(
     "@" + loggedUsername,
-    "Quer ser seu amigo.",
+    notificationMessages.FRIEND_REQUEST,
     loggedUserId,
     friendId,
     '',
@@ -87,7 +87,7 @@ if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
         "content",
         _val.map()
           .set("title", "@" + loggedUsername)
-          .set("content", "Quer ser seu amigo.")
+          .set("content", notificationMessages.FRIEND_REQUEST)
           .set("originator", 
             _val.map()
               .set("uid", loggedUserUid)
@@ -101,7 +101,7 @@ if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
           .set("sent_at", currentTimestamp)
           .set("read_at", null)
           .set("extra", "")
-          .set("type", "friend-request")
+          .set("type", notificationTypes.FRIEND_REQUEST)
       )
   );
 }

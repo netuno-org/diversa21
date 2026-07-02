@@ -1,7 +1,7 @@
 import { _req, _db, _val, _out, _header, _exec, _group } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
-import notifications from "#core/lib/notifications.js";
+import notifications, { notificationTypes } from "#core/lib/notifications.js";
 
 const loggedUser = people.getLogged();
 
@@ -37,8 +37,8 @@ if (!dbFriendship) {
 
 _db.delete("friend", dbFriendship.getInt("id"));
 
-const requestNotificationTypeId = notifications.getNotificationTypeId('friend-request');
-const acceptedNotificationTypeId = notifications.getNotificationTypeId('friend-request-accepted');
+const requestNotificationTypeId = notifications.getNotificationTypeId(notificationTypes.FRIEND_REQUEST);
+const acceptedNotificationTypeId = notifications.getNotificationTypeId(notificationTypes.FRIEND_REQUEST_ACCEPTED);
 
 const dbNotification = _db.queryFirst(`
     SELECT id 
