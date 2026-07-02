@@ -1,0 +1,15 @@
+{
+  "tags": [
+    "notification"
+  ],
+  "summary": "Block notification type",
+  "description": "Block a notification type for the logged-in user by creating an opt-out entry.",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Notification type code to block."
+    }
+  },
+  "required": ["type"]
+}
