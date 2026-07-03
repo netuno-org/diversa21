@@ -8,7 +8,7 @@
 
 import {_val, _form} from "@netuno/server-types";
 
-_form.createIfNotExists(
+_form.sync(
 	_val.map()
 		.set("big", false)
 		.set("control_active", true)
@@ -30,7 +30,7 @@ _form.createIfNotExists(
 		.set("title", "Notifica\u00E7\u00E3o")
 		.set("uid", "d395b86d-9985-472e-9b02-ae1c8dcd1c38")
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)
@@ -61,7 +61,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 6)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)
@@ -92,7 +92,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 7)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)
@@ -123,7 +123,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 10)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)
@@ -154,7 +154,7 @@ _form.createComponentIfNotExists(
 		.set("x", 2)
 		.set("y", 4)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)
@@ -185,7 +185,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 9)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)
@@ -216,7 +216,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 3)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)
@@ -247,7 +247,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 5)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"d395b86d-9985-472e-9b02-ae1c8dcd1c38",
 	_val.map()
 		.set("colspan", 0)

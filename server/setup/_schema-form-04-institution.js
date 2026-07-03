@@ -8,7 +8,7 @@
 
 import {_val, _form} from "@netuno/server-types";
 
-_form.createIfNotExists(
+_form.sync(
 	_val.map()
 		.set("big", false)
 		.set("control_active", true)
@@ -30,7 +30,7 @@ _form.createIfNotExists(
 		.set("title", "Institui\u00E7\u00E3o")
 		.set("uid", "4b24212c-fa55-44a7-af4c-66720f556c19")
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -61,7 +61,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 6)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -92,7 +92,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 13)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -123,7 +123,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 15)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -154,7 +154,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 11)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -185,7 +185,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 2)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -216,7 +216,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 3)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -247,7 +247,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 1)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -278,7 +278,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 7)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
@@ -309,7 +309,7 @@ _form.createComponentIfNotExists(
 		.set("x", 1)
 		.set("y", 4)
 );
-_form.createComponentIfNotExists(
+_form.syncField(
 	"4b24212c-fa55-44a7-af4c-66720f556c19",
 	_val.map()
 		.set("colspan", 0)
