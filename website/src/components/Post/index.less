@@ -28,6 +28,24 @@
     margin-top: 24px;
   }
 
+  .activity-context-bar {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #8c8c8c;
+  }
+
+  .activity-context-label {
+    a {
+      color: @primary-color;
+      font-weight: 500;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
   .header-user-info-container {
     width: 100%;
     display: flex;
@@ -72,6 +90,18 @@
   .user-info-actions {
     display: flex;
     align-items: center;
+    gap: 4px;
+  }
+
+  .btn-parent-nav {
+    font-size: 12px;
+    padding: 0 8px;
+    color: @primary-color;
+    opacity: 0.8;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
   .delete-post-button {

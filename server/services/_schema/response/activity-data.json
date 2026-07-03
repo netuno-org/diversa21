@@ -2,13 +2,13 @@
   "type": "object",
   "properties": {
     "uid": {
-      "type": "uid"
+      "type": "string"
     },
     "moment": {
-      "type": "string-not-empty"
+      "type": "string"
     },
     "content": {
-      "type": "string-not-empty"
+      "type": "string"
     },
     "comments": {
       "type": "integer"
@@ -20,26 +20,32 @@
       "type": "boolean"
     },
     "parentUid": {
-      "type": [ "uid", "string" ] 
+      "type": "string"
     },
     "rootUid": {
-      "type": [ "uid", "string" ] 
+      "type": "string"
+    },
+    "parentPeopleUser": {
+      "type": "string"
+    },
+    "parentPeopleUid": {
+      "type": "string"
     },
     "type": {
-      "type": "string-not-empty",
+      "type": "string",
       "enum": [ "comment", "like" ]
     },
     "people": {
       "type": "object",
       "properties": {
         "uid": {
-          "type": "uid"
+          "type": "string"
         },
         "name": {
-          "type": "string-not-empty"
+          "type": "string"
         },
         "user": {
-          "type": "string-not-empty"
+          "type": "string"
         },
         "avatar": {
           "type": "boolean"

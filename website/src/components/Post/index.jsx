@@ -16,12 +16,14 @@ import usePeople from "../../common/usePeople.js";
 function Post({
   uid,
   parentUid,
+  parentPeopleUser,
   rootUid,
   moment,
   content,
   comments,
   likes,
   liked,
+  type,
   people,
   onRemovePost,
   onEditPost,
@@ -51,13 +53,10 @@ function Post({
   const formatPostDate = (date) => {
     const postMoment = dayjs(date);
     const now = dayjs();
-
     const diffInHours = now.diff(postMoment, 'hour');
-
     if (diffInHours < 24) {
       return postMoment.fromNow();
     }
-
     return postMoment.format("llll");
   };
 
@@ -72,14 +71,12 @@ function Post({
   useEffect(() => {
     if (isAlreadyIsolated) {
       setIsHighlighted(true);
-
       setTimeout(() => {
         postCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         if (countComments > 0 && !showComments) {
           setShowComments(true);
           setLoadingComments(true);
         }
-
         setTimeout(() => setIsHighlighted(false), 3000);
       }, 500);
     }
@@ -93,107 +90,59 @@ function Post({
   }, [isolatedCommentUid, countComments]);
 
   const handleCardClick = (e) => {
-    if (isAlreadyIsolated || editMode) {
-      return;
-    }
-
-    if (e.target.closest('.post-actions-wrapper') || e.target.closest('.user-info-actions') || e.target.closest('a')) {
-      return;
-    }
-
+    if (isAlreadyIsolated || editMode) return;
+    if (e.target.closest('.post-actions-wrapper') || e.target.closest('.user-info-actions') || e.target.closest('a')) return;
     navigate(`/p/${uid}`);
   };
 
-  const onCommentRemoved = () => {
-    setCountComments(countComments - 1);
-  }
+  const onCommentRemoved = () => setCountComments(countComments - 1);
 
   const onCreated = (post) => {
     setCountComments(countComments + 1);
-
-    if (refPostList.current) {
-      refPostList.current.newPost(post);
-    }
-
+    if (refPostList.current) refPostList.current.newPost(post);
     setShowEditor(false);
   };
 
-  const onCommentsLoaded = () => {
-    setLoadingComments(false);
-  };
+  const onCommentsLoaded = () => setLoadingComments(false);
 
   const onDeletePost = (e) => {
     e.stopPropagation();
     _service({
       url: "/post",
       method: "DELETE",
-      data: {
-        uid
-      },
-      success: (respo) => {
-        notification.success({
-          title: "Post apagado com sucesso."
-        });
+      data: { uid },
+      success: () => {
+        notification.success({ title: "Post apagado com sucesso." });
         onRemovePost(uid);
       },
       fail: (e) => {
-        notification.error({
-          title: "Falha ao deletar post."
-        });
+        notification.error({ title: "Falha ao deletar post." });
         console.error("Service Error", e);
       }
-    })
+    });
   };
 
   const onLike = () => {
-    if (loadingLike) {
-      return;
-    }
-
+    if (loadingLike) return;
     setLoadingLike(true);
-
     if (!isLiked) {
       _service({
         url: 'post/like',
         method: 'POST',
-        data: {
-          uid
-        },
-        success: (response) => {
-          setIsLiked(true);
-          setLikesCounter(likesCounter + 1);
-          setLoadingLike(false);
-        },
-        fail: (e) => {
-          notification.error({
-            title: "Falha ao dar o like."
-          });
-          console.error("Service Error", e);
-          setLoadingLike(false);
-        }
+        data: { uid },
+        success: () => { setIsLiked(true); setLikesCounter(likesCounter + 1); setLoadingLike(false); },
+        fail: (e) => { notification.error({ title: "Falha ao dar o like." }); console.error("Service Error", e); setLoadingLike(false); }
       });
     } else {
       _service({
         url: 'post/like',
         method: 'DELETE',
-        data: {
-          uid
-        },
-        success: (response) => {
-          setIsLiked(false);
-          setLikesCounter(likesCounter - 1);
-          setLoadingLike(false);
-        },
-        fail: (e) => {
-          notification.error({
-            title: "Falha ao remover o like."
-          });
-          console.error("Service Error", e);
-          setLoadingLike(false);
-        }
+        data: { uid },
+        success: () => { setIsLiked(false); setLikesCounter(likesCounter - 1); setLoadingLike(false); },
+        fail: (e) => { notification.error({ title: "Falha ao remover o like." }); console.error("Service Error", e); setLoadingLike(false); }
       });
     }
-  }
+  };
 
   const displayContent = [];
   for (const line of content.split("\n")) {
@@ -202,19 +151,28 @@ function Post({
   }
   displayContent.pop();
 
+  // Texto contextual de atividade
+  const activityLabel = type === 'comment' && parentPeopleUser
+    ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> comentou num post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
+    : type === 'like' && parentPeopleUser
+    ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> gostou de um post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
+    : null;
+
   return (
     <Card
       className={`post-container 
-        ${isHighlighted
-          ? 'post-container--highlight'
-          : ''} 
-      ${!isAlreadyIsolated
-          ? 'post-container--clickable'
-          : ''}`}
+        ${isHighlighted ? 'post-container--highlight' : ''} 
+        ${!isAlreadyIsolated ? 'post-container--clickable' : ''}`}
       ref={postCardRef}
       onClick={handleCardClick}
       style={{ cursor: !isAlreadyIsolated ? 'pointer' : 'default' }}
     >
+      {activityLabel && (
+        <div className="activity-context-bar">
+          {activityLabel}
+        </div>
+      )}
+
       <div className="header-user-info-container">
         <div className="user-info-left">
           <Link to={`/u/${people.user}`}>
@@ -230,13 +188,33 @@ function Post({
             <Link className="user-name-link" to={`/u/${people.user}`}>
               <p className="user-name">{people.name}</p>
             </Link>
-            <span className="post-date">
-              {dayjs(moment).fromNow()}
-            </span>
+            <span className="post-date">{dayjs(moment).fromNow()}</span>
           </div>
         </div>
 
         <div className="user-info-actions">
+          <div className="parent-nav-tags" onClick={(e) => e.stopPropagation()}>
+            {parentUid && (
+              <Tag
+                className="btn-parent-nav"
+                color="purple"
+                style={{ cursor: 'pointer' }}
+                onClick={() => navigate(`/p/${parentUid}`)}
+              >
+                Ver resposta
+              </Tag>
+            )}
+            {rootUid && rootUid !== parentUid && rootUid !== uid && (
+              <Tag
+                className="btn-parent-nav"
+                color="default"
+                style={{ cursor: 'pointer' }}
+                onClick={() => { console.log('tag clicked', rootUid); navigate(`/p/${rootUid}`); }}
+              >
+                Ver post original
+              </Tag>
+            )}
+          </div>
           {canViewDeletePostButton && (
             <>
               <Popconfirm
@@ -246,20 +224,12 @@ function Post({
                 okText="Sim"
                 cancelText="Não"
               >
-                <Button
-                  danger
-                  type="link"
-                  className="delete-post-button"
-                >
+                <Button danger type="link" className="delete-post-button">
                   <DeleteOutlined />
                 </Button>
               </Popconfirm>
               {!editMode && (
-                <Button
-                  type="link"
-                  onClick={() => setEditMode(true)}
-                  className="edit-post-button"
-                >
+                <Button type="link" onClick={() => setEditMode(true)} className="edit-post-button">
                   <EditOutlined />
                 </Button>
               )}
@@ -277,15 +247,11 @@ function Post({
           onSubmitted={(values) => {
             onEditPost(uid, values.content);
             setEditMode(false);
-            if (refPostList.current) {
-              refPostList.current.newPost(values);
-            }
+            if (refPostList.current) refPostList.current.newPost(values);
           }}
         />
       ) : (
-        <div className="post-text-container">
-          {displayContent}
-        </div>
+        <div className="post-text-container">{displayContent}</div>
       )}
 
       {!editMode && (
@@ -302,9 +268,7 @@ function Post({
                 className="btn-load-comments"
                 onClick={() => {
                   setShowComments(!showComments);
-                  if (!showComments) {
-                    setLoadingComments(true);
-                  }
+                  if (!showComments) setLoadingComments(true);
                 }}
                 loading={loadingComments}
               >
@@ -324,16 +288,6 @@ function Post({
             {!showEditor && (
               <Button className="btn-reply" onClick={() => setShowEditor(true)}>
                 <RiArrowGoBackLine /> Responder
-              </Button>
-            )}
-            {parentUid && (
-              <Button className="btn-reply" onClick={() => { navigate(`/p/${parentUid}`); } }>
-                Pai 
-              </Button>
-            )}
-            {rootUid && (
-              <Button className="btn-reply" onClick={() => { navigate(`/p/${rootUid}`); } }>
-                Raíz 
               </Button>
             )}
           </div>

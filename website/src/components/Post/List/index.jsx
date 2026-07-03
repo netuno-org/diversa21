@@ -65,7 +65,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
           return p;
         });
 
-        setPosts([...posts, ...fetchedItems]);
+        setPosts(prev => [...prev, ...fetchedItems]);
         setTotalCount(json?.data?.pagination?.totalCount || 0);
       },
       fail: (e) => {

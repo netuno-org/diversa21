@@ -24,6 +24,8 @@ let activityQuery = `
         SELECT
             post.id, post.uid, post.moment, post.content, post.comments, post.likes,
             parent.uid AS "parent_uid",
+            parent_author.uid AS "parent_people_uid",
+            parent_author_user.user AS "parent_people_user",
             people.name AS "people_name", people.uid AS "people_uid",
             netuno_user.user AS "people_user",
             people.avatar AS "people_avatar",
@@ -33,6 +35,8 @@ let activityQuery = `
         INNER JOIN post parent ON post.parent_id = parent.id
         INNER JOIN people ON post.people_id = people.id
         INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+        INNER JOIN people parent_author ON parent.people_id = parent_author.id
+        INNER JOIN netuno_user parent_author_user ON parent_author.people_user_id = parent_author_user.id
 
     `;
 
@@ -62,8 +66,10 @@ activityQuery += `
         SELECT
             post.id, post.uid, post_like.moment, post.content, post.comments, post.likes,
             parent.uid AS "parent_uid",
+            author.uid AS "parent_people_uid",
+            netuno_user.user AS "parent_people_user",
             author.name AS "people_name", author.uid AS "people_uid",
-            netuno_user.user AS "people_user",
+            liker_user.user AS "people_user",
             author.avatar AS "people_avatar",
             (SELECT id FROM post_like WHERE people_id = ?::int AND post_id = post.id LIMIT 1) AS "post_like_id",
             'like' AS "type"
@@ -71,6 +77,7 @@ activityQuery += `
         INNER JOIN post ON post_like.post_id = post.id
         LEFT JOIN post parent ON post.parent_id = parent.id
         INNER JOIN people liker ON post_like.people_id = liker.id
+        INNER JOIN netuno_user liker_user ON liker.people_user_id = liker_user.id
         INNER JOIN people author ON post.people_id = author.id
         INNER JOIN netuno_user ON author.people_user_id = netuno_user.id
 `;
@@ -139,6 +146,8 @@ for (const dbPost of dbActivities) {
       .set("type", dbPost.getString("type"))
       .set("rootUid", dbRoot ? dbRoot.getString("root_uid") : '')
       .set("parentUid", dbPost.getString("parent_uid"))
+      .set("parentPeopleUser", dbPost.getString("parent_people_user"))
+      .set("parentPeopleUid", dbPost.getString("parent_people_uid"))
       .set(
         "people",
         _val.map()
