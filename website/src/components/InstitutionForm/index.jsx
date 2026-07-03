@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch } from 'antd';
+import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch, Result } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import _service from '@netuno/service-client';
 
+import usePeople from '../../common/usePeople.js';
 import Avatar from '../Avatar';
 import CoverImage from '../CoverImage';
 import "./index.less";
@@ -21,8 +22,10 @@ export default function InstitutionForm({
   showBackButton = true
 }) {
   const navigate = useNavigate();
+  const loggedUser = usePeople();
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState((!!uid || !!slug) && !initialData);
+  const [forbidden, setForbidden] = useState(false);
   const [form] = Form.useForm();
   const [institution, setInstitution] = useState(initialData);
 
@@ -37,7 +40,14 @@ export default function InstitutionForm({
   const editIdentifier = slug || uid;
   const isEditMode = !!editIdentifier;
 
+  const canCreate = loggedUser.canCreateInstitutions();
+
   useEffect(() => {
+    if (!isEditMode && !canCreate) {
+      setForbidden(true);
+      return;
+    }
+
     if (editIdentifier && !initialData) {
       const identifierParam = slug ? `slug=${slug}` : `uid=${uid}`;
       _service({
@@ -47,6 +57,13 @@ export default function InstitutionForm({
           if (json.data) {
             const data = json.data;
             setInstitution(data);
+
+            if (!loggedUser.canManageInstitution(data.uid)) {
+              setForbidden(true);
+              setLoading(false);
+              return;
+            }
+
             setAvatarImageURL(data.avatar ? _service.url(`/asset?uid=${data.uid}&type=avatar&entity=institution&t=${Date.now()}`) : null);
             setCoverImageURL(data.cover_image ? _service.url(`/asset?uid=${data.uid}&type=cover_image&entity=institution&t=${Date.now()}`) : null);
 
@@ -168,6 +185,34 @@ export default function InstitutionForm({
     }
   };
 
+  if (forbidden) {
+    return (
+      <section className="reserved-area">
+        <div className="reserved-area__unauthorized">
+          <Result
+            status="403"
+            title="Não Autorizado"
+            subTitle={
+              isEditMode
+                ? "Não tens permissão para editar esta instituição."
+                : "Não tens permissão para criar instituições."
+            }
+            extra={
+              <Button
+                type="primary"
+                onClick={() =>
+                  navigate(isEditMode && slug ? `/institutions/${slug}` : '/institutions')
+                }
+              >
+                {isEditMode ? 'Voltar à Instituição' : 'Voltar à Listagem'}
+              </Button>
+            }
+          />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <div className="institution-form">
       <div className="institution-form__body">
@@ -236,8 +281,6 @@ export default function InstitutionForm({
                     </Col>
                   </Row>
                 )}
-
-
               </Card>
 
               <div className="institution-form__actions">
