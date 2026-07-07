@@ -17,6 +17,7 @@ function FriendRequests() {
     items: receivedRequests,
     loading,
     pagination,
+    fetchList,
     handlePaginationChange,
   } = useFilteredPaginatedList({
     serviceUrl: 'friend/request/list',
@@ -40,12 +41,15 @@ function FriendRequests() {
         uid,
       },
       success: () => {
+        fetchList({
+          term: pagination.term,
+          location: pagination.location,
+        });
         setProcessingRequest(null);
         notification.success({
           message: successMessage,
           description: successDescription,
         });
-        refresh();
       },
       fail: (error) => {
         setProcessingRequest(null);
