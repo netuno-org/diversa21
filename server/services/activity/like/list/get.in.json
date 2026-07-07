@@ -1,0 +1,23 @@
+{
+  "tags": [
+    "activity"
+  ],
+  "summary": "List user likes activity",
+  "description": "Retrieve paginated liked post activities for a specific user or institution.",
+  "properties": {
+    "peopleUid": {
+      "type": "uid"
+    },
+    "institutionUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  },
+  "oneOf": [ 
+    { "required": ["peopleUid"] },
+    { "required": ["institutionUid"] }
+  ]
+}

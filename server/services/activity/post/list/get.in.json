@@ -2,8 +2,8 @@
   "tags": [
     "activity"
   ],
-  "summary": "List user activity posts",
-  "description": "Retrieve paginated activity posts for a specific user.",
+  "summary": "List user posts activity",
+  "description": "Retrieve paginated post activities for a specific user or institution.",
   "properties": {
     "peopleUid": {
       "type": "uid"
