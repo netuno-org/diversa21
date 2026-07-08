@@ -264,16 +264,25 @@ function Profile({ user }) {
       label: 'Publicações',
       children: (
         <div className="profile__tabs-content">
-          <PostList author={user.uid} />
+          <ActivityList url="activity/post/list" author={user.uid} />
         </div>
       ),
     },
     {
-      key: 'activity',
-      label: 'Atividade',
+      key: 'comments',
+      label: 'Comentários',
       children: (
         <div className="profile__tabs-content">
-          <ActivityList author={user.uid} />
+          <ActivityList url="activity/comment/list" author={user.uid} />
+        </div>
+      ),
+    },
+    {
+      key: 'likes',
+      label: 'Gostos',
+      children: (
+        <div className="profile__tabs-content">
+          <ActivityList url="activity/like/list" author={user.uid} />
         </div>
       ),
     },
