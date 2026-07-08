@@ -295,7 +295,7 @@ _form.syncField(
 		.set("tdheight", 0)
 		.set("tdwidth", 0)
 		.set("title", "Telefone")
-		.set("type", "textnum")
+		.set("type", "integer")
 		.set("uid", "10798630-78dd-4889-9228-059c1c806bb6")
 		.set("unique", false)
 		.set("user_id", 0)
