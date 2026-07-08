@@ -5,10 +5,6 @@ import notifications, { notificationTypes } from "#core/lib/notifications.js";
 
 const loggedUser = people.getLogged();
 
-if (_group.code() !== "member") {
-  response.stopWithPermissionDenied();
-}
-
 const friendUid = _req.getString("uid");
 
 const dbFriend = _db.queryFirst(`

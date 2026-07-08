@@ -9,7 +9,7 @@ import {
   ClockCircleOutlined,
   CheckOutlined,
   CloseOutlined,
-  MessageOutlined
+  MessageOutlined,
 } from '@ant-design/icons';
 import { RiCommunityLine, RiFileEditLine } from "react-icons/ri";
 import { BsFillHouseGearFill } from "react-icons/bs";
@@ -38,18 +38,17 @@ function Profile({ user }) {
   const [canRequestFriend, setCanRequestFriend] = useState(false);
   const isOwnProfile = user?.username === loggedUser?.data?.username;
   const canEditProfile = isOwnProfile || loggedUser?.canManageUser(user);
-  const showAddFriendButton = !canEditProfile && canRequestFriend;
 
   const friendshipStatus = {
     none: { label: "Adicionar amigo", action: "request" },
     pending: { label: "Cancelar pedido", action: "cancel", title: "Deseja cancelar o pedido de amizade?" },
-    received: { label: "Responder", action: "accept", title: "Deseja aceitar o pedido de amizade?" },
+    received: { label: "Aceitar", action: "accept", title: "Deseja aceitar o pedido de amizade?" },
     friends: { label: "Amigos", action: "remove", title: "Deseja desfazer a amizade?" }
   };
   const currentFriendship = friendshipStatus[friendStatus];
   let buttonIcon = undefined;
 
-  if (canEditProfile) {
+  if (isOwnProfile) {
     buttonIcon = <EditOutlined />;
   } else if (friendStatus === null) {
     buttonIcon = undefined;
@@ -58,7 +57,7 @@ function Profile({ user }) {
   } else if (friendStatus === "pending") {
     buttonIcon = <ClockCircleOutlined />;
   } else if (friendStatus === "received") {
-    buttonIcon = <LuUserCheck />;
+    buttonIcon = <CheckOutlined />;
   } else {
     buttonIcon = <LuUserCheck size={19} />;
   }
@@ -333,50 +332,71 @@ function Profile({ user }) {
           </div>
           <div className="profile__actions">
             <div className="profile__action-buttons">
-              {(canEditProfile || showAddFriendButton) && (
-                friendStatus === "none" || canEditProfile ? (
+              {isOwnProfile ? (
+                <Button
+                  type="primary"
+                  className="profile__edit-btn"
+                  icon={<EditOutlined />}
+                  onClick={handleEdit}
+                >
+                  Editar Perfil
+                </Button>
+              ) : currentFriendship && (canRequestFriend || friendStatus !== "none") ? (
+                friendStatus === "none" ? (
                   <Button
                     type="primary"
-                    className={`profile__edit-btn ${friendStatus === "friends" ||
-                      friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
+                    className="profile__edit-btn"
                     icon={buttonIcon}
-                    onClick={canEditProfile ? handleEdit : handleFriendAction}
+                    onClick={handleFriendAction}
                     loading={isLoading}
                   >
-                    {canEditProfile ? "Editar Perfil" : currentFriendship.label}
+                    {currentFriendship.label}
                   </Button>
                 ) : (
                   <Popconfirm
                     title={currentFriendship.title}
                     onConfirm={handleFriendAction}
-                    onCancel={handleRejectFriendRequest}
-                    okText="Sim"
-                    cancelText="Não"
                   >
                     <Button
                       type="primary"
-                      className={`profile__edit-btn ${friendStatus === "friends" ||
-                        friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
+                      className={`profile__edit-btn ${friendStatus === "friends" || friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
                       icon={buttonIcon}
                       loading={isLoading}
                     >
-                      {canEditProfile ? "Editar Perfil" : currentFriendship.label}
+                      {currentFriendship.label}
                     </Button>
                   </Popconfirm>
                 )
-              )}
+              ) : null}
               {
-                !canEditProfile && friendStatus === 'friends' &&
+                friendStatus === "received" &&
+                <Popconfirm
+                  title={'Deseja recusar o pedido de amizade'}
+                  onConfirm={handleRejectFriendRequest}
+                >
+                  <Button
+                    type="primary"
+                    className={"profile__secondary-btn"}
+                    icon={<CloseOutlined />}
+                    loading={isLoading}
+                  >
+                    Recusar
+                  </Button>
+                </Popconfirm>
+              }
+              {
+                !isOwnProfile && friendStatus === 'friends' &&
                 <Button
                   type='primary'
                   loading={isLoading}
                   onClick={() => handleOpenMessages(user)}
+                  icon={<MessageOutlined />}
                 >
-                  <MessageOutlined />Enviar mensagem
+                  Enviar mensagem
                 </Button>
               }
             </div>
-            {showAddFriendButton && friendStatus === "received" && (
+            {friendStatus === "received" && (
               <div className="profile__friend-request-text">
                 Deseja aceitar o pedido de amizade de
                 <span className="profile__friend-request-text__name">

@@ -5,11 +5,6 @@ import notifications, { notificationTypes, notificationMessages } from "#core/li
 
 const friendUid = _req.getString("uid");
 
-// TODO: criar canAddFriend em permissions e usar aqui
-if (_group.code() !== "member") {
-  response.stopWithPermissionDenied();
-}
-
 const loggedUser = people.getLogged();
 const loggedUserId = loggedUser.getInt("id");
 

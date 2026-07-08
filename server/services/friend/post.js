@@ -7,10 +7,6 @@ const friendUid = _req.getString("uid");
 
 const loggedUser = people.getLogged();
 
-if (_group.code() !== "member") {
-  response.stopWithPermissionDenied();
-}
-
 const dbFriend = _db.queryFirst(`
   SELECT id, name
   FROM people

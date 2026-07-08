@@ -21,9 +21,7 @@ if (!dbFriend) {
 const loggedId = loggedUser.getInt("id");
 const friendId = dbFriend.getInt("id");
 
-const loggedGroupCode = _group.code();
-const targetGroupCode = dbFriend.getString("group_code");
-const canRequest = loggedGroupCode === "member" && targetGroupCode === "member";
+const canRequest = loggedId !== friendId;
 
 let status = "none";
 
