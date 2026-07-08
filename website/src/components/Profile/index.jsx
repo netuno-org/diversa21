@@ -8,7 +8,8 @@ import {
   SafetyOutlined,
   ClockCircleOutlined,
   CheckOutlined,
-  CloseOutlined
+  CloseOutlined,
+  MessageOutlined
 } from '@ant-design/icons';
 import { RiCommunityLine, RiFileEditLine } from "react-icons/ri";
 import { BsFillHouseGearFill } from "react-icons/bs";
@@ -42,7 +43,7 @@ function Profile({ user }) {
   const friendshipStatus = {
     none: { label: "Adicionar amigo", action: "request" },
     pending: { label: "Cancelar pedido", action: "cancel", title: "Deseja cancelar o pedido de amizade?" },
-    received: { label: "Confirmar", action: "accept", title: "Deseja aceitar o pedido de amizade?" },
+    received: { label: "Responder", action: "accept", title: "Deseja aceitar o pedido de amizade?" },
     friends: { label: "Amigos", action: "remove", title: "Deseja desfazer a amizade?" }
   };
   const currentFriendship = friendshipStatus[friendStatus];
@@ -57,7 +58,7 @@ function Profile({ user }) {
   } else if (friendStatus === "pending") {
     buttonIcon = <ClockCircleOutlined />;
   } else if (friendStatus === "received") {
-    buttonIcon = <CheckOutlined />;
+    buttonIcon = <LuUserCheck />;
   } else {
     buttonIcon = <LuUserCheck size={19} />;
   }
@@ -322,6 +323,7 @@ function Profile({ user }) {
                   <Popconfirm
                     title={currentFriendship.title}
                     onConfirm={handleFriendAction}
+                    onCancel={handleRejectFriendRequest}
                     okText="Sim"
                     cancelText="Não"
                   >
@@ -337,21 +339,15 @@ function Profile({ user }) {
                   </Popconfirm>
                 )
               )}
-              {showAddFriendButton && friendStatus === "received" && (
-                <Popconfirm
-                  title="Deseja recusar o pedido de amizade?"
-                  onConfirm={handleRejectFriendRequest}
-                  okText="Sim"
-                  cancelText="Não"
+              {
+                !canEditProfile &&
+                <Button
+                  type='primary'
+                  loading={isLoading}
                 >
-                  <Button
-                    className="profile__secondary-btn"
-                    loading={isLoading}
-                  >
-                    <CloseOutlined />Recusar
-                  </Button>
-                </Popconfirm>
-              )}
+                  <MessageOutlined />Enviar mensagem
+                </Button>
+              }
             </div>
             {showAddFriendButton && friendStatus === "received" && (
               <div className="profile__friend-request-text">
