@@ -366,7 +366,7 @@ function Profile({ user }) {
                 )
               )}
               {
-                !canEditProfile &&
+                !canEditProfile && friendStatus === 'friends' &&
                 <Button
                   type='primary'
                   loading={isLoading}
