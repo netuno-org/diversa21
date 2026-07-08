@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch, Result } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import _service from '@netuno/service-client';
@@ -246,10 +246,8 @@ export default function InstitutionForm({
                     <Form.Item name="city" label="Cidade" rules={[{ required: true }]}>
                       <Select
                         labelInValue
-                        showSearch
-                        filterOption={false}
+                        showSearch={{ onSearch: handleCitySearch }}
                         options={cityOptions}
-                        onSearch={handleCitySearch}
                         onChange={(opt) => setSelectedCity(opt)}
                         allowClear
                         disabled={submitting}

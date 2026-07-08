@@ -417,7 +417,7 @@ function Profile({ user }) {
             </Text>
             {renderGroupInfo()}
             {user.active === false && (
-              <Tag bordered={false} color="error" className="profile__status-tag" style={{ borderRadius: '32px' }}>
+              <Tag variant="filled" color="error" className="profile__status-tag" style={{ borderRadius: '32px' }}>
                 Conta Inativa
               </Tag>
             )}

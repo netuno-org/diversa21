@@ -367,13 +367,11 @@ function ProfileForm({
                   >
                     <Select
                       labelInValue
-                      showSearch
+                      showSearch={{ filterOption: false, onSearch: handleCitySearch }}
                       notFoundContent={null}
-                      filterOption={false}
                       placeholder="Cidade"
                       options={cityOptions}
                       allowClear
-                      onSearch={handleCitySearch}
                     />
                   </Form.Item>
                 </Col>
@@ -387,13 +385,11 @@ function ProfileForm({
                     >
                       <Select
                         labelInValue
-                        showSearch
+                        showSearch={{ filterOption: false, onSearch: handleInstitutionSearch }}
                         notFoundContent={null}
-                        filterOption={false}
                         placeholder="Instituição"
                         options={institutionOptions}
                         allowClear
-                        onSearch={handleInstitutionSearch}
                       />
                     </Form.Item>
                   </Col>
@@ -416,9 +412,8 @@ function ProfileForm({
                     >
                       <Select
                         labelInValue
-                        showSearch
+                        showSearch={{ filterOption: false }}
                         notFoundContent={null}
-                        filterOption={false}
                         placeholder="Grupo"
                         options={groupOptions}
                         allowClear

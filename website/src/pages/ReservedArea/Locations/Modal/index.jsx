@@ -115,8 +115,7 @@ function LocationModal({
               <Select
                 placeholder="Selecione um país"
                 options={allCountries.map(c => ({ value: c.uid, label: c.name }))}
-                showSearch
-                optionFilterProp="label"
+                showSearch={{ optionFilterProp: "label" }}
               />
             </Form.Item>
           )}
@@ -126,8 +125,7 @@ function LocationModal({
               <Select
                 placeholder="Selecione um estado"
                 options={allStates.map(s => ({ value: s.uid, label: `${s.name} | ${s.countryName}` }))}
-                showSearch
-                optionFilterProp="label"
+                showSearch={{ optionFilterProp: "label" }}
               />
             </Form.Item>
           )}

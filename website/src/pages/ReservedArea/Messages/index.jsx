@@ -129,13 +129,11 @@ function Messages() {
             Pesquise e selecione uma pessoa para iniciar uma troca de mensagens.
           </Text>
           <Select
-            showSearch
+            showSearch={{ filterOption: false, onSearch: handleModalSearch }}
             style={{ width: '100%' }}
             placeholder="Pesquisar por nome..."
             value={null}
-            onSearch={handleModalSearch}
             onChange={handleStartNewChat}
-            filterOption={false}
             notFoundContent={
               fetchingPeople ? (
                 <div style={{ textAlign: 'center', padding: 16 }}><Spin size="small" /></div>
