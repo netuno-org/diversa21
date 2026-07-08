@@ -98,11 +98,16 @@ posts.forEach((post) => {
 
 likes.forEach((like) => {
   try {
-    _db.insertIfNotExists("post_like", _val.map()
-      .set("post_id", like.post_id)
-      .set("people_id", like.people_id)
-      .set("moment", _db.timestamp())
-    );
+    const dbPost = _db.get("post", like.post_id);
+    const dbPeople = _db.get("people", like.people_id);
+    if (dbPost && dbPeople) {
+      _db.insertIfNotExists("post_like", _val.map()
+        .set("post_id", dbPost.getInt("id"))
+        .set("people_id", dbPeople.getInt("id"))
+        .set("moment", _db.timestamp()),
+        _val.list().add("post_id").add("people_id")
+      );
+    }
   } catch (e) {
     _log.warn("error: like not created", e);
   }
