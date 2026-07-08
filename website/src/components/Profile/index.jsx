@@ -291,6 +291,23 @@ function Profile({ user }) {
     });
   }
 
+  const handleOpenMessages = (user) => {
+    if (!user?.uid) {
+      return;
+    }
+
+    navigate('/messages', {
+      state: {
+        autoOpenFriend: {
+          uid: user.uid,
+          name: user.name,
+          username: user.username,
+          avatar: user.avatar
+        }
+      }
+    });
+  }
+
   return (
     <section className="profile">
       <div className="profile__cover">
@@ -344,6 +361,7 @@ function Profile({ user }) {
                 <Button
                   type='primary'
                   loading={isLoading}
+                  onClick={() => handleOpenMessages(user)}
                 >
                   <MessageOutlined />Enviar mensagem
                 </Button>
