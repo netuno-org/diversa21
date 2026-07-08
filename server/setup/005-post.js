@@ -1,4 +1,4 @@
-import {_log, _val, _db, _user, _group } from "@netuno/server-types";
+import { _log, _val, _db, _user, _group } from "@netuno/server-types";
 
 // Example posts
 const posts = [
@@ -101,11 +101,12 @@ likes.forEach((like) => {
     const dbPost = _db.get("post", like.post_id);
     const dbPeople = _db.get("people", like.people_id);
     if (dbPost && dbPeople) {
-      _db.insertIfNotExists("post_like", _val.map()
-        .set("post_id", dbPost.getInt("id"))
-        .set("people_id", dbPeople.getInt("id"))
-        .set("moment", _db.timestamp()),
-        _val.list().add("post_id").add("people_id")
+      _db.insertIfNotExists(
+        "post_like",
+        _val.map()
+          .set("post_id", dbPost.getInt("id"))
+          .set("people_id", dbPeople.getInt("id"))
+          .set("moment", _db.timestamp()),
       );
     }
   } catch (e) {

@@ -48,13 +48,14 @@ friends.forEach((friend) => {
       const fromId = dbFrom.getInt("id");
       const toId = dbTo.getInt("id");
 
-      _db.insertIfNotExists("friend", _val.map()
-        .set("people_id", fromId)
-        .set("friend_id", toId)
-        .set("request_at", friend.request_at)
-        .set("accepted_at", friend.accepted_at)
+      _db.insertIfNotExists(
+        "friend",
+        _val.map()
+          .set("people_id", fromId)
+          .set("friend_id", toId)
+          .set("request_at", friend.request_at)
+          .set("accepted_at", friend.accepted_at)
       );
-      _log.info(`Friendship created between people_id ${fromId} and friend_id ${toId}`);
     }
   } catch (e) {
     _log.warn("error: friend relation not created", e);
