@@ -289,11 +289,29 @@ function View() {
               children: membersTab
             },
             {
-              key: 'activity',
-              label: 'Atividade',
+              key: 'posts',
+              label: 'Publicações',
               children: (
                 <div className="institution-view__tabs-content">
-                  <ActivityList institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />
+                  <ActivityList url="activity/post/list" institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />
+                </div>
+              )
+            },
+            {
+              key: 'comments',
+              label: 'Comentários',
+              children: (
+                <div className="institution-view__tabs-content">
+                  <ActivityList url="activity/comment/list" institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />
+                </div>
+              )
+            },
+            {
+              key: 'likes',
+              label: 'Gostos',
+              children: (
+                <div className="institution-view__tabs-content">
+                  <ActivityList url="activity/like/list" institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />
                 </div>
               )
             }
