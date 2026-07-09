@@ -5,6 +5,7 @@ import { RiCommunityLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { LuUserCheck } from "react-icons/lu";
+import { SettingOutlined } from "@ant-design/icons";
 
 import { Menu, Layout } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -64,6 +65,12 @@ const menuItems = [
     label: "Amigos",
     icon: <LuUserCheck />,
     link: "/friends"
+  }, 
+  {
+    key: "notification-settings",
+    label: "Preferências",
+    icon: <SettingOutlined />,
+    link: "/notification-settings"
   }
 ];
 

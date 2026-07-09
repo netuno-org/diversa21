@@ -1,0 +1,59 @@
+@import '../../../styles/variables.less';
+
+.notification-settings-page {
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: @md) {
+    padding: 16px 8px;
+  }
+
+  &__header {
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+
+  &__card {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+
+    .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__loading {
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: #fafafa;
+    }
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

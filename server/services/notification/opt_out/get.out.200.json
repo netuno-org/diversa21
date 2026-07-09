@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string-not-empty"
+          },
+          "name": {
+            "type": "string-not-empty"
+          },
+          "blocked": {
+            "type": "boolean"
+          }
+        },
+        "required": ["code", "name", "blocked"]
+      }
+    }
+  },
+  "required": ["result", "data"]
+}

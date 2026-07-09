@@ -22,6 +22,7 @@ import LocationList from "./Locations/List";
 import MyConnections from "./MyConnections/index.jsx";
 import Messages from "./Messages";
 import Notifications from "./Notifications";
+import NotificationSettings from "./NotificationSettings";
 
 import "./index.less";
 
@@ -133,6 +134,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/notifications") {
         return <Notifications />;
+      }
+      if (location.pathname === "/notification-settings") {
+        return <NotificationSettings />;
       }
       return <NotFound />;
     };
