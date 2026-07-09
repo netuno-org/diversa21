@@ -22,13 +22,11 @@ function useWS() {
       method: 'GET',
       autoReconnect: true,
       connect: (event) => {
-        console.log('ws connect', event);
         setConnecting(false);
         dispatch(wsLoadAction({connected: true}));
         onFinish && onFinish(true);
       },
       close: (event) => {
-        console.log('ws close', event);
         setConnecting(false);
         dispatch(wsLoadAction({connected: false}));
         onFinish && onFinish(false);
@@ -39,9 +37,6 @@ function useWS() {
         dispatch(wsLoadAction({connected: false}));
         onFinish && onFinish(false);
       },
-      message: (data, event) => {
-        console.log('ws message', {data, event});
-      }
     });
     _ws.connect();
     setConnecting(true);

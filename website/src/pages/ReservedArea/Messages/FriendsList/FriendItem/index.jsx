@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Typography } from "antd";
 import _service from "@netuno/service-client";
 
@@ -7,6 +7,7 @@ import "./index.less";
 const { Text } = Typography;
 
 function FriendItem({ uid, name, avatar, isActive, onClick }) {
+
   const avatarSrc = avatar
     ? _service.url(`/asset?uid=${uid}&type=avatar&entity=people&${new Date().getTime()}`)
     : '/images/profile-default.png';
@@ -18,7 +19,6 @@ function FriendItem({ uid, name, avatar, isActive, onClick }) {
     >
       <div className="messages__friend-item-avatar-wrapper">
         <Avatar size={48} src={avatarSrc} shape="square" />
-        <span className="messages__friend-item-status"></span>
       </div>
 
       <div className="messages__friend-item-info">

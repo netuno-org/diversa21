@@ -29,7 +29,7 @@ function FriendsList({ onFriendSelected }) {
         setLoading(true);
       },
       success: ({ content }) => {
-        setPeopleList(content.data.items);
+        setPeopleList(content.data.items || []);
       },
       fail: (error) => {
         console.error(error);
@@ -60,62 +60,45 @@ function FriendsList({ onFriendSelected }) {
     //     });
     //   }
     // });
-    // const listenerNewMessage = _ws.addListener({
-    //   method: "POST",
-    //   service: "message/new",
-    //   success: ({ content }) => {
-    //     setList((prev) => {
-    //       const safePrev = Array.isArray(prev) ? prev : [];
-    //       return safePrev.map((item) => {
-    //         if (item.uid === data.with) {
-    //           return { ...item, unread_messages: item.unread_messages + 1 }
-    //         }
-    //         return item;
-    //       });
-    //     });
-    //   }
-    // });
-    // const listenerMessageReadMark = _ws.addListener({
-    //   service: "message/read/mark",
-    //   success: ({ content }) => {
-    //     peopleList((prev) => {
-    //       const safePrev = Array.isArray(prev) ? prev : [];
-    //       return safePrev.map((item) => {
-    //         if (item.uid === data.from) {
-    //           return { ...item, unread_messages: item.unread_messages - 1 }
-    //         }
-    //         return item;
-    //       });
-    //     });
-    //   }
-    // });
+    const listenerNewMessage = _ws.addListener({
+      method: "POST",
+      service: "message/new",
+      success: ({ data }) => {
+        setPeopleList((prev) => {
+          const safePrev = Array.isArray(prev) ? prev : [];
+
+          return safePrev.map((item) => {
+            if (item.uid === data.with) {
+              return { ...item, unread_messages: item.unread_messages + 1 }
+            }
+            return item;
+          });
+        });
+      }
+    });
+    const listenerMessageReadMark = _ws.addListener({
+      service: "message/read/mark",
+      success: ({ content }) => {
+        setPeopleList((prev) => {
+          const safePrev = Array.isArray(prev) ? prev : [];
+
+          return safePrev.map((item) => {
+            if (item.uid === content.from) {
+              return { ...item, unread_messages: item.unread_messages - 1 }
+            }
+            return item;
+          });
+        });
+      }
+    });
 
     return () => {
       _ws.removeListener(listenerList);
       // _ws.removeListener(listenerStatusChanged);
-      // _ws.removeListener(listenerNewMessage);
-      // _ws.removeListener(listenerMessageReadMark);
+      _ws.removeListener(listenerNewMessage);
+      _ws.removeListener(listenerMessageReadMark);
     }
   }, [ws.data]);
-
-  const fetchFriendListMessage = (value) => {
-    setLoading(true)
-
-    _service({
-      url: "friend/list",
-      data: {
-        name: value
-      },
-      success: ({ json }) => {
-        setPeopleList(json.data?.items || [])
-        setLoading(false)
-      },
-      fail: (error) => {
-        setLoading(false)
-        console.log(error)
-      }
-    });
-  }
 
   const handleSearch = (value) => {
     fetchFriendListMessage(value)

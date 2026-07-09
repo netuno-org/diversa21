@@ -21,7 +21,7 @@ function History({ friend, reload }) {
         setLoading(true);
       },
       success: ({ content }) => {
-        setMessages(Array.isArray(content) ? content : []);
+        setMessages(content);
       },
       fail: (error) => {
         console.error(error);
@@ -47,7 +47,7 @@ function History({ friend, reload }) {
               from: friend.uid
             },
             success: () => {
-              setMessages((prev) => [...(Array.isArray(prev) ? prev : []), content]);
+              setMessages((prev) => [...prev, content]);
             }
           });
         }
