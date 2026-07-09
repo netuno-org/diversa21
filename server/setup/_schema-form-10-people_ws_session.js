@@ -22,17 +22,17 @@ _form.sync(
 		.set("export_xls", true)
 		.set("export_xml", true)
 		.set("firebase", "")
-		.set("name", "notification_opt_out")
-		.set("parent_uid", "d395b86d-9985-472e-9b02-ae1c8dcd1c38")
+		.set("name", "people_ws_session")
+		.set("parent_uid", "0028953a-b610-4e37-9f25-87bdad2e37dd")
 		.set("reorder", 0)
 		.set("report", false)
 		.set("report_behaviour", 0)
 		.set("show_id", true)
-		.set("title", "Bloqueios")
-		.set("uid", "b881807d-7f60-45b9-888d-81695755a1ea")
+		.set("title", "Sess\u00E3o WS")
+		.set("uid", "3cfcbb8a-7f88-47c7-9287-3c747daac2dc")
 );
 _form.syncField(
-	"b881807d-7f60-45b9-888d-81695755a1ea",
+	"3cfcbb8a-7f88-47c7-9287-3c747daac2dc",
 	_val.map()
 		.set("colspan", 0)
 		.set("description", "")
@@ -49,7 +49,7 @@ _form.syncField(
 		.set("tdwidth", 0)
 		.set("title", "Pessoa")
 		.set("type", "select")
-		.set("uid", "59cd19eb-6e5e-40ba-a04c-86903c8c8abe")
+		.set("uid", "6031c4b9-0363-4923-89d0-155b62dfd2ec")
 		.set("unique", false)
 		.set("user_id", 0)
 		.set("whenedit", true)
@@ -63,7 +63,7 @@ _form.syncField(
 		.set("y", 1)
 );
 _form.syncField(
-	"b881807d-7f60-45b9-888d-81695755a1ea",
+	"3cfcbb8a-7f88-47c7-9287-3c747daac2dc",
 	_val.map()
 		.set("colspan", 0)
 		.set("description", "")
@@ -73,14 +73,14 @@ _form.syncField(
 		.set("mandatory", true)
 		.set("max", 0)
 		.set("min", 0)
-		.set("name", "type_id")
-		.set("properties", "{\"COLUMN_SEPARATOR\":{\"default\":\" - \",\"type\":\"LINK_SEPARATOR\",\"value\":\" - \"},\"LINK\":{\"default\":\"\",\"type\":\"LINK\",\"value\":\"notification_type:code,name\"},\"MAX_COLUMN_LENGTH\":{\"default\":\"0\",\"type\":\"INTEGER\",\"value\":\"0\"},\"ONLY_ACTIVES\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"SERVICE\":{\"default\":\"com/Select.netuno\",\"type\":\"STRING\",\"value\":\"com/Select.netuno\"}}")
+		.set("name", "session_id")
+		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
 		.set("rowspan", 0)
 		.set("tdheight", 0)
 		.set("tdwidth", 0)
-		.set("title", "Tipo")
-		.set("type", "select")
-		.set("uid", "a303d530-7fa1-459a-b544-11875803f8b9")
+		.set("title", "Sess\u00E3o ID")
+		.set("type", "text")
+		.set("uid", "66f7a69e-deb6-4c5a-9250-63bccd55c005")
 		.set("unique", false)
 		.set("user_id", 0)
 		.set("whenedit", true)
@@ -91,5 +91,5 @@ _form.syncField(
 		.set("whenview", true)
 		.set("width", 0)
 		.set("x", 1)
-		.set("y", 3)
+		.set("y", 2)
 );
