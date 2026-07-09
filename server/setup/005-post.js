@@ -44,7 +44,7 @@ const posts = [
     parent_id: 0,
     content: "Manutenção do sistema agendada para 20 de maio, 02:00–04:00 UTC. Alguns serviços (envio de arquivos, notificações) podem ficar intermitentes.",
     moment: "2026-06-09 11:03:35",
-    comments: 1,
+    comments: 2,
     likes: 3 // Gestor, Revisor, Test
   },
   {

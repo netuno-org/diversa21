@@ -1,6 +1,6 @@
 import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
 
-// TODO: import response from "#core/lib/response.js";
+import response from "#core/lib/response.js";
 import permissions from "#core/lib/permissions.js";
 
 const uid = _req.getString("uid");
@@ -28,8 +28,9 @@ if (dbPost.getInt("people_user_id") !== _user.id && !permissions.canManagePosts(
 }
 
 const postId = dbPost.getInt("id");
+const parentId = dbPost.getInt("parent_id");
 
-const dbParentPost = _db.get('post', dbPost.getInt('parent_id'));
+const dbParentPost = parentId > 0 ? _db.get('post', parentId) : null;
 
 const result = _db.execute(`
     WITH RECURSIVE post_tree AS (
@@ -74,9 +75,8 @@ if (dbParentPost) {
     "post",
     dbParentPost.getInt("id"),
     _val.map()
-      .set("comments", dbParentPost.getInt("comments", 0) - 1)
+      .set("comments", Math.max(0, dbParentPost.getInt("comments", 0) - 1))
     )
 }
 
-// TODO: response.successWithoutData();
-_out.json({ result: true })
+response.successWithoutData();

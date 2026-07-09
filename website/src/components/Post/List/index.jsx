@@ -65,7 +65,11 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
           return p;
         });
 
-        setPosts(prev => [...prev, ...fetchedItems]);
+        if (page === 0) {
+          setPosts(fetchedItems);
+        } else {
+          setPosts(prev => [...prev, ...fetchedItems]);
+}
         setTotalCount(json?.data?.pagination?.totalCount || 0);
       },
       fail: (e) => {
@@ -86,11 +90,12 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
   const onLoadMorePosts = () => setPage(page + 1);
 
   const onRemovePost = (uid) => {
-    setPosts(posts.filter((post) => post.uid !== uid));
-    if (onItemRemoved) {
-      onItemRemoved();
-    }
-  };
+  setPosts(prev => prev.filter((post) => post.uid !== uid));
+  setTotalCount(prev => prev - 1);
+  if (onItemRemoved) {
+    onItemRemoved();
+  }
+};
 
   const onEditPost = (uid, content) => {
     setPosts(posts.map((post) => post.uid === uid ? { ...post, content } : post));
