@@ -13,10 +13,6 @@ if (page > 0) {
 
 const loggedUser = people.getLogged();
 
-if (_group.code() !== "member") {
-  response.stopWithPermissionDenied();
-}
-
 const loggedId = loggedUser.getInt("id");
 
 const params = _val.list();

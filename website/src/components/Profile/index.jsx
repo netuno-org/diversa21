@@ -287,7 +287,7 @@ function Profile({ user }) {
     },
   ];
 
-  if (loggedUser?.data?.group?.code === "member" && user?.group?.code === "member") {
+  if (loggedUser?.data?.group?.code) {
     tabItems.push({
       key: 'friends',
       label: 'Amigos',
