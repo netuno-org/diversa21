@@ -75,7 +75,7 @@ function Chat({ friend }) {
             className="messages__chat-header-avatar"
           />
           <div className="messages__chat-header-info">
-            <Text strong className="messages__chat-name">{friend.name || "Utilizador"}</Text>
+            <Text strong className="messages__chat-name">{friend.name || "Usuário"}</Text>
             {friend.username && <Text type="secondary" className="messages__chat-username">@{friend.username}</Text>}
           </div>
         </div>
@@ -101,7 +101,7 @@ function Chat({ friend }) {
               style={{ marginBottom: 0, flex: 1 }}
             >
               <TextArea
-                placeholder={`Escrever mensagem para ${friend.name || 'o utilizador'}...`}
+                placeholder={`Escrever mensagem para ${friend.name || 'o usuário'}...`}
                 autoSize={{ minRows: 1, maxRows: 4 }}
                 variant="borderless"
                 className="messages__chat-textarea"

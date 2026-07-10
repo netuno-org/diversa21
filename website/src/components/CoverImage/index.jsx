@@ -139,7 +139,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
                   icon={<UploadOutlined />}
                   className="cover-editor__btn-swap"
                 >
-                  Trocar Ficheiro
+                  Trocar Arquivo
                 </Button>
 
                 <div className="cover-editor__settings">

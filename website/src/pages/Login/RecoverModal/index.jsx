@@ -26,8 +26,8 @@ export default function RecoverModal(props) {
       success: (response) => {
         if (response.json.result) {
           api.success({
-            message: 'Alteração da Palavra-Passe ',
-            description: 'Foi enviado um e-mail para a alteração da Palavra-Passe.',
+            message: 'Alteração da senha ',
+            description: 'Foi enviado um e-mail para a alteração da senha.',
           });
           setSubmitting(false);
           setOpen(false);
@@ -36,8 +36,8 @@ export default function RecoverModal(props) {
       fail: () => {
         setSubmitting(false);
         api.error({
-          message: 'Erro na Alteração da Palavra-Passe',
-          description: 'Não foi possível alterar a palavra-passe, contacte-nos através do chat de suporte.',
+          message: 'Erro na Alteração da senha',
+          description: 'Não foi possível alterar a senha, contacte-nos através do chat de suporte.',
         });
       }
     });

@@ -169,7 +169,7 @@ function ProfileForm({
           }
         } else if (operation === "edit") {
           globalNotification.warning({
-            title: 'Utilizador existente',
+            title: 'Usuário existente',
             description: json.error,
           });
           profileForm.current.setFieldsValue({
@@ -191,13 +191,13 @@ function ProfileForm({
           if (e.json.error === 'email-already-exists') {
             return api.warning({
               title: 'E-mail Existente',
-              description: 'Este e-mail já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
+              description: 'Este e-mail já existe, faça a recuperação do acesso na tela de login ou escolha outro.',
             });
           }
           if (e.json.error === 'user-already-exists') {
             return api.warning({
-              title: 'Utilizador Existente',
-              description: 'Este utilizador já existe, faça a recuperação do acesso no ecrã de login ou escolha outro.',
+              title: 'Usuário Existente',
+              description: 'Este usuário já existe, faça a recuperação do acesso na tela de login ou escolha outro.',
             });
           }
         }
@@ -302,7 +302,7 @@ function ProfileForm({
               </Col>
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Utilizador"
+                  label="Usuário"
                   name="username"
                   rules={[
                     { required: true, message: 'Insira o usuário.' },
@@ -444,11 +444,11 @@ function ProfileForm({
               <Row gutter={16}>
                 <Col xs={24} md={12}>
                   <Form.Item
-                    label={(operation === "edit" ? "Nova" : "") + " Palavra-passe"}
+                    label={(operation === "edit" ? "Nova" : "") + " Senha"}
                     name="password"
                     rules={[
-                      (operation === "create" && { required: true, message: 'Insira a palavra-passe.' }),
-                      { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                      (operation === "create" && { required: true, message: 'Insira a senha.' }),
+                      { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
                     ]}
                   >
                     {operation === "create" ? <PasswordInput disabled={submitting} maxLength={25} /> : <PasswordInput />}
@@ -457,15 +457,15 @@ function ProfileForm({
 
                 <Col xs={24} md={12}>
                   <Form.Item
-                    label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Palavra-passe"}
+                    label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Senha"}
                     name="password_confirm"
                     rules={[
-                      (operation === "create" ? { required: true, message: `Insira a confirmação da palavra-passe.` } : { required: passwordRequired, message: 'Insira a confirmação da nova palavra-passe.' }),
-                      { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                      (operation === "create" ? { required: true, message: `Insira a confirmação da senha.` } : { required: passwordRequired, message: 'Insira a confirmação da nova senha.' }),
+                      { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           if (!value || getFieldValue('password') === value) return Promise.resolve();
-                          return Promise.reject('As palavras-passes não são iguais.');
+                          return Promise.reject('As senhas não são iguais.');
                         },
                       })
                     ]}

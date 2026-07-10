@@ -160,7 +160,7 @@ function Login() {
                 </Form.Item> }
 
               <Form.Item
-                label="Utilizador"
+                label="Usuário"
                 name="username"
                 rules={[
                   { required: true, message: 'Insira o seu usuário.' },
@@ -171,9 +171,9 @@ function Login() {
               </Form.Item>
 
               <Form.Item
-                label="Palavra-passe"
+                label="Senha"
                 name="password"
-                rules={[{ required: true, message: 'Insira a palavra-passe.' }]}
+                rules={[{ required: true, message: 'Insira a senha.' }]}
               >
                 <Input.Password />
               </Form.Item>

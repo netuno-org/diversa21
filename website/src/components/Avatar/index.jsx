@@ -134,7 +134,7 @@ function Avatar({ currentImage, onRemove }, ref) {
                   icon={<UploadOutlined />}
                   className="avatar-editor__btn-swap"
                 >
-                  Trocar Ficheiro
+                  Trocar Arquivo
                 </Button>
 
                 <div className="avatar-editor__settings">

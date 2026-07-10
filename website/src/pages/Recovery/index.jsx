@@ -35,8 +35,8 @@ export default function Recovery(props) {
       success: (response) => {
         if (response.json.result) {
           api.success({
-            message: 'Alteração de Palavra-Passe',
-            description: 'A sua palavra-passe foi alterada com sucesso.',
+            message: 'Alteração de senha',
+            description: 'A sua senha foi alterada com sucesso.',
           });
           setSubmitting(false);
           setReady(true);
@@ -45,8 +45,8 @@ export default function Recovery(props) {
       fail: () => {
         setSubmitting(false);
         api.error({
-          message: 'Erro na alteração de Palavra-Passe',
-          description: 'Não foi possível alterar a sua palavra-passe, o link é inválido ou por favor contacte o suporte.',
+          message: 'Erro na alteração de senha',
+          description: 'Não foi possível alterar a sua senha, o link é inválido ou por favor contacte o suporte.',
         });
       }
     });
@@ -67,7 +67,7 @@ export default function Recovery(props) {
             <Title>Recuperar Acesso</Title>
           </div>
           <div className="content-body">
-            <p>Alteração da palavra-passe da sua conta.</p>
+            <p>Alteração da senha da sua conta.</p>
             <Form
               ref={recoveryForm}
               layout="vertical"
@@ -77,27 +77,27 @@ export default function Recovery(props) {
               onFinishFailed={onFinishFailed}
             >
               <Form.Item
-                label="Palavra-passe"
+                label="Senha"
                 name="password"
                 rules={[
-                  { required: true, message: 'Insira a palavra-passe.' },
-                  { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                  { required: true, message: 'Insira a senha.' },
+                  { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
                 ]}
               >
                 <PasswordInput disabled={submitting} maxLength={25} />
               </Form.Item>
               <Form.Item
-                label="Confirmar a Palavra-passe"
+                label="Confirmar a senha"
                 name="password_confirm"
                 rules={[
-                  { required: true, message: 'Insira a confirmação da palavra-passe.' },
-                  { type: 'string', message: 'Palavra-Passe deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                  { required: true, message: 'Insira a confirmação da senha.' },
+                  { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
                       if (!value || getFieldValue('password') === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject('As palavras-passes não são iguais.');
+                      return Promise.reject('As senhas não são iguais.');
                     },
                   })
                 ]}
@@ -106,7 +106,7 @@ export default function Recovery(props) {
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" loading={submitting}>
-                  Redefinir Palavra-passe
+                  Redefinir senha
                 </Button>
               </Form.Item>
             </Form>

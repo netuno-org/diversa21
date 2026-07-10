@@ -155,7 +155,7 @@ function Post({
   const activityLabel = type === 'comment' && parentPeopleUser
     ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> comentou num post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
     : type === 'like' && parentPeopleUser
-    ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> gostou de um post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
+    ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> curtiu de um post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
     : null;
 
   return (

@@ -308,7 +308,7 @@ function View() {
             },
             {
               key: 'likes',
-              label: 'Gostos',
+              label: 'Curtidas',
               children: (
                 <div className="institution-view__tabs-content">
                   <ActivityList url="activity/like/list" institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />

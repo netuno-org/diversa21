@@ -43,7 +43,7 @@ function usePeople() {
           onFinish && onFinish(true);
         } else {
           globalNotification.warning({
-            title: 'Dados do Utilizador',
+            title: 'Dados do Usuário',
             description: response.json.error,
           });
           onFinish && onFinish(false);
@@ -51,9 +51,9 @@ function usePeople() {
         }
       },
       fail: (e) => {
-        console.error('Dados do Utilizador', e);
+        console.error('Dados do Usuário', e);
         globalNotification.serviceFail({
-          title: 'Dados do Utilizador',
+          title: 'Dados do Usuário',
           description: 'Ocorreu um erro a carregar os dados, por favor tente novamente mais tarde.',
         });
         _auth.logout();
@@ -75,7 +75,7 @@ function usePeople() {
         } else {
           globalNotification.warning({
             title: isEditing ? 'Atualizar Pessoa' : 'Nova Pessoa',
-            description: response.json.error || 'Não foi possível guardar o registo.',
+            description: response.json.error || 'Não foi possível guardar o registro.',
           });
           callbacks.onFail && callbacks.onFail(response.json);
         }
@@ -102,7 +102,7 @@ function usePeople() {
         } else {
           globalNotification.warning({
             title: 'Apagar Pessoa',
-            description: response.json.error || 'Não foi possível apagar o registo.',
+            description: response.json.error || 'Não foi possível apagar o registro.',
           });
           callbacks.onFail && callbacks.onFail(response.json);
         }

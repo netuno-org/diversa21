@@ -93,7 +93,7 @@ function LocationList() {
           title="Localidades"
           createButton={loggedUser.canManageLocations() && {
             icon: <BiSolidLocationPlus />,
-            text: 'Novo registo',
+            text: 'Novo registro',
             onClick: () => {
               setEditingItem(null);
               setIsModalVisible(true);

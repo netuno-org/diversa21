@@ -45,7 +45,7 @@ function People() {
   const handleDeleteUser = (uid) => {
     loggedUser.remove(uid, {
       onSuccess: () => {
-        messageApi.success('Utilizador apagado com sucesso.');
+        messageApi.success('usuário apagado com sucesso.');
       }
     });
   };

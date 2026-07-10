@@ -278,7 +278,7 @@ function Profile({ user }) {
     },
     {
       key: 'likes',
-      label: 'Gostos',
+      label: 'Curtidas',
       children: (
         <div className="profile__tabs-content">
           <ActivityList url="activity/like/list" author={user.uid} />
@@ -459,7 +459,7 @@ function Profile({ user }) {
           <Paragraph className="profile__about-text">
             {user.description && user.description !== "-"
               ? user.description
-              : 'Este utilizador ainda não adicionou uma descrição.'}
+              : 'Este usuário ainda não adicionou uma descrição.'}
           </Paragraph>
         </div>
       </Card>

@@ -27,10 +27,10 @@ function LocationTable({
       data: { uid },
       success: ({ json }) => {
         if (json?.result) {
-          messageApi.success('Registo apagado com sucesso.');
+          messageApi.success('Registro apagado com sucesso.');
           onDeleteSuccess() && onDeleteSuccess();
         } else {
-          messageApi.error(json?.error || 'Não foi possível apagar o registo.');
+          messageApi.error(json?.error || 'Não foi possível apagar o registro.');
         }
         setDeletingUid(null);
       },
@@ -43,7 +43,7 @@ function LocationTable({
         } else if (json?.error === 'state-has-cities') {
           messageApi.error('Não é possível apagar: existem cidades associadas a este estado.');
         } else {
-          messageApi.error(json?.error || 'Falha de comunicação ao apagar o registo.');
+          messageApi.error(json?.error || 'Falha de comunicação ao apagar o registro.');
         }
         setDeletingUid(null);
       },
@@ -107,7 +107,7 @@ function LocationTable({
     return (
       <>
         {contextHolder}
-        <Empty description="Nenhum registo encontrado." />
+        <Empty description="Nenhum registro encontrado." />
       </>
     );
   }

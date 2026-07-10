@@ -59,16 +59,16 @@ function LocationModal({
         data,
         success: ({ json }) => {
           if (json?.result) {
-            messageApi.success(isEditing ? 'Registo atualizado com sucesso.' : 'Registo guardado com sucesso.');
+            messageApi.success(isEditing ? 'Registro atualizado com sucesso.' : 'Registro guardado com sucesso.');
             onSuccess() && onSuccess();
             onClose() && onClose();
           } else {
-            messageApi.error(json?.error || 'Não foi possível guardar o registo.');
+            messageApi.error(json?.error || 'Não foi possível guardar o registro.');
           }
           setIsSaving(false);
         },
         fail: () => {
-          messageApi.error('Falha de comunicação ao guardar o registo.');
+          messageApi.error('Falha de comunicação ao guardar o registro.');
           setIsSaving(false);
         },
       });
@@ -82,7 +82,7 @@ function LocationModal({
     <>
       {contextHolder}
       <Modal
-        title={editingItem ? 'Editar Registo' : 'Novo Registo'}
+        title={editingItem ? 'Editar Registro' : 'Novo Registro'}
         open={visible}
         onOk={handleSave}
         onCancel={onClose}
