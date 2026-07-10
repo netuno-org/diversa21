@@ -9,7 +9,7 @@ expect.extend({ toBePost });
 
 test("list activities of an institution without logging in", async () => {
   await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.clinicaSaoRafael}`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.clinicaSaoRafael}`)
     .expect(401);
 });
 
@@ -17,7 +17,7 @@ test("list activities of an institution", async () => {
   const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.clinicaSaoRafael}`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.clinicaSaoRafael}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
@@ -37,12 +37,12 @@ test("list activities of a different institution returns different results", asy
   const accessToken = await login.asTest();
 
   const responseA = await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.clinicaSaoRafael}`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.clinicaSaoRafael}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
   const responseB = await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.laboratorioModelo}`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.laboratorioModelo}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
@@ -63,7 +63,7 @@ test("list activities of a non-existent institution returns empty result", async
   const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
-    .get("/activity/list?institutionUid=7c076702-0f99-44b9-b4f5-7b6d4810b7d8")
+    .get("/activity/post/list?institutionUid=7c076702-0f99-44b9-b4f5-7b6d4810b7d8")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
@@ -76,7 +76,7 @@ test("list activities of an institution with pagination", async () => {
   const accessToken = await login.asTest();
 
   const response = await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=2`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=2`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
@@ -92,17 +92,17 @@ test("pagination for institution activities must be a non-negative integer", asy
   const accessToken = await login.asTest();
 
   await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=-1`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=-1`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
 
   await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=a1`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=a1`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
 
   await request(NETUNO_URL)
-    .get(`/activity/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=1a`)
+    .get(`/activity/post/list?institutionUid=${institutionUid.clinicaSaoRafael}&page=1a`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
 });
@@ -111,7 +111,7 @@ test("list activities without institutionUid nor peopleUid returns 400", async (
   const accessToken = await login.asTest();
 
   await request(NETUNO_URL)
-    .get("/activity/list")
+    .get("/activity/post/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
 });

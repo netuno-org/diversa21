@@ -19,7 +19,7 @@ test("get by username", async () => {
   expect(response.body).toHaveProperty("data");
   const user = response.body.data;
   expect(user).toBePeople();
-  expect(user.uid).toBe(userUid.test);
+  expect(user.uid).toBe(userUid.alice);
 });
 
 test("get by username not found", async () => {
@@ -29,7 +29,7 @@ test("get by username not found", async () => {
     .get("/people/by?username=notexist")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(404);
-  
+
   expect(response.body.error).toBe("user-not-found");
 });
 
