@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge, Popover, Typography, Avatar, Button, Spin, Empty, Space } from 'antd';
+import { Badge, Popover, Typography, Avatar, Button, Spin, Empty } from 'antd';
 import { UserAddOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
@@ -30,7 +30,6 @@ function HeaderFriendsRequests() {
   } = useNotifications(loggedUser);
 
   const friendRequests = notifications.filter(n => FRIEND_REQUEST_TYPES.includes(n.type));
-
   const unreadCount = friendRequests.filter(n => !n.read).length;
 
   const handleMarkAll = (e) => {
@@ -66,25 +65,32 @@ function HeaderFriendsRequests() {
   const popoverContent = (
     <div className="header-friends-requests__content">
       <div className="header-friends-requests__header">
-        <Text strong style={{ fontSize: 16 }}>Pedidos de Amizade</Text>
+        <Text strong className="header-friends-requests__title">
+          Solicitações de Amizade
+        </Text>
         {unreadCount > 0 && (
           <Button type="link" size="small" onClick={handleMarkAll} icon={<IoCheckmarkDoneSharp />}>
-            Marcar todas lidas
+            Marcar como lidas
           </Button>
         )}
       </div>
 
       <div className="header-friends-requests__list">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '24px 0' }}><Spin /></div>
+          <div className="header-friends-requests__state">
+            <Spin />
+          </div>
         ) : friendRequests.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '24px 0', color: '#999' }}>
-            <Empty description="Não há pedidos de amizade." image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          <div className="header-friends-requests__state header-friends-requests__state--empty">
+            <Empty description="Não há solicitações de amizade." image={Empty.PRESENTED_IMAGE_SIMPLE} />
           </div>
         ) : (
           friendRequests.map((item) => {
             const isPending = item.type === 'friend-request';
             const itemProcessing = processing[item.id];
+            const itemAvatarUrl = (item.originator?.uid && item.originator?.avatar)
+              ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people`)
+              : "/images/profile-default.png";
 
             return (
               <div
@@ -94,55 +100,64 @@ function HeaderFriendsRequests() {
               >
                 <div className="header-friends-requests__item-avatar">
                   <Avatar
-                    size={40}
-                    src={
-                      item.originator?.uid
-                        ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people&${new Date().getTime()}`)
-                        : "/images/profile-default.png"
-                    }
+                    size={48}
+                    shape="square"
+                    className="header-friends-requests__avatar"
+                    src={itemAvatarUrl}
                   />
                 </div>
                 <div className="header-friends-requests__item-content">
                   <div className="header-friends-requests__item-title-row">
-                    <Text strong={!item.read}>{item.title}</Text>
-                    <Text type="secondary" style={{ fontSize: 12 }}>{item.time}</Text>
+                    <Text strong className="header-friends-requests__username">{item.title}</Text>
+                    <div className="header-friends-requests__meta">
+                      <Text type="secondary" className="header-friends-requests__time">{item.time}</Text>
+                      {!item.read && <div className="header-friends-requests__dot" />}
+                    </div>
                   </div>
-                  <Text type="secondary" style={{ fontSize: 13, display: 'block' }}>
+                  <Text type="secondary" className="header-friends-requests__desc">
                     {item.desc}
                   </Text>
 
                   {isPending && (
-                    <Space size="small" style={{ marginTop: 8 }}>
+                    <div className="header-friends-requests__actions">
                       <Button
                         type="primary"
-                        size="small"
+                        size="middle"
                         icon={<CheckOutlined />}
                         loading={itemProcessing === 'accept'}
                         disabled={!!itemProcessing}
                         onClick={(e) => handleAccept(e, item)}
+                        className="header-friends-requests__btn"
                       >
                         Aceitar
                       </Button>
                       <Button
-                        size="small"
+                        size="middle"
                         icon={<CloseOutlined />}
                         loading={itemProcessing === 'reject'}
                         disabled={!!itemProcessing}
                         onClick={(e) => handleReject(e, item)}
+                        className="header-friends-requests__btn"
                       >
                         Recusar
                       </Button>
-                    </Space>
+                    </div>
                   )}
                 </div>
-                {!item.read && <div className="header-friends-requests__dot" />}
               </div>
             );
           })
         )}
       </div>
       <div className="header-friends-requests__footer">
-        <Button type="link" onClick={() => { setPopoverOpen(false); navigate('/friends/requests'); }} block>
+        <Button
+          type="link"
+          onClick={() => {
+            setPopoverOpen(false);
+            navigate('/friends?tab=received-requests');
+          }}
+          block
+        >
           Ver todos
         </Button>
       </div>

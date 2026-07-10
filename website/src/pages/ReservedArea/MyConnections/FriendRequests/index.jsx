@@ -98,7 +98,7 @@ function FriendRequests() {
     <div className="friend-list">
       <div className="friend-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'pedidos de amizade' : 'pedido de amizade'} encontrado{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? 'solicitações de amizade' : 'pedido de amizade'} encontrado{pagination.total !== 1 ? 's' : ''}
         </Text>
       </div>
       <div className="friend-list__items">
@@ -106,7 +106,7 @@ function FriendRequests() {
           <Card key={request.uid} className="friend-list__card" hoverable>
             <div className="friend-list__card-content">
               <Link to={`/u/${request.username}`} className="friend-list__link">
-                <UserProfileDisplay user={request} avatarStyle={{ width: '60px', height: '60px' }} />
+                <UserProfileDisplay user={request} avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }} />
               </Link>
               <Space className="friend-list__card-actions">
                 <Button
