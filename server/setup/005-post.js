@@ -106,7 +106,7 @@ likes.forEach((like) => {
         _val.map()
           .set("post_id", dbPost.getInt("id"))
           .set("people_id", dbPeople.getInt("id"))
-          .set("moment", _db.timestamp()),
+          .set("moment", "2026-07-01 12:00:00")
       );
     }
   } catch (e) {
