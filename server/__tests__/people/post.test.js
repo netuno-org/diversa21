@@ -4,7 +4,7 @@ import { MEMBER } from "#core/lib/groups.js";
 import login from '../util/login.js';
 import { cityUid, institutionUid } from '../util/uids.js';
 import cleanObject from '../util/clean.js';
-import { NETUNO_URL } from '../config.js';
+import config from "../config.js";
 
 // TODO: testar com grupo inexistente, cidade inexistente, instituicao inexistente
 // name, username, birthDate e email invalidos
@@ -24,7 +24,7 @@ test("create a new user", async () => {
     group: MEMBER
   }
 
-  const postResponse = await request(NETUNO_URL)
+  const postResponse = await request(config.NETUNO_URL)
     .post("/people")
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")
@@ -35,7 +35,7 @@ test("create a new user", async () => {
   expect(postResponse.body.result).toBe(true);
 
   // verify if the user was inserted
-  const newDataResponse = await request(NETUNO_URL)
+  const newDataResponse = await request(config.NETUNO_URL)
     .get("/people/by?username=newuser")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -57,7 +57,7 @@ test("create a new user", async () => {
 afterEach(async () => {
   const accessToken = await login.asSuperAdmin();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .delete("/people?username=newuser")
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")

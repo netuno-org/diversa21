@@ -1,9 +1,8 @@
 import request from "supertest";
-
-const NETUNO_URL = "http://localhost:9000/services";
+import config from "./config.js"
 
 test("login with user Test", async () => {
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .put("/_auth")
     .set("Content-Type", "application/json")
     .set("Accept", "*/*")
@@ -20,7 +19,7 @@ test("login with user Test", async () => {
 });
 
 test("login with a user that doesn't exist", async () => {
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .put("/_auth")
     .set("Content-Type", "application/json")
     .set("Accept", "*/*")

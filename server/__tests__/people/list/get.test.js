@@ -2,12 +2,12 @@ import request from "supertest";
 
 import toBePeople from '../../custom/people.js';
 import login from '../../util/login.js';
-import { NETUNO_URL } from '../../config.js';
+import config from "../../config.js";
 
 expect.extend({ toBePeople });
 
 test("list people without loging in", async () => {
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get("/people/list")
     .expect(401);
 });
@@ -15,7 +15,7 @@ test("list people without loging in", async () => {
 test("list people", async () => {
   const accessToken = await login.asTest(); 
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/people/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);

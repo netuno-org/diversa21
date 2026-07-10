@@ -4,12 +4,12 @@ import { MEMBER } from "#core/lib/groups.js";
 import login from '../util/login.js';
 import { userUid, cityUid, institutionUid } from '../util/uids.js';
 import cleanObject from '../util/clean.js';
-import { NETUNO_URL } from '../config.js';
+import config from "../config.js";
 
 test("super admin should be able to modify a user", async () => {
   const accessToken = await login.asSuperAdmin();
 
-  const oldDataResponse = await request(NETUNO_URL)
+  const oldDataResponse = await request(config.NETUNO_URL)
     .get(`/people?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -34,7 +34,7 @@ test("super admin should be able to modify a user", async () => {
     active: true,
   };
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put(`/people?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")
@@ -42,7 +42,7 @@ test("super admin should be able to modify a user", async () => {
     .send(newData)
     .expect(200);
 
-  const newDataResponse = await request(NETUNO_URL)
+  const newDataResponse = await request(config.NETUNO_URL)
     .get(`/people?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -54,7 +54,7 @@ test("super admin should be able to modify a user", async () => {
   expect(newDataResponse.body.data.institution.uid).toBe(newData.institution);
 
   // restore old data
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put(`/people?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")
@@ -64,7 +64,7 @@ test("super admin should be able to modify a user", async () => {
 });
 
 test("shouldn't be able to modify a user without logging in", async () => {
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put(`/people?uid=${userUid.test}`)
     .set("Content-Type", "application/json")
     .send({ 
@@ -81,7 +81,7 @@ test("shouldn't be able to modify a user without logging in", async () => {
 test("shouldn't be able to modify a user that doesn't exist", async () => {
   const accessToken = await login.asSuperAdmin();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put(`/people?uid=${userUid.notExist}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")
@@ -102,7 +102,7 @@ test("shouldn't be able to modify a user that doesn't exist", async () => {
 test("member shouldn't be able to modify another user", async () => {
   const accessToken = await login.asTest();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put(`/people?uid=${userUid.super}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")

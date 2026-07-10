@@ -1,7 +1,6 @@
 import request from "supertest";
-
 import login from '../util/login.js';
-import { NETUNO_URL } from '../config.js';
+import config from "../config.js";
 
 let testCountryUid;
 let createdStateUid;
@@ -9,7 +8,7 @@ let createdStateUid;
 beforeEach(async () => {
   const accessToken = await login.asSuperAdmin();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .post("/location/country")
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")
@@ -17,7 +16,7 @@ beforeEach(async () => {
     .send({ name: `StateTestCountry-${Date.now()}`, code: `S${Date.now()}`.slice(0, 3) })
     .expect(200);
 
-  const listResponse = await request(NETUNO_URL)
+  const listResponse = await request(config.NETUNO_URL)
     .get("/location/country")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -30,7 +29,7 @@ afterEach(async () => {
   const accessToken = await login.asSuperAdmin();
 
   if (createdStateUid) {
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .delete(`/location/state?uid=${createdStateUid}`)
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -39,7 +38,7 @@ afterEach(async () => {
   }
 
   if (testCountryUid) {
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .delete(`/location/country?uid=${testCountryUid}`)
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -52,7 +51,7 @@ describe("POST /location/state", () => {
   test("create a new state", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -62,7 +61,7 @@ describe("POST /location/state", () => {
 
     expect(response.body.result).toBe(true);
 
-    const listResponse = await request(NETUNO_URL)
+    const listResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
@@ -76,7 +75,7 @@ describe("POST /location/state", () => {
   test("create a state with non-existent country returns 404", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -90,7 +89,7 @@ describe("POST /location/state", () => {
   test("create a state with duplicate name in same country returns 409", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    const firstResponse = await request(NETUNO_URL)
+    const firstResponse = await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -100,14 +99,14 @@ describe("POST /location/state", () => {
 
     expect(firstResponse.body.result).toBe(true);
 
-    const listResponse = await request(NETUNO_URL)
+    const listResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
 
     createdStateUid = listResponse.body.data.find(s => s.name === "Duplicatestate").uid;
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -121,7 +120,7 @@ describe("POST /location/state", () => {
   test("create a state without permission returns 403", async () => {
     const accessToken = await login.asTest();
 
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -135,7 +134,7 @@ describe("GET /location/state", () => {
   test("get all states", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
@@ -149,7 +148,7 @@ describe("PUT /location/state", () => {
   test("update an existing state", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -157,14 +156,14 @@ describe("PUT /location/state", () => {
       .send({ name: "Updatestate", code: "US", countryUid: testCountryUid })
       .expect(200);
 
-    const listResponse = await request(NETUNO_URL)
+    const listResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
 
     createdStateUid = listResponse.body.data.find(s => s.name === "Updatestate").uid;
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .put("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -174,7 +173,7 @@ describe("PUT /location/state", () => {
 
     expect(response.body.result).toBe(true);
 
-    const updatedListResponse = await request(NETUNO_URL)
+    const updatedListResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
@@ -187,7 +186,7 @@ describe("PUT /location/state", () => {
   test("update a state with non-existent uid returns 404", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .put("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -201,7 +200,7 @@ describe("PUT /location/state", () => {
   test("update a state with non-existent country returns 404", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -209,14 +208,14 @@ describe("PUT /location/state", () => {
       .send({ name: "Movestate", code: "MV", countryUid: testCountryUid })
       .expect(200);
 
-    const listResponse = await request(NETUNO_URL)
+    const listResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
 
     createdStateUid = listResponse.body.data.find(s => s.name === "Movestate").uid;
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .put("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -232,7 +231,7 @@ describe("DELETE /location/state", () => {
   test("delete an existing state", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -240,14 +239,14 @@ describe("DELETE /location/state", () => {
       .send({ name: "Deletestate", code: "DL", countryUid: testCountryUid })
       .expect(200);
 
-    const listResponse = await request(NETUNO_URL)
+    const listResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
 
     const uidToDelete = listResponse.body.data.find(s => s.name === "Deletestate").uid;
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .delete(`/location/state?uid=${uidToDelete}`)
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -256,7 +255,7 @@ describe("DELETE /location/state", () => {
 
     expect(response.body.result).toBe(true);
 
-    const finalListResponse = await request(NETUNO_URL)
+    const finalListResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
@@ -268,7 +267,7 @@ describe("DELETE /location/state", () => {
   test("delete a state with non-existent uid returns 404", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .delete("/location/state?uid=7c076702-0f99-44b9-b4f5-7b6d4810b7d8")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -281,7 +280,7 @@ describe("DELETE /location/state", () => {
   test("delete a state that has cities returns 409", async () => {
     const accessToken = await login.asSuperAdmin();
 
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .post("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -289,14 +288,14 @@ describe("DELETE /location/state", () => {
       .send({ name: "Hascitystate", code: "HC", countryUid: testCountryUid })
       .expect(200);
 
-    const listResponse = await request(NETUNO_URL)
+    const listResponse = await request(config.NETUNO_URL)
       .get("/location/state")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
 
     createdStateUid = listResponse.body.data.find(s => s.name === "Hascitystate").uid;
 
-    const cityResponse = await request(NETUNO_URL)
+    const cityResponse = await request(config.NETUNO_URL)
       .post("/location/city")
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -306,7 +305,7 @@ describe("DELETE /location/state", () => {
 
     expect(cityResponse.body.result).toBe(true);
 
-    const response = await request(NETUNO_URL)
+    const response = await request(config.NETUNO_URL)
       .delete(`/location/state?uid=${createdStateUid}`)
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")
@@ -316,13 +315,13 @@ describe("DELETE /location/state", () => {
     expect(response.body.error).toBe("state-has-cities");
 
     // Cleanup: delete city first, then state in afterEach
-    const cityListResponse = await request(NETUNO_URL)
+    const cityListResponse = await request(config.NETUNO_URL)
       .get("/location/city")
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
 
     const cityToDelete = cityListResponse.body.data.find(c => c.name === "Hascity");
-    await request(NETUNO_URL)
+    await request(config.NETUNO_URL)
       .delete(`/location/city?uid=${cityToDelete.uid}`)
       .set("Authorization", `Bearer ${accessToken}`)
       .set("Accept", "*/*")

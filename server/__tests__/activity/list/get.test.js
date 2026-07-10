@@ -3,12 +3,12 @@ import request from "supertest";
 import toBePost from '../../custom/post.js';
 import login from '../../util/login.js';
 import { userUid } from '../../util/uids.js'
-import { NETUNO_URL } from '../../config.js';
+import config from "../../config.js";
 
 expect.extend({ toBePost });
 
 test("list activities without loging in", async () => {
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get(`/activity/post/list?peopleUid=${userUid.test}`)
     .expect(401);
 });
@@ -16,7 +16,7 @@ test("list activities without loging in", async () => {
 test("list activities without passing the user UID", async () => {
   const accessToken = await login.asTest();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get("/activity/post/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
@@ -25,7 +25,7 @@ test("list activities without passing the user UID", async () => {
 // test("list activities of the user Alice", async () => {
 //   const accessToken = await login.asTest(); 
 //
-//   const response = await request(NETUNO_URL)
+//   const response = await request(config.NETUNO_URL)
 //     .get(`/activity/post/list?peopleUid=${userUid.alice}`)
 //     .set("Authorization", `Bearer ${accessToken}`)
 //     .expect(200);
@@ -43,7 +43,7 @@ test("list activities without passing the user UID", async () => {
 // test("list activities of the user Super", async () => {
 //   const accessToken = await login.asSuperAdmin(); 
 //
-//   const response = await request(NETUNO_URL)
+//   const response = await request(config.NETUNO_URL)
 //     .get(`/activity/post/list?peopleUid=${userUid.super}`)
 //     .set("Authorization", `Bearer ${accessToken}`)
 //     .expect(200);
@@ -61,7 +61,7 @@ test("list activities without passing the user UID", async () => {
 test("list activities with pagination", async () => {
   const accessToken = await login.asSuperAdmin();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get(`/activity/post/list?peopleUid=${userUid.super}&page=2`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -78,22 +78,22 @@ test("list activities with pagination", async () => {
 test("pagination must be a non-negative integer", async () => {
   const accessToken = await login.asSuperAdmin();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get(`/activity/post/list?peopleUid=${userUid.super}&page=-1`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get(`/activity/post/list?peopleUid=${userUid.super}&page=a1`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get(`/activity/post/list?peopleUid=${userUid.super}&page=1a`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get(`/activity/post/list?peopleUid=${userUid.super}&page=a`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);

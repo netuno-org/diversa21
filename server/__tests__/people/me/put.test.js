@@ -3,12 +3,12 @@ import request from "supertest";
 import login from '../../util/login.js';
 import cleanObject from '../../util/clean.js';
 import { cityUid, institutionUid } from '../../util/uids.js';
-import { NETUNO_URL } from '../../config.js';
+import config from "../../config.js";
 
 test("modify my own user details", async () => {
   const accessToken = await login.asTest();
 
-  const oldDataResponse = await request(NETUNO_URL)
+  const oldDataResponse = await request(config.NETUNO_URL)
     .get("/people/me")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -29,7 +29,7 @@ test("modify my own user details", async () => {
     institution: institutionUid.clinicaSaoRafael,
   }
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put("/people/me")
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")
@@ -37,7 +37,7 @@ test("modify my own user details", async () => {
     .send(newData)
     .expect(200);
 
-  const newDataResponse = await request(NETUNO_URL)
+  const newDataResponse = await request(config.NETUNO_URL)
     .get("/people/me")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -48,7 +48,7 @@ test("modify my own user details", async () => {
 
   expect(fetchedUser).toMatchObject(newData);
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put("/people/me")
     .set("Authorization", `Bearer ${accessToken}`)
     .set("Accept", "*/*")

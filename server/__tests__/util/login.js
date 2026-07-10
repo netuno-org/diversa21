@@ -1,10 +1,10 @@
 import request from "supertest";
 
-import { NETUNO_URL } from '../config.js';
+import config from "../config.js";
 import { username } from './usernames.js';
 
 const loginAs = async (name) => {
-  const loginResponse = await request(NETUNO_URL)
+  const loginResponse = await request(config.NETUNO_URL)
     .put("/_auth")
     .set("Content-Type", "application/json")
     .set("Accept", "*/*")

@@ -3,14 +3,14 @@ import request from "supertest";
 import toBePeople from '../custom/people.js';
 import login from '../util/login.js';
 import { userUid } from '../util/uids.js'
-import { NETUNO_URL } from '../config.js';
+import config from "../config.js";
 
 expect.extend({ toBePeople });
 
 test("get by uid", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get(`/people?uid=${userUid.bob}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -25,7 +25,7 @@ test("get by uid", async () => {
 test("get missing uid paramenter", async () => {
   const accessToken = await login.asTest();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get("/people")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
@@ -34,7 +34,7 @@ test("get missing uid paramenter", async () => {
 test("get by non-existent paramenter, missing uid paramenter", async () => {
   const accessToken = await login.asTest();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get("/people?foo=bar")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(400);
@@ -43,7 +43,7 @@ test("get by non-existent paramenter, missing uid paramenter", async () => {
 test("get by uid not found", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get(`/people?uid=${userUid.notExist}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(404);

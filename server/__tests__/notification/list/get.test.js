@@ -3,12 +3,12 @@ import request from "supertest";
 import { userUid } from '../../util/uids.js';
 import { username } from '../../util/usernames.js';
 import login from '../../util/login.js';
-import { NETUNO_URL } from '../../config.js';
+import config from "../../config.js";
 
 beforeEach(async () => {
   const accessToken = await login.asTest(); 
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .post(`/friend?uid=${userUid.ben}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -17,13 +17,13 @@ beforeEach(async () => {
 afterEach(async () => {
   const accessToken = await login.asTest();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .delete(`/friend?uid=${userUid.ben}`)
     .set("Authorization", `Bearer ${accessToken}`)
 });
 
 test("get notifications without loging in", async () => {
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get("/notification/list")
     .expect(401);
 });
@@ -31,7 +31,7 @@ test("get notifications without loging in", async () => {
 test("users should be able to get notifications when someone asked to be a friend", async () => {
   const accessToken = await login.asBen();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/notification/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -54,14 +54,14 @@ test("users should be able to get notifications when someone asked to be a frien
 test("notifications of friendship request should be deleted after the request is canceled", async () => {
   let accessToken = await login.asTest(); 
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .delete(`/friend?uid=${userUid.ben}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
   accessToken = await login.asBen();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/notification/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -78,12 +78,12 @@ test("notifications of friendship request should be deleted after the request is
 test("notifications of friendship request should be deleted after the request is rejected", async () => {
   const accessToken = await login.asBen();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .delete(`/friend?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/notification/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -100,14 +100,14 @@ test("notifications of friendship request should be deleted after the request is
 test("users should be able to get notifications when someone accepted their friend request", async () => {
   let accessToken = await login.asBen();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put(`/friend?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
   accessToken = await login.asTest(); 
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/notification/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -130,19 +130,19 @@ test("users should be able to get notifications when someone accepted their frie
 test("notifications of friendship request accepted should be deleted after the friendship is removed", async () => {
   let accessToken = await login.asBen();
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .put(`/friend?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .delete(`/friend?uid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
   accessToken = await login.asTest(); 
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/notification/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);

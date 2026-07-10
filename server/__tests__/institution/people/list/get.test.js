@@ -3,12 +3,12 @@ import request from "supertest";
 import toBePeople from '../../../custom/people.js';
 import login from '../../../util/login.js';
 import { institutionUid } from '../../../util/uids.js';
-import { NETUNO_URL } from '../../../config.js';
+import config from "../../../config.js";
 
 expect.extend({ toBePeople });
 
 test("list institution people without logging in", async () => {
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get("/institution/people/list")
     .query({ uid: institutionUid.clinicaSaoRafael })
     .expect(401);
@@ -17,7 +17,7 @@ test("list institution people without logging in", async () => {
 test("list institution people", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/institution/people/list")
     .query({ uid: institutionUid.clinicaSaoRafael })
     .set("Authorization", `Bearer ${accessToken}`)
@@ -49,7 +49,7 @@ test("list institution people", async () => {
 test("list institution people with invalid uid returns 404", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/institution/people/list")
     .query({ uid: "00000000-0000-0000-0000-000000000000" })
     .set("Authorization", `Bearer ${accessToken}`)

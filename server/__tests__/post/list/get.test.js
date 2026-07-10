@@ -3,12 +3,12 @@ import request from "supertest";
 import toBePost from '../../custom/post.js';
 import login from '../../util/login.js';
 import { userUid, postUid } from '../../util/uids.js'
-import { NETUNO_URL } from '../../config.js';
+import config from "../../config.js";
 
 expect.extend({ toBePost });
 
 test("list posts without loging in", async () => {
-  await request(NETUNO_URL)
+  await request(config.NETUNO_URL)
     .get("/post/list")
     .expect(401);
 });
@@ -16,7 +16,7 @@ test("list posts without loging in", async () => {
 test("list posts", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/post/list")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -35,7 +35,7 @@ test("list posts", async () => {
 it("shouldn't return comments if parent is not passed", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get(`/post/list?peopleUid=${userUid.test}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -51,7 +51,7 @@ it("shouldn't return comments if parent is not passed", async () => {
 test("list comments on a post", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get(`/post/list?parent=${postUid.primeiroPost}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -72,7 +72,7 @@ it("souldn't list comment with a parent that doesn't exist", async () => {
   const accessToken = await login.asTest();
   const fakeParentUid = "39bc1b9d-3bfa-43e7-a417-6dd6b5ad1ce0";
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get(`/post/list?parent=${fakeParentUid}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(404);
@@ -81,7 +81,7 @@ it("souldn't list comment with a parent that doesn't exist", async () => {
 test("list posts by a user", async () => {
   const accessToken = await login.asTest();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get(`/post/list?peopleUid=${userUid.ben}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
@@ -99,7 +99,7 @@ test("list posts by a user", async () => {
 test("list posts with pagination", async () => {
   const accessToken = await login.asSuperAdmin();
 
-  const response = await request(NETUNO_URL)
+  const response = await request(config.NETUNO_URL)
     .get("/post/list?page=2")
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
