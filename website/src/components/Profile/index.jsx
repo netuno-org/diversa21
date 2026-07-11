@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Empty, Tag, notification, Popconfirm } from 'antd';
+import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Tag, Popconfirm } from 'antd';
 import {
   EditOutlined,
   EnvironmentOutlined,
@@ -21,9 +21,9 @@ import _service from '@netuno/service-client';
 
 import ActivityList from "../Activity/List";
 import FriendList from "../Friend/List";
-
-import PostList from '../Post/List';
 import usePeople from "../../common/usePeople.js";
+import useFriendActions from "../../common/useFriendActions.js";
+
 import './index.less';
 
 const { Title, Text, Paragraph } = Typography;
@@ -33,9 +33,11 @@ function Profile({ user }) {
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [coverUrl, setCoverUrl] = useState();
-  const [isLoading, setIsLoading] = useState(false);
   const [friendStatus, setFriendStatus] = useState(null);
   const [canRequestFriend, setCanRequestFriend] = useState(false);
+
+  const { run, isProcessing } = useFriendActions();
+
   const isOwnProfile = user?.username === loggedUser?.data?.username;
   const canEditProfile = isOwnProfile || loggedUser?.canManageUser(user);
 
@@ -43,11 +45,13 @@ function Profile({ user }) {
     none: { label: "Adicionar amigo", action: "request" },
     pending: { label: "Cancelar pedido", action: "cancel", title: "Deseja cancelar o pedido de amizade?" },
     received: { label: "Aceitar", action: "accept", title: "Deseja aceitar o pedido de amizade?" },
-    friends: { label: "Amigos", action: "remove", title: "Deseja desfazer a amizade?" }
+    friends: { label: "Amigos", action: "remove", title: "Deseja desfazer a amizade?" },
   };
   const currentFriendship = friendshipStatus[friendStatus];
-  let buttonIcon = undefined;
 
+  const isLoading = user?.uid ? isProcessing(user.uid) : false;
+
+  let buttonIcon = undefined;
   if (isOwnProfile) {
     buttonIcon = <EditOutlined />;
   } else if (friendStatus === null) {
@@ -69,7 +73,6 @@ function Profile({ user }) {
     }
   }, [user]);
 
-
   useEffect(() => {
     if (!user?.uid) {
       return;
@@ -85,9 +88,7 @@ function Profile({ user }) {
     _service({
       method: "GET",
       url: "/friend/status",
-      data: {
-        uid: user.uid
-      },
+      data: { uid: user.uid },
       success: ({ json }) => {
         setCanRequestFriend(json.canRequest);
         setFriendStatus(json.status);
@@ -96,7 +97,7 @@ function Profile({ user }) {
         console.error(error);
         setCanRequestFriend(false);
         setFriendStatus("none");
-      }
+      },
     });
   }, [user, isOwnProfile]);
 
@@ -108,94 +109,12 @@ function Profile({ user }) {
     }
   };
 
-  const requestFriendAction = ({
-    method,
-    status,
-    successMessage,
-    successDescription,
-    errorMessage,
-    errorDescription
-  }) => {
-
-    setIsLoading(true);
-
-    _service({
-      method,
-      url: "/friend",
-      data: {
-        uid: user.uid
-      },
-      success: () => {
-        setFriendStatus(status);
-        setIsLoading(false);
-        notification.success({
-          title: successMessage,
-          description: successDescription
-        });
-      },
-      fail: (error) => {
-        setIsLoading(false);
-        console.error(error);
-        notification.error({
-          title: errorMessage,
-          description: errorDescription
-        });
-      }
-    });
-  };
-
-  const handleSendFriendRequest = () => {
-    requestFriendAction({
-      method: "POST",
-      status: "pending",
-      successMessage: "Solicitação enviada",
-      successDescription: "A solicitação de amizade foi enviada com sucesso.",
-      errorMessage: "Erro ao enviar solicitação",
-      errorDescription: "Não foi possível enviar a solicitação de amizade."
-    });
-  };
-
-  const handleCancelFriendRequest = () => {
-    requestFriendAction({
-      method: "DELETE",
-      status: "none",
-      successMessage: "Solicitação cancelada",
-      successDescription: "A solicitação de amizade foi cancelada com sucesso.",
-      errorMessage: "Erro ao cancelar solicitação",
-      errorDescription: "Não foi possível cancelar a solicitação de amizade."
-    });
-  };
-
-  const handleAcceptFriendRequest = () => {
-    requestFriendAction({
-      method: "PUT",
-      status: "friends",
-      successMessage: "Pedido aceito",
-      successDescription: "O pedido de amizade foi aceito com sucesso.",
-      errorMessage: "Erro ao aceitar pedido",
-      errorDescription: "Não foi possível aceitar o pedido de amizade."
-    });
-  };
-
-  const handleRejectFriendRequest = () => {
-    requestFriendAction({
-      method: "DELETE",
-      status: "none",
-      successMessage: "Pedido recusado",
-      successDescription: "O pedido de amizade foi recusado com sucesso.",
-      errorMessage: "Erro ao recusar pedido",
-      errorDescription: "Não foi possível recusar o pedido de amizade."
-    });
-  };
-
-  const handleRemoveFriend = () => {
-    requestFriendAction({
-      method: "DELETE",
-      status: "none",
-      successMessage: "Amizade desfeita",
-      successDescription: "Você não está mais conectado com este usuário.",
-      errorMessage: "Erro ao desfazer amizade",
-      errorDescription: "Não foi possível desfazer a amizade."
+  const doFriendAction = (action, nextStatus) => {
+    if (!user?.uid) {
+      return;
+    }
+    run(action, user.uid, {
+      onSuccess: () => setFriendStatus(nextStatus),
     });
   };
 
@@ -203,22 +122,41 @@ function Profile({ user }) {
     if (!currentFriendship?.action) {
       return;
     }
-
     switch (currentFriendship.action) {
       case "request":
-        handleSendFriendRequest();
+        doFriendAction("send", "pending");
         break;
       case "cancel":
-        handleCancelFriendRequest();
+        doFriendAction("cancel", "none");
         break;
       case "accept":
-        handleAcceptFriendRequest();
+        doFriendAction("accept", "friends");
         break;
       case "remove":
-        handleRemoveFriend();
+        doFriendAction("remove", "none");
         break;
       default:
     }
+  };
+
+  const handleRejectFriendRequest = () => {
+    doFriendAction("reject", "none");
+  };
+
+  const handleOpenMessages = (u) => {
+    if (!u?.uid) {
+      return;
+    }
+    navigate('/messages', {
+      state: {
+        autoOpenFriend: {
+          uid: u.uid,
+          name: u.name,
+          username: u.username,
+          avatar: u.avatar,
+        },
+      },
+    });
   };
 
   if (!user) {
@@ -233,11 +171,11 @@ function Profile({ user }) {
 
   const renderGroupInfo = () => {
     if (user.group.code === "member") {
-      return null
-    };
+      return null;
+    }
 
     let Icon = RiFileEditLine;
-    let color = "#d0990f"; // Review
+    let color = "#d0990f";
 
     if (user.group.code === "super-admin") {
       Icon = SafetyOutlined;
@@ -299,23 +237,6 @@ function Profile({ user }) {
     });
   }
 
-  const handleOpenMessages = (user) => {
-    if (!user?.uid) {
-      return;
-    }
-
-    navigate('/messages', {
-      state: {
-        autoOpenFriend: {
-          uid: user.uid,
-          name: user.name,
-          username: user.username,
-          avatar: user.avatar
-        }
-      }
-    });
-  }
-
   return (
     <section className="profile">
       <div className="profile__cover">
@@ -356,6 +277,8 @@ function Profile({ user }) {
                   <Popconfirm
                     title={currentFriendship.title}
                     onConfirm={handleFriendAction}
+                    okText="Sim"
+                    cancelText="Não"
                   >
                     <Button
                       type="primary"
@@ -368,33 +291,33 @@ function Profile({ user }) {
                   </Popconfirm>
                 )
               ) : null}
-              {
-                friendStatus === "received" &&
+              {friendStatus === "received" && (
                 <Popconfirm
-                  title={'Deseja recusar o pedido de amizade'}
+                  title="Deseja recusar o pedido de amizade?"
                   onConfirm={handleRejectFriendRequest}
+                  okText="Sim"
+                  cancelText="Não"
                 >
                   <Button
                     type="primary"
-                    className={"profile__secondary-btn"}
+                    className="profile__secondary-btn"
                     icon={<CloseOutlined />}
                     loading={isLoading}
                   >
                     Recusar
                   </Button>
                 </Popconfirm>
-              }
-              {
-                !isOwnProfile && friendStatus === 'friends' &&
+              )}
+              {!isOwnProfile && friendStatus === 'friends' && (
                 <Button
-                  type='primary'
+                  type="primary"
                   loading={isLoading}
                   onClick={() => handleOpenMessages(user)}
                   icon={<MessageOutlined />}
                 >
                   Enviar mensagem
                 </Button>
-              }
+              )}
             </div>
             {friendStatus === "received" && (
               <div className="profile__friend-request-text">

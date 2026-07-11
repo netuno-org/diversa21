@@ -15,20 +15,29 @@
     max-width: 100%;
     display: flex;
     flex-direction: column;
+
+    @media screen and (max-width: 768px) {
+      width: 360px;
+    }
+
+    @media screen and (max-width: 576px) {
+      width: 100%;
+    }
   }
 
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
     border-bottom: 1px solid #f0f0f0;
     border-radius: 12px 12px 0 0;
-  }
 
-  &__title {
-    font-size: 16px;
-    white-space: nowrap;
+    >.ant-btn {
+      margin: auto;
+    }
   }
 
   &__state {
@@ -51,6 +60,10 @@
     &::-webkit-scrollbar-thumb {
       background-color: rgba(0, 0, 0, 0.1);
       border-radius: 10px;
+    }
+
+    @media screen and (max-width: 576px) {
+      max-height: 60vh;
     }
   }
 
@@ -78,6 +91,19 @@
       }
     }
 
+    &--handled {
+      cursor: default;
+      opacity: 0.75;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    @media screen and (max-width: 576px) {
+      padding: 16px;
+    }
+
     &-avatar {
       flex-shrink: 0;
       margin-right: 16px;
@@ -85,6 +111,15 @@
       .ant-avatar,
       .ant-avatar img {
         border-radius: 8px !important;
+      }
+
+      @media screen and (max-width: 576px) {
+        margin-right: 12px;
+
+        .ant-avatar {
+          width: 40px !important;
+          height: 40px !important;
+        }
       }
     }
 
@@ -97,6 +132,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       margin-bottom: 4px;
     }
   }
@@ -111,6 +147,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 8px;
+    min-width: 0;
+
+    @media screen and (max-width: 576px) {
+      font-size: 14px;
+    }
   }
 
   &__meta {
@@ -129,6 +170,7 @@
     border-radius: 50%;
     background-color: @primary-color;
     margin-left: 8px;
+    flex-shrink: 0;
   }
 
   &__desc {
@@ -147,6 +189,17 @@
     flex: 1;
     border-radius: 32px;
     font-weight: 500;
+
+    @media screen and (max-width: 576px) {
+      font-size: 12px;
+    }
+  }
+
+  &__status {
+    display: block;
+    margin-top: 6px;
+    font-style: italic;
+    font-size: 13px;
   }
 
   &__footer {
@@ -169,6 +222,7 @@
     left: 16px !important;
     transform: none !important;
     width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
   }
 
   .ant-popover-inner {

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge, Popover, Typography, Avatar, Button, Spin, Empty } from 'antd';
+import { Badge, Popover, Typography, Avatar, Button, Spin, Empty, Popconfirm } from 'antd';
 import { UserAddOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
 import _service from '@netuno/service-client';
 import usePeople from "../../common/usePeople.js";
 import useNotifications from "../../common/useNotifications.js";
+import useFriendActions from "../../common/useFriendActions.js";
 
 import './index.less';
 
@@ -18,19 +19,26 @@ function HeaderFriendsRequests() {
   const loggedUser = usePeople();
   const navigate = useNavigate();
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const [processing, setProcessing] = useState({});
+  const [handledItems, setHandledItems] = useState({});
 
   const {
     notifications,
     loading,
     markAllAsRead,
     onNotificationClick,
-    acceptFriendRequest,
-    rejectFriendRequest,
   } = useNotifications(loggedUser);
+
+  const { run, isProcessing } = useFriendActions();
 
   const friendRequests = notifications.filter(n => FRIEND_REQUEST_TYPES.includes(n.type));
   const unreadCount = friendRequests.filter(n => !n.read).length;
+
+  const handlePopoverChange = (open) => {
+    setPopoverOpen(open);
+    if (!open) {
+      setHandledItems({});
+    }
+  };
 
   const handleMarkAll = (e) => {
     e.stopPropagation();
@@ -38,28 +46,23 @@ function HeaderFriendsRequests() {
   };
 
   const handleItemClick = (item) => {
+    if (handledItems[item.id]) {
+      return;
+    }
     setPopoverOpen(false);
     onNotificationClick(item, navigate);
   };
 
-  const handleAccept = async (e, item) => {
-    e.stopPropagation();
-    setProcessing(prev => ({ ...prev, [item.id]: 'accept' }));
-    try {
-      acceptFriendRequest && acceptFriendRequest(item);
-    } finally {
-      setProcessing(prev => ({ ...prev, [item.id]: null }));
+  const handleAction = (action, item, resultStatus) => {
+    const uid = item?.originator?.uid;
+    if (!uid) {
+      return;
     }
-  };
-
-  const handleReject = async (e, item) => {
-    e.stopPropagation();
-    setProcessing(prev => ({ ...prev, [item.id]: 'reject' }));
-    try {
-      rejectFriendRequest && rejectFriendRequest(item);
-    } finally {
-      setProcessing(prev => ({ ...prev, [item.id]: null }));
-    }
+    run(action, uid, {
+      onSuccess: () => {
+        setHandledItems(prev => ({ ...prev, [item.id]: resultStatus }));
+      },
+    });
   };
 
   const popoverContent = (
@@ -86,16 +89,30 @@ function HeaderFriendsRequests() {
           </div>
         ) : (
           friendRequests.map((item) => {
-            const isPending = item.type === 'friend-request';
-            const itemProcessing = processing[item.id];
-            const itemAvatarUrl = (item.originator?.uid && item.originator?.avatar)
-              ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people`)
+            const handledStatus = handledItems[item.id];
+            const isPending = item.type === 'friend-request' && !handledStatus;
+            const originatorUid = item.originator?.uid;
+            const itemAvatarUrl = (originatorUid && item.originator?.avatar)
+              ? _service.url(`/asset?uid=${originatorUid}&type=avatar&entity=people`)
               : "/images/profile-default.png";
+
+            let statusText = null;
+            if (handledStatus === "friends") {
+              statusText = "Vocês agora são amigos.";
+            } else if (handledStatus === "rejected") {
+              statusText = "Pedido recusado.";
+            }
+
+            const itemClasses = [
+              'header-friends-requests__item',
+              !item.read ? 'header-friends-requests__item--unread' : '',
+              handledStatus ? 'header-friends-requests__item--handled' : '',
+            ].filter(Boolean).join(' ');
 
             return (
               <div
                 key={item.id}
-                className={`header-friends-requests__item ${!item.read ? 'header-friends-requests__item--unread' : ''}`}
+                className={itemClasses}
                 onClick={() => handleItemClick(item)}
               >
                 <div className="header-friends-requests__item-avatar">
@@ -118,29 +135,49 @@ function HeaderFriendsRequests() {
                     {item.desc}
                   </Text>
 
+                  {statusText && (
+                    <Text type="secondary" className="header-friends-requests__status">
+                      {statusText}
+                    </Text>
+                  )}
+
                   {isPending && (
                     <div className="header-friends-requests__actions">
-                      <Button
-                        type="primary"
-                        size="middle"
-                        icon={<CheckOutlined />}
-                        loading={itemProcessing === 'accept'}
-                        disabled={!!itemProcessing}
-                        onClick={(e) => handleAccept(e, item)}
-                        className="header-friends-requests__btn"
+                      <Popconfirm
+                        title="Deseja aceitar o pedido de amizade?"
+                        onConfirm={() => handleAction('accept', item, 'friends')}
+                        okText="Sim"
+                        cancelText="Não"
                       >
-                        Aceitar
-                      </Button>
-                      <Button
-                        size="middle"
-                        icon={<CloseOutlined />}
-                        loading={itemProcessing === 'reject'}
-                        disabled={!!itemProcessing}
-                        onClick={(e) => handleReject(e, item)}
-                        className="header-friends-requests__btn"
+                        <Button
+                          type="primary"
+                          size="middle"
+                          icon={<CheckOutlined />}
+                          loading={isProcessing(originatorUid, 'accept')}
+                          disabled={isProcessing(originatorUid)}
+                          onClick={(e) => e.stopPropagation()}
+                          className="header-friends-requests__btn"
+                        >
+                          Aceitar
+                        </Button>
+                      </Popconfirm>
+                      <Popconfirm
+                        title="Deseja recusar o pedido de amizade?"
+                        onConfirm={() => handleAction('reject', item, 'rejected')}
+                        okText="Sim"
+                        cancelText="Não"
                       >
-                        Recusar
-                      </Button>
+                        <Button
+                          size="middle"
+                          icon={<CloseOutlined />}
+                          loading={isProcessing(originatorUid, 'reject')}
+                          disabled={isProcessing(originatorUid)}
+                          onClick={(e) => e.stopPropagation()}
+                          className="header-friends-requests__btn"
+                        >
+                          Recusar
+                        </Button>
+                      </Popconfirm>
                     </div>
                   )}
                 </div>
@@ -168,7 +205,7 @@ function HeaderFriendsRequests() {
     <Popover
       content={popoverContent} trigger="click" placement="bottomRight"
       overlayClassName="header-friends-requests__popover" arrow={false}
-      open={popoverOpen} onOpenChange={setPopoverOpen}
+      open={popoverOpen} onOpenChange={handlePopoverChange}
     >
       <div className="header-friends-requests__trigger">
         <Badge count={unreadCount} size="small" offset={[-2, 4]} color="#FDBA3C">

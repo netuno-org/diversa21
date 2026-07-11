@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Tabs } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import FriendList from '../../../components/Friend/List';
@@ -10,22 +10,18 @@ function MyConnections() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'friends';
 
-  const items = [
+  const items = useMemo(() => [
     {
       key: 'friends',
       label: 'Amigos',
-      children: (
-        <FriendList />
-      ),
+      children: <FriendList />,
     },
     {
       key: 'received-requests',
       label: 'Solicitações de amizade',
-      children: (
-        <FriendRequests />
-      ),
+      children: <FriendRequests />,
     },
-  ];
+  ], []);
 
   const handleTabChange = (key) => {
     setSearchParams({ tab: key });

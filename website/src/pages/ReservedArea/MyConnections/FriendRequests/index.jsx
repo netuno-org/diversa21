@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import _service from '@netuno/service-client';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import useFilteredPaginatedList from '../../../../common/useFilteredPaginatedList';
-import { Spin, Empty, Card, Pagination, Typography, Button, Popconfirm, notification, Space } from 'antd';
+import { Spin, Empty, Card, Pagination, Typography, Button, Space, Popconfirm } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+
+import useFilteredPaginatedList from '../../../../common/useFilteredPaginatedList';
+import useFriendActions from '../../../../common/useFriendActions';
 import UserProfileDisplay from '../../../../components/UserProfileDisplay';
 
 import '../../../../components/Friend/List/index.less';
@@ -12,7 +13,6 @@ import './index.less';
 const { Text } = Typography;
 
 function FriendRequests() {
-  const [processingRequest, setProcessingRequest] = useState(null);
   const {
     items: receivedRequests,
     loading,
@@ -23,67 +23,21 @@ function FriendRequests() {
     serviceUrl: 'friend/request/list',
   });
 
-  const requestFriendAction = ({
-    uid,
-    action,
-    method,
-    successMessage,
-    successDescription,
-    errorMessage,
-    errorDescription,
-  }) => {
-    setProcessingRequest({ uid, action });
+  const { run, isProcessing } = useFriendActions();
 
-    _service({
-      method,
-      url: "/friend",
-      data: {
-        uid,
-      },
-      success: () => {
-        fetchList({
-          term: pagination.term,
-          location: pagination.location,
-        });
-        setProcessingRequest(null);
-        notification.success({
-          message: successMessage,
-          description: successDescription,
-        });
-      },
-      fail: (error) => {
-        setProcessingRequest(null);
-        console.error(error);
-        notification.error({
-          message: errorMessage,
-          description: errorDescription,
-        });
-      }
+  const refetch = () => {
+    fetchList({
+      term: pagination.term,
+      location: pagination.location,
     });
   };
 
-  const handleAcceptRequest = (uid) => {
-    requestFriendAction({
-      uid,
-      action: 'accept',
-      method: "PUT",
-      successMessage: "Pedido aceito",
-      successDescription: "O pedido de amizade foi aceito com sucesso.",
-      errorMessage: "Erro ao aceitar pedido",
-      errorDescription: "Não foi possível aceitar o pedido de amizade."
-    });
+  const handleAccept = (uid) => {
+    run('accept', uid, { onSuccess: refetch });
   };
 
-  const handleRejectRequest = (uid) => {
-    requestFriendAction({
-      uid,
-      action: 'reject',
-      method: "DELETE",
-      successMessage: "Pedido recusado",
-      successDescription: "O pedido de amizade foi recusado com sucesso.",
-      errorMessage: "Erro ao recusar pedido",
-      errorDescription: "Não foi possível recusar o pedido de amizade."
-    });
+  const handleReject = (uid) => {
+    run('reject', uid, { onSuccess: refetch });
   };
 
   if (loading && receivedRequests.length === 0) {
@@ -94,40 +48,48 @@ function FriendRequests() {
     );
   }
 
+  const countLabel = pagination.total === 1
+    ? '1 solicitação encontrada'
+    : `${pagination.total} solicitações encontradas`;
+
   return (
     <div className="friend-list">
       <div className="friend-list__count">
-        <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'solicitações de amizade' : 'pedido de amizade'} encontrado{pagination.total !== 1 ? 's' : ''}
-        </Text>
+        <Text type="secondary">{countLabel}</Text>
       </div>
       <div className="friend-list__items">
         {receivedRequests.map((request) => (
           <Card key={request.uid} className="friend-list__card" hoverable>
             <div className="friend-list__card-content">
               <Link to={`/u/${request.username}`} className="friend-list__link">
-                <UserProfileDisplay user={request} avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }} />
+                <UserProfileDisplay
+                  user={request}
+                  avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }}
+                />
               </Link>
               <Space className="friend-list__card-actions">
                 <Button
                   type="primary"
                   icon={<CheckOutlined />}
-                  onClick={() => handleAcceptRequest(request.uid)}
-                  loading={processingRequest?.uid === request.uid && processingRequest?.action === 'accept'}
+                  onClick={() => handleAccept(request.uid)}
+                  loading={isProcessing(request.uid, 'accept')}
+                  disabled={isProcessing(request.uid)}
                 >
                   Aceitar
                 </Button>
                 <Popconfirm
-                  title="Deseja recusar o pedido de amizade?"
-                  onConfirm={() => handleRejectRequest(request.uid)}
+                  title="Recusar solicitação"
+                  description="Tem certeza que deseja recusar este pedido de amizade?"
+                  onConfirm={() => handleReject(request.uid)}
                   okText="Sim"
                   cancelText="Não"
                 >
                   <Button
                     className="profile__secondary-btn"
                     type="primary"
-                    loading={processingRequest?.uid === request.uid && processingRequest?.action === 'reject'}
+                    loading={isProcessing(request.uid, 'reject')}
                     icon={<CloseOutlined />}
+                    disabled={isProcessing(request.uid)}
                   >
                     Recusar
                   </Button>
@@ -143,8 +105,8 @@ function FriendRequests() {
       {receivedRequests.length > 0 && (
         <div className="friend-list__pagination">
           <Pagination
-            className={`friends-list__pagination ${receivedRequests.length === 0 && !loading ? 'friends-list__pagination--hidden' : ''}`}
-            align='center'
+            className="friends-list__pagination"
+            align="center"
             total={pagination.total}
             current={pagination.current}
             pageSize={pagination.size}
