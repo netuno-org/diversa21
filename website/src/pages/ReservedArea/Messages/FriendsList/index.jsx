@@ -46,20 +46,6 @@ function FriendsList({ onFriendSelected }) {
       service: "friend/list"
     });
 
-    // const listenerStatusChanged = _ws.addListener({
-    //   service: "friend/status/changed",
-    //   success: ({ content }) => {
-    //     setList((prev) => {
-    //       const safePrev = Array.isArray(prev) ? prev : [];
-    //       return safePrev.map((item) => {
-    //         if (item.uid === content.uid) {
-    //           return { ...item, ...content }
-    //         }
-    //         return item;
-    //       });
-    //     });
-    //   }
-    // });
     const listenerNewMessage = _ws.addListener({
       method: "POST",
       service: "message/new",
@@ -101,7 +87,7 @@ function FriendsList({ onFriendSelected }) {
   }, [ws.data]);
 
   const handleSearch = (value) => {
-    fetchFriendListMessage(value)
+    fetchFriendListMessage(value);
   }
 
   return (
@@ -116,32 +102,35 @@ function FriendsList({ onFriendSelected }) {
           onSearch={handleSearch}
         />
       </div>
+
       {loading ? (
         <div className="messages__friends-loading">
           <Spin />
         </div>
-      ) : (
+      ) : peopleList.length > 0 ? (
         <ul className="messages__friends-ul">
-          {peopleList.length > 0 ? (
-            peopleList.map((friend) => (
-              <FriendItem
-                key={friend.uid}
-                uid={friend.uid}
-                name={friend.name}
-                avatar={friend.avatar}
-                isActive={ws.data?.uid === friend.uid}
-                onClick={() => onFriendSelected && onFriendSelected(friend)}
-              />
-            ))
-          ) : (
-            <div style={{ padding: '32px 16px', textAlign: 'center' }}>
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={<Text type="secondary">Nenhuma conversa encontrada.</Text>}
-              />
-            </div>
-          )}
+          {peopleList.map((friend) => (
+            <FriendItem
+              key={friend.uid}
+              uid={friend.uid}
+              name={friend.name}
+              avatar={friend.avatar}
+              isActive={ws.data?.uid === friend.uid}
+              onClick={() => onFriendSelected && onFriendSelected(friend)}
+            />
+          ))}
         </ul>
+      ) : (
+        <div className="messages__friends--empty">
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={
+              <Text type="secondary" className="messages__friends-empty-text">
+                Nenhuma conversa encontrada.
+              </Text>
+            }
+          />
+        </div>
       )}
     </div>
   );

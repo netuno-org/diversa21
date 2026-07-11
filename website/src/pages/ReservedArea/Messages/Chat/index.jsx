@@ -23,7 +23,7 @@ function Chat({ friend }) {
     setHistoryReload(0);
   }, [friend]);
 
-  const onFinish = ({message}) => {
+  const onFinish = ({ message }) => {
     _ws.sendService({
       method: "POST",
       service: "message",
@@ -45,6 +45,17 @@ function Chat({ friend }) {
       },
       end: () => setMessageSubmitting(false),
     });
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+
+      const currentMessage = form.getFieldValue('message');
+      if (currentMessage && currentMessage.trim() !== '') {
+        form.submit();
+      }
+    }
   };
 
   if (!friend) {
@@ -105,6 +116,7 @@ function Chat({ friend }) {
                 autoSize={{ minRows: 1, maxRows: 4 }}
                 variant="borderless"
                 className="messages__chat-textarea"
+                onKeyDown={handleKeyDown}
               />
             </Form.Item>
 
