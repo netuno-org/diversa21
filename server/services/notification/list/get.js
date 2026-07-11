@@ -17,6 +17,7 @@ const dbNotifications = _db.query(`
         notification_type.code AS type,
         notification.title AS title,
         originator.uid AS originator_uid,
+        originator.avatar AS originator_avatar,
         recipient.uid AS recipient_uid,
         originator_user.user AS originator_username,
         recipient_user.user AS recipient_username,
@@ -57,6 +58,7 @@ for (const dbNotification of dbNotifications) {
     .set("originator", _val.map()
       .set("uid", dbNotification.getString("originator_uid"))
       .set("username", dbNotification.getString("originator_username"))
+      .set("avatar", dbNotification.getString("originator_avatar"))
     )
     .set("recipient", _val.map()
       .set("uid", dbNotification.getString("recipient_uid"))

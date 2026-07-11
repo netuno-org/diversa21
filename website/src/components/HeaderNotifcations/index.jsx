@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Popover, Typography, Avatar, Button, Spin, Empty } from 'antd';
 import {
@@ -91,7 +91,7 @@ function HeaderNotifications() {
                   <Avatar
                     size={40}
                     src={
-                      item.originator?.uid
+                      item.originator?.avatar
                         ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people&${new Date().getTime()}`)
                         : "/images/profile-default.png"
                     }

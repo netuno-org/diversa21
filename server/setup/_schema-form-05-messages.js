@@ -65,6 +65,7 @@ _form.syncField(
 	"3fc1633d-d218-4546-b5b7-f0abfcc86bc3",
 	_val.map()
 		.set("colspan", 0)
+		.set("description", "")
 		.set("firebase", "")
 		.set("group_id", 0)
 		.set("height", 0)
@@ -126,6 +127,7 @@ _form.syncField(
 	"3fc1633d-d218-4546-b5b7-f0abfcc86bc3",
 	_val.map()
 		.set("colspan", 0)
+		.set("description", "")
 		.set("firebase", "")
 		.set("group_id", 0)
 		.set("height", 0)

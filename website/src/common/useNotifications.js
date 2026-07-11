@@ -108,7 +108,7 @@ function useNotifications(loggedUser) {
         success: (data) => {
           const newNotification = data.content;
           processNotification(newNotification);
-          setNotifications(prev => [...prev, newNotification]); 
+          setNotifications(prev => [...prev, newNotification]);
           setCount((prev) => prev + 1);
         }
       });
@@ -128,17 +128,18 @@ function useNotifications(loggedUser) {
   }, [connected]);
 
   const processNotification = (n) => {
-      n.id = n.uid;
-      n.desc = n.content;
-      n.username = n.originator.username;
-      n.read = Boolean(n.read_at);
+    n.id = n.uid;
+    n.desc = n.content;
+    n.username = n.originator.username;
+    n.avatar = Boolean(n.originator.avatar);
+    n.read = Boolean(n.read_at);
 
-      if (["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
-        n.postId = n.extra.postUid;
-      }
+    if (["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
+      n.postId = n.extra.postUid;
+    }
 
-      const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
-      n.time = dayjs(deatTimeUrl).fromNow();
+    const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
+    n.time = dayjs(deatTimeUrl).fromNow();
   }
 
   const markAllAsRead = () => {
