@@ -40,6 +40,9 @@ if (profileUid && profileUid !== "") {
 }
 
 const params = _val.list();
+
+params.add(targetId);
+
 params.add(targetId).add(targetId).add(targetId).add(`%${name}%`);
 
 let sqlQuery = `
@@ -47,7 +50,14 @@ let sqlQuery = `
         p.uid AS "friend_uid", 
         p.name AS "friend_name", 
         netuno_user.user AS "friend_user",
-        p.avatar AS "friend_avatar"
+        p.avatar AS "friend_avatar",
+        (
+            SELECT count(m.id) 
+            FROM messages m
+            WHERE m.originator_id = p.id 
+              AND m.recipient_id = ? 
+              AND m.read_at IS NULL
+        ) AS unread_messages
     FROM friend f
         INNER JOIN people p ON p.id = (
             CASE 
@@ -87,9 +97,10 @@ const dbFriends = _db.query(sqlQuery, params);
 
 const friends = _val.list();
 for (const dbFriend of dbFriends) {
-  friends.add(
-    people.getData(dbFriend.getUID("friend_uid"))
-  );
+  const friendData = people.getData(dbFriend.getUID("friend_uid"));
+  friendData.set("unread_messages", dbFriend.getInt("unread_messages"));
+
+  friends.add(friendData);
 }
 
 const result = _val.map();
@@ -105,4 +116,4 @@ result.set("pagination", _val.map()
   .set("totalCount", totalCount)
 );
 
-response.successWithData(result)
+response.successWithData(result);
