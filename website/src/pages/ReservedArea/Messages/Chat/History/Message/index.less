@@ -1,10 +1,21 @@
 @import "../../../../../../styles/variables.less";
 
 .messages__message {
-  display: flex;
-  align-items: flex-end;
   margin-bottom: 16px;
   width: 100%;
+
+  &-time {
+    display: block;
+    margin-bottom: 8px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  &-row {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+  }
 
   &-avatar {
     margin-right: 8px;
@@ -43,7 +54,9 @@
   }
 
   &--incoming {
-    justify-content: flex-start;
+    .messages__message-row {
+      justify-content: flex-start;
+    }
 
     .messages__message-content {
       align-items: flex-start;
@@ -57,7 +70,9 @@
   }
 
   &--outgoing {
-    justify-content: flex-end;
+    .messages__message-row {
+      justify-content: flex-end;
+    }
 
     .messages__message-content {
       align-items: flex-end;

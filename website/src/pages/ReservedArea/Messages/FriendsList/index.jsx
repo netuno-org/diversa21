@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Spin, Input, Typography, Empty } from "antd";
-
-import usePeople from "../../../../common/usePeople.js";
 
 import _ws from "@netuno/ws-client";
 import useWS from "../../../../common/useWS.js";
@@ -10,15 +8,16 @@ import globalNotification from "../../../../common/globalNotification.js";
 import FriendItem from "./FriendItem";
 
 import "./index.less";
-import { data } from "react-router-dom";
-import _service from "@netuno/service-client";
 
 const { Text } = Typography;
 const { Search } = Input;
 
-function FriendsList({ onFriendSelected }) {
+function FriendsList({ onFriendSelected, friend }) {
   const [loading, setLoading] = useState(true);
   const [peopleList, setPeopleList] = useState([]);
+  const selectedFriendUidRef = useRef(null);
+
+  selectedFriendUidRef.current = friend?.uid ?? null;
 
   const ws = useWS();
 
@@ -51,13 +50,23 @@ function FriendsList({ onFriendSelected }) {
       service: "message/new",
       success: ({ data }) => {
         setPeopleList((prev) => {
-          const safePrev = Array.isArray(prev) ? prev : [];
-
-          return safePrev.map((item) => {
-            if (item.uid === data.with) {
-              return { ...item, unread_messages: item.unread_messages + 1 }
+          // Aqui comparamos e não alteramos o contador se não for da pessoa certa
+          return prev.map((item) => {
+            if (item.uid !== data.with) {
+              return item;
             }
-            return item;
+            // Se for da pessoa certa e a janela está aberta, zeramos o contador
+            if (selectedFriendUidRef.current === data.with) {
+              return {
+                ...item,
+                unread_messages: 0
+              };
+            }
+            // É da pessoa correta e a janela está fechada, então incrementamos +1
+            return {
+              ...item,
+              unread_messages: (item.unread_messages || 0) + 1
+            };
           });
         });
       }
@@ -66,11 +75,12 @@ function FriendsList({ onFriendSelected }) {
       service: "message/read/mark",
       success: ({ content }) => {
         setPeopleList((prev) => {
-          const safePrev = Array.isArray(prev) ? prev : [];
-
-          return safePrev.map((item) => {
+          return prev.map((item) => {
             if (item.uid === content.from) {
-              return { ...item, unread_messages: item.unread_messages - 1 }
+              return {
+                ...item,
+                unread_messages: Math.max(0, (item.unread_messages || 0) - 1)
+              };
             }
             return item;
           });
@@ -87,8 +97,15 @@ function FriendsList({ onFriendSelected }) {
   }, [ws.data]);
 
   const handleSearch = (value) => {
-    fetchFriendListMessage(value);
-  }
+    if (value.trim() || value === '') {
+      _ws.sendService({
+        service: "friend/list",
+        data: {
+          name: value
+        }
+      });
+    }
+  };
 
   return (
     <div className="messages__friends-list">
@@ -109,16 +126,17 @@ function FriendsList({ onFriendSelected }) {
         </div>
       ) : peopleList.length > 0 ? (
         <ul className="messages__friends-ul">
-          {peopleList.map((friend) => (
+          {peopleList.map((friend) =>
             <FriendItem
               key={friend.uid}
               uid={friend.uid}
               name={friend.name}
               avatar={friend.avatar}
               isActive={ws.data?.uid === friend.uid}
+              unreadMessages={friend.unread_messages}
               onClick={() => onFriendSelected && onFriendSelected(friend)}
             />
-          ))}
+          )}
         </ul>
       ) : (
         <div className="messages__friends--empty">

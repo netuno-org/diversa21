@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Typography, Avatar, Empty } from "antd";
+import { Form, Input, Button, Typography, Avatar, Empty, Popconfirm } from "antd";
 import { SendOutlined, CloseOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
@@ -14,7 +14,7 @@ import "./index.less";
 const { TextArea } = Input;
 const { Text } = Typography;
 
-function Chat({ friend }) {
+function Chat({ friend, onClose }) {
   const [form] = Form.useForm();
   const [messageSubmitting, setMessageSubmitting] = useState(false);
   const [historyReload, setHistoryReload] = useState(0);
@@ -91,11 +91,19 @@ function Chat({ friend }) {
           </div>
         </div>
 
-        <Button
-          type="text"
-          icon={<CloseOutlined />}
-          className="messages__chat-close-btn"
-        />
+        <Popconfirm
+          title="Deseja fechar conversa?"
+          onConfirm={onClose}
+          okText="Sim"
+          cancelText="Não"
+        >
+          <Button
+            type="text"
+            icon={<CloseOutlined />}
+            className="messages__chat-close-btn"
+            aria-label="Fechar conversa"
+          />
+        </Popconfirm>
 
       </div>
 

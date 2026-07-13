@@ -106,7 +106,7 @@ function Messages() {
         <Card className="messages__card" variant="borderless">
           <Row className="messages__row">
             <Col xs={24} md={8} className="messages__sidebar">
-              <FriendsList onFriendSelected={onFriendSelected} />
+              <FriendsList friend={chatFriend} onFriendSelected={onFriendSelected} />
             </Col>
             <Col xs={24} md={16} className="messages__chat-area">
               <Chat

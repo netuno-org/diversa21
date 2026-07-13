@@ -108,7 +108,10 @@
   &-textarea {
     padding: 0 !important;
 
-    &:focus {
+    &:focus,
+    &:focus-visible {
+      border-color: transparent !important;
+      outline: none !important;
       box-shadow: none !important;
     }
 

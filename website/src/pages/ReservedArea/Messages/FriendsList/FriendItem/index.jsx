@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Typography } from "antd";
+import { Avatar, Typography, Badge, Col } from "antd";
 import _service from "@netuno/service-client";
 
 import "./index.less";
 
 const { Text } = Typography;
 
-function FriendItem({ uid, name, avatar, isActive, onClick }) {
+function FriendItem({ uid, name, avatar, isActive, onClick, unreadMessages }) {
 
   const avatarSrc = avatar
     ? _service.url(`/asset?uid=${uid}&type=avatar&entity=people&${new Date().getTime()}`)
@@ -22,13 +22,24 @@ function FriendItem({ uid, name, avatar, isActive, onClick }) {
       </div>
 
       <div className="messages__friend-item-info">
-        <Text strong className="messages__friend-item-name">
-          {name}
-        </Text>
+
+        <div className="messages__friend-item__count">
+          <Text strong className="messages__friend-item-name">
+            {name}
+          </Text>
+          <Col flex="50px">
+            {unreadMessages > 0 &&
+              <div>
+                <Badge color="green" count={unreadMessages} />
+              </div>
+            }
+          </Col>
+        </div>
 
         <Text className="messages__friend-item-preview">
           Toque para ver as mensagens...
         </Text>
+
       </div>
     </li>
   );
