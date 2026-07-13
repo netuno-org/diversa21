@@ -106,7 +106,9 @@ function Message({ friend, data, onDelete, onEdit }) {
 
           {!isIncoming && readTime && (
             <div className="messages__message-meta">
-              <span className="messages__message-read">Lida às {readTime}</span>
+              <Text type="secondary" className="messages__message-read">
+                Lida às {readTime}
+              </Text>
             </div>
           )}
         </div>
