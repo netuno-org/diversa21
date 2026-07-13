@@ -45,6 +45,35 @@ if (totalMessagesMarkedAsRead > 0 || cleared > 0) {
   );
 }
 
+if (totalMessagesMarkedAsRead > 0) {
+  const dbMessageRead = _db.queryFirst(`
+    SELECT read_at FROM messages
+    WHERE originator_id = ?::int AND recipient_id = ?::int AND read_at IS NOT NULL
+    ORDER BY read_at DESC
+    LIMIT 1
+  `, dbPeopleFriend.getInt("id"), dbPeopleLogged.getInt("id"));
+
+  if (dbMessageRead) {
+    people.wsSendAsService(
+      dbPeopleFriend,
+      _val.map()
+        .set("method", "POST")
+        .set("service", "message/read")
+        .set(
+          "data",
+          _val.map()
+            .set("with", dbPeopleLogged.getString("uid"))
+        )
+        .set(
+          "content",
+          _val.map()
+            .set("all", true)
+            .set("read_at", dbMessageRead.getString("read_at"))
+        )
+    );
+  }
+}
+
 const dbMessagesPage = _db.form("messages")
   .where(
     _db.where()

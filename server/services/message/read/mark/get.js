@@ -18,6 +18,24 @@ notifications.clearMessageNotification(
   dbPeopleLogged.getInt("id")
 );
 
+const dbMessageUpdated = message.getByUID(_req.getString("uid"));
+
+people.wsSendAsService(
+  dbPeopleFrom,
+  _val.map()
+    .set("method", "POST")
+    .set("service", "message/read")
+    .set(
+      "data",
+      _val.map()
+        .set("with", dbPeopleLogged.getString("uid"))
+    )
+    .set(
+      "content",
+      message.toData(dbPeopleFrom, dbPeopleLogged, dbMessageUpdated)
+    )
+);
+
 people.wsSendAsService(
   dbPeopleLogged,
   _val.map()

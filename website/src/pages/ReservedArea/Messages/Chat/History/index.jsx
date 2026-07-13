@@ -52,7 +52,6 @@ function History({ friend, reload }) {
         }
       }
     });
-
     const listenerDeleteMessageRef = _ws.addListener({
       method: "DELETE",
       service: "message/delete",
@@ -69,6 +68,33 @@ function History({ friend, reload }) {
       }
     });
 
+    const listenerMessageReadRef = _ws.addListener({
+      method: "POST",
+      service: "message/read",
+      success: ({ data, content }) => {
+        if (data?.with !== friend.uid || !content) {
+          return;
+        }
+
+        if (content.uid) {
+          setMessages((prev) =>
+            prev.map((m) => (m.uid === content.uid ? { ...m, read_at: content.read_at } : m))
+          );
+          return;
+        }
+
+        if (content.all && content.read_at) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.to === friend.uid && !m.read_at
+                ? { ...m, read_at: content.read_at }
+                : m
+            )
+          );
+        }
+      }
+    });
+
     onLoad();
 
     return () => {
@@ -76,6 +102,7 @@ function History({ friend, reload }) {
       _ws.removeListener(listenerNewMessageRef);
       _ws.removeListener(listenerDeleteMessageRef);
       _ws.removeListener(listenerEditMessageRef);
+      _ws.removeListener(listenerMessageReadRef);
     }
   }, [friend]);
 

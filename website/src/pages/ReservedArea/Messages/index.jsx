@@ -32,7 +32,7 @@ function Messages() {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-
+  
   useEffect(() => {
     setOpenChatFriendUid(chatFriend?.uid);
     return () => setOpenChatFriendUid(null);
