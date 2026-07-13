@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch, Result } from 'antd';
+import { ArrowLeftOutlined } from "@ant-design/icons";
+
 import { useNavigate } from 'react-router-dom';
 import _service from '@netuno/service-client';
 
@@ -190,16 +192,25 @@ export default function InstitutionForm({
       <section className="reserved-area">
         <div className="reserved-area__unauthorized">
           <Result
-            status="403"
             title="Não Autorizado"
             subTitle={
               isEditMode
-                ? "Não tens permissão para editar esta instituição."
-                : "Não tens permissão para criar instituições."
+                ? "Não tem permissão para editar esta instituição."
+                : "Não tem permissão para criar instituições."
+            }
+            icon={
+              // test
+              <img
+                src="/images/logo.png"
+                alt="Não Autorizado"
+                style={{ width: 250, margin: '0 auto' }}
+              />
             }
             extra={
               <Button
                 type="primary"
+                size="large"
+                icon={<ArrowLeftOutlined />}
                 onClick={() =>
                   navigate(isEditMode && slug ? `/institutions/${slug}` : '/institutions')
                 }

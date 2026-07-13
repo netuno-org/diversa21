@@ -122,7 +122,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
       {!loadingPosts && posts.length === 0 && (
         <div style={{ padding: '40px 20px', background: '#fff', borderRadius: '8px', border: '1px solid #f0f0f0' }}>
           <Empty
-            description={parent ? "Ainda não existem comentários." : "Esta publicação não foi encontrada ou foi apagada."}
+            description={parent ? "Ainda não existem comentários." : "Esta postagem não foi encontrada ou foi apagada."}
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
         </div>

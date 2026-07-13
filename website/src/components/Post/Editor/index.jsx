@@ -111,9 +111,9 @@ function Editor({
       onFinish: onCreatedPost
     },
     post: {
-      submitButtonText: "Publicar",
+      submitButtonText: "Postar",
       showCancelButton: false,
-      title: "Publicação",
+      title: "Postagem",
       onFinish: onCreatedPost
     },
     editPost: {

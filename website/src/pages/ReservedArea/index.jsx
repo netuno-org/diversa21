@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import _auth from "@netuno/auth-client";
 import { Button, Result, Spin } from "antd";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 import usePeople from "../../common/usePeople.js";
 import useWS from "../../common/useWS.js";
@@ -154,11 +155,23 @@ function ReservedArea() {
     <section className="reserved-area">
       <div className="reserved-area__unauthorized">
         <Result
-          status="403"
           title="Não Autorizado"
           subTitle="É necessário realizar a autenticação para aceder a área reservada."
+          icon={
+            // test
+            <img
+              src="/images/logo.png"
+              alt="Não Autorizado"
+              style={{ width: 250, margin: '0 auto' }}
+            />
+          }
           extra={
-            <Button type="primary" onClick={() => navigate("/login")}>
+            <Button
+              type="primary"
+              size="large"
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate("/login")}
+            >
               Ir para o Login
             </Button>
           }
