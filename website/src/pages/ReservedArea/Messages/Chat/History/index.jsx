@@ -54,11 +54,29 @@ function History({ friend, reload }) {
       }
     });
 
+    const listenerDeleteMessageRef = _ws.addListener({
+      method: "DELETE",
+      service: "message/delete",
+      success: ({ data }) => {
+        setMessages((prev) => prev.filter((m) => m.uid !== data.uid));
+      }
+    });
+
+    const listenerEditMessageRef = _ws.addListener({
+      method: "PUT",
+      service: "message/edit",
+      success: ({ content }) => {
+        setMessages((prev) => prev.map((m) => m.uid === content.uid ? content : m));
+      }
+    });
+
     onLoad();
 
     return () => {
       _ws.removeListener(listenerMessageRef);
       _ws.removeListener(listenerNewMessageRef);
+      _ws.removeListener(listenerDeleteMessageRef);
+      _ws.removeListener(listenerEditMessageRef);
     }
   }, [friend]);
 
@@ -89,6 +107,22 @@ function History({ friend, reload }) {
     });
   };
 
+  const handleDeleteMessage = (uid) => {
+    _ws.sendService({
+      method: "DELETE",
+      service: "message",
+      data: { uid }
+    });
+  };
+
+  const handleEditMessage = (uid, text) => {
+    _ws.sendService({
+      method: "PUT",
+      service: "message",
+      data: { uid, message: text }
+    });
+  };
+
   return (
     <div className="messages__history-wrapper" ref={refList}>
       {loading && (
@@ -100,7 +134,13 @@ function History({ friend, reload }) {
       {!loading && (
         <ul className="messages__history-list">
           {messages.map((message) => (
-            <Message key={message.uid} friend={friend} data={message} />
+            <Message
+              key={message.uid}
+              friend={friend}
+              data={message}
+              onDelete={handleDeleteMessage}
+              onEdit={handleEditMessage}
+            />
           ))}
         </ul>
       )}

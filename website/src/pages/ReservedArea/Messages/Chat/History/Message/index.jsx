@@ -1,5 +1,6 @@
-import React from "react";
-import { Avatar, Typography } from "antd";
+import React, { useState } from "react";
+import { Avatar, Typography, Dropdown, Button, Input, Popconfirm } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import _service from "@netuno/service-client";
 
 import "./index.less";
@@ -8,7 +9,11 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-function Message({ friend, data }) {
+function Message({ friend, data, onDelete, onEdit }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [editText, setEditText] = useState(data.message || data.text || "");
+
   const messageText = data.message || data.text;
   const isIncoming = friend.uid === data.from;
 
@@ -18,6 +23,29 @@ function Message({ friend, data }) {
   const readTime = data.read_at
     ? dayjs(data.read_at).format("HH:mm")
     : "";
+
+  const handleSaveEdit = () => {
+    if (editText.trim() !== "" && editText !== messageText) {
+      onEdit && onEdit(data.uid, editText);
+    }
+    setIsEditing(false);
+  };
+
+  const menuItems = [
+    {
+      key: 'edit',
+      label: 'Editar',
+      icon: <EditOutlined />,
+      onClick: () => setIsEditing(true)
+    },
+    {
+      key: 'delete',
+      label: 'Eliminar',
+      icon: <DeleteOutlined />,
+      danger: true,
+      onClick: () => setShowDeleteConfirm(true)
+    }
+  ];
 
   return (
     <li className={`messages__message ${isIncoming ? 'messages__message--incoming' : 'messages__message--outgoing'}`}>
@@ -38,9 +66,43 @@ function Message({ friend, data }) {
         )}
 
         <div className="messages__message-content">
-          <div className="messages__message-bubble">
-            <Text className="messages__message-text">{messageText}</Text>
-          </div>
+          {isEditing ? (
+            <div className="messages__message-edit-wrapper">
+              <Input.TextArea
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                autoSize={{ minRows: 1, maxRows: 3 }}
+                className="messages__message-edit-input"
+              />
+              <div className="messages__message-edit-buttons">
+                <Button size="small" type="primary" onClick={handleSaveEdit} className="messages__message-edit-btn-save">
+                  Salvar
+                </Button>
+                <Button size="small" onClick={() => setIsEditing(false)} className="messages__message-edit-btn-cancel">
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Popconfirm
+              title="Eliminar mensagem?"
+              open={showDeleteConfirm}
+              onConfirm={() => {
+                onDelete && onDelete(data.uid);
+                setShowDeleteConfirm(false);
+              }}
+              onCancel={() => setShowDeleteConfirm(false)}
+              okText="Sim"
+              cancelText="Não"
+              placement="left"
+            >
+              <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight" disabled={isIncoming}>
+                <div className="messages__message-bubble" style={{ cursor: isIncoming ? 'default' : 'pointer' }}>
+                  <Text className="messages__message-text">{messageText}</Text>
+                </div>
+              </Dropdown>
+            </Popconfirm>
+          )}
 
           {!isIncoming && readTime && (
             <div className="messages__message-meta">
