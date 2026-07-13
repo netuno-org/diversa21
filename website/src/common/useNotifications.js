@@ -6,6 +6,12 @@ import useWS from "./useWS.js";
 
 import dayjs from 'dayjs';
 
+let openChatFriendUid = null;
+
+export function setOpenChatFriendUid(uid) {
+  openChatFriendUid = uid || null;
+}
+
 function useNotifications(loggedUser) {
   const MOCK_NOTIFICATIONS = loggedUser.canChangeUserGroup() ?
     [
@@ -108,8 +114,52 @@ function useNotifications(loggedUser) {
         success: (data) => {
           const newNotification = data.content;
           processNotification(newNotification);
-          setNotifications(prev => [...prev, newNotification]);
-          setCount((prev) => prev + 1);
+
+          if (
+            newNotification.type === 'message' &&
+            openChatFriendUid &&
+            newNotification.originator?.uid === openChatFriendUid
+          ) {
+            return;
+          }
+
+          setNotifications(prev => {
+            if (newNotification.type === 'message') {
+              const alreadyExists = prev.some(n =>
+                n.type === 'message' && n.originator?.uid === newNotification.originator?.uid
+              );
+              if (!alreadyExists) {
+                setCount((c) => c + 1);
+              }
+              return [
+                newNotification,
+                ...prev.filter(n =>
+                  !(n.type === 'message' && n.originator?.uid === newNotification.originator?.uid)
+                )
+              ];
+            }
+            setCount((c) => c + 1);
+            return [newNotification, ...prev];
+          });
+        }
+      });
+      const listenerNotificationRead = _ws.addListener({
+        method: "POST",
+        service: "notification/read",
+        success: (data) => {
+          const content = data.content;
+          if (content?.type !== 'message') {
+            return;
+          }
+          if (content.all) {
+            setNotifications(prev => prev.filter(n => n.type !== 'message'));
+            return;
+          }
+          if (content.originator?.uid) {
+            setNotifications(prev => prev.filter(n =>
+              !(n.type === 'message' && n.originator?.uid === content.originator.uid)
+            ));
+          }
         }
       });
       // const listenerMessageReadMark = _ws.addListener({
@@ -122,6 +172,7 @@ function useNotifications(loggedUser) {
         _ws.removeListener(listenerNotificationCount);
         _ws.removeListener(listenerNotification);
         _ws.removeListener(listenerNewNotification);
+        _ws.removeListener(listenerNotificationRead);
         // _ws.removeListener(listenerMessageReadMark);
       }
     }
@@ -142,8 +193,21 @@ function useNotifications(loggedUser) {
     n.time = dayjs(deatTimeUrl).fromNow();
   }
 
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  const markAllAsRead = (type) => {
+    if (type === 'message') {
+      _service({
+        url: 'notification/message/clear',
+        method: 'POST'
+      });
+      setNotifications(prev => prev.filter(n => n.type !== 'message'));
+      return;
+    }
+    setNotifications(prev => prev.map(n => {
+      if (type && n.type !== type) {
+        return n;
+      }
+      return { ...n, read: true };
+    }));
   };
 
   const markAsRead = (id) => {
@@ -151,6 +215,23 @@ function useNotifications(loggedUser) {
   };
 
   const onNotificationClick = (item, navigate) => {
+    if (item.type === 'message') {
+      setNotifications(prev => prev.filter(n =>
+        !(n.type === 'message' && n.originator?.uid === item.originator?.uid)
+      ));
+      navigate('/messages', {
+        state: {
+          autoOpenFriend: {
+            uid: item.originator?.uid,
+            name: item.originator?.name,
+            username: item.username || item.originator?.username,
+            avatar: item.originator?.avatar
+          }
+        }
+      });
+      return;
+    }
+
     markAsRead(item.id);
 
     if (["post", "comment", "like"].some(k => item.type.includes(k))) {
@@ -178,17 +259,6 @@ function useNotifications(loggedUser) {
 
     } else if (item.type === 'friend-request' || item.type === 'friend-request-accepted') {
       navigate(`/u/${item.username}`);
-    } else if (item.type === 'message') {
-      navigate('/messages', {
-        state:
-        {
-          autoOpenFriend: {
-            uid: item.senderUid,
-            name: item.title,
-            username: item.username
-          }
-        }
-      });
     }
   };
 

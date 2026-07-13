@@ -55,6 +55,11 @@ const types = [
     uid: "98091421-3845-4a0b-a933-54c1f67d87f5",
     name: "Comentário em seu post",
     code: "my-post-comment"
+  },
+  {
+    uid: "7f3a9c2e-1d4b-4e8a-9f6c-2b5d8e1a4c7f",
+    name: "Mensagem",
+    code: "message"
   }
 ];
 

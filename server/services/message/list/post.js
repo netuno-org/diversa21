@@ -2,6 +2,7 @@ import {_db, _val, _out, _req} from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import message from "#core/lib/message.js";
+import notifications, { notificationTypes } from "#core/lib/notifications.js";
 
 const dbPeopleLogged = people.getLogged();
 const dbPeopleFriend = people.getByUid(_req.getString("with"));
@@ -11,7 +12,12 @@ const totalMessagesMarkedAsRead = _db.execute(`
   WHERE read_at IS NULL AND originator_id = ?::int AND recipient_id = ?::int
 `, dbPeopleFriend.getInt("id"), dbPeopleLogged.getInt("id"));
 
-if (totalMessagesMarkedAsRead > 0) {
+const cleared = notifications.clearMessageNotification(
+  dbPeopleFriend.getInt("id"),
+  dbPeopleLogged.getInt("id")
+);
+
+if (totalMessagesMarkedAsRead > 0 || cleared > 0) {
   people.wsSendService(
     dbPeopleLogged,
     _val.map()
@@ -21,6 +27,21 @@ if (totalMessagesMarkedAsRead > 0) {
     dbPeopleLogged,
     _val.map()
       .set("service", "friend/list")
+  );
+  people.wsSendAsService(
+    dbPeopleLogged,
+    _val.map()
+      .set("method", "POST")
+      .set("service", "notification/read")
+      .set(
+        "content",
+        _val.map()
+          .set("type", notificationTypes.MESSAGE)
+          .set("originator",
+            _val.map()
+              .set("uid", dbPeopleFriend.getString("uid"))
+          )
+      )
   );
 }
 

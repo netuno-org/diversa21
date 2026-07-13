@@ -6,6 +6,7 @@ import { LuMessageSquarePlus } from "react-icons/lu";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople";
+import { setOpenChatFriendUid } from "../../../common/useNotifications.js";
 
 import Chat from "./Chat";
 import FriendsList from "./FriendsList/index.jsx";
@@ -31,6 +32,11 @@ function Messages() {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    setOpenChatFriendUid(chatFriend?.uid);
+    return () => setOpenChatFriendUid(null);
+  }, [chatFriend?.uid]);
 
   const fetchPeopleForModal = (term = "") => {
     setFetchingPeople(true);
