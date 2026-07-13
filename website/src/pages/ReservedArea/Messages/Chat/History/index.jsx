@@ -14,12 +14,11 @@ function History({ friend, reload }) {
   const refList = useRef(null);
 
   useEffect(() => {
+    setLoading(true);
+    setMessages([]);
     const listenerMessageRef = _ws.addListener({
       method: "POST",
       service: "message/list",
-      start: () => {
-        setLoading(true);
-      },
       success: ({ content }) => {
         setMessages(content);
       },
