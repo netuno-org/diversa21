@@ -82,7 +82,7 @@ function HeaderMessages() {
         )}
       </div>
       <div className="header-messages__footer">
-        <Button type="link" onClick={() => { setPopoverOpen(false); navigate('/messages'); }} block>
+        <Button type="link" onClick={() => { setPopoverOpen(false); navigate('/notifications'); }} block>
           Ver todas
         </Button>
       </div>
