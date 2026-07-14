@@ -92,11 +92,11 @@ delete from people
 ;;
 delete from notification_type
 ;;
-delete from notification_settings
-;;
 delete from notification_opt_out
 ;;
 delete from notification
+;;
+delete from messages
 ;;
 delete from institution
 ;;

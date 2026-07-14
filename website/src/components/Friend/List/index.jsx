@@ -63,7 +63,7 @@ function FriendList({ userUid, title }) {
         {friendsList.map((friend) => (
           <Card key={friend.uid} className="friend-list__card" hoverable>
             <Link to={`/u/${friend.username}`} className="friend-list__link">
-              <UserProfileDisplay user={friend} avatarStyle={{ width: '60px', height: '60px' }} />
+              <UserProfileDisplay user={friend} avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }} />
             </Link>
           </Card>
         ))}

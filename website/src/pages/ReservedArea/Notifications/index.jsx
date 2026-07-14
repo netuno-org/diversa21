@@ -34,7 +34,7 @@ function Notifications() {
   };
 
   const filteredNotifications = activeTab === 'unread'
-    ? notifications.filter(n => !n.read)
+    ? notifications.filter((n) => !n.read)
     : notifications;
 
   return (
@@ -50,7 +50,16 @@ function Notifications() {
           className="notifications-page__tabs"
           items={[
             { key: 'all', label: 'Todas' },
-            { key: 'unread', label: <Space size="small">Não Lidas<Tag color="#8A6AA2" variant='solid' style={{ borderRadius: '32px' }}>{unreadCount}</Tag></Space> }
+            {
+              key: 'unread', label: (
+                <Space size="small">
+                  Não Lidas
+                  <Tag color="#8A6AA2" variant="solid" style={{ borderRadius: '32px' }}>
+                    {unreadCount}
+                  </Tag>
+                </Space>
+              ),
+            },
           ]}
         />
 
@@ -86,7 +95,9 @@ function Notifications() {
                   <div className="notifications-page__item-content">
                     <div className="notifications-page__item-title">
                       <Text strong={!item.read}>{item.title}</Text>
-                      <Text type="secondary" className="notifications-page__item-time">{item.time}</Text>
+                      {item.time && (
+                        <Text type="secondary" className="notifications-page__item-time">{item.time}</Text>
+                      )}
                     </div>
                     <div className="notifications-page__item-description">
                       <Text type="secondary">{item.desc}</Text>

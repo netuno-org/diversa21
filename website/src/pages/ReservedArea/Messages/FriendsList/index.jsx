@@ -49,42 +49,36 @@ function FriendsList({ onFriendSelected, friend }) {
       method: "POST",
       service: "message/new",
       success: ({ data }) => {
-        setPeopleList((prev) => {
+        setPeopleList((prev) => prev.map((item) => {
           // Aqui comparamos e não alteramos o contador se não for da pessoa certa
-          return prev.map((item) => {
-            if (item.uid !== data.with) {
-              return item;
-            }
-            // Se for da pessoa certa e a janela está aberta, zeramos o contador
-            if (selectedFriendUidRef.current === data.with) {
-              return {
-                ...item,
-                unread_messages: 0
-              };
-            }
-            // É da pessoa correta e a janela está fechada, então incrementamos +1
-            return {
-              ...item,
-              unread_messages: (item.unread_messages || 0) + 1
-            };
-          });
-        });
+          if (item.uid !== data.with) {
+            return item;
+          }
+          // Se for da pessoa certa e a janela está aberta, zeramos o contador
+          if (selectedFriendUidRef.current === data.with) {
+            return { ...item, unread_messages: 0 };
+          }
+          // É da pessoa correta e a janela está fechada, então incrementamos +1
+          return {
+            ...item,
+            unread_messages: (item.unread_messages || 0) + 1
+          };
+        }));
       }
     });
+
     const listenerMessageReadMark = _ws.addListener({
       service: "message/read/mark",
       success: ({ content }) => {
-        setPeopleList((prev) => {
-          return prev.map((item) => {
-            if (item.uid === content.from) {
-              return {
-                ...item,
-                unread_messages: Math.max(0, (item.unread_messages || 0) - 1)
-              };
-            }
-            return item;
-          });
-        });
+        setPeopleList((prev) => prev.map((item) => {
+          if (item.uid === content.from) {
+            return {
+              ...item,
+              unread_messages: Math.max(0, (item.unread_messages || 0) - 1)
+            };
+          }
+          return item;
+        }));
       }
     });
 
@@ -126,17 +120,17 @@ function FriendsList({ onFriendSelected, friend }) {
         </div>
       ) : peopleList.length > 0 ? (
         <ul className="messages__friends-ul">
-          {peopleList.map((friend) =>
+          {peopleList.map((f) => (
             <FriendItem
-              key={friend.uid}
-              uid={friend.uid}
-              name={friend.name}
-              avatar={friend.avatar}
-              isActive={ws.data?.uid === friend.uid}
-              unreadMessages={friend.unread_messages}
-              onClick={() => onFriendSelected && onFriendSelected(friend)}
+              key={f.uid}
+              uid={f.uid}
+              name={f.name}
+              avatar={f.avatar}
+              isActive={selectedFriendUidRef.current === f.uid}
+              unreadMessages={f.unread_messages}
+              onClick={() => onFriendSelected && onFriendSelected(f)}
             />
-          )}
+          ))}
         </ul>
       ) : (
         <div className="messages__friends--empty">

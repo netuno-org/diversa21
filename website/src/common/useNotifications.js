@@ -70,6 +70,7 @@ function useNotifications(loggedUser) {
     setCount(0);
     if (!ws.data) {
       setConnected(NO_DATA);
+      return;
     }
     if (ws.data?.connected) {
       setConnected(CONNECTED);
@@ -79,119 +80,125 @@ function useNotifications(loggedUser) {
   }, [ws.data]);
 
   useEffect(() => {
-    if (connected === CONNECTED) {
-      const listenerNotificationCount = _ws.addListener({
-        method: "GET",
-        service: 'notification/list',
-        success: (data) => {
-          setCount(data.content.data.pagination.totalCount);
-        }
-      });
-      const listenerNotification = _ws.addListener({
-        method: "GET",
-        service: 'notification/list',
-        success: (data) => {
-          setLoading(true);
-          const items = data.content.data.items;
-          items.forEach(n => {
-            processNotification(n)
-          });
-          setNotifications(items);
-          setLoading(false);
-        }
-      });
-      _ws.sendService({
-        method: "GET",
-        service: "notification/list"
-      });
-      // _ws.sendService({
-      //   method: "GET",
-      //   service: "notification"
-      // });
-      const listenerNewNotification = _ws.addListener({
-        method: "POST",
-        service: "notification/new",
-        success: (data) => {
-          const newNotification = data.content;
-          processNotification(newNotification);
-
-          if (
-            newNotification.type === 'message' &&
-            openChatFriendUid &&
-            newNotification.originator?.uid === openChatFriendUid
-          ) {
-            return;
-          }
-
-          setNotifications(prev => {
-            if (newNotification.type === 'message') {
-              const alreadyExists = prev.some(n =>
-                n.type === 'message' && n.originator?.uid === newNotification.originator?.uid
-              );
-              if (!alreadyExists) {
-                setCount((c) => c + 1);
-              }
-              return [
-                newNotification,
-                ...prev.filter(n =>
-                  !(n.type === 'message' && n.originator?.uid === newNotification.originator?.uid)
-                )
-              ];
-            }
-            setCount((c) => c + 1);
-            return [newNotification, ...prev];
-          });
-        }
-      });
-      const listenerNotificationRead = _ws.addListener({
-        method: "POST",
-        service: "notification/read",
-        success: (data) => {
-          const content = data.content;
-          if (content?.type !== 'message') {
-            return;
-          }
-          if (content.all) {
-            setNotifications(prev => prev.filter(n => n.type !== 'message'));
-            return;
-          }
-          if (content.originator?.uid) {
-            setNotifications(prev => prev.filter(n =>
-              !(n.type === 'message' && n.originator?.uid === content.originator.uid)
-            ));
-          }
-        }
-      });
-      // const listenerMessageReadMark = _ws.addListener({
-      //   service: "message/read/mark",
-      //   success: () => {
-      //     setUnreadCount((prev) => prev - 1);
-      //   }
-      // });
-      return () => {
-        _ws.removeListener(listenerNotificationCount);
-        _ws.removeListener(listenerNotification);
-        _ws.removeListener(listenerNewNotification);
-        _ws.removeListener(listenerNotificationRead);
-        // _ws.removeListener(listenerMessageReadMark);
-      }
+    if (connected !== CONNECTED) {
+      return;
     }
+
+    const listenerNotification = _ws.addListener({
+      method: "GET",
+      service: 'notification/list',
+      start: () => setLoading(true),
+      success: (data) => {
+        const items = data.content.data.items || [];
+        items.forEach(n => processNotification(n));
+        setNotifications(items);
+        setCount(data.content.data.pagination?.totalCount ?? items.length);
+      },
+      end: () => setLoading(false)
+    });
+
+    _ws.sendService({
+      method: "GET",
+      service: "notification/list"
+    });
+
+    const listenerNewNotification = _ws.addListener({
+      method: "POST",
+      service: "notification/new",
+      success: (data) => {
+        const newNotification = data.content;
+        processNotification(newNotification);
+
+        // Chat aberto com o remetente: ignora a notificação.
+        if (
+          newNotification.type === 'message' &&
+          openChatFriendUid &&
+          newNotification.originator?.uid === openChatFriendUid
+        ) {
+          return;
+        }
+
+        setNotifications(prev => {
+          if (newNotification.type === 'message') {
+            const existing = prev.find(n =>
+              n.type === 'message' && n.originator?.uid === newNotification.originator?.uid
+            );
+            const previousCount = existing?.messageCount || 1;
+            newNotification.messageCount = existing ? previousCount + 1 : 1;
+            newNotification.desc = buildMessageDesc(newNotification);
+
+            if (!existing) {
+              setCount((c) => c + 1);
+            }
+            return [
+              newNotification,
+              ...prev.filter(n =>
+                !(n.type === 'message' && n.originator?.uid === newNotification.originator?.uid)
+              )
+            ];
+          }
+          setCount((c) => c + 1);
+          return [newNotification, ...prev];
+        });
+      }
+    });
+
+    const listenerNotificationRead = _ws.addListener({
+      method: "POST",
+      service: "notification/read",
+      success: (data) => {
+        const content = data.content;
+        if (content?.type !== 'message') {
+          return;
+        }
+        if (content.all) {
+          setNotifications(prev => prev.filter(n => n.type !== 'message'));
+          return;
+        }
+        if (content.originator?.uid) {
+          setNotifications(prev => prev.filter(n =>
+            !(n.type === 'message' && n.originator?.uid === content.originator.uid)
+          ));
+        }
+      }
+    });
+
+    return () => {
+      _ws.removeListener(listenerNotification);
+      _ws.removeListener(listenerNewNotification);
+      _ws.removeListener(listenerNotificationRead);
+    };
   }, [connected]);
+
+  const buildMessageDesc = (n) => {
+    const username = n.originator?.username ? `@${n.originator.username}` : (n.originator?.name || 'Alguém');
+    const c = n.messageCount || 1;
+    if (c === 1) {
+      return `${username} enviou-te uma nova mensagem.`;
+    }
+    return `${username} enviou-te ${c} mensagens.`;
+  };
 
   const processNotification = (n) => {
     n.id = n.uid;
-    n.desc = n.content;
-    n.username = n.originator.username;
-    n.avatar = Boolean(n.originator.avatar);
+    n.username = n.originator?.username;
     n.read = Boolean(n.read_at);
 
-    if (["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
+    if (n.type === 'message') {
+      // Se o servidor mandar um contador, respeitamos; senão começamos em 1.
+      n.messageCount = n.messageCount || n.extra?.count || 1;
+      n.desc = buildMessageDesc(n);
+    } else {
+      n.desc = n.content;
+    }
+
+    if (n.type && ["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
       n.postId = n.extra.postUid;
     }
 
-    const deatTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
-    n.time = dayjs(deatTimeUrl).fromNow();
-  }
+    const dateTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
+    n.time = dayjs(dateTimeUrl).fromNow();
+  };
 
   const markAllAsRead = (type) => {
     if (type === 'message') {
@@ -234,7 +241,7 @@ function useNotifications(loggedUser) {
 
     markAsRead(item.id);
 
-    if (["post", "comment", "like"].some(k => item.type.includes(k))) {
+    if (item.type && ["post", "comment", "like"].some(k => item.type.includes(k))) {
       if (!item.postId) {
         return navigate('/posts');
       }

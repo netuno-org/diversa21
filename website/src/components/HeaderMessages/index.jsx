@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Popover, Typography, Avatar, Button, Spin, Empty } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
@@ -20,7 +20,6 @@ function HeaderMessages() {
   const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
 
   const messageNotifications = notifications.filter(n => n.type === 'message');
-
   const unreadCount = messageNotifications.filter(n => !n.read).length;
 
   const handleMarkAll = (e) => {
