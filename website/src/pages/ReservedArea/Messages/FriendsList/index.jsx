@@ -44,7 +44,19 @@ function FriendsList({ onFriendSelected, friend }) {
     _ws.sendService({
       service: "friend/list"
     });
-
+    const listenerStatusChanged = _ws.addListener({
+      service: "friend/status/changed",
+      success: ({content}) => {
+        setPeopleList((prev) =>
+          prev.map((item) => {
+            if (item.uid === content.uid) {
+              return {...item, ...content}
+            }
+            return item;
+          })
+        )
+      }
+    });
     const listenerNewMessage = _ws.addListener({
       method: "POST",
       service: "message/new",
@@ -84,7 +96,7 @@ function FriendsList({ onFriendSelected, friend }) {
 
     return () => {
       _ws.removeListener(listenerList);
-      // _ws.removeListener(listenerStatusChanged);
+      _ws.removeListener(listenerStatusChanged);
       _ws.removeListener(listenerNewMessage);
       _ws.removeListener(listenerMessageReadMark);
     }
@@ -125,6 +137,7 @@ function FriendsList({ onFriendSelected, friend }) {
               key={f.uid}
               uid={f.uid}
               name={f.name}
+              status={f.online}
               avatar={f.avatar}
               isActive={selectedFriendUidRef.current === f.uid}
               unreadMessages={f.unread_messages}
