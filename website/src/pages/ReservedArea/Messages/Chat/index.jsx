@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Typography, Avatar, Empty, Popconfirm } from "antd";
-import { SendOutlined, CloseOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Typography, Avatar, Empty, Popconfirm, Grid } from "antd";
+import { SendOutlined, CloseOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
 
@@ -13,11 +13,15 @@ import "./index.less";
 
 const { TextArea } = Input;
 const { Text } = Typography;
+const { useBreakpoint } = Grid;
 
 function Chat({ friend, onClose }) {
   const [form] = Form.useForm();
   const [messageSubmitting, setMessageSubmitting] = useState(false);
   const [historyReload, setHistoryReload] = useState(0);
+
+  const screens = useBreakpoint();
+  const isMobile = screens.md === false;
 
   useEffect(() => {
     setHistoryReload(0);
@@ -77,9 +81,18 @@ function Chat({ friend, onClose }) {
     <div className="messages__chat">
       <div className="messages__chat-header">
         <div className="messages__chat-header-user">
+          {isMobile && (
+            <Button
+              type="text"
+              icon={<ArrowLeftOutlined />}
+              onClick={onClose}
+              className="messages__chat-back-btn"
+              style={{ marginRight: 8, padding: '4px 8px' }}
+            />
+          )}
           <Avatar
             src={friend.avatar
-              ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&${new Date().getTime()}`)
+              ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&t=${new Date().getTime()}`)
               : '/images/profile-default.png'}
             size="large"
             shape="square"
@@ -91,20 +104,21 @@ function Chat({ friend, onClose }) {
           </div>
         </div>
 
-        <Popconfirm
-          title="Deseja fechar conversa?"
-          onConfirm={onClose}
-          okText="Sim"
-          cancelText="Não"
-        >
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            className="messages__chat-close-btn"
-            aria-label="Fechar conversa"
-          />
-        </Popconfirm>
-
+        {!isMobile && (
+          <Popconfirm
+            title="Deseja fechar conversa?"
+            onConfirm={onClose}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button
+              type="text"
+              icon={<CloseOutlined />}
+              className="messages__chat-close-btn"
+              aria-label="Fechar conversa"
+            />
+          </Popconfirm>
+        )}
       </div>
 
       <div className="messages__chat-body">
@@ -120,7 +134,7 @@ function Chat({ friend, onClose }) {
               style={{ marginBottom: 0, flex: 1 }}
             >
               <TextArea
-                placeholder={`Escrever mensagem para ${friend.name || 'o usuário'}...`}
+                placeholder={`Mensagem para ${friend.name || 'o usuário'}...`}
                 autoSize={{ minRows: 1, maxRows: 4 }}
                 variant="borderless"
                 className="messages__chat-textarea"

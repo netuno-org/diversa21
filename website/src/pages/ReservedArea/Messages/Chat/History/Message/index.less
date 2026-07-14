@@ -32,6 +32,10 @@
     display: flex;
     flex-direction: column;
     max-width: 70%;
+
+    @media (max-width: @md) {
+      max-width: 85%;
+    }
   }
 
   &-bubble {
@@ -103,6 +107,11 @@
     gap: 8px;
     width: 250px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    @media (max-width: @md) {
+      width: 100%;
+      min-width: 200px;
+    }
   }
 
   &-edit-input {

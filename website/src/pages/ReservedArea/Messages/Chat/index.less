@@ -31,6 +31,10 @@
     background-color: #ffffff;
     border-bottom: 1px solid #f0f0f0;
 
+    @media (max-width: @md) {
+      padding: 12px 16px;
+    }
+
     &-avatar {
 
       &,
@@ -49,6 +53,12 @@
       display: flex;
       flex-direction: column;
       line-height: 1.2;
+    }
+  }
+
+  &-back-btn {
+    @media (max-width: @md) {
+      margin-left: -8px;
     }
   }
 
@@ -84,6 +94,10 @@
     padding: 16px 24px;
     border-top: 1px solid #f0f0f0;
     background-color: #ffffff;
+
+    @media (max-width: @md) {
+      padding: 12px 16px;
+    }
   }
 
   &-form {
@@ -99,9 +113,17 @@
     border-radius: 32px;
     transition: all 0.3s;
 
+    .ant-input{
+      border-radius: 0;
+    }
+
     &:focus-within {
       background-color: #ffffff;
       box-shadow: 0 0 0 1px @primary-color;
+    }
+
+    @media (max-width: @md) {
+      padding: 4px 4px 4px 16px;
     }
   }
 

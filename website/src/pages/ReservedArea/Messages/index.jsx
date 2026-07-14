@@ -32,7 +32,7 @@ function Messages() {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-  
+
   useEffect(() => {
     setOpenChatFriendUid(chatFriend?.uid);
     return () => setOpenChatFriendUid(null);
@@ -75,7 +75,6 @@ function Messages() {
     if (isModalVisible) {
       fetchPeopleForModal("");
     } else {
-
       setPeopleList([]);
       setSearchTerm("");
     }
@@ -96,7 +95,7 @@ function Messages() {
   };
 
   return (
-    <section className="messages">
+    <section className={`messages ${chatFriend ? 'messages--chat-active' : ''}`}>
       <div className="messages__header">
         <ListHeaderFilters
           title="Mensagens"
