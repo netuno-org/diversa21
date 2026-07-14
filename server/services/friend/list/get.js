@@ -57,7 +57,12 @@ let sqlQuery = `
             WHERE m.originator_id = p.id 
               AND m.recipient_id = ? 
               AND m.read_at IS NULL
-        ) AS unread_messages
+        ) AS unread_messages,
+        (
+            SELECT count(id)
+            FROM people_ws_session
+            WHERE people_id = p.id
+        ) AS sessions
     FROM friend f
         INNER JOIN people p ON p.id = (
             CASE 
@@ -99,6 +104,7 @@ const friends = _val.list();
 for (const dbFriend of dbFriends) {
   const friendData = people.getData(dbFriend.getUID("friend_uid"));
   friendData.set("unread_messages", dbFriend.getInt("unread_messages"));
+  friendData.set("online", dbFriend.getInt("sessions") > 0);
 
   friends.add(friendData);
 }
