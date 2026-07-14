@@ -12,16 +12,34 @@ import "./index.less";
 function History({ friend, reload }) {
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const refList = useRef(null);
+  const prevScrollHeightRef = useRef(0);
 
   useEffect(() => {
     setLoading(true);
     setMessages([]);
+    setCurrentPage(1);
+    setHasMore(true);
+    setLoadingMore(false);
+    prevScrollHeightRef.current = 0;
     const listenerMessageRef = _ws.addListener({
       method: "POST",
       service: "message/list",
-      success: ({ content }) => {
-        setMessages(content);
+      success: ({ content, data }) => {
+        const page = data?.page || 1;
+        if (page > 1) {
+          setMessages((prev) => [...content, ...prev]);
+        } else {
+          setMessages(content);
+        }
+        if (content.length < 10) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
       },
       fail: (error) => {
         console.error(error);
@@ -32,6 +50,7 @@ function History({ friend, reload }) {
       },
       end: () => {
         setLoading(false);
+        setLoadingMore(false);
       }
     });
 
@@ -109,9 +128,33 @@ function History({ friend, reload }) {
 
   useEffect(() => {
     if (refList.current) {
-      refList.current.scrollTo({ top: refList.current.scrollHeight });
+      if (prevScrollHeightRef.current > 0) {
+        const newScrollHeight = refList.current.scrollHeight;
+        refList.current.scrollTop = newScrollHeight - prevScrollHeightRef.current;
+        prevScrollHeightRef.current = 0;
+      } else {
+        refList.current.scrollTo({ top: refList.current.scrollHeight });
+      }
     }
   }, [messages]);
+
+  const handleScroll = (e) => {
+    const { scrollTop } = e.currentTarget;
+    if (scrollTop === 0 && hasMore && !loading && !loadingMore) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      setLoadingMore(true);
+      prevScrollHeightRef.current = e.currentTarget.scrollHeight;
+      _ws.sendService({
+        method: "POST",
+        service: "message/list",
+        data: {
+          with: friend.uid,
+          page: nextPage
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     if (reload > 0) {
@@ -151,7 +194,7 @@ function History({ friend, reload }) {
   };
 
   return (
-    <div className="messages__history-wrapper" ref={refList}>
+    <div className="messages__history-wrapper" ref={refList} onScroll={handleScroll}>
       {loading && (
         <div className="messages__history-loading">
           <Spin />
@@ -160,6 +203,11 @@ function History({ friend, reload }) {
 
       {!loading && (
         <ul className="messages__history-list">
+          {loadingMore && (
+            <li className="messages__history-loading-more" style={{ textAlign: 'center', padding: '8px 0', listStyleType: 'none' }}>
+              <Spin size="small" />
+            </li>
+          )}
           {messages.map((message, index) => {
             const prevMessage = index > 0 ? messages[index - 1] : null;
             const nextMessage = index < messages.length - 1 ? messages[index + 1] : null;
