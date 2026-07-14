@@ -74,6 +74,9 @@ if (totalMessagesMarkedAsRead > 0) {
   }
 }
 
+const page = _req.getInt("page", 1);
+const size = _req.getInt("size", 10);
+
 const dbMessagesPage = _db.form("messages")
   .where(
     _db.where()
@@ -86,7 +89,7 @@ const dbMessagesPage = _db.form("messages")
           .or("recipient_id").equal(dbPeopleFriend.getInt("id"))
       )
   ).order("sent_at", "desc")
-  .page(1, 10);
+  .page(page, size);
 
 const messages = _val.list();
 
