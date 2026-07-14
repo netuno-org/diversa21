@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Spin } from "antd";
 
 import _ws from "@netuno/ws-client";
+import dayjs from "dayjs";
 
 import globalNotification from "../../../../../common/globalNotification.js";
 
@@ -159,15 +160,49 @@ function History({ friend, reload }) {
 
       {!loading && (
         <ul className="messages__history-list">
-          {messages.map((message) => (
-            <Message
-              key={message.uid}
-              friend={friend}
-              data={message}
-              onDelete={handleDeleteMessage}
-              onEdit={handleEditMessage}
-            />
-          ))}
+          {messages.map((message, index) => {
+            const prevMessage = index > 0 ? messages[index - 1] : null;
+            const nextMessage = index < messages.length - 1 ? messages[index + 1] : null;
+
+            let showTime = false;
+            if (!prevMessage) {
+              showTime = true;
+            } else {
+              const diffMinutes = dayjs(message.sent_at).diff(dayjs(prevMessage.sent_at), 'minute');
+              if (diffMinutes >= 10) {
+                showTime = true;
+              }
+            }
+
+            let showRead = false;
+            const isOutgoing = friend.uid !== message.from;
+
+            if (isOutgoing && message.read_at) {
+              if (!nextMessage) {
+                showRead = true;
+              } else {
+                const nextIsIncoming = friend.uid === nextMessage.from;
+                const nextIsUnread = !nextMessage.read_at;
+                const diffNextMinutes = dayjs(nextMessage.sent_at).diff(dayjs(message.sent_at), 'minute');
+
+                if (nextIsIncoming || nextIsUnread || diffNextMinutes >= 5) {
+                  showRead = true;
+                }
+              }
+            }
+
+            return (
+              <Message
+                key={message.uid}
+                friend={friend}
+                data={message}
+                showTime={showTime}
+                showRead={showRead}
+                onDelete={handleDeleteMessage}
+                onEdit={handleEditMessage}
+              />
+            );
+          })}
         </ul>
       )}
     </div>

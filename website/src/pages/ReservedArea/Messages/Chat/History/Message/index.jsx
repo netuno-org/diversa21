@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-function Message({ friend, data, onDelete, onEdit }) {
+function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editText, setEditText] = useState(data.message || data.text || "");
@@ -20,6 +20,7 @@ function Message({ friend, data, onDelete, onEdit }) {
   const messageTime = data.sent_at
     ? dayjs(data.sent_at).format("DD/MM/YYYY HH:mm")
     : "";
+
   const readTime = data.read_at
     ? dayjs(data.read_at).format("HH:mm")
     : "";
@@ -49,9 +50,11 @@ function Message({ friend, data, onDelete, onEdit }) {
 
   return (
     <li className={`messages__message ${isIncoming ? 'messages__message--incoming' : 'messages__message--outgoing'}`}>
-      <Text type="secondary" className="messages__message-time">
-        {messageTime}
-      </Text>
+      {showTime && (
+        <Text type="secondary" className="messages__message-time">
+          {messageTime}
+        </Text>
+      )}
 
       <div className="messages__message-row">
         {isIncoming && (
@@ -75,10 +78,19 @@ function Message({ friend, data, onDelete, onEdit }) {
                 className="messages__message-edit-input"
               />
               <div className="messages__message-edit-buttons">
-                <Button size="small" type="primary" onClick={handleSaveEdit} className="messages__message-edit-btn-save">
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={handleSaveEdit}
+                  className="messages__message-edit-btn-save"
+                >
                   Salvar
                 </Button>
-                <Button size="small" onClick={() => setIsEditing(false)} className="messages__message-edit-btn-cancel">
+                <Button
+                  size="small"
+                  onClick={() => setIsEditing(false)}
+                  className="messages__message-edit-btn-cancel"
+                >
                   Cancelar
                 </Button>
               </div>
@@ -96,15 +108,21 @@ function Message({ friend, data, onDelete, onEdit }) {
               cancelText="Não"
               placement="left"
             >
-              <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight" disabled={isIncoming}>
+              <Dropdown
+                menu={{ items: menuItems }}
+                trigger={['click']}
+                placement="bottomRight" disabled={isIncoming}
+              >
                 <div className="messages__message-bubble" style={{ cursor: isIncoming ? 'default' : 'pointer' }}>
-                  <Text className="messages__message-text">{messageText}</Text>
+                  <Text className="messages__message-text">
+                    {messageText}
+                  </Text>
                 </div>
               </Dropdown>
             </Popconfirm>
           )}
 
-          {!isIncoming && readTime && (
+          {!isIncoming && readTime && showRead && (
             <div className="messages__message-meta">
               <Text type="secondary" className="messages__message-read">
                 Lida às {readTime}
