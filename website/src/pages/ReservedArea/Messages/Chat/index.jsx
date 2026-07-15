@@ -39,6 +39,10 @@ function Chat({ friend, onClose }) {
       success: () => {
         form.resetFields([["message"]]);
         setHistoryReload((prev) => prev + 1);
+        _ws.sendService({
+          service: "friend/list",
+          data: { forMessages: true }
+        });
       },
       fail: (error) => {
         console.error(error);

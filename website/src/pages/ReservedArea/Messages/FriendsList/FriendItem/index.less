@@ -17,12 +17,24 @@
     display: flex;
     align-items: center;
     width: 100%;
+    gap: 8px;
 
     .ant-col {
       margin-left: auto;
       display: flex;
+      align-items: center;
       justify-content: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
     }
+  }
+
+  &-time {
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: fade(black, 45%);
+    transition: color 0.2s;
   }
 
   &-name {
@@ -59,6 +71,10 @@
     .messages__friend-item-preview {
       color: fade(@primary-color, 80%);
     }
+
+    .messages__friend-item-time {
+      color: fade(@primary-color, 70%);
+    }
   }
 
   &--active {
@@ -72,6 +88,10 @@
     .messages__friend-item-preview {
       color: fade(white, 60%);
       opacity: 0.8;
+    }
+
+    .messages__friend-item-time {
+      color: fade(white, 55%);
     }
   }
 

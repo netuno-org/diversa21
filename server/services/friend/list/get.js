@@ -124,6 +124,7 @@ for (const dbFriend of dbFriends) {
   const friendData = people.getData(dbFriend.getUID("friend_uid"));
   friendData.set("unread_messages", dbFriend.getInt("unread_messages"));
   friendData.set("online", dbFriend.getInt("sessions") > 0);
+  friendData.set("last_message_at", dbFriend.getString("last_message_at") || "");
 
   friends.add(friendData);
 }

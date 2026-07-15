@@ -15,11 +15,20 @@ const { Search } = Input;
 function FriendsList({ onFriendSelected, friend }) {
   const [loading, setLoading] = useState(true);
   const [peopleList, setPeopleList] = useState([]);
+  const [timeRefresh, setTimeRefresh] = useState(0);
   const selectedFriendUidRef = useRef(null);
 
   selectedFriendUidRef.current = friend?.uid ?? null;
 
   const ws = useWS();
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimeRefresh((n) => n + 1);
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     const listenerList = _ws.addListener({
@@ -49,11 +58,11 @@ function FriendsList({ onFriendSelected, friend }) {
     });
     const listenerStatusChanged = _ws.addListener({
       service: "friend/status/changed",
-      success: ({content}) => {
+      success: ({ content }) => {
         setPeopleList((prev) =>
           prev.map((item) => {
             if (item.uid === content.uid) {
-              return {...item, ...content}
+              return { ...item, ...content }
             }
             return item;
           })
@@ -63,20 +72,20 @@ function FriendsList({ onFriendSelected, friend }) {
     const listenerNewMessage = _ws.addListener({
       method: "POST",
       service: "message/new",
-      success: ({ data }) => {
+      success: ({ data, content }) => {
+        let shouldRefresh = false;
+
         setPeopleList((prev) => {
           const index = prev.findIndex((item) => item.uid === data.with);
           if (index === -1) {
-            _ws.sendService({
-              service: "friend/list",
-              data: { forMessages: true }
-            });
+            shouldRefresh = true;
             return prev;
           }
 
           const current = prev[index];
           const updated = {
             ...current,
+            last_message_at: content?.sent_at ?? current.last_message_at,
             unread_messages: selectedFriendUidRef.current === data.with
               ? 0
               : (current.unread_messages || 0) + 1
@@ -92,6 +101,13 @@ function FriendsList({ onFriendSelected, friend }) {
             ...prev.slice(index + 1)
           ];
         });
+
+        if (shouldRefresh) {
+          _ws.sendService({
+            service: "friend/list",
+            data: { forMessages: true }
+          });
+        }
       }
     });
 
@@ -123,7 +139,8 @@ function FriendsList({ onFriendSelected, friend }) {
       _ws.sendService({
         service: "friend/list",
         data: {
-          name: value
+          name: value,
+          forMessages: true
         }
       });
     }
@@ -157,6 +174,7 @@ function FriendsList({ onFriendSelected, friend }) {
               avatar={f.avatar}
               isActive={selectedFriendUidRef.current === f.uid}
               unreadMessages={f.unread_messages}
+              lastMessageAt={f.last_message_at}
               onClick={() => onFriendSelected && onFriendSelected(f)}
             />
           ))}
