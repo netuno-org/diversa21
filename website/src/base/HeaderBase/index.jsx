@@ -9,7 +9,6 @@ import React, { useEffect, useState } from "react";
 
 import HeaderUserInfo from "../../components/HeaderUserInfo";
 import HeaderNotifications from "../../components/HeaderNotifcations";
-import HeaderFriendsRequests from "../../components/HeaderFriendsRequests";
 import HeaderMessages from "../../components/HeaderMessages";
 
 import usePeople from "../../common/usePeople.js";
@@ -67,13 +66,6 @@ function HeaderBase({ collapsed }) {
             {
               key: "generalNotifications",
               label: <HeaderNotifications />,
-              className: "notifications-menu",
-              popupClassName: "notifications-menu-popup",
-              style: { padding: 0 }
-            },
-            {
-              key: "friendRequests",
-              label: <HeaderFriendsRequests />,
               className: "notifications-menu",
               popupClassName: "notifications-menu-popup",
               style: { padding: 0 }
