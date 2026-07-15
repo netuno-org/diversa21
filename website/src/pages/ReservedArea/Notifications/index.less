@@ -120,8 +120,12 @@
     }
 
     &--unread {
+      border-left: 4px solid @primary-color;
+      padding-left: 12px;
+
       &:hover {
         background-color: #fafafa;
+        box-shadow: 0 4px 12px fade(@primary-color, 8%);
       }
     }
 
