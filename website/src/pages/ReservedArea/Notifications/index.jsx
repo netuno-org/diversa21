@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin } from 'antd';
-import { MessageOutlined, SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined } from '@ant-design/icons';
+import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
 import _service from '@netuno/service-client';
@@ -20,7 +20,9 @@ function Notifications() {
 
   const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  // Mensagens ficam só no header de mensagens — não aparecem nesta página.
+  const generalNotifications = notifications.filter((n) => n.type !== 'message');
+  const unreadCount = generalNotifications.filter(n => !n.read).length;
 
   const getIconForType = (type) => {
     switch (type) {
@@ -28,14 +30,13 @@ function Notifications() {
       case 'my-post-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
       case 'friend-request': return <Avatar icon={<UserAddOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
       case 'friend-request-accepted': return <Avatar icon={<TeamOutlined />} style={{ backgroundColor: '#52c41a' }} />;
-      case 'message': return <Avatar icon={<MessageOutlined />} style={{ backgroundColor: '#8A6AA2' }} />;
       case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
       default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;
     }
   };
 
   const getNotificationAvatar = (item) => {
-    if (['friend-request', 'friend-request-accepted', 'message'].includes(item.type)) {
+    if (['friend-request', 'friend-request-accepted'].includes(item.type)) {
       if (item.originator?.uid) {
         return (
           <Avatar
@@ -52,15 +53,15 @@ function Notifications() {
   };
 
   const getNotificationTitle = (item) => {
-    if (['friend-request', 'friend-request-accepted', 'message'].includes(item.type) && item.originator?.name) {
+    if (['friend-request', 'friend-request-accepted'].includes(item.type) && item.originator?.name) {
       return item.originator.name;
     }
     return item.title;
   };
 
   const filteredNotifications = activeTab === 'unread'
-    ? notifications.filter((n) => !n.read)
-    : notifications;
+    ? generalNotifications.filter((n) => !n.read)
+    : generalNotifications;
 
   return (
     <section className="notifications-page">
