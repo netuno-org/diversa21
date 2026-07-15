@@ -3,7 +3,7 @@ import _auth from "@netuno/auth-client";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Layout, Menu } from "antd";
 
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, SettingOutlined } from "@ant-design/icons";
 import { MdLogout } from "react-icons/md";
 import React, { useEffect, useState } from "react";
 
@@ -28,6 +28,8 @@ function HeaderBase({ collapsed }) {
   useEffect(() => {
     if (location.pathname === '/profile/edit') {
       setMenuKeysSelected(['profileEdit']);
+    } else if (location.pathname === '/notification-settings') {
+      setMenuKeysSelected(['notificationSettings']);
     } else {
       setMenuKeysSelected([]);
     }
@@ -36,6 +38,8 @@ function HeaderBase({ collapsed }) {
   function onUserMenuClick({ key }) {
     if (key === "profileEdit") {
       navigate("/profile/edit");
+    } else if (key === "notificationSettings") {
+      navigate("/notification-settings");
     } else if (key === "logout") {
       loggedUser.unload();
     }
@@ -84,6 +88,11 @@ function HeaderBase({ collapsed }) {
                   key: "profileEdit",
                   icon: <EditOutlined />,
                   label: 'Editar Perfil'
+                },
+                {
+                  key: "notificationSettings",
+                  icon: <SettingOutlined />,
+                  label: 'Gerir Notificações'
                 },
                 {
                   key: "logout",

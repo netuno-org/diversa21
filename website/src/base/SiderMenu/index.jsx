@@ -65,13 +65,7 @@ const menuItems = [
     label: "Amigos",
     icon: <LuUserCheck />,
     link: "/friends"
-  }, 
-  {
-    key: "notification-settings",
-    label: "Preferências",
-    icon: <SettingOutlined />,
-    link: "/notification-settings"
-  }
+  },
 ];
 
 function SiderMenu({ collapsed, onCollapse }) {
