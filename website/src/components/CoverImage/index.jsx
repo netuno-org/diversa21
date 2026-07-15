@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Row, Col, Button, Slider, Divider, Space, Typography } from 'antd';
+import { Row, Col, Button, Slider, Divider, Space, Typography, Popconfirm } from 'antd';
 import {
   UploadOutlined, ZoomInOutlined, ZoomOutOutlined,
   UndoOutlined, FormatPainterOutlined, PictureOutlined, DeleteOutlined
@@ -182,10 +182,18 @@ function CoverImage({ currentImage, onRemove }, ref) {
                         className="cover-editor__color-picker"
                       />
                     </Space>
-
-                    <Button onClick={handleUndo} type="dashed" danger>
-                      Cancelar Edição
-                    </Button>
+                    <Popconfirm
+                      title="Cancelar edição?"
+                      description="Todas as alterações não guardadas serão perdidas."
+                      onConfirm={handleUndo}
+                      okText="Sim"
+                      cancelText="Não"
+                      placement="top"
+                    >
+                      <Button type="dashed" danger>
+                        Cancelar Edição
+                      </Button>
+                    </Popconfirm>
                   </Space>
                 </div>
               </Space>

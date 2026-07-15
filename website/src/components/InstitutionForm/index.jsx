@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch, Result } from 'antd';
+import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch, Result, Popconfirm } from 'antd';
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
 import { useNavigate } from 'react-router-dom';
@@ -294,15 +294,23 @@ export default function InstitutionForm({
 
               <div className="institution-form__actions">
                 <Form.Item className="institution-form__action-item">
-                  <Button
-                    type="default"
-                    onClick={handleCancelClick}
-                    size="large"
-                    block
-                    className="institution-form__btn institution-form__btn--cancel"
+                  <Popconfirm
+                    title="Cancelar edição?"
+                    description="Todas as alterações não guardadas serão perdidas."
+                    onConfirm={handleCancelClick}
+                    okText="Sim"
+                    cancelText="Não"
+                    placement="top"
                   >
-                    Cancelar
-                  </Button>
+                    <Button
+                      type="default"
+                      size="large"
+                      block
+                      className="institution-form__btn institution-form__btn--cancel"
+                    >
+                      Cancelar
+                    </Button>
+                  </Popconfirm>
                 </Form.Item>
 
                 <Form.Item className="institution-form__action-item">

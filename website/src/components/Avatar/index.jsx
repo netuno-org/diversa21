@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar } from 'antd';
+import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar, Popconfirm } from 'antd';
 import {
   UploadOutlined, ZoomInOutlined, ZoomOutOutlined,
   UndoOutlined, FormatPainterOutlined, DeleteOutlined
@@ -36,7 +36,7 @@ function Avatar({ currentImage, onRemove }, ref) {
     isRemoved: () => removed,
   }), [imageEditing, removed]);
 
-    const handleRemove = () => {
+  const handleRemove = () => {
     setImage(DEFAULT_IMAGE);
     setRemoved(true);
     if (onRemove) onRemove();
@@ -177,10 +177,18 @@ function Avatar({ currentImage, onRemove }, ref) {
                         className="avatar-editor__color-picker"
                       />
                     </Space>
-
-                    <Button onClick={handleUndo} type="dashed" danger>
-                      Cancelar Edição
-                    </Button>
+                    <Popconfirm
+                      title="Cancelar edição?"
+                      description="Todas as alterações não guardadas serão perdidas."
+                      onConfirm={handleUndo}
+                      okText="Sim"
+                      cancelText="Não"
+                      placement="top"
+                    >
+                      <Button type="dashed" danger>
+                        Cancelar Edição
+                      </Button>
+                    </Popconfirm>
                   </Space>
                 </div>
               </Space>

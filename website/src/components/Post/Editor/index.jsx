@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form, Input, notification, Space } from "antd";
+import { Button, Form, Input, notification, Space, Popconfirm } from "antd";
 import _service from "@netuno/service-client";
 
 const { TextArea } = Input;
@@ -126,7 +126,7 @@ function Editor({
 
   return (
     <Form
-      className={`editor-form editor-form--${type}`} 
+      className={`editor-form editor-form--${type}`}
       form={form}
       onFinish={types[type].onFinish}
       onClick={(e) => e.stopPropagation()}
@@ -142,7 +142,7 @@ function Editor({
         <TextArea
           className="editor-form__text-area"
           maxLength={500}
-          rows={4} 
+          rows={4}
           placeholder="Escreva o seu post"
         />
       </Form.Item>
@@ -155,18 +155,24 @@ function Editor({
             </span>
 
             {types[type].showCancelButton && (
-              <Button 
-                className="editor-form__btn editor-form__btn--cancel" 
-                onClick={onCancel}
+              <Popconfirm
+                title="Cancelar edição?"
+                description="Todas as alterações não guardadas serão perdidas."
+                onConfirm={onCancel}
+                okText="Sim"
+                cancelText="Não"
+                placement="top"
               >
-                Cancelar
-              </Button>
+                <Button className="editor-form__btn editor-form__btn--cancel">
+                  Cancelar
+                </Button>
+              </Popconfirm>
             )}
 
-            <Button 
-              className="editor-form__btn editor-form__btn--submit" 
-              htmlType="submit" 
-              loading={submitting} 
+            <Button
+              className="editor-form__btn editor-form__btn--submit"
+              htmlType="submit"
+              loading={submitting}
               type="primary"
             >
               {types[type].submitButtonText}

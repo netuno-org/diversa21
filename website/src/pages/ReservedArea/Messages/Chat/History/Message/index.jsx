@@ -86,13 +86,21 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
                 >
                   Salvar
                 </Button>
-                <Button
-                  size="small"
-                  onClick={() => setIsEditing(false)}
-                  className="messages__message-edit-btn-cancel"
+                <Popconfirm
+                  title="Cancelar edição?"
+                  description="Todas as alterações não guardadas serão perdidas."
+                  onConfirm={() => setIsEditing(false)}
+                  okText="Sim"
+                  cancelText="Não"
+                  placement="top"
                 >
-                  Cancelar
-                </Button>
+                  <Button
+                    size="small"
+                    className="messages__message-edit-btn-cancel"
+                  >
+                    Cancelar
+                  </Button>
+                </Popconfirm>
               </div>
             </div>
           ) : (

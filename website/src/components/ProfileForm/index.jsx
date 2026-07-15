@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col, Popconfirm } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -478,15 +478,23 @@ function ProfileForm({
           )}
           <div className="profile-form__actions">
             <Form.Item className="profile-form__action-item">
-              <Button
-                type="default"
-                onClick={() => navigate(redirectTo || -1)}
-                size="large"
-                block
-                className="profile-form__btn profile-form__btn--cancel"
+              <Popconfirm
+                title="Cancelar edição?"
+                description="Todas as alterações não guardadas serão perdidas."
+                onConfirm={() => navigate(redirectTo || -1)}
+                okText="Sim"
+                cancelText="Não"
+                placement="top"
               >
-                Cancelar
-              </Button>
+                <Button
+                  type="default"
+                  size="large"
+                  block
+                  className="profile-form__btn profile-form__btn--cancel"
+                >
+                  Cancelar
+                </Button>
+              </Popconfirm>
             </Form.Item>
 
             <Form.Item className="profile-form__action-item">
