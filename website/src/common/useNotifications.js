@@ -125,7 +125,6 @@ function useNotifications(loggedUser) {
             );
             const previousCount = existing?.messageCount || 1;
             newNotification.messageCount = existing ? previousCount + 1 : 1;
-            newNotification.desc = buildMessageDesc(newNotification);
 
             if (!existing) {
               setCount((c) => c + 1);
@@ -170,15 +169,6 @@ function useNotifications(loggedUser) {
     };
   }, [connected]);
 
-  const buildMessageDesc = (n) => {
-    const username = n.originator?.username ? `@${n.originator.username}` : (n.originator?.name || 'Alguém');
-    const c = n.messageCount || 1;
-    if (c === 1) {
-      return `${username} enviou-te uma nova mensagem.`;
-    }
-    return `${username} enviou-te ${c} mensagens.`;
-  };
-
   const processNotification = (n) => {
     n.id = n.uid;
     n.username = n.originator?.username;
@@ -187,7 +177,6 @@ function useNotifications(loggedUser) {
     if (n.type === 'message') {
       // Se o servidor mandar um contador, respeitamos; senão começamos em 1.
       n.messageCount = n.messageCount || n.extra?.count || 1;
-      n.desc = buildMessageDesc(n);
     } else {
       n.desc = n.content;
     }
@@ -195,9 +184,6 @@ function useNotifications(loggedUser) {
     if (n.type && ["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
       n.postId = n.extra.postUid;
     }
-
-    const dateTimeUrl = n.sent_at && !n.sent_at.endsWith('Z') ? `${n.sent_at}Z` : n.sent_at;
-    n.time = dayjs(dateTimeUrl).fromNow();
   };
 
   const markAllAsRead = (type) => {
