@@ -42,7 +42,10 @@ function FriendsList({ onFriendSelected, friend }) {
       }
     });
     _ws.sendService({
-      service: "friend/list"
+      service: "friend/list",
+      data: {
+        forMessages: true
+      }
     });
     const listenerStatusChanged = _ws.addListener({
       service: "friend/status/changed",
@@ -61,21 +64,34 @@ function FriendsList({ onFriendSelected, friend }) {
       method: "POST",
       service: "message/new",
       success: ({ data }) => {
-        setPeopleList((prev) => prev.map((item) => {
-          // Aqui comparamos e não alteramos o contador se não for da pessoa certa
-          if (item.uid !== data.with) {
-            return item;
+        setPeopleList((prev) => {
+          const index = prev.findIndex((item) => item.uid === data.with);
+          if (index === -1) {
+            _ws.sendService({
+              service: "friend/list",
+              data: { forMessages: true }
+            });
+            return prev;
           }
-          // Se for da pessoa certa e a janela está aberta, zeramos o contador
-          if (selectedFriendUidRef.current === data.with) {
-            return { ...item, unread_messages: 0 };
-          }
-          // É da pessoa correta e a janela está fechada, então incrementamos +1
-          return {
-            ...item,
-            unread_messages: (item.unread_messages || 0) + 1
+
+          const current = prev[index];
+          const updated = {
+            ...current,
+            unread_messages: selectedFriendUidRef.current === data.with
+              ? 0
+              : (current.unread_messages || 0) + 1
           };
-        }));
+
+          if (index === 0) {
+            return [updated, ...prev.slice(1)];
+          }
+
+          return [
+            updated,
+            ...prev.slice(0, index),
+            ...prev.slice(index + 1)
+          ];
+        });
       }
     });
 

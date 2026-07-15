@@ -27,6 +27,7 @@ if (totalMessagesMarkedAsRead > 0 || cleared > 0) {
     dbPeopleLogged,
     _val.map()
       .set("service", "friend/list")
+      .set("data", _val.map().set("forMessages", true))
   );
   people.wsSendAsService(
     dbPeopleLogged,

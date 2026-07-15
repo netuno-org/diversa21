@@ -39,9 +39,13 @@ if (profileUid && profileUid !== "") {
   targetId = dbProfile.getInt("id");
 }
 
+const forMessages = _req.getBoolean("forMessages");
+
 const params = _val.list();
 
 params.add(targetId);
+
+params.add(targetId).add(targetId);
 
 params.add(targetId).add(targetId).add(targetId).add(`%${name}%`);
 
@@ -58,6 +62,12 @@ let sqlQuery = `
               AND m.recipient_id = ? 
               AND m.read_at IS NULL
         ) AS unread_messages,
+        (
+            SELECT MAX(m.sent_at)
+            FROM messages m
+            WHERE (m.originator_id = p.id AND m.recipient_id = ?)
+               OR (m.originator_id = ? AND m.recipient_id = p.id)
+        ) AS last_message_at,
         (
             SELECT count(id)
             FROM people_ws_session
@@ -90,8 +100,17 @@ if (cityUid) {
   params.add(countryUid);
 }
 
-sqlQuery += `
+if (forMessages) {
+  sqlQuery += `
+    ORDER BY last_message_at DESC NULLS LAST, p.name ASC
+  `;
+} else {
+  sqlQuery += `
     ORDER BY p.name ASC
+  `;
+}
+
+sqlQuery += `
     LIMIT 10
     OFFSET ?::int
 `;
