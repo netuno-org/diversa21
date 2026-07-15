@@ -9,7 +9,7 @@ import { SettingOutlined } from "@ant-design/icons";
 
 import { Menu, Layout } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import "./index.less";
 
@@ -74,8 +74,6 @@ function SiderMenu({ collapsed, onCollapse }) {
   const loggedUser = usePeople();
   const location = useLocation();
   const navigate = useNavigate();
-  
-  const loggedUserGroupCode = loggedUser.data?.group?.code;
 
   useEffect(() => {
     const menuItem = menuItems.find((i) => location.pathname === i.link);
@@ -97,39 +95,58 @@ function SiderMenu({ collapsed, onCollapse }) {
     }
   }
 
+  function handleOverlayClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    onCollapse(true);
+  }
+
+  const showOverlay = _auth.isLogged() && sideMenuMobileMode && !collapsed;
+
   return (
     <>
       {_auth.isLogged() &&
-        <Sider
-          onBreakpoint={mobile => {
-            setSideMenuMobileMode(mobile);
-          }}
-          collapsedWidth={sideMenuMobileMode ? '0' : '80'}
-          breakpoint={"md"}
-          collapsible
-          collapsed={collapsed}
-          onCollapse={onCollapse}
-          trigger={<MenuOutlined />}
-          className="sider-menu"
-        >
-          <div className="logo-container"><img alt="logo" src="/images/logo.svg" /></div>
-          <Menu
-            onClick={onMenuClick}
-            selectedKeys={selectedMenuKeys}
-            mode="inline"
-            items={
-              menuItems.filter((item) => {
-                const restrictedKeys = ['locations'];
+        <>
+          {showOverlay && (
+            <div
+              className="sider-menu-overlay"
+              onClick={handleOverlayClick}
+              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              onTouchStart={(e) => { e.stopPropagation(); }}
+              aria-hidden="true"
+            />
+          )}
+          <Sider
+            onBreakpoint={mobile => {
+              setSideMenuMobileMode(mobile);
+            }}
+            collapsedWidth={sideMenuMobileMode ? '0' : '80'}
+            breakpoint={"md"}
+            collapsible
+            collapsed={collapsed}
+            onCollapse={onCollapse}
+            trigger={<MenuOutlined />}
+            className="sider-menu"
+          >
+            <div className="logo-container"><img alt="logo" src="/images/logo.svg" /></div>
+            <Menu
+              onClick={onMenuClick}
+              selectedKeys={selectedMenuKeys}
+              mode="inline"
+              items={
+                menuItems.filter((item) => {
+                  const restrictedKeys = ['locations'];
 
-                if (restrictedKeys.includes(item.key)) {
-                  return loggedUser.canManageInstitution();
-                }
+                  if (restrictedKeys.includes(item.key)) {
+                    return loggedUser.canManageInstitution();
+                  }
 
-                return true;
-              })
-            }
-          />
-        </Sider>
+                  return true;
+                })
+              }
+            />
+          </Sider>
+        </>
       }
     </>
   );

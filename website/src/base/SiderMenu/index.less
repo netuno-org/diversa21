@@ -41,6 +41,7 @@
         border-radius: 0;
         color: @primary-color;
       }
+
       &.ant-menu-item-selected {
         border-right: 6px solid @secondary-color;
         border-radius: 0;
@@ -48,5 +49,34 @@
         background-color: @primary-color;
       }
     }
+  }
+}
+
+.sider-menu-overlay {
+  display: none;
+
+  @media screen and (max-width: (@mobile-width - 1px)) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(@primary-color, 0.25);
+    z-index: 105;
+    cursor: pointer;
+    animation: siderOverlayFadeIn 0.2s ease-out;
+  }
+}
+
+@keyframes siderOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
