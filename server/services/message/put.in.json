@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "uid",
+    "message"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "uid": {
+        "type": "string"
+      },
+      "message": {
+        "type": "string"
+      },
+      "from": {
+        "type": "string"
+      },
+      "to": {
+        "type": "string"
+      },
+      "sent_at": {
+        "type": "string"
+      },
+      "read_at": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "uid",
+      "message",
+      "from",
+      "to",
+      "sent_at"
+    ]
+  }
+}

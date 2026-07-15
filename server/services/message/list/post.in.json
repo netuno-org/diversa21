@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "properties": {
+    "with": {
+      "type": "string"
+    },
+    "page": {
+      "type": "integer"
+    },
+    "size": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "with"
+  ]
+}

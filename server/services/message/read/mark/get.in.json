@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "from": {
+      "type": "string"
+    },
+    "uid": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "from",
+    "uid"
+  ]
+}
