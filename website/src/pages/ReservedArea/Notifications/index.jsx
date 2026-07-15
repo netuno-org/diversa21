@@ -4,6 +4,7 @@ import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin 
 import { MessageOutlined, SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 
+import _service from '@netuno/service-client';
 import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
 import usePeople from "../../../common/usePeople.js";
 import useNotifications from "../../../common/useNotifications.js";
@@ -31,6 +32,30 @@ function Notifications() {
       case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
       default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;
     }
+  };
+
+  const getNotificationAvatar = (item) => {
+    if (['friend-request', 'friend-request-accepted', 'message'].includes(item.type)) {
+      if (item.originator?.uid) {
+        return (
+          <Avatar
+            size={40}
+            src={item.originator?.avatar
+              ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people&${new Date().getTime()}`)
+              : "/images/profile-default.png"
+            }
+          />
+        );
+      }
+    }
+    return getIconForType(item.type);
+  };
+
+  const getNotificationTitle = (item) => {
+    if (['friend-request', 'friend-request-accepted', 'message'].includes(item.type) && item.originator?.name) {
+      return item.originator.name;
+    }
+    return item.title;
   };
 
   const filteredNotifications = activeTab === 'unread'
@@ -90,11 +115,11 @@ function Notifications() {
               >
                 <div className="notifications-page__item-meta">
                   <div className="notifications-page__item-avatar">
-                    {getIconForType(item.type)}
+                    {getNotificationAvatar(item)}
                   </div>
                   <div className="notifications-page__item-content">
                     <div className="notifications-page__item-title">
-                      <Text strong={!item.read}>{item.title}</Text>
+                      <Text strong={!item.read}>{getNotificationTitle(item)}</Text>
                       {item.time && (
                         <Text type="secondary" className="notifications-page__item-time">{item.time}</Text>
                       )}
