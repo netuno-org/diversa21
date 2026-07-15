@@ -96,17 +96,6 @@ function Messages() {
 
   return (
     <section className={`messages ${chatFriend ? 'messages--chat-active' : ''}`}>
-      <div className="messages__header">
-        <ListHeaderFilters
-          title="Mensagens"
-          hideInputs={true}
-          createButton={{
-            icon: <LuMessageSquarePlus size={18} />,
-            text: 'Nova mensagem',
-            onClick: () => setIsModalVisible(true)
-          }}
-        />
-      </div>
       <div className="messages__body">
         <Card className="messages__card" variant="borderless">
           <Row className="messages__row">

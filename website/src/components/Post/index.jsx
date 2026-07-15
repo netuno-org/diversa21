@@ -1,17 +1,18 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { connect } from 'react-redux';
 import _service from "@netuno/service-client";
-import { Space, Tag } from "antd";
+import { Space, Tag, Card, Avatar, Button, Popconfirm } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Card, Avatar, Button, Popconfirm, notification } from "antd";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaRegComment } from "react-icons/fa";
 import dayjs from "dayjs";
+
 import Editor from "./Editor";
 import PostList from "./List";
 import "./index.less";
 import usePeople from "../../common/usePeople.js";
+import globalNotification from "../../common/globalNotification.js";
 
 function Post({
   uid,
@@ -61,12 +62,12 @@ function Post({
   };
 
   useEffect(() => {
-    if (people.avatar) {
+    if (people?.avatar) {
       setAvatarUrl(
         _service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`)
       );
     }
-  }, []);
+  }, [people]);
 
   useEffect(() => {
     if (isAlreadyIsolated) {
@@ -80,18 +81,24 @@ function Post({
         setTimeout(() => setIsHighlighted(false), 3000);
       }, 500);
     }
-  }, [location.state, uid, countComments, showComments]);
+  }, [location.state, uid, countComments, showComments, isAlreadyIsolated]);
 
   useEffect(() => {
     if (isolatedCommentUid && countComments > 0 && !showComments) {
       setShowComments(true);
       setLoadingComments(true);
     }
-  }, [isolatedCommentUid, countComments]);
+  }, [isolatedCommentUid, countComments, showComments]);
 
   const handleCardClick = (e) => {
-    if (isAlreadyIsolated || editMode) return;
-    if (e.target.closest('.post-actions-wrapper') || e.target.closest('.user-info-actions') || e.target.closest('a')) return;
+    if (isAlreadyIsolated || editMode) {
+      return;
+    }
+    if (e.target.closest('.post-actions-wrapper')
+      || e.target.closest('.user-info-actions')
+      || e.target.closest('a')) {
+      return;
+    }
     navigate(`/p/${uid}`);
   };
 
@@ -99,7 +106,9 @@ function Post({
 
   const onCreated = (post) => {
     setCountComments(countComments + 1);
-    if (refPostList.current) refPostList.current.newPost(post);
+    if (refPostList.current) {
+      refPostList.current.newPost(post);
+    }
     setShowEditor(false);
   };
 
@@ -112,11 +121,15 @@ function Post({
       method: "DELETE",
       data: { uid },
       success: () => {
-        notification.success({ title: "Post apagado com sucesso." });
+        globalNotification.success({
+          title: "Post apagado com sucesso."
+        });
         onRemovePost(uid);
       },
       fail: (e) => {
-        notification.error({ title: "Falha ao deletar post." });
+        globalNotification.error({
+          title: "Falha ao deletar post."
+        });
         console.error("Service Error", e);
       }
     });
@@ -130,33 +143,49 @@ function Post({
         url: 'post/like',
         method: 'POST',
         data: { uid },
-        success: () => { setIsLiked(true); setLikesCounter(likesCounter + 1); setLoadingLike(false); },
-        fail: (e) => { notification.error({ title: "Falha ao dar o like." }); console.error("Service Error", e); setLoadingLike(false); }
+        success: () => {
+          setIsLiked(true);
+          setLikesCounter(likesCounter + 1);
+          setLoadingLike(false);
+        },
+        fail: (e) => {
+          globalNotification.error({ title: "Falha ao dar o like." });
+          console.error("Service Error", e);
+          setLoadingLike(false);
+        }
       });
     } else {
       _service({
         url: 'post/like',
         method: 'DELETE',
         data: { uid },
-        success: () => { setIsLiked(false); setLikesCounter(likesCounter - 1); setLoadingLike(false); },
-        fail: (e) => { notification.error({ title: "Falha ao remover o like." }); console.error("Service Error", e); setLoadingLike(false); }
+        success: () => {
+          setIsLiked(false);
+          setLikesCounter(likesCounter - 1);
+          setLoadingLike(false);
+        },
+        fail: (e) => {
+          globalNotification.error({ title: "Falha ao remover o like." });
+          console.error("Service Error", e);
+          setLoadingLike(false);
+        }
       });
     }
   };
 
-  const displayContent = [];
-  for (const line of content.split("\n")) {
-    displayContent.push(line);
-    displayContent.push(<br />);
-  }
-  displayContent.pop();
+  const displayContent = content.split('\n').map((line, index, array) => (
+    <React.Fragment key={index}>
+      {line}
+      {index < array.length - 1 && <br />}
+    </React.Fragment>
+  ));
 
   // Texto contextual de atividade
   const activityLabel = type === 'comment' && parentPeopleUser
     ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> comentou num post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
     : type === 'like' && parentPeopleUser
-    ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> curtiu de um post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
-    : null;
+      ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> curtiu de um post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
+      : null;
 
   return (
     <Card
@@ -247,7 +276,9 @@ function Post({
           onSubmitted={(values) => {
             onEditPost(uid, values.content);
             setEditMode(false);
-            if (refPostList.current) refPostList.current.newPost(values);
+            if (refPostList.current) {
+              refPostList.current.newPost(values);
+            }
           }}
         />
       ) : (
@@ -268,7 +299,9 @@ function Post({
                 className="btn-load-comments"
                 onClick={() => {
                   setShowComments(!showComments);
-                  if (!showComments) setLoadingComments(true);
+                  if (!showComments) {
+                    setLoadingComments(true);
+                  }
                 }}
                 loading={loadingComments}
               >

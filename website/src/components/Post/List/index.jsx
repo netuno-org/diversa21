@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useImperativeHandle } from "react";
 import _service from "@netuno/service-client";
-import { Button, Col, notification, Row, Spin, Empty } from "antd";
+import { Button, Col, Row, Spin, Empty } from "antd";
+
+import globalNotification from "../../../common/globalNotification.js";
 import Post from "..";
 
 function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, onItemRemoved }, ref) {
@@ -14,7 +16,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
   }, [page]);
 
   const newPost = (post) => {
-    setPosts([post, ...posts]);
+    setPosts((prev) => [post, ...prev]);
   };
 
   const getPosts = () => {
@@ -69,7 +71,8 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
           setPosts(fetchedItems);
         } else {
           setPosts(prev => [...prev, ...fetchedItems]);
-}
+        }
+
         setTotalCount(json?.data?.pagination?.totalCount || 0);
       },
       fail: (e) => {
@@ -77,7 +80,8 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
           onLoaded();
         }
         setLoadingPosts(false);
-        notification.error({
+
+        globalNotification.error({
           title: `Falha ao carregar ${parent ? "comentários" : "posts"}`,
         });
         console.error("Service Error", e);
@@ -90,15 +94,15 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
   const onLoadMorePosts = () => setPage(page + 1);
 
   const onRemovePost = (uid) => {
-  setPosts(prev => prev.filter((post) => post.uid !== uid));
-  setTotalCount(prev => prev - 1);
-  if (onItemRemoved) {
-    onItemRemoved();
-  }
-};
+    setPosts(prev => prev.filter((post) => post.uid !== uid));
+    setTotalCount(prev => prev - 1);
+    if (onItemRemoved) {
+      onItemRemoved();
+    }
+  };
 
   const onEditPost = (uid, content) => {
-    setPosts(posts.map((post) => post.uid === uid ? { ...post, content } : post));
+    setPosts(prev => prev.map((post) => post.uid === uid ? { ...post, content } : post));
   }
 
   if ((!parent && loadingPosts) && page === 0) {

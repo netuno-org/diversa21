@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
-import { notification } from 'antd';
+
+import globalNotification from '../common/globalNotification.js';
+
 import _service from '@netuno/service-client';
 
 const ACTION_CONFIG = {
@@ -58,8 +60,8 @@ function useFriendActions() {
       success: (response) => {
         setProcessing(prev => ({ ...prev, [uid]: null }));
         if (!silent) {
-          notification.success({
-            message: config.successMessage,
+          globalNotification.success({
+            title: config.successMessage,
             description: config.successDescription,
           });
         }
@@ -69,8 +71,8 @@ function useFriendActions() {
         console.error(error);
         setProcessing(prev => ({ ...prev, [uid]: null }));
         if (!silent) {
-          notification.error({
-            message: config.errorMessage,
+          globalNotification.error({
+            title: config.errorMessage,
             description: config.errorDescription,
           });
         }

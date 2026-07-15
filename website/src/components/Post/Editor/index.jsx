@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Button, Form, Input, notification, Space, Popconfirm } from "antd";
+import { Button, Form, Input, Space, Popconfirm } from "antd";
+import globalNotification from "../../../common/globalNotification";
 import _service from "@netuno/service-client";
 
 const { TextArea } = Input;
@@ -50,12 +51,15 @@ function Editor({
             content: "",
           });
         }
+        globalNotification.success({
+          title: "Post criado com sucesso."
+        });
         setSubmitting(false);
       },
       fail: (e) => {
-        notification.error({
+        globalNotification.error({
           title: `Falha ao publicar ${parent ? "comentário" : "post"}`,
-        })
+        });
         setSubmitting(false);
       },
     });
@@ -87,14 +91,14 @@ function Editor({
         if (onSubmitted) {
           onSubmitted({ ...values, content: cleanedContent });
         }
-        notification.success({
+        globalNotification.success({
           title: "Sucesso ao editar"
-        })
+        });
 
         setSubmitting(false);
       },
       fail: (e) => {
-        notification.error({
+        globalNotification.error({
           title: `Falha ao editar`,
         });
 
@@ -108,18 +112,21 @@ function Editor({
       submitButtonText: "Comentar",
       showCancelButton: true,
       title: "Comentário",
+      cancelTitle: "Cancelar comentário?",
       onFinish: onCreatedPost
     },
     post: {
       submitButtonText: "Postar",
       showCancelButton: false,
       title: "Postagem",
+      cancelTitle: "",
       onFinish: onCreatedPost
     },
     editPost: {
       submitButtonText: "Editar",
       showCancelButton: true,
       title: "",
+      cancelTitle: "Cancelar edição?",
       onFinish: onEditPost
     }
   }
@@ -156,7 +163,7 @@ function Editor({
 
             {types[type].showCancelButton && (
               <Popconfirm
-                title="Cancelar edição?"
+                title={types[type].cancelTitle}
                 description="Todas as alterações não guardadas serão perdidas."
                 onConfirm={onCancel}
                 okText="Sim"

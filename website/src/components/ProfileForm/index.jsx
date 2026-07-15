@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, notification, Row, Col, Popconfirm } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, Row, Col, Popconfirm } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -52,7 +52,6 @@ function ProfileForm({
   const [coverImageURL, setCoverImageURL] = useState('');
   const [ready, setReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     if (people && operation === "edit") {
@@ -152,7 +151,7 @@ function ProfileForm({
               description: 'Os dados do seu perfil foram alterados com sucesso.',
             });
           } else {
-            api.success({
+            globalNotification.success({
               title: 'Conta Criada',
               description: 'A conta foi criada com sucesso, pode iniciar sessão.',
             });
@@ -182,32 +181,32 @@ function ProfileForm({
       fail: (e) => {
         setSubmitting(false);
         if (e.error && isNetworkError(e.error)) {
-          return api.error({
+          return globalNotification.error({
             title: 'Conexão',
             description: 'Há problemas de conexão com o servidor, tente novamente mais tarde.',
           });
         }
         if (e && e.status === 409 && e.json && e.json.error) {
           if (e.json.error === 'email-already-exists') {
-            return api.warning({
+            return globalNotification.warning({
               title: 'E-mail Existente',
               description: 'Este e-mail já existe, faça a recuperação do acesso na tela de login ou escolha outro.',
             });
           }
           if (e.json.error === 'user-already-exists') {
-            return api.warning({
+            return globalNotification.warning({
               title: 'Usuário Existente',
               description: 'Este usuário já existe, faça a recuperação do acesso na tela de login ou escolha outro.',
             });
           }
         }
         if (operation === "edit") {
-          globalNotification.serviceFail({
+          globalNotification.error({
             title: 'Erro na Edição do Perfil',
             description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
           });
         } else if (operation === "create") {
-          return api.error({
+          return globalNotification.error({
             title: 'Erro na Criação de Conta',
             description: 'Não foi possível criar a conta, contacte-nos através do chat de suporte.',
           });
@@ -230,7 +229,6 @@ function ProfileForm({
 
   return (
     <div className="profile-form">
-      {contextHolder}
       <div className="profile-form__body">
         <Form
           form={form}
@@ -238,7 +236,7 @@ function ProfileForm({
           onValuesChange={onValuesChange}
           ref={profileForm}
           layout="vertical"
-          name="basic"
+          name="basic_profile"
           initialValues={
             operation === "edit" ? {
               name: people.name,

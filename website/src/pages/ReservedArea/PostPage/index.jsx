@@ -6,13 +6,12 @@ function PostPage({ uid }) {
   const [post, setPost] = useState({});
 
   const onRemovePost = (uid) => {
-    setPosts(posts.filter((post) => post.uid !== uid));
-    if (onItemRemoved) onItemRemoved();
+    setPost({});
   };
 
   const onEditPost = (uid, content) => {
-    setPosts(posts.map((post) => post.uid === uid ? { ...post, content } : post));
-  }
+    setPost(prev => ({ ...prev, content }));
+  };
 
   useEffect(() => {
     fetchPost();
@@ -31,19 +30,19 @@ function PostPage({ uid }) {
       fail: () => {
         console.log("falha ao carregar post");
       }
-    })
+    });
   };
 
   if (Object.keys(post).length === 0) {
-    return;
+    return null;
   }
 
   return (
-      <Post
-        {...post}
-        onRemovePost={onRemovePost}
-        onEditPost={onEditPost}
-      />
+    <Post
+      {...post}
+      onRemovePost={onRemovePost}
+      onEditPost={onEditPost}
+    />
   );
 }
 

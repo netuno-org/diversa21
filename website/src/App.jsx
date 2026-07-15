@@ -107,6 +107,7 @@ export default function App() {
         },
       }}
     >
+      {contextHolder}
       <Provider store={store}>
         <Layout className={'page ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
           <SiderMenu collapsed={collapsed} onCollapse={onCollapse} />

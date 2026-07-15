@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Card, Switch, Typography, Spin, notification, Empty } from 'antd';
+import { Card, Switch, Typography, Spin, Empty } from 'antd';
 import _service from '@netuno/service-client';
 
 import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
+import globalNotification from "../../../common/globalNotification.js";
 
 import './index.less';
 
@@ -27,7 +28,9 @@ function NotificationSettings() {
         setLoading(false);
       },
       fail: (e) => {
-        notification.error({ message: 'Falha ao carregar tipos de notificação.' });
+        globalNotification.error({
+          title: 'Falha ao carregar tipos de notificação.'
+        });
         console.error('Service Error', e);
         setLoading(false);
       }
@@ -48,7 +51,9 @@ function NotificationSettings() {
         setLoadingCode(null);
       },
       fail: (e) => {
-        notification.error({ message: 'Falha ao atualizar preferência de notificação.' });
+        globalNotification.error({
+          title: 'Falha ao atualizar preferência de notificação.'
+        });
         console.error('Service Error', e);
         setLoadingCode(null);
       }

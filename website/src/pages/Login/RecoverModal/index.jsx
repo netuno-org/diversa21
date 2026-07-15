@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Modal, Button, Form, Input, notification } from 'antd';
-
+import { Modal, Button, Form, Input } from 'antd';
 import _service from '@netuno/service-client';
+import globalNotification from "../../../common/globalNotification.js"
 
 export default function RecoverModal(props) {
 
   const [submitting, setSubmitting] = useState(false);
   const [open, setOpen] = useState(true);
   const recoverForm = useRef(null);
-  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,8 +24,8 @@ export default function RecoverModal(props) {
       },
       success: (response) => {
         if (response.json.result) {
-          api.success({
-            message: 'Alteração da senha ',
+          globalNotification.success({
+            title: 'Alteração da senha',
             description: 'Foi enviado um e-mail para a alteração da senha.',
           });
           setSubmitting(false);
@@ -35,8 +34,8 @@ export default function RecoverModal(props) {
       },
       fail: () => {
         setSubmitting(false);
-        api.error({
-          message: 'Erro na Alteração da senha',
+        globalNotification.error({
+          title: 'Erro na Alteração da senha',
           description: 'Não foi possível alterar a senha, contacte-nos através do chat de suporte.',
         });
       }
@@ -80,10 +79,9 @@ export default function RecoverModal(props) {
         </Button>
       ]}
     >
-      {contextHolder}
       <Form
         ref={recoverForm}
-        name="basic"
+        name="recover_form"
         onFinishFailed={onFinishFailed}
       >
         <Form.Item

@@ -22,6 +22,7 @@ function usePeople() {
     const loggedUserInstitutionUid = data?.institution?.uid;
     return loggedUserInstitutionUid === institutionUid;
   }
+
   const canManageUserOrCreateMember = (otherUserGroupCode, otherUserInstitutionUid) => {
     return (isSuperAdmin ||
       (

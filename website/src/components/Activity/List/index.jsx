@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useImperativeHandle } from "react";
 import _service from "@netuno/service-client";
-import { Button, Col, notification, Row, Spin, Empty } from "antd";
+import { Button, Col, Row, Spin, Empty } from "antd";
+import globalNotification from "../../../common/globalNotification";
 import Post from "../../Post";
 
 function ActivityList({ url = "activity/list", author, parent, institution, onLoaded, onItemRemoved }, ref) {
@@ -14,7 +15,7 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
   }, [page]);
 
   const newPost = (post) => {
-    setPosts([post, ...posts]);
+    setPosts(prev => [post, ...prev]);
   };
 
   const getPosts = () => {
@@ -40,20 +41,17 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
       url: url,
       data,
       success: (response) => {
-        if (onLoaded) {
-          onLoaded();
-        }
+        if (onLoaded) onLoaded();
 
         setLoadingPosts(false);
-        setPosts([...posts, ...response.json.data.items]);
+        setPosts(prev => [...prev, ...response.json.data.items]);
         setTotalCount(response.json.data.pagination.totalCount);
       },
       fail: (e) => {
-        if (onLoaded) {
-          onLoaded();
-        }
+        if (onLoaded) onLoaded();
+
         setLoadingPosts(false);
-        notification.error({
+        globalNotification.error({
           title: `Falha ao carregar ${parent ? "comentários" : "posts"}`,
         });
         console.error("Service Error", e);
@@ -66,28 +64,17 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
   }));
 
   const onLoadMorePosts = () => {
-    setPage(page + 1);
+    setPage(prevPage => prevPage + 1);
   };
 
   const onRemovePost = (uid) => {
-    setPosts(posts.filter((post) => post.uid !== uid));
-    if (onItemRemoved) {
-      onItemRemoved();
-    }
+    setPosts(prev => prev.filter((post) => post.uid !== uid));
+    if (onItemRemoved) onItemRemoved();
   };
 
   const onEditPost = (uid, content) => {
-    setPosts(posts.map((post) => {
-      if (post.uid === uid) {
-        return {
-          ...post,
-          content
-        };
-      }
-
-      return post;
-    }));
-  }
+    setPosts(prev => prev.map((post) => post.uid === uid ? { ...post, content } : post));
+  };
 
   if ((!parent && loadingPosts) && page === 0) {
     return (
@@ -101,16 +88,14 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
 
   return (
     <div>
-      {
-        posts.map((post) => (
-          <Post
-            key={post.uid}
-            {...post}
-            onRemovePost={onRemovePost}
-            onEditPost={onEditPost}
-          />
-        ))
-      }
+      {posts.map((post) => (
+        <Post
+          key={post.uid}
+          {...post}
+          onRemovePost={onRemovePost}
+          onEditPost={onEditPost}
+        />
+      ))}
 
       {!loadingPosts && posts.length === 0 && (
         <div style={{ padding: '40px 20px', background: '#fff', borderRadius: '8px', border: '1px solid #f0f0f0' }}>
