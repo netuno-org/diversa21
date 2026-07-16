@@ -119,7 +119,7 @@ function View() {
                     <Link to={`/u/${user.username}`} style={{ color: "inherit" }}>
                       <UserProfileDisplay
                         user={user}
-                        avatarStyle={{ width: 64, height: 64 }}
+                        avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }}
                       />
                     </Link>
                   </div>

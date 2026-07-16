@@ -91,9 +91,9 @@ params
 
 const dbInstitutions = _db.query(sqlQuery, params);
 
-const institutionList = _val.list()
+const institutionList = _val.list();
 for (const dbInstitution of dbInstitutions) {
-  institutionList.add(mapInstitution(dbInstitution))
+  institutionList.add(mapInstitution(dbInstitution));
 }
 
 const totalCount = dbInstitutions.length === 0 ? 0 : dbInstitutions[0].getInt("total_count");

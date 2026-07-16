@@ -1,14 +1,11 @@
-import { Avatar } from 'antd';
-import {
-  EnvironmentOutlined,
-  GlobalOutlined,
-  MailOutlined,
-  PhoneOutlined
-} from '@ant-design/icons';
+import { Avatar, Typography } from 'antd';
+import { EnvironmentOutlined } from '@ant-design/icons';
 
 import _service from '@netuno/service-client';
 
 import './index.less';
+
+const { Paragraph } = Typography;
 
 function InstitutionDisplay({ institution, avatarStyle, children }) {
   if (!institution) return null;
@@ -40,28 +37,20 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
           <strong>{institution.name}</strong>
         </div>
 
-        {institution.email && (
-          <div>
-            <MailOutlined /> {institution.email}
-          </div>
-        )}
-
-        {institution.telephone && (
-          <div>
-            <PhoneOutlined /> {institution.telephone}
-          </div>
-        )}
-
         {location && (
           <div>
             <EnvironmentOutlined /> {location}
           </div>
         )}
 
-        {institution.website && (
-          <div>
-            <GlobalOutlined /> {institution.website}
-          </div>
+        {institution.description && (
+          <Paragraph
+            type="secondary"
+            ellipsis={{ rows: 2, tooltip: true }}
+            style={{ marginBottom: 0, fontSize: 13 }}
+          >
+            {institution.description}
+          </Paragraph>
         )}
 
         {children}
