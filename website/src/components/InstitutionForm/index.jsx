@@ -31,6 +31,7 @@ function InstitutionForm({
   const [loading, setLoading] = useState((!!uid || !!slug) && !initialData);
   const [forbidden, setForbidden] = useState(false);
   const [form] = Form.useForm();
+  const descriptionValue = Form.useWatch("description", form) || "";
   const [institution, setInstitution] = useState(initialData);
 
   const profileAvatar = useRef(null);
@@ -263,7 +264,12 @@ function InstitutionForm({
               )}
               <Card title="Informações Gerais" className="institution-form__card">
                 <Form.Item name="name" label="Nome" rules={[{ required: true }]}><Input disabled={submitting} /></Form.Item>
-                <Form.Item name="description" label="Descrição"><TextArea rows={4} disabled={submitting} /></Form.Item>
+                <Form.Item name="description" label="Descrição" style={{ marginBottom: 8 }}>
+                  <TextArea rows={4} disabled={submitting} maxLength={2000} style={{ resize: 'none' }} />
+                </Form.Item>
+                <div className="institution-form__description-count">
+                  <span>{descriptionValue.length}/2000</span>
+                </div>
 
                 <Row gutter={16}>
                   <Col xs={24} md={12}><Form.Item name="email" label="E-mail"><Input disabled={submitting} /></Form.Item></Col>
