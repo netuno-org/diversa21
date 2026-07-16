@@ -147,17 +147,26 @@ function useNotifications(loggedUser) {
       service: "notification/read",
       success: (data) => {
         const content = data.content;
-        if (content?.type !== 'message') {
+        if (!content) {
           return;
         }
+        if (content.type === 'message') {
+          if (content.all) {
+            setNotifications(prev => prev.filter(n => n.type !== 'message'));
+            return;
+          }
+          if (content.originator?.uid) {
+            setNotifications(prev => prev.filter(n =>
+              !(n.type === 'message' && n.originator?.uid === content.originator.uid)
+            ));
+          }
+          return;
+        }
+        
         if (content.all) {
-          setNotifications(prev => prev.filter(n => n.type !== 'message'));
-          return;
-        }
-        if (content.originator?.uid) {
-          setNotifications(prev => prev.filter(n =>
-            !(n.type === 'message' && n.originator?.uid === content.originator.uid)
-          ));
+          setNotifications(prev => prev.map(n => n.type !== 'message' ? { ...n, read: true } : n));
+        } else if (content.uid) {
+          setNotifications(prev => prev.map(n => n.uid === content.uid ? { ...n, read: true } : n));
         }
       }
     });
@@ -195,16 +204,41 @@ function useNotifications(loggedUser) {
       setNotifications(prev => prev.filter(n => n.type !== 'message'));
       return;
     }
+
+    const previousNotifications = notifications;
+
     setNotifications(prev => prev.map(n => {
       if (type && n.type !== type) {
         return n;
       }
+      if (n.type === 'message') {
+        return n;
+      }
       return { ...n, read: true };
     }));
+
+    _service({
+      url: 'notification',
+      method: 'PUT',
+      fail: (e) => {
+        console.error("Falha ao marcar todas as notificações como lidas:", e);
+        setNotifications(previousNotifications);
+      }
+    });
   };
 
   const markAsRead = (id) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+
+    _service({
+      url: 'notification',
+      method: 'PUT',
+      data: { uid: id },
+      fail: (e) => {
+        console.error("Falha ao marcar notificação como lida:", e);
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: false } : n));
+      }
+    });
   };
 
   const onNotificationClick = (item, navigate) => {
