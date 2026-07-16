@@ -35,5 +35,15 @@
         margin-top: 8px;
       }
     }
+
+    .ant-table-tbody>tr.ant-table-row {
+      transition: all 0.2s ease;
+
+      &:hover {
+        box-shadow: 0 4px 12px fade(@primary-color, 15%);
+        transform: translateY(-3px);
+        cursor: default;
+      }
+    }
   }
 }

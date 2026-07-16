@@ -11,6 +11,13 @@
 
   .ant-card-body {
     padding: 24px;
+    transition: all 0.2s ease;
+
+  &:hover {
+    border-color: @primary-color;
+    box-shadow: 0 4px 12px fade(@primary-color, 15%);
+    transform: translateY(-2px);
+  }
 
     @media (max-width: @mobile-width) {
       padding: 16px;

@@ -1,4 +1,16 @@
+@import '../../../../styles/variables.less';
+
 .friend-list {
+  &__card {
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: @primary-color;
+      box-shadow: 0 4px 12px fade(@primary-color, 15%);
+      transform: translateY(-2px);
+    }
+  }
+
   &__card-content {
     @media (max-width: 830px) {
       flex-direction: column;
