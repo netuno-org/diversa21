@@ -3,6 +3,7 @@ import { Table, Button, Space, Popconfirm, Typography, Empty, message } from 'an
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import _service from '@netuno/service-client';
+import globalNotification from '../../../../common/globalNotification';
 
 const { Text } = Typography;
 
@@ -21,30 +22,31 @@ function LocationTable({
   const handleDelete = (uid) => {
     setDeletingUid(uid);
     _service({
-      // The endpoint dynamically adapts to the current tab (e.g., 'location/country')
       url: `location/${activeTab}`,
       method: 'DELETE',
       data: { uid },
       success: ({ json }) => {
         if (json?.result) {
-          messageApi.success('Registro apagado com sucesso.');
+          globalNotification.success({ title: 'Sucesso', description: 'Registro apagado com sucesso.' });
           onDeleteSuccess() && onDeleteSuccess();
         } else {
-          messageApi.error(json?.error || 'Não foi possível apagar o registro.');
+          globalNotification.error({ title: 'Erro', description: json?.error || 'Não foi possível apagar o registro.' });
         }
         setDeletingUid(null);
       },
       fail: (response) => {
         const json = response?.json;
+        let desc = json?.error || 'Falha de comunicação ao apagar o registro.';
 
         // Catch custom backend database constraint errors to show friendly messages
         if (json?.error === 'country-has-states') {
-          messageApi.error('Não é possível apagar: existem estados associados a este país.');
-        } else if (json?.error === 'state-has-cities') {
-          messageApi.error('Não é possível apagar: existem cidades associadas a este estado.');
-        } else {
-          messageApi.error(json?.error || 'Falha de comunicação ao apagar o registro.');
+          desc = 'Não é possível apagar: existem estados associados a este país.';
         }
+        if (json?.error === 'state-has-cities') {
+          desc = 'Não é possível apagar: existem cidades associadas a este estado.';
+        }
+
+        globalNotification.error({ title: 'Erro', description: desc });
         setDeletingUid(null);
       },
     });

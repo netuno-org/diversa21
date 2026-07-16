@@ -2,7 +2,6 @@
 
 .institution-form {
   margin: 0 auto;
-  max-width: 800px;
 
   &__body {
     width: 100%;
@@ -23,16 +22,33 @@
       font-weight: 600;
       font-size: 16px;
     }
-  }
 
-  .ant-form-item {
-    margin-bottom: 16px;
+    @media screen and (max-width: 450px) {
+
+      .ant-card-head-title,
+      .ant-card-body {
+        text-align: center;
+      }
+
+      .ant-card-body>.ant-row {
+        justify-content: center;
+      }
+    }
   }
 
   &__actions {
     display: flex;
     gap: 16px;
     margin-top: 24px;
+
+    @media screen and (max-width: 450px) {
+      flex-direction: column-reverse;
+      gap: 12px;
+    }
+  }
+
+  &__btn {
+    border-radius: 32px;
   }
 
   &__action-item {
@@ -47,25 +63,6 @@
     &:hover {
       background-color: darken(@primary-color, 10%);
       border-color: darken(@primary-color, 10%);
-    }
-  }
-
-  @media screen and (max-width: 450px) {
-    &__actions {
-      flex-direction: column-reverse;
-      gap: 12px;
-    }
-
-    &__card {
-
-      .ant-card-head-title,
-      .ant-card-body {
-        text-align: center;
-      }
-
-      .ant-card-body>.ant-row {
-        justify-content: center;
-      }
     }
   }
 }

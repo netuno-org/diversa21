@@ -1,6 +1,13 @@
+@import '../../styles/variables.less';
+
 .reserved-area {
   max-width: 780px;
   margin: 0 auto;
+  overflow-x: hidden;
+
+  @media (max-width: @xs) {
+    margin: 0 16px;
+  }
 
   >div.loading {
     display: flex;
@@ -16,13 +23,13 @@
     min-height: 65vh;
     padding: 40px 20px;
 
-    @media screen and (max-width: 576px) {
+    @media screen and (max-width: @xs) {
       padding: 20px 0;
       min-height: 60vh;
     }
   }
 
-  .ant-result-title{
+  .ant-result-title {
     margin-top: 24px;
     font-weight: bold;
   }
@@ -31,16 +38,14 @@
     .ant-btn {
       width: 100%;
     }
-  }
 
-  @media screen and (max-width: 576px) {
-    padding: 16px;
+    @media screen and (max-width: @xs) {
+      .ant-result-extra {
+        margin-top: 32px;
 
-    .ant-result-extra {
-      margin-top: 32px;
-
-      .ant-btn {
-        width: 100%;
+        .ant-btn {
+          width: 100%;
+        }
       }
     }
   }

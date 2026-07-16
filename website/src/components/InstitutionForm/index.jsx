@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { Typography, Form, Input, Button, Card, Spin, Select, message, Row, Col, Switch, Result, Popconfirm } from 'antd';
+import { Typography, Form, Input, Button, Card, Spin, Select, Row, Col, Switch, Result, Popconfirm } from 'antd';
 import { ArrowLeftOutlined } from "@ant-design/icons";
-
 import { useNavigate } from 'react-router-dom';
-import _service from '@netuno/service-client';
 
+import _service from '@netuno/service-client';
+import isNetworkError from "is-network-error";
+
+import globalNotification from '../../common/globalNotification.js';
 import usePeople from '../../common/usePeople.js';
 import Avatar from '../Avatar';
 import CoverImage from '../CoverImage';
@@ -13,7 +15,7 @@ import "./index.less";
 const { Title } = Typography;
 const { TextArea } = Input;
 
-export default function InstitutionForm({
+function InstitutionForm({
   uid = null,
   slug = null,
   initialData = null,
@@ -166,15 +168,31 @@ export default function InstitutionForm({
       data: formData,
       success: (res) => {
         if (res.json.result) {
+          globalNotification.success({
+            title: isEditMode ? 'Edição da Instituição' : 'Instituição Criada',
+            description: isEditMode ? 'Os dados da instituição foram alterados com sucesso.' : 'A instituição foi criada com sucesso.',
+          });
           if (onSuccess) onSuccess(slug || uid, res.json.data);
         } else {
-          message.error(res.json.error || 'Erro ao guardar.');
+          globalNotification.warning({
+            title: 'Aviso',
+            description: res.json.error || 'Ocorreu um problema ao guardar os dados da instituição.',
+          });
           setSubmitting(false);
         }
       },
-      fail: () => {
-        message.error('Erro de conexão.');
+      fail: (e) => {
         setSubmitting(false);
+        if (e.error && isNetworkError(e.error)) {
+          return globalNotification.error({
+            title: 'Conexão',
+            description: 'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+          });
+        }
+        globalNotification.error({
+          title: 'Erro no Servidor',
+          description: 'Ocorreu um erro ao guardar a instituição, por favor contacte-nos através do suporte.',
+        });
       }
     });
   };
@@ -274,7 +292,7 @@ export default function InstitutionForm({
 
                 <Row gutter={16}>
                   <Col xs={24} md={12}><Form.Item name="address" label="Endereço"><Input disabled={submitting} /></Form.Item></Col>
-                  <Col xs={24} md={12}><Form.Item name="post_code" label="Código Postal"><Input disabled={submitting} /></Form.Item></Col>
+                  <Col xs={24} md={12}><Form.Item name="post_code" label="Código de Endereçamento Postal"><Input disabled={submitting} /></Form.Item></Col>
                 </Row>
 
                 {isEditMode && (
@@ -333,3 +351,5 @@ export default function InstitutionForm({
     </div>
   );
 }
+
+export default InstitutionForm;

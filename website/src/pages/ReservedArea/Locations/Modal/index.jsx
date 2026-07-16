@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Form, Modal, Input, Select, message } from 'antd';
+import { Form, Modal, Input, Select } from 'antd';
 
 import _service from '@netuno/service-client';
+import globalNotification from '../../../../common/globalNotification';
 
 function LocationModal({
   visible,
@@ -13,7 +14,6 @@ function LocationModal({
   onSuccess
 }) {
   const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
   const [isSaving, setIsSaving] = useState(false);
 
   // Synchronize form fields whenever the modal opens or the editing item changes
@@ -59,16 +59,25 @@ function LocationModal({
         data,
         success: ({ json }) => {
           if (json?.result) {
-            messageApi.success(isEditing ? 'Registro atualizado com sucesso.' : 'Registro guardado com sucesso.');
+            globalNotification.success({
+              title: 'Sucesso',
+              description: isEditing ? 'Registro atualizado com sucesso.' : 'Registro guardado com sucesso.'
+            });
             onSuccess() && onSuccess();
             onClose() && onClose();
           } else {
-            messageApi.error(json?.error || 'Não foi possível guardar o registro.');
+            globalNotification.error({
+              title: 'Erro',
+              description: json?.error || 'Não foi possível guardar o registro.'
+            });
           }
           setIsSaving(false);
         },
         fail: () => {
-          messageApi.error('Falha de comunicação ao guardar o registro.');
+          globalNotification.error({
+            title: 'Falha de comunicação',
+            description: 'Falha de comunicação ao guardar o registro.'
+          });
           setIsSaving(false);
         },
       });
@@ -80,7 +89,6 @@ function LocationModal({
 
   return (
     <>
-      {contextHolder}
       <Modal
         title={editingItem ? 'Editar Registro' : 'Novo Registro'}
         open={visible}

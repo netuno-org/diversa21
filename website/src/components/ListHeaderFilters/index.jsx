@@ -73,7 +73,7 @@ function ListHeaderFilters({
         <div className="list-header-filters__header">
           <Row align="middle" gutter={[16, 16]}>
             {title && (
-              <Col xs={12} sm={12}>
+              <Col xs={createButton ? 12 : 24} sm={createButton ? 12 : 24}>
                 <Title>{title}</Title>
               </Col>
             )}

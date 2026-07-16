@@ -19,8 +19,9 @@ function Editor({
   const [form] = Form.useForm();
   const contentValue = Form.useWatch("content", form) || "";
 
-  const clearContentForSubmit = (value) =>
-    value.replace(/\n{3,}/g, "\n\n").trim();
+  const clearContentForSubmit = (value) => {
+    return (value || "").replace(/\n{3,}/g, "\n\n").trim();
+  };
 
   const onCreatedPost = (values) => {
     const cleanedContent = clearContentForSubmit(values.content);
@@ -29,7 +30,7 @@ function Editor({
       form.setFields([
         {
           name: "content",
-          errors: ["Digite algum conteúdo para publicar."]
+          errors: ["Digite algum conteúdo."]
         }
       ]);
       return;
@@ -46,19 +47,16 @@ function Editor({
         post.comments = 0;
         if (onSubmitted) {
           onSubmitted(post);
-
-          form.setFieldsValue({
-            content: "",
-          });
+          form.setFieldsValue({ content: "" });
         }
         globalNotification.success({
-          title: "Post criado com sucesso."
+          title: `${parent ? "Comentário criado" : "Postagem criada"}com sucesso.`
         });
         setSubmitting(false);
       },
       fail: (e) => {
         globalNotification.error({
-          title: `Falha ao publicar ${parent ? "comentário" : "post"}`,
+          title: `Falha ao criar ${parent ? "comentário" : "post"}`,
         });
         setSubmitting(false);
       },
@@ -72,7 +70,7 @@ function Editor({
       form.setFields([
         {
           name: "content",
-          errors: ["Digite algum conteúdo para publicar."]
+          errors: ["Digite algum conteúdo."]
         }
       ]);
       return;
@@ -92,14 +90,14 @@ function Editor({
           onSubmitted({ ...values, content: cleanedContent });
         }
         globalNotification.success({
-          title: "Sucesso ao editar"
+          title: `Sucesso ao editar ${parent ? "comentário" : "postagem"}`
         });
 
         setSubmitting(false);
       },
       fail: (e) => {
         globalNotification.error({
-          title: `Falha ao editar`,
+          title: `Falha ao editar ${parent ? "comentário" : "postagem"}`,
         });
 
         setSubmitting(false);
@@ -138,9 +136,7 @@ function Editor({
       onFinish={types[type].onFinish}
       onClick={(e) => e.stopPropagation()}
       layout="vertical"
-      initialValues={{
-        content
-      }}
+      initialValues={{ content }}
     >
       <Form.Item
         name="content"
@@ -150,7 +146,7 @@ function Editor({
           className="editor-form__text-area"
           maxLength={500}
           rows={4}
-          placeholder="Escreva o seu post"
+          placeholder={`Escreva ${parent ? "o seu comentário" : "a sua postagem"}`}
         />
       </Form.Item>
 

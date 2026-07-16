@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, message, Switch, Tag } from 'antd';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, Switch, Tag } from 'antd';
 import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
+import ListHeaderFilters from "../../../components/ListHeaderFilters";
 
+import globalNotification from '../../../common/globalNotification.js';
 import usePeople from "../../../common/usePeople.js";
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
-
-import ListHeaderFilters from "../../../components/ListHeaderFilters";
 
 import "./index.less";
 
@@ -30,7 +30,6 @@ function People() {
     serviceUrl: 'people/list',
   });
   const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
   const screens = useBreakpoint();
   const screenSize = screens.xl
     ? 100
@@ -45,7 +44,7 @@ function People() {
   const handleDeleteUser = (uid) => {
     loggedUser.remove(uid, {
       onSuccess: () => {
-        messageApi.success('usuário apagado com sucesso.');
+        globalNotification.success('Usuário apagado com sucesso.');
       }
     });
   };
@@ -54,7 +53,6 @@ function People() {
 
   return (
     <div className="people-list">
-      {contextHolder}
       <div className="people-list__header">
         <ListHeaderFilters
           title="Pessoas"

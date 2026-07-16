@@ -173,7 +173,6 @@ function CoverImage({ currentImage, onRemove }, ref) {
                   <Space size="large" align="center" className="cover-editor__actions">
                     <Space>
                       <FormatPainterOutlined className="cover-editor__icon" />
-                      <Text type="secondary">Cor de fundo:</Text>
                       <input
                         type="color"
                         value={color}

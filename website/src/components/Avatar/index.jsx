@@ -168,7 +168,6 @@ function Avatar({ currentImage, onRemove }, ref) {
                   <Space size="large" align="center" className="avatar-editor__actions">
                     <Space>
                       <FormatPainterOutlined className="avatar-editor__icon" />
-                      <Text type="secondary">Cor de fundo:</Text>
                       <input
                         type="color"
                         value={color}

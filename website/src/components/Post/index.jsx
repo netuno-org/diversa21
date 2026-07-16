@@ -247,7 +247,7 @@ function Post({
           {canViewDeletePostButton && (
             <>
               <Popconfirm
-                title="Tem a certeza que quer remover o post?"
+                title="Tem a certeza que quer remover a postagem?"
                 description="Esta ação é irreversível"
                 onConfirm={onDeletePost}
                 okText="Sim"

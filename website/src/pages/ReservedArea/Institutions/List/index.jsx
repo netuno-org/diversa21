@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Tag } from 'antd';
-import { UserAddOutlined } from '@ant-design/icons';
-import _service from '@netuno/service-client';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Tag, Button } from 'antd';
+import { UserAddOutlined, EditOutlined } from '@ant-design/icons';
 
 import InstitutionDisplay from "../../../../components/InstitutionDisplay";
 import usePeople from "../../../../common/usePeople.js";
+import useFilteredPaginatedList from '../../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from "../../../../components/ListHeaderFilters";
 
 import "./index.less";
@@ -15,14 +15,17 @@ const { useBreakpoint } = Grid;
 
 function ListInstitution() {
   const loggedUser = usePeople();
-  const [loading, setLoading] = useState(true);
-  const [institutionList, setInstitutionList] = useState([]);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    size: 10,
-    total: 0,
-    term: '',
-    location: null
+  const {
+    items: institutionList,
+    loading,
+    pagination,
+    handlePaginationChange,
+    handleSearch,
+    handleLocationChange,
+    handleLocationClear,
+    handleSearchClear,
+  } = useFilteredPaginatedList({
+    serviceUrl: 'institution/list',
   });
   const navigate = useNavigate();
   const screens = useBreakpoint();
@@ -36,63 +39,6 @@ function ListInstitution() {
           ? 90
           : 70;
 
-  useEffect(() => {
-    fetchInstitutionList('', null, 1);
-  }, []);
-
-  const fetchInstitutionList = (term, location, page) => {
-    setLoading(true);
-    _service({
-      url: 'institution/list',
-      data: {
-        name: term,
-        ...(location && { [location.type + "Uid"]: location.uid }),
-        page,
-      },
-      success: (response) => {
-        const { items, pagination: responsePagination } = response.json.data;
-        setInstitutionList(items);
-        setPagination((currentPagination) => ({
-          ...currentPagination,
-          current: page,
-          term,
-          location,
-          total: responsePagination.totalCount,
-          size: responsePagination.pageSize
-        }));
-        setLoading(false);
-      },
-      fail: () => {
-        setLoading(false);
-      }
-    });
-  };
-
-  const handlePaginationChange = (page, pageSize) => {
-    setPagination({ ...pagination, current: page, size: pageSize });
-    fetchInstitutionList(pagination.term, pagination.location, page);
-  };
-
-  const handleInstitutionSearch = (term) => {
-    setPagination({ ...pagination, current: 1, term });
-    fetchInstitutionList(term, pagination.location, 1);
-  };
-
-  const handleLocationChange = (option) => {
-    setPagination({ ...pagination, current: 1, location: option });
-    fetchInstitutionList(pagination.term, option, 1);
-  };
-
-  const handleLocationClear = () => {
-    setPagination({ ...pagination, current: 1, location: null });
-    fetchInstitutionList(pagination.term, null, 1);
-  };
-
-  const handleSearchClear = () => {
-    setPagination({ ...pagination, current: 1, term: '' });
-    fetchInstitutionList('', pagination.location, 1);
-  };
-
   return (
     <div className="institutions-list">
       <div className="institutions-list__header">
@@ -103,7 +49,7 @@ function ListInstitution() {
             text: "Criar Instituição",
             onClick: () => navigate('/institutions/new'),
           }}
-          onSearch={handleInstitutionSearch}
+          onSearch={handleSearch}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
@@ -137,13 +83,21 @@ function ListInstitution() {
                   />
                 </Link>
               </div>
+              
               {(loggedUser.canManageInstitution(institution.uid) || loggedUser.canCreateInstitutions()) && (
                 <div className="institutions-list__card-actions">
                   {(institution.active === false || institution.active === "false") && (
-                    <Tag variant="filled" color="error" className="institutions-list__card-status-tag">
+                    <Tag variant="filled" color="error" className="institutions-list__card-status-tag" style={{ borderRadius: '32px' }}>
                       Inativa
                     </Tag>
                   )}
+                  <Button
+                    type="link"
+                    onClick={() => navigate(`/institutions/${institution.slug}/edit`)}
+                    className="institutions-list__card-btn institutions-list__card-btn--edit"
+                  >
+                    <EditOutlined />
+                  </Button>
                 </div>
               )}
             </div>

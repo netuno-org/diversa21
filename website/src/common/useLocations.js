@@ -34,7 +34,10 @@ function useLocations() {
         setLoading(l => ({ ...l, [type]: false }));
       },
       fail: () => {
-        message.error(`Falha ao carregar ${label}.`);
+        globalNotification.error({
+          title: `Erro ao carregar ${label}`,
+          description: `Não foi possível obter a lista de ${label}.`
+        });
         setLoading(l => ({ ...l, [type]: false }));
       },
     });
