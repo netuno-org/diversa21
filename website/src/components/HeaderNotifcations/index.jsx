@@ -155,7 +155,6 @@ function HeaderNotifications() {
                       >
                         <Button
                           type="primary"
-                          size="small"
                           icon={<CheckOutlined />}
                           loading={isProcessing(originatorUid, 'accept')}
                           disabled={isProcessing(originatorUid)}
@@ -171,7 +170,8 @@ function HeaderNotifications() {
                         cancelText="Não"
                       >
                         <Button
-                          size="small"
+                          type="primary"
+                          className="profile__secondary-btn"
                           icon={<CloseOutlined />}
                           loading={isProcessing(originatorUid, 'reject')}
                           disabled={isProcessing(originatorUid)}

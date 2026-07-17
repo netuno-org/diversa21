@@ -168,12 +168,13 @@ function HeaderFriendsRequests() {
                         cancelText="Não"
                       >
                         <Button
+                          type="primary"
                           size="middle"
                           icon={<CloseOutlined />}
                           loading={isProcessing(originatorUid, 'reject')}
                           disabled={isProcessing(originatorUid)}
                           onClick={(e) => e.stopPropagation()}
-                          className="header-friends-requests__btn"
+                          className="header-friends-requests__btn profile__secondary-btn"
                         >
                           Recusar
                         </Button>
