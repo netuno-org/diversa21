@@ -1,0 +1,95 @@
+/**
+  *
+  *  CODE GENERATED AUTOMATICALLY
+  *
+  *  THIS FILE SHOULD NOT BE EDITED BY HAND
+  *
+  */
+
+import {_val, _form} from "@netuno/server-types";
+
+_form.sync(
+	_val.map()
+		.set("big", false)
+		.set("control_active", true)
+		.set("control_group", false)
+		.set("control_user", false)
+		.set("description", "")
+		.set("export_id", false)
+		.set("export_json", true)
+		.set("export_lastchange", false)
+		.set("export_uid", true)
+		.set("export_xls", true)
+		.set("export_xml", true)
+		.set("firebase", "")
+		.set("name", "people_ws_session")
+		.set("parent_uid", "0028953a-b610-4e37-9f25-87bdad2e37dd")
+		.set("reorder", 0)
+		.set("report", false)
+		.set("report_behaviour", 0)
+		.set("show_id", true)
+		.set("title", "Sess\u00E3o WS")
+		.set("uid", "3cfcbb8a-7f88-47c7-9287-3c747daac2dc")
+);
+_form.syncField(
+	"3cfcbb8a-7f88-47c7-9287-3c747daac2dc",
+	_val.map()
+		.set("colspan", 0)
+		.set("description", "")
+		.set("firebase", "")
+		.set("group_id", 0)
+		.set("height", 0)
+		.set("mandatory", true)
+		.set("max", 0)
+		.set("min", 0)
+		.set("name", "people_id")
+		.set("properties", "{\"COLUMN_SEPARATOR\":{\"default\":\" - \",\"type\":\"LINK_SEPARATOR\",\"value\":\" - \"},\"LINK\":{\"default\":\"\",\"type\":\"LINK\",\"value\":\"people:name,email\"},\"MAX_COLUMN_LENGTH\":{\"default\":\"0\",\"type\":\"INTEGER\",\"value\":\"0\"},\"ONLY_ACTIVES\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"SERVICE\":{\"default\":\"com/Select.netuno\",\"type\":\"STRING\",\"value\":\"com/Select.netuno\"}}")
+		.set("rowspan", 0)
+		.set("tdheight", 0)
+		.set("tdwidth", 0)
+		.set("title", "Pessoa")
+		.set("type", "select")
+		.set("uid", "6031c4b9-0363-4923-89d0-155b62dfd2ec")
+		.set("unique", false)
+		.set("user_id", 0)
+		.set("whenedit", true)
+		.set("whenexport", true)
+		.set("whenfilter", true)
+		.set("whennew", true)
+		.set("whenresult", true)
+		.set("whenview", true)
+		.set("width", 0)
+		.set("x", 1)
+		.set("y", 1)
+);
+_form.syncField(
+	"3cfcbb8a-7f88-47c7-9287-3c747daac2dc",
+	_val.map()
+		.set("colspan", 0)
+		.set("description", "")
+		.set("firebase", "")
+		.set("group_id", 0)
+		.set("height", 0)
+		.set("mandatory", true)
+		.set("max", 0)
+		.set("min", 0)
+		.set("name", "session_id")
+		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
+		.set("rowspan", 0)
+		.set("tdheight", 0)
+		.set("tdwidth", 0)
+		.set("title", "Sess\u00E3o ID")
+		.set("type", "text")
+		.set("uid", "66f7a69e-deb6-4c5a-9250-63bccd55c005")
+		.set("unique", false)
+		.set("user_id", 0)
+		.set("whenedit", true)
+		.set("whenexport", true)
+		.set("whenfilter", true)
+		.set("whennew", true)
+		.set("whenresult", true)
+		.set("whenview", true)
+		.set("width", 0)
+		.set("x", 1)
+		.set("y", 2)
+);
