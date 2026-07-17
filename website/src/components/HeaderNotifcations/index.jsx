@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import useFriendActions from "../../common/useFriendActions.js";
+import TimeAgo from '../TimeAgo';
 
 import _service from '@netuno/service-client';
 import usePeople from "../../common/usePeople.js";
@@ -133,7 +134,7 @@ function HeaderNotifications() {
                 <div className="header-notifications__item-content">
                   <div className="header-notifications__item-title-row">
                     <Text strong={!item.read}>{item.title}</Text>
-                    <Text type="secondary" style={{ fontSize: 12 }}>{item.time}</Text>
+                    <TimeAgo sentAt={item.sent_at} className="header-notifications__time" />
                   </div>
                   <Text type="secondary" style={{ fontSize: 13, display: 'block' }}>
                     {item.desc}

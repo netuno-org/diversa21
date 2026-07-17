@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin } from 'antd';
 import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
-
 import _service from '@netuno/service-client';
 import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
+import TimeAgo from '../../../components/TimeAgo';
 import usePeople from "../../../common/usePeople.js";
 import useNotifications from "../../../common/useNotifications.js";
 
@@ -121,8 +121,8 @@ function Notifications() {
                   <div className="notifications-page__item-content">
                     <div className="notifications-page__item-title">
                       <Text strong={!item.read}>{getNotificationTitle(item)}</Text>
-                      {item.time && (
-                        <Text type="secondary" className="notifications-page__item-time">{item.time}</Text>
+                      {item.sent_at && (
+                        <TimeAgo sentAt={item.sent_at} className="notifications-page__item-time" />
                       )}
                     </div>
                     <div className="notifications-page__item-description">

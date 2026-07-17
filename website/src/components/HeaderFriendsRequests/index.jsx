@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Badge, Popover, Typography, Avatar, Button, Spin, Empty, Popconfirm } from 'antd';
 import { UserAddOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
+import TimeAgo from '../TimeAgo';
 
 import _service from '@netuno/service-client';
 import usePeople from "../../common/usePeople.js";
@@ -127,7 +128,7 @@ function HeaderFriendsRequests() {
                   <div className="header-friends-requests__item-title-row">
                     <Text strong className="header-friends-requests__username">{item.title}</Text>
                     <div className="header-friends-requests__meta">
-                      <Text type="secondary" className="header-friends-requests__time">{item.time}</Text>
+                      <TimeAgo sentAt={item.sent_at} className="header-friends-requests__time" />
                       {!item.read && <div className="header-friends-requests__dot" />}
                     </div>
                   </div>

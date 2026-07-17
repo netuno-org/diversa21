@@ -22,13 +22,7 @@ function FriendsList({ onFriendSelected, friend }) {
 
   const ws = useWS();
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimeRefresh((n) => n + 1);
-    }, 60000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+ 
 
   useEffect(() => {
     const listenerList = _ws.addListener({

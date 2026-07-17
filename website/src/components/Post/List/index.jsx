@@ -60,13 +60,6 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
           fetchedItems = fetchedItems.filter(p => String(p.uid) === String(isolatedCommentUid));
         }
 
-        fetchedItems = fetchedItems.map(p => {
-          if (p.moment && !p.moment.endsWith('Z')) {
-            p.moment = `${p.moment}Z`;
-          }
-          return p;
-        });
-
         if (page === 0) {
           setPosts(fetchedItems);
         } else {

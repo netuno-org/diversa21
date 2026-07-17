@@ -6,8 +6,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaRegComment } from "react-icons/fa";
-import dayjs from "dayjs";
 
+import TimeAgo from "../../components/TimeAgo"
 import Editor from "./Editor";
 import PostList from "./List";
 import "./index.less";
@@ -50,16 +50,6 @@ function Post({
 
   const isAlreadyIsolated = location.pathname === `/p/${uid}`;
   const canViewDeletePostButton = people.uid === loggedUser.data?.uid || loggedUser.canManagePosts();
-
-  const formatPostDate = (date) => {
-    const postMoment = dayjs(date);
-    const now = dayjs();
-    const diffInHours = now.diff(postMoment, 'hour');
-    if (diffInHours < 24) {
-      return postMoment.fromNow();
-    }
-    return postMoment.format("llll");
-  };
 
   useEffect(() => {
     if (people?.avatar) {
@@ -217,7 +207,7 @@ function Post({
             <Link className="user-name-link" to={`/u/${people.user}`}>
               <p className="user-name">{people.name}</p>
             </Link>
-            <span className="post-date">{dayjs(moment).fromNow()}</span>
+            <TimeAgo sentAt={moment} className="post-date" />
           </div>
         </div>
 
