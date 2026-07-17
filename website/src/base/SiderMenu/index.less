@@ -8,15 +8,6 @@
   height: 100vh;
   position: fixed;
 
-  @media screen and (max-width: (@mobile-width - 1px)) {
-    position: fixed;
-    left: 0;
-    top: 0;
-    margin-top: 0;
-    height: 100vh;
-    z-index: 110;
-  }
-
   .logo-container {
     max-width: 200px;
     height: 60px;
@@ -32,51 +23,41 @@
     }
   }
 
-  ul.ant-menu {
-    li {
-      &.ant-menu-item {
-        width: 100%;
-        margin-left: 0;
-        border-right: 6px solid @primary-color;
-        border-radius: 0;
-        color: @primary-color;
-      }
+  ul.ant-menu li {
+    &.ant-menu-item {
+      width: 100%;
+      margin-left: 0;
+      border-right: 6px solid @primary-color;
+      border-radius: 0;
+      color: @primary-color;
+    }
 
-      &.ant-menu-item-selected {
-        border-right: 6px solid @secondary-color;
-        border-radius: 0;
-        color: @secondary-color;
-        background-color: @primary-color;
-      }
+    &.ant-menu-item-selected {
+      border-right: 6px solid @secondary-color;
+      border-radius: 0;
+      color: @secondary-color;
+      background-color: @primary-color;
     }
   }
 }
 
-.sider-menu-overlay {
-  display: none;
-
-  @media screen and (max-width: (@mobile-width - 1px)) {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(@primary-color, 0.25);
-    z-index: 105;
-    cursor: pointer;
-    animation: siderOverlayFadeIn 0.2s ease-out;
-  }
+.sider-menu__mobile-toggle {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  background: transparent;
+  border: none;
+  box-shadow: none !important;
+  color: @primary-color;
 }
 
-@keyframes siderOverlayFadeIn {
-  from {
-    opacity: 0;
-  }
+.logo-container--drawer {
+  padding: 16px;
+  text-align: center;
 
-  to {
-    opacity: 1;
+  img {
+    max-width: 140px;
+    height: auto;
   }
 }

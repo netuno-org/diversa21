@@ -50,7 +50,7 @@ function Editor({
           form.setFieldsValue({ content: "" });
         }
         globalNotification.success({
-          title: `${parent ? "Comentário criado" : "Postagem criada"}com sucesso.`
+          title: `${parent ? "Comentário criado" : "Postagem criada"} com sucesso.`
         });
         setSubmitting(false);
       },

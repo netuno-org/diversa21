@@ -1,19 +1,20 @@
 import _auth from "@netuno/auth-client";
-import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined, UsergroupAddOutlined, SettingOutlined } from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
 import { LuUserCheck } from "react-icons/lu";
 
-import { Menu, Layout } from "antd";
+import { Menu, Layout, Drawer, Button, Grid } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./index.less";
 
 import usePeople from "../../common/usePeople";
 
 const { Sider } = Layout;
+const { useBreakpoint } = Grid;
 
 const menuItems = [
   {
@@ -51,14 +52,14 @@ const menuItems = [
     label: "Mensagens",
     icon: <MessageOutlined />,
     link: "/messages"
-  }
-  , {
+  },
+  {
     key: "notifications",
     label: "Notificações",
     icon: <BellOutlined />,
     link: "/notifications"
-  }
-  , {
+  },
+  {
     key: "friends",
     label: "Amigos",
     icon: <LuUserCheck />,
@@ -66,87 +67,98 @@ const menuItems = [
   },
 ];
 
-function SiderMenu({ collapsed, onCollapse }) {
+const RESTRICTED_KEYS = ['locations'];
+
+function SiderMenu() {
   const [selectedMenuKeys, setSelectedMenuKeys] = useState(["posts"]);
-  const [sideMenuMobileMode, setSideMenuMobileMode] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const loggedUser = usePeople();
   const location = useLocation();
   const navigate = useNavigate();
 
+  const screens = useBreakpoint();
+  const isMobile = screens.md === false;
+
+  useEffect(() => {
+    if (!isMobile) {
+      setDrawerOpen(false);
+    }
+  }, [isMobile]);
+
   useEffect(() => {
     const menuItem = menuItems.find((i) => location.pathname === i.link);
-    if (menuItem) {
-      setSelectedMenuKeys([menuItem.key]);
-    } else {
-      setSelectedMenuKeys([]);
-    }
+    setSelectedMenuKeys(menuItem ? [menuItem.key] : []);
   }, [location]);
 
   function onMenuClick(e) {
     const menuItem = menuItems.find((i) => i.key === e.key);
-    if (menuItem) {
-      setSelectedMenuKeys([menuItem.key]);
-      navigate(menuItem.link);
-      if (sideMenuMobileMode && !collapsed) {
-        onCollapse(true);
-      }
+    if (!menuItem) {
+      return;
+    }
+
+    setSelectedMenuKeys([menuItem.key]);
+    navigate(menuItem.link);
+
+    if (isMobile) {
+      setDrawerOpen(false);
     }
   }
 
-  function handleOverlayClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    onCollapse(true);
+  if (!_auth.isLogged()) {
+    return null;
   }
 
-  const showOverlay = _auth.isLogged() && sideMenuMobileMode && !collapsed;
+  const filteredItems = menuItems.filter((item) => {
+    if (RESTRICTED_KEYS.includes(item.key)) {
+      return loggedUser.canManageInstitution();
+    }
+    return true;
+  });
+
+  const menuContent = (
+    <Menu
+      onClick={onMenuClick}
+      selectedKeys={selectedMenuKeys}
+      mode="inline"
+      items={filteredItems}
+    />
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {!drawerOpen && (
+          <Button
+            className="sider-menu__mobile-toggle"
+            icon={<MenuOutlined />}
+            onClick={() => setDrawerOpen(true)}
+          />
+        )}
+
+        <Drawer
+          placement="left"
+          onClose={() => setDrawerOpen(false)}
+          open={drawerOpen}
+          size={260}
+          styles={{ body: { padding: 0 } }}
+        >
+          <div className="logo-container logo-container--drawer">
+            <img alt="logo" src="/images/logo.svg" />
+          </div>
+          {menuContent}
+        </Drawer>
+      </>
+    );
+  }
 
   return (
-    <>
-      {_auth.isLogged() &&
-        <>
-          {showOverlay && (
-            <div
-              className="sider-menu-overlay"
-              onClick={handleOverlayClick}
-              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
-              onTouchStart={(e) => { e.stopPropagation(); }}
-              aria-hidden="true"
-            />
-          )}
-          <Sider
-            onBreakpoint={mobile => {
-              setSideMenuMobileMode(mobile);
-            }}
-            collapsedWidth={sideMenuMobileMode ? '0' : '80'}
-            breakpoint={"md"}
-            collapsible
-            collapsed={collapsed}
-            onCollapse={onCollapse}
-            trigger={<MenuOutlined />}
-            className="sider-menu"
-          >
-            <div className="logo-container"><img alt="logo" src="/images/logo.svg" /></div>
-            <Menu
-              onClick={onMenuClick}
-              selectedKeys={selectedMenuKeys}
-              mode="inline"
-              items={
-                menuItems.filter((item) => {
-                  const restrictedKeys = ['locations'];
-
-                  if (restrictedKeys.includes(item.key)) {
-                    return loggedUser.canManageInstitution();
-                  }
-
-                  return true;
-                })
-              }
-            />
-          </Sider>
-        </>
-      }
-    </>
+    <Sider className="sider-menu">
+      <div className="logo-container">
+        <img alt="logo" src="/images/logo.svg" />
+      </div>
+      {menuContent}
+    </Sider>
   );
 }
 

@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import _auth from "@netuno/auth-client";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Grid } from "antd";
 
 import { EditOutlined, SettingOutlined } from "@ant-design/icons";
 import { MdLogout } from "react-icons/md";
@@ -16,13 +16,17 @@ import usePeople from "../../common/usePeople.js";
 import "./index.less";
 
 const { Header } = Layout;
+const { useBreakpoint } = Grid;
 
-function HeaderBase({ collapsed }) {
+function HeaderBase() {
   const [menuKeysSelected, setMenuKeysSelected] = useState([]);
 
   const location = useLocation();
   const navigate = useNavigate();
   const loggedUser = usePeople();
+
+  const screens = useBreakpoint();
+  const isMobile = screens.md === false;
 
   useEffect(() => {
     if (location.pathname === '/profile/edit') {
@@ -44,12 +48,21 @@ function HeaderBase({ collapsed }) {
     }
   }
 
+  const isLogged = _auth.isLogged();
+
   return (
-    <Header className={'header-base ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
-      {!_auth.isLogged() &&
-        <Link to="/" className="logo-container"><img alt="logo" src="/images/logo.svg" /></Link>
-      }
-      {_auth.isLogged() &&
+    <Header
+      className={classNames('header-base', {
+        auth: isLogged,
+        mobile: isMobile,
+      })}
+    >
+      {!isLogged && (
+        <Link to="/" className="logo-container">
+          <img alt="logo" src="/images/logo.svg" />
+        </Link>
+      )}
+      {isLogged && (
         <Menu
           mode="horizontal"
           disabledOverflow={true}
@@ -96,7 +109,7 @@ function HeaderBase({ collapsed }) {
             }
           ]}
         />
-      }
+      )}
     </Header>
   );
 }
