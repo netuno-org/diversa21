@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Typography, Card, Spin, Button, Divider, Avatar, Space, Empty, Pagination, Tabs, Tag
@@ -267,9 +267,14 @@ function View() {
 
         <div className="institution-view__about">
           <Title level={4}>Sobre</Title>
-          <Paragraph className="institution-view__about-text">
-            {institution.description || 'Esta instituição ainda não adicionou uma descrição.'}
-          </Paragraph>
+          {(institution.description || 'Esta instituição ainda não adicionou uma descrição.')
+            .split('\n')
+            .map((line, index, array) => (
+              <Fragment key={index}>
+                {line}
+                {index < array.length - 1 && <br />}
+              </Fragment>
+            ))}
         </div>
       </Card>
 
