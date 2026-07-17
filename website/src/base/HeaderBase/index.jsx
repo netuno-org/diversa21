@@ -97,7 +97,7 @@ function HeaderBase() {
                 {
                   key: "notificationSettings",
                   icon: <SettingOutlined />,
-                  label: 'Gerir Notificações'
+                  label: 'Gerenciar Notificações'
                 },
                 {
                   key: "logout",
