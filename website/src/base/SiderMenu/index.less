@@ -53,8 +53,21 @@
 }
 
 .logo-container--drawer {
-  padding: 16px;
-  text-align: center;
+  height: 64px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  .drawer-close-btn {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: @primary-color;
+  }
 
   img {
     max-width: 140px;

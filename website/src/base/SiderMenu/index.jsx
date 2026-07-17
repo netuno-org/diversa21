@@ -1,5 +1,5 @@
 import _auth from "@netuno/auth-client";
-import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined } from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined, CloseOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
@@ -141,9 +141,15 @@ function SiderMenu() {
           onClose={() => setDrawerOpen(false)}
           open={drawerOpen}
           size={260}
-          styles={{ body: { padding: 0 } }}
+          styles={{ body: { padding: 0 }, header: { display: 'none' } }}
         >
           <div className="logo-container logo-container--drawer">
+            <Button
+              type="text"
+              icon={<CloseOutlined />}
+              onClick={() => setDrawerOpen(false)}
+              className="drawer-close-btn"
+            />
             <img alt="logo" src="/images/logo.svg" />
           </div>
           {menuContent}
