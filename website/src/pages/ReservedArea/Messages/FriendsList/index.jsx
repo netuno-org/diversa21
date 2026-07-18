@@ -22,14 +22,9 @@ function FriendsList({ onFriendSelected, friend }) {
 
   const ws = useWS();
 
- 
-
   useEffect(() => {
     const listenerList = _ws.addListener({
       service: "friend/list",
-      start: () => {
-        setLoading(true);
-      },
       success: ({ content }) => {
         setPeopleList(content.data.items || []);
       },
@@ -130,6 +125,7 @@ function FriendsList({ onFriendSelected, friend }) {
 
   const handleSearch = (value) => {
     if (value.trim() || value === '') {
+      setLoading(true)
       _ws.sendService({
         service: "friend/list",
         data: {
