@@ -1,4 +1,9 @@
 {
+  "tags": [
+    "message"
+  ],
+  "summary": "Unread Messages",
+  "description": "Fetch number of unread messages.",
   "type": "object",
   "properties": {}
 }

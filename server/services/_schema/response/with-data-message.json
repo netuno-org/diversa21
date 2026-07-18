@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "total": {
+        "type": "integer"
+      }
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

@@ -1,11 +1,3 @@
 {
-  "type": "object",
-  "properties": {
-    "total": {
-      "type": "integer"
-    }
-  },
-  "required": [
-    "total"
-  ]
+  "_schema": "response/with-data-message"
 }
