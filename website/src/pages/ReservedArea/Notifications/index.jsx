@@ -131,7 +131,7 @@ function Notifications() {
                   </div>
                 </div>
                 <div className="notifications-page__item-extra">
-                  {!item.read && <Badge color="#8A6AA2" />}
+                  {!item.read && <Badge color="#52c41a" />}
                 </div>
               </div>
             ))

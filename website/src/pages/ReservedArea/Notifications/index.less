@@ -12,12 +12,12 @@
   }
 
   &__header {
-    border-radius: 16px;
+    border-radius: 0;
     margin-bottom: 16px;
   }
 
   &__card {
-    border-radius: 8px;
+    border-radius: 0;
     overflow: hidden;
     border: 1px solid #f0f0f0;
     flex: 1;
@@ -37,7 +37,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 24px;
 
     .ant-tabs {
       width: 100%;
@@ -63,10 +63,24 @@
 
   &__tabs {
     .ant-tabs-nav {
-      margin: 0 !important;
+      padding: 0 24px;
+      margin-bottom: 24px;
+
+      @media (max-width: @md) {
+        padding: 0 20px;
+      }
 
       &::before {
         display: none;
+      }
+
+      .ant-tabs-tab,
+      .ant-tabs-tab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        line-height: 1;
       }
     }
   }
@@ -102,12 +116,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    padding: 16px 24px;
     cursor: pointer;
     transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     border-bottom: 1px solid #f0f0f0;
     border: 1px solid transparent;
-    border-radius: 8px;
+    border-radius: 0;
 
     &:hover {
       background-color: #fafafa;
@@ -121,12 +135,13 @@
     }
 
     &--unread {
-      border-left: 4px solid @primary-color;
-      padding-left: 12px;
+      border-right: 6px solid @primary-color;
+      padding-right: 12px;
 
       &:hover {
         background-color: #fafafa;
-        box-shadow: 0 4px 12px fade(@primary-color, 8%);
+        border-right-color: @secondary-color;
+        box-shadow: none;
       }
     }
 
