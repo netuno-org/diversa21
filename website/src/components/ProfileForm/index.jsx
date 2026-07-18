@@ -113,14 +113,16 @@ function ProfileForm({
     const data = {
       name: values.name,
       username: values.username,
-      description: values.description,
       password: values.password,
       email: values.email,
       birthDate: values.birthDate?.format('YYYY-MM-DD') ?? '',
       city: values.city?.value || values.city,
       institution: values.institution?.value || values.institution || people?.institution?.uid || loggedUser.data?.institution?.uid,
       group: values.group?.value || values.group || people?.group?.code || "member",
-      active: values.active !== undefined ? values.active : (people?.active ?? true)
+      active: values.active !== undefined ? values.active : (people?.active ?? true),
+      description: (values.description || "")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim()
     }
 
     if (operation === "edit" && people && loggedUser) {

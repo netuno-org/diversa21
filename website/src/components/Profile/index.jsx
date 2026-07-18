@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Tag, Popconfirm } from 'antd';
 import {
@@ -379,11 +379,14 @@ function Profile({ user }) {
         <Divider />
         <div className="profile__about">
           <Title level={4}>Sobre</Title>
-          <Paragraph className="profile__about-text">
-            {user.description && user.description !== "-"
-              ? user.description
-              : 'Este usuário ainda não adicionou uma descrição.'}
-          </Paragraph>
+          {(user.description || 'Esta instituição ainda não adicionou uma descrição.')
+            .split('\n')
+            .map((line, index, array) => (
+              <Fragment key={index}>
+                {line}
+                {index < array.length - 1 && <br />}
+              </Fragment>
+            ))}
         </div>
       </Card>
       <div className="profile__tabs">
