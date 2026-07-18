@@ -47,10 +47,6 @@ function InstitutionForm({
 
   const canCreate = loggedUser.canCreateInstitutions();
 
-  const cleanedDescriptionForSubmit = (value) => {
-    return (value || "").replace(/\n{3,}/g, "\n\n").trim();
-  };
-
   useEffect(() => {
     if (!isEditMode && !canCreate) {
       setForbidden(true);
@@ -117,8 +113,6 @@ function InstitutionForm({
   };
 
   const onFinish = (values) => {
-    
-    const cleanedDescription = cleanedDescriptionForSubmit(values.description);
 
     setSubmitting(true);
     const formData = new FormData();
@@ -128,10 +122,9 @@ function InstitutionForm({
       post_code: institution?.post_code || "",
       telephone: institution?.telephone || "",
       website: institution?.website || "",
-      description: institution?.description || "",
+      description: (institution?.description || "").replace(/\n{3,}/g, "\n\n").trim(),
       active: institution?.active !== undefined ? String(institution.active) : "true",
-      ...values,
-      description: cleanedDescription
+      ...values
     };
 
     Object.keys(allValues).forEach(key => {
