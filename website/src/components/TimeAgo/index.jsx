@@ -31,7 +31,7 @@ function formatRelativeTime(sentAt) {
     return `Há ${days} d`;
   }
 
-  return date.format("DD/MM");
+  return date.format("DD/MM/YY");
 }
 
 function TimeAgo({ sentAt, className = '' }) {

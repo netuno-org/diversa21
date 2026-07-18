@@ -15,7 +15,6 @@ const { Search } = Input;
 function FriendsList({ onFriendSelected, friend }) {
   const [loading, setLoading] = useState(true);
   const [peopleList, setPeopleList] = useState([]);
-  const [timeRefresh, setTimeRefresh] = useState(0);
   const selectedFriendUidRef = useRef(null);
 
   selectedFriendUidRef.current = friend?.uid ?? null;
