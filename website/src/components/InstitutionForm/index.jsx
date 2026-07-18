@@ -117,14 +117,18 @@ function InstitutionForm({
     setSubmitting(true);
     const formData = new FormData();
 
+
     const allValues = {
       address: institution?.address || "",
       post_code: institution?.post_code || "",
       telephone: institution?.telephone || "",
       website: institution?.website || "",
-      description: (institution?.description || "").replace(/\n{3,}/g, "\n\n").trim(),
+      description: (institution?.description || ""),
       active: institution?.active !== undefined ? String(institution.active) : "true",
-      ...values
+      ...values,
+      description: (values.description || "")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim()
     };
 
     Object.keys(allValues).forEach(key => {
