@@ -21,7 +21,7 @@ function Chat({ friend, onClose }) {
   const [historyReload, setHistoryReload] = useState(0);
 
   const screens = useBreakpoint();
-  const isMobile = screens.md === false;
+  const isMobile = screens.lg === false;
 
   useEffect(() => {
     setHistoryReload(0);
