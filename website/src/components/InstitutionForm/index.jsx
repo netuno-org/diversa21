@@ -123,7 +123,6 @@ function InstitutionForm({
       post_code: institution?.post_code || "",
       telephone: institution?.telephone || "",
       website: institution?.website || "",
-      description: (institution?.description || ""),
       active: institution?.active !== undefined ? String(institution.active) : "true",
       ...values,
       description: (values.description || "")
