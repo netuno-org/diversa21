@@ -48,7 +48,6 @@ function TimeAgo({ sentAt, className = '' }) {
     if (sentAt && sentAt !== '') {
       const serverTimezone = Config.timezone();
       moment = dayjs.tz(sentAt, serverTimezone).tz(dayjs.tz.guess());
-      debugger
     }
     setTimeLabel(formatRelativeTime(moment));
 
