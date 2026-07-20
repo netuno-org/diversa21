@@ -30,6 +30,11 @@ class Config {
     return config.websocket.servicesPrefix;
   }
 
+  static timezone() {
+    const { config } = window.reauthkit;
+    return config.timezone;
+  }
+
   static authAltcha() {
     const { config } = window.reauthkit;
     return !!config.auth.altcha;
