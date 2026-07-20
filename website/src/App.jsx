@@ -6,6 +6,8 @@ import antLocale_ptBR from 'antd/lib/locale/pt_BR';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 import classNames from 'classnames';
 
@@ -34,6 +36,9 @@ import './styles/App.less';
 dayjs.locale('pt-br');
 dayjs.extend(LocalizedFormat);
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 const { Content } = Layout;
 
