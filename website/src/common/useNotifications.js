@@ -241,6 +241,19 @@ function useNotifications(loggedUser) {
     });
   };
 
+  const removeNotification = (id) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    // ensure server marks as read/handled
+    _service({
+      url: 'notification',
+      method: 'PUT',
+      data: { uid: id },
+      fail: (e) => {
+        console.error("Falha ao marcar notificação como lida ao remover:", e);
+      }
+    });
+  };
+
   const onNotificationClick = (item, navigate) => {
     if (item.type === 'message') {
       setNotifications(prev => prev.filter(n =>
@@ -294,6 +307,8 @@ function useNotifications(loggedUser) {
     loading,
     markAllAsRead,
     onNotificationClick,
+    markAsRead,
+    removeNotification,
     count
   };
 }

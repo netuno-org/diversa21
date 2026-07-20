@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin } from 'antd';
-import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined } from '@ant-design/icons';
+import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm } from 'antd';
+import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import _service from '@netuno/service-client';
+import useFriendActions from '../../../common/useFriendActions.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
 import TimeAgo from '../../../components/TimeAgo';
 import usePeople from "../../../common/usePeople.js";
@@ -18,7 +19,8 @@ function Notifications() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
-  const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
+  const { notifications, loading, markAllAsRead, onNotificationClick, markAsRead, removeNotification } = useNotifications(loggedUser);
+  const { run: runFriendAction, isProcessing } = useFriendActions();
 
   // Mensagens ficam só no header de mensagens — não aparecem nesta página.
   const generalNotifications = notifications.filter((n) => n.type !== 'message');
@@ -171,9 +173,52 @@ function Notifications() {
                     <div className="notifications-page__item-description">
                       <Text type="secondary">{item.desc}</Text>
                     </div>
+                    {item.type === 'friend-request' && item.originator?.uid && !item.read && (
+                      <div className="notifications-page__item-actions" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          size="small"
+                          type="primary"
+                          icon={<CheckOutlined />}
+                          onClick={() => {
+                            runFriendAction('accept', item.originator.uid, {
+                              onSuccess: () => {
+                                removeNotification(item.id);
+                              }
+                            });
+                          }}
+                          loading={isProcessing(item.originator.uid, 'accept')}
+                          disabled={isProcessing(item.originator.uid)}
+                        >
+                          Aceitar
+                        </Button>
+                        <Popconfirm
+                          title="Recusar solicitação"
+                          description="Tem certeza que deseja recusar este pedido de amizade?"
+                          onConfirm={() => {
+                            runFriendAction('reject', item.originator.uid, {
+                              onSuccess: () => {
+                                removeNotification(item.id);
+                              }
+                            });
+                          }}
+                          okText="Sim"
+                          cancelText="Não"
+                        >
+                          <Button
+                            size="small"
+                            type="default"
+                            icon={<CloseOutlined />}
+                            loading={isProcessing(item.originator.uid, 'reject')}
+                            disabled={isProcessing(item.originator.uid)}
+                          >
+                            Recusar
+                          </Button>
+                        </Popconfirm>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="notifications-page__item-extra">
+                <div className="notifications-page__item-extra" onClick={(e) => e.stopPropagation()}>
                   {!item.read && <Badge color="#52c41a" />}
                 </div>
               </div>
