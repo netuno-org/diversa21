@@ -57,14 +57,14 @@ if (!dbParentPost.isEmpty()) {
       loggedUserId,
       friendId,
       `{ "postUid": "${postUid}" }`,
-      notificationTypeId);
+      notificationTypeId
+    );
 
     const loggedUserUid = loggedUser.getUID("uid");
     const dbFriend = _db.queryFirst(`
         SELECT people.id, people.uid, netuno_user.user
         FROM people
-        JOIN netuno_user
-        ON people.people_user_id = netuno_user.id
+        JOIN netuno_user ON people.people_user_id = netuno_user.id
         WHERE people.id = ?::int
       `, friendId);
     const friendUid = dbFriend.getUID("uid");
@@ -75,35 +75,56 @@ if (!dbParentPost.isEmpty()) {
       _val.map()
         .set("method", "POST")
         .set("service", "notification/new")
-        .set(
-          "data",
-          _val.map()
-            .set("with", loggedUserUid)
-        )
-        .set(
-          "content",
-          _val.map()
-            .set("title", "@" + loggedUsername)
-            .set("content", notificationMessages.MY_POST_COMMENT)
-            .set("originator", 
-              _val.map()
-                .set("uid", loggedUserUid)
-                .set("username", loggedUsername)
-            )
-            .set("recipient", 
-              _val.map()
-                .set("uid", friendUid)
-                .set("username", friendUsername)
-            )
-            .set("sent_at", _db.timestamp())
-            .set("read_at", null)
-            .set("extra", _val.map()
-              .set("postUid", dbPost.getUID("uid"))
-            )
-            .set("type", notificationTypes.MY_POST_COMMENT)
+        .set("data", _val.map().set("with", loggedUserUid))
+        .set("content", _val.map()
+          .set("uid", _db.queryFirst(`
+            SELECT uid FROM notification
+            WHERE originator_id = ?::int AND recipient_id = ?::int AND type_id = ?::int
+            ORDER BY id DESC LIMIT 1
+          `, loggedUserId, friendId, notificationTypeId).getString("uid"))
+          .set("title", "@" + loggedUsername)
+          .set("content", notificationMessages.MY_POST_COMMENT)
+          .set("originator", 
+            _val.map()
+              .set("uid", loggedUserUid)
+              .set("username", loggedUsername)
+          )
+          .set("recipient", 
+            _val.map()
+              .set("uid", friendUid)
+              .set("username", friendUsername)
+          )
+          .set("sent_at", _db.timestamp())
+          .set("read_at", null)
+          .set("extra", _val.map().set("postUid", dbPost.getUID("uid")))
+          .set("type", notificationTypes.MY_POST_COMMENT)
         )
     );
   }
+}
+
+const friendQueueTypeId = notifications.getNotificationTypeId(
+  parent ? notificationTypes.FRIEND_COMMENT : notificationTypes.FRIEND_POST
+);
+
+_db.insert("notification_queue",
+  _val.map()
+    .set("entity_uid", dbPost.getUID("uid"))
+    .set("originator_id", loggedUserId)
+    .set("type_id", friendQueueTypeId)
+);
+
+const loggedInstitutionId = loggedUser.getInt("institution_id");
+if (loggedInstitutionId > 0) {
+  const institutionQueueTypeId = notifications.getNotificationTypeId(
+    parent ? notificationTypes.INSTITUTION_COMMENT : notificationTypes.INSTITUTION_POST
+  );
+  _db.insert("notification_queue",
+    _val.map()
+      .set("entity_uid", dbPost.getUID("uid"))
+      .set("originator_id", loggedUserId)
+      .set("type_id", institutionQueueTypeId)
+  );
 }
 
 const post = _val.map()

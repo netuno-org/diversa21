@@ -61,7 +61,61 @@ if (loggedUserId !== postAuthorId && !notifications.isNotificationBlocked(postAu
     loggedUserId,
     postAuthorId,
     `{ "postUid": "${postUid}" }`,
-    notificationTypeId);
+    notificationTypeId
+  );
+
+  const dbParentAuthor = _db.queryFirst(`
+    SELECT people.id, people.uid, netuno_user.user AS username
+    FROM people
+    INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
+    WHERE people.id = ?::int
+  `, postAuthorId);
+
+  if (dbParentAuthor) {
+    const dbCreated = _db.queryFirst(`
+      SELECT uid, sent_at FROM notification
+      WHERE originator_id = ?::int AND recipient_id = ?::int AND type_id = ?::int
+      ORDER BY id DESC LIMIT 1
+    `, loggedUserId, postAuthorId, notificationTypeId);
+
+    people.wsSendAsService(
+      dbParentAuthor,
+      _val.map()
+        .set("method", "POST")
+        .set("service", "notification/new")
+        .set("data", _val.map().set("with", loggedUserUid))
+        .set("content", _val.map()
+          .set("uid", dbCreated.getString("uid"))
+          .set("title", "@" + loggedUsername)
+          .set("content", notificationMessages.MY_POST_LIKE)
+          .set("originator", _val.map().set("uid", loggedUserUid).set("username", loggedUsername))
+          .set("recipient", _val.map().set("uid", dbParentAuthor.getString("uid")))
+          .set("sent_at", dbCreated.getString("sent_at"))
+          .set("read_at", null)
+          .set("extra", _val.map().set("postUid", postUid))
+          .set("type", notificationTypes.MY_POST_LIKE)
+        )
+    );
+  }
+}
+
+const friendQueueTypeId = notifications.getNotificationTypeId(notificationTypes.FRIEND_LIKE);
+_db.insert("notification_queue",
+  _val.map()
+    .set("entity_uid", postUid)
+    .set("originator_id", loggedUserId)
+    .set("type_id", friendQueueTypeId)
+);
+
+const loggedInstitutionId = loggedUser.getInt("institution_id");
+if (loggedInstitutionId > 0) {
+  const institutionQueueTypeId = notifications.getNotificationTypeId(notificationTypes.INSTITUTION_LIKE);
+  _db.insert("notification_queue",
+    _val.map()
+      .set("entity_uid", postUid)
+      .set("originator_id", loggedUserId)
+      .set("type_id", institutionQueueTypeId)
+  );
 }
 
 _out.json(
