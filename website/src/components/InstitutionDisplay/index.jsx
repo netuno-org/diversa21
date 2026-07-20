@@ -21,8 +21,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
   ].filter(Boolean).join(', ');
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-
+    <div className="institution-display">
       <Avatar
         style={{ backgroundColor: avatarUrl ? '#fff' : '#8A6AA2', ...avatarStyle }}
         src={avatarUrl}
@@ -31,8 +30,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
         {!avatarUrl && institution.name?.[0]}
       </Avatar>
 
-      <div className="user-profile-display-content">
-
+      <div className="institution-display-content" style={{ minWidth: 0, flex: 1 }}>
         <div>
           <strong>{institution.name}</strong>
         </div>
@@ -52,9 +50,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
             {institution.description}
           </Paragraph>
         )}
-
         {children}
-
       </div>
     </div>
   );
