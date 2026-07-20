@@ -5,7 +5,7 @@ import Config from "../../common/Config.js";
 
 import './index.less'
 
-function formatRelativeTime(moment) {
+const formatRelativeTime = (moment)=> {
   if (!moment) {
     return '';
   }
@@ -36,28 +36,27 @@ function formatRelativeTime(moment) {
 }
 
 function TimeAgo({ sentAt, className = '' }) {
-  const [timeRefresh, setTimeRefresh] = useState(0);
   const [timeLabel, setTimeLabel] = useState('');
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimeRefresh((n) => n + 1);
-    }, 60000);
+    const onTick = () => {
+      let moment = '';
+      if (sentAt && sentAt !== '') {
+        const serverTimezone = Config.timezone();
+        moment = dayjs.tz(sentAt, serverTimezone).tz(dayjs.tz.guess());
+      }
+      setTimeLabel(formatRelativeTime(moment));
+    };
 
-    let moment = '';
-    if (sentAt && sentAt !== '') {
-      const serverTimezone = Config.timezone();
-      moment = dayjs.tz(sentAt, serverTimezone).tz(dayjs.tz.guess());
-    }
-    setTimeLabel(formatRelativeTime(moment));
+    const intervalId = setInterval(onTick, 60000);
+
+    onTick();
 
     return () => clearInterval(intervalId);
   }, []);
 
-  const classes = ['time-ago', className].join(' ');
-
   return (
-    <span className={classes}>
+    <span className={['time-ago', className].join(' ')}>
       {timeLabel}
     </span>
   );
