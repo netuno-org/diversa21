@@ -1,4 +1,9 @@
 {
+  "tags": [
+    "message"
+  ],
+  "summary": "Mark Message as Read",
+  "description": "Mark a specific message as read.",
   "type": "object",
   "properties": {
     "from": {

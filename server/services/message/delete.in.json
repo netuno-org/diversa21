@@ -1,4 +1,9 @@
 {
+  "tags": [
+    "message"
+  ],
+  "summary": "Delete Message",
+  "description": "Permanently delete a specific message.",
   "type": "object",
   "properties": {
     "uid": {

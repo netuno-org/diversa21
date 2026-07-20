@@ -1,4 +1,9 @@
 {
+  "tags": [
+    "message"
+  ],
+  "summary": "List Messages",
+  "description": "List direct messages exchanged with a specific user, supports pagination.",
   "type": "object",
   "properties": {
     "with": {

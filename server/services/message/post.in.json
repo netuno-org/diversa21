@@ -1,4 +1,9 @@
 {
+  "tags": [
+    "message"
+  ],
+  "summary": "Send Message",
+  "description": "Send a new message to a specific user.",
   "type": "object",
   "properties": {
     "to": {

@@ -1,4 +1,9 @@
 {
+  "tags": [
+    "message"
+  ],
+  "summary": "Edit Message",
+  "description": "Edit the text content of a message.",
   "type": "object",
   "properties": {
     "uid": {
