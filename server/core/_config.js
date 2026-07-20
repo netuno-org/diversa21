@@ -30,9 +30,11 @@ if (_env.is("dev")) {
 if (_app.isFolder(websiteBuildPath)) {
     const websiteConfigFile = _app.file(`${websiteBuildPath}/reauthkit.js`)
     if (_app.configReloaded() || !websiteConfigFile.exists()) {
+        const websiteSettings = _app.settings.getValues("website", _val.map())
         const websiteConfig = _val.map()
-            .set("api", _app.settings.getValues("api", _val.map()))
-            .set("websocket", _app.settings.getValues("websocket", _val.map()))
+            .set("api", websiteSettings.getValues("api", _val.map()))
+            .set("websocket", websiteSettings.getValues("websocket", _val.map()))
+            .set("timezone", websiteSettings.getString("timezone"))
             .set(
                 "auth",
                 _val.map()
