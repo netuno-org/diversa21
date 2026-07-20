@@ -53,7 +53,7 @@ function TimeAgo({ sentAt, className = '' }) {
     onTick();
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [sentAt]);
 
   return (
     <span className={['time-ago', className].join(' ')}>
