@@ -20,12 +20,15 @@
     ]
   },
   "settings": {
-    "api": {
-      "endpoint": "http://localhost:9000/services/"
-    },
-    "websocket": {
-      "url": "ws://localhost:9000/ws/private/",
-      "servicesPrefix": "/services"
+    "website": {
+      "api": {
+        "endpoint": "http://localhost:9000/services/"
+      },
+      "websocket": {
+        "url": "ws://localhost:9000/ws/private/",
+        "servicesPrefix": "/services"
+      },
+      "timezone": "Europe/Lisbon"
     },
     "public": {}
   },
