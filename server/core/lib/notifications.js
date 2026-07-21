@@ -168,6 +168,18 @@ export default {
 
     for (const dbRecipient of recipientList) {
       const recipientId = dbRecipient.getInt("id");
+
+      const isBlocked = _db.queryFirst(`
+        SELECT id
+        FROM notification_opt_out
+        WHERE people_id = ?::int
+          AND type_id = ?::int
+      `, recipientId, typeId);
+
+      if (isBlocked !== null) {
+        continue;
+      }
+      
       const currentTimestamp = _db.timestamp();
       
       let extraJson = "";

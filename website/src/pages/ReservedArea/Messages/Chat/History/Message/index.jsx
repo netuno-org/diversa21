@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Avatar, Typography, Dropdown, Button, Input, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import _service from "@netuno/service-client";
+import Config from "../../../../../../common/Config";
 
 import "./index.less";
 
@@ -17,13 +18,9 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
   const messageText = data.message || data.text;
   const isIncoming = friend.uid === data.from;
 
-  const messageTime = data.sent_at
-    ? dayjs(data.sent_at).format("DD/MM/YYYY HH:mm")
-    : "";
-
-  const readTime = data.read_at
-    ? dayjs(data.read_at).format("HH:mm")
-    : "";
+  const serverTimezone = Config.timezone();
+  let messageMoment = dayjs.tz(data.sent_at, serverTimezone).tz(dayjs.tz.guess());
+  let readMoment = dayjs.tz(data.read_at, serverTimezone).tz(dayjs.tz.guess());
 
   const handleSaveEdit = () => {
     if (editText.trim() !== "" && editText !== messageText) {
@@ -52,7 +49,7 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
     <li className={`messages__message ${isIncoming ? 'messages__message--incoming' : 'messages__message--outgoing'}`}>
       {showTime && (
         <Text type="secondary" className="messages__message-time">
-          {messageTime}
+          {messageMoment.format("DD/MM/YYYY HH:mm")}
         </Text>
       )}
 
@@ -130,10 +127,10 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
             </Popconfirm>
           )}
 
-          {!isIncoming && readTime && showRead && (
+          {!isIncoming && readMoment && showRead && (
             <div className="messages__message-meta">
               <Text type="secondary" className="messages__message-read">
-                Lida às {readTime}
+                Lida às {readMoment.format("HH:mm")}
               </Text>
             </div>
           )}

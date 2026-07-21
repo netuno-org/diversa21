@@ -96,7 +96,8 @@ if (!dbParentPost.isEmpty()) {
           )
           .set("sent_at", _db.timestamp())
           .set("read_at", null)
-          .set("extra", _val.map().set("postUid", dbPost.getUID("uid")))
+          .set("extra", _val.map()
+          .set("postUid", dbPost.getUID("uid")))
           .set("type", notificationTypes.MY_POST_COMMENT)
         )
     );

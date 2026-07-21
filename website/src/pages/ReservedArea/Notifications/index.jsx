@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin } from 'antd';
-import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined } from '@ant-design/icons';
+import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm } from 'antd';
+import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import _service from '@netuno/service-client';
+import useFriendActions from '../../../common/useFriendActions.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
 import TimeAgo from '../../../components/TimeAgo';
 import usePeople from "../../../common/usePeople.js";
@@ -18,7 +19,8 @@ function Notifications() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
-  const { notifications, loading, markAllAsRead, onNotificationClick } = useNotifications(loggedUser);
+  const { notifications, loading, markAllAsRead, onNotificationClick, markAsRead, removeNotification } = useNotifications(loggedUser);
+  const { run: runFriendAction, isProcessing } = useFriendActions();
 
   // Mensagens ficam só no header de mensagens — não aparecem nesta página.
   const generalNotifications = notifications.filter((n) => n.type !== 'message');
@@ -27,7 +29,13 @@ function Notifications() {
   const getIconForType = (type) => {
     switch (type) {
       case 'institution-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
+      case 'friend-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
       case 'my-post-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
+      case 'institution-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
+      case 'friend-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
+      case 'my-post-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
+      case 'institution-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
+      case 'friend-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
       case 'friend-request': return <Avatar icon={<UserAddOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
       case 'friend-request-accepted': return <Avatar icon={<TeamOutlined />} style={{ backgroundColor: '#52c41a' }} />;
       case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
@@ -35,19 +43,54 @@ function Notifications() {
     }
   };
 
+  const getNotificationBadge = (type) => {
+    let icon;
+    let color;
+    switch (type) {
+      case 'institution-post':
+      case 'friend-post':
+        icon = <FileTextOutlined style={{ fontSize: 10 }} />;
+        color = '#50a063';
+        break;
+      case 'my-post-comment':
+      case 'institution-comment':
+      case 'friend-comment':
+        icon = <CommentOutlined style={{ fontSize: 10 }} />;
+        color = '#1890ff';
+        break;
+      case 'my-post-like':
+      case 'institution-like':
+      case 'friend-like':
+        icon = <HeartOutlined style={{ fontSize: 10 }} />;
+        color = '#eb2f96';
+        break;
+      case 'security':
+        icon = <SafetyOutlined style={{ fontSize: 10 }} />;
+        color = '#fa8c16';
+        break;
+      case 'friend-request':
+      case 'friend-request-accepted':
+        icon = <CheckOutlined style={{ fontSize: 10 }} />;
+        color = '#52c41a';
+        break;
+      default:
+        icon = <NotificationOutlined style={{ fontSize: 10 }} />;
+        color = '#bfbfbf';
+    }
+    return <Avatar size={18} style={{ backgroundColor: color, border: '2px solid #fff' }} icon={icon} />;
+  };
+
   const getNotificationAvatar = (item) => {
-    if (['friend-request', 'friend-request-accepted'].includes(item.type)) {
-      if (item.originator?.uid) {
-        return (
-          <Avatar
-            size={40}
-            src={item.originator?.avatar
-              ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people&${new Date().getTime()}`)
-              : "/images/profile-default.png"
-            }
-          />
-        );
-      }
+    if (item.originator?.uid) {
+      return (
+        <Avatar
+          size={40}
+          src={item.originator?.avatar
+            ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people&${new Date().getTime()}`)
+            : "/images/profile-default.png"
+          }
+        />
+      );
     }
     return getIconForType(item.type);
   };
@@ -116,7 +159,9 @@ function Notifications() {
               >
                 <div className="notifications-page__item-meta">
                   <div className="notifications-page__item-avatar">
-                    {getNotificationAvatar(item)}
+                    <Badge count={getNotificationBadge(item.type)} offset={[-4, 32]}>
+                      {getNotificationAvatar(item)}
+                    </Badge>
                   </div>
                   <div className="notifications-page__item-content">
                     <div className="notifications-page__item-title">
@@ -128,9 +173,52 @@ function Notifications() {
                     <div className="notifications-page__item-description">
                       <Text type="secondary">{item.desc}</Text>
                     </div>
+                    {item.type === 'friend-request' && item.originator?.uid && !item.read && (
+                      <div className="notifications-page__item-actions" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          size="small"
+                          type="primary"
+                          icon={<CheckOutlined />}
+                          onClick={() => {
+                            runFriendAction('accept', item.originator.uid, {
+                              onSuccess: () => {
+                                removeNotification(item.id);
+                              }
+                            });
+                          }}
+                          loading={isProcessing(item.originator.uid, 'accept')}
+                          disabled={isProcessing(item.originator.uid)}
+                        >
+                          Aceitar
+                        </Button>
+                        <Popconfirm
+                          title="Recusar solicitação"
+                          description="Tem certeza que deseja recusar este pedido de amizade?"
+                          onConfirm={() => {
+                            runFriendAction('reject', item.originator.uid, {
+                              onSuccess: () => {
+                                removeNotification(item.id);
+                              }
+                            });
+                          }}
+                          okText="Sim"
+                          cancelText="Não"
+                        >
+                          <Button
+                            size="small"
+                            type="default"
+                            icon={<CloseOutlined />}
+                            loading={isProcessing(item.originator.uid, 'reject')}
+                            disabled={isProcessing(item.originator.uid)}
+                          >
+                            Recusar
+                          </Button>
+                        </Popconfirm>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="notifications-page__item-extra">
+                <div className="notifications-page__item-extra" onClick={(e) => e.stopPropagation()}>
                   {!item.read && <Badge color="#52c41a" />}
                 </div>
               </div>
