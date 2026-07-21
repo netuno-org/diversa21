@@ -2,6 +2,7 @@
 
 .messages__history {
   &-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -26,6 +27,19 @@
         background-color: rgba(0, 0, 0, 0.2);
       }
     }
+  }
+
+  &-scroll-bottom {
+    position: sticky;
+    bottom: 12px;
+    align-self: center;
+    z-index: 10;
+    padding: 6px 20px;
+    height: auto;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-top: -40px;
   }
 
   &-loading {

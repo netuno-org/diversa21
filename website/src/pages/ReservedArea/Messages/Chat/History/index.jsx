@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Spin } from "antd";
+import { Spin, Button } from "antd";
 
 import _ws from "@netuno/ws-client";
 import dayjs from "dayjs";
@@ -15,6 +15,7 @@ function History({ friend, reload }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
   const refList = useRef(null);
   const prevScrollHeightRef = useRef(0);
 
@@ -202,12 +203,15 @@ function History({ friend, reload }) {
   }, [messages, loading, loadingMore, hasMore]);
 
   const handleScroll = (e) => {
-    const { scrollTop } = e.currentTarget;
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    const isFarFromBottom = scrollHeight - scrollTop - clientHeight > 300;
+    setShowScrollBottom(isFarFromBottom);
+
     if (scrollTop <= 50 && hasMore && !loading && !loadingMore) {
       const nextPage = Math.floor(messages.length / 10) + 1;
       setCurrentPage(nextPage);
       setLoadingMore(true);
-      prevScrollHeightRef.current = e.currentTarget.scrollHeight;
+      prevScrollHeightRef.current = scrollHeight;
       _ws.sendService({
         method: "POST",
         service: "message/list",
@@ -216,6 +220,12 @@ function History({ friend, reload }) {
           page: nextPage
         }
       });
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (refList.current) {
+      refList.current.scrollTo({ top: refList.current.scrollHeight, behavior: 'smooth' });
     }
   };
 
@@ -318,6 +328,17 @@ function History({ friend, reload }) {
             );
           })}
         </ul>
+      )}
+
+      {showScrollBottom && (
+        <Button
+          type="primary"
+          shape="round"
+          className="messages__history-scroll-bottom"
+          onClick={scrollToBottom}
+        >
+          Ver mensagens recentes
+        </Button>
       )}
     </div>
   );
