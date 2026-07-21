@@ -43,7 +43,11 @@ function TimeAgo({ sentAt, className = '' }) {
       let moment = '';
       if (sentAt && sentAt !== '') {
         const serverTimezone = Config.timezone();
-        moment = dayjs.tz(sentAt, serverTimezone).tz(dayjs.tz.guess());
+        if (serverTimezone.toUpperCase() === 'UTC') {
+          moment = dayjs.utc(sentAt).tz(dayjs.tz.guess());
+        } else {
+          moment = dayjs.tz(sentAt, serverTimezone).tz(dayjs.tz.guess());
+        }
       }
       setTimeLabel(formatRelativeTime(moment));
     };
