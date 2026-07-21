@@ -1,4 +1,4 @@
-import { _req, _header, _out, _val, _exec } from "@netuno/server-types";
+import { _req, _header, _out, _db, _storage } from "@netuno/server-types";
 
 import response from "#core/lib/response.js";
 
@@ -8,9 +8,15 @@ const entity = _req.getString('entity');
 
 const dbTable = _db.get(entity, uid);
 
-if (!dbTable) response.stopWithTableNotFound();
+if (!dbTable) {
+  response.stopWithTableNotFound();
+}
 
-let dbTableName = dbTable.getString(type);
+const dbTableName = dbTable.getString(type);
+
+if (dbTableName === "") {
+  response.stopWithTableNotFound();
+}
 
 const storageFile = _storage.database(
   entity,
