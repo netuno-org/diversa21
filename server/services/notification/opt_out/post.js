@@ -1,62 +1,39 @@
-import { _req, _db, _header, _exec, _out } from "@netuno/server-types";
+import { _req, _db, _val, _header, _exec } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
-const type = _req.getString("type");
-
-const dbNotificationType = _db.queryFirst(`
-  SELECT id FROM notification_type
-  WHERE code = ?::varchar
-`, type);
-
-if (!dbNotificationType) {
-  _header.status(404);
-  _out.json(
-    { error: "notification-type-not-found" }
-  );
+const typeCode = _req.getString("type");
+if (!typeCode || typeCode.trim() === "") {
+  _header.status(400);
   _exec.stop();
 }
 
-const typeId = dbNotificationType.getInt("id");
+const loggedUser = people.getLogged();
+const loggedUserId = loggedUser.getInt("id");
 
-const dbPeople = people.getLogged();
+const dbType = _db.queryFirst(`
+  SELECT id FROM notification_type WHERE code = ? AND active = true
+`, typeCode);
 
-if (!dbPeople) {
+if (!dbType) {
   _header.status(404);
-  _out.json(
-    { error: "people-not-found" }
-  );
   _exec.stop();
 }
 
-const peopleId = dbPeople.getInt("id");
+const typeId = dbType.getInt("id");
 
-const dbOptOut = _db.queryFirst(`
+const dbExisting = _db.queryFirst(`
   SELECT id FROM notification_opt_out
   WHERE people_id = ?::int AND type_id = ?::int
-`, peopleId, typeId);
+`, loggedUserId, typeId);
 
-if (dbOptOut) {
-  _header.status(409);
-  _out.json(
-    { error: "notification-opt-out-already-exists" }
+if (!dbExisting) {
+  _db.insert("notification_opt_out",
+    _val.map()
+      .set("people_id", loggedUserId)
+      .set("type_id", typeId)
   );
-  _exec.stop();
-}
-
-const result = _db.insert("notification_opt_out",
-  _val.map()
-    .set("people_id", peopleId)
-    .set("type_id", typeId)
-);
-
-if (!result) {
-  _header.status(400);
-  _out.json(
-    { error: "notification-opt-out-not-created" }
-  );
-  _exec.stop();
 }
 
 response.successWithoutData();

@@ -3,25 +3,30 @@ import { _db, _val } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
-const dbPeople = people.getLogged();
-
-const peopleId = dbPeople.getInt("id");
+const loggedUser = people.getLogged();
+const loggedUserId = loggedUser.getInt("id");
 
 const dbTypes = _db.query(`
-  SELECT
+  SELECT 
+    notification_type.id,
     notification_type.code,
     notification_type.name,
-    CASE WHEN notification_opt_out.id IS NOT NULL THEN true ELSE false END AS blocked
+    CASE 
+      WHEN notification_opt_out.id IS NOT NULL THEN true 
+      ELSE false 
+    END AS blocked
   FROM notification_type
-  LEFT JOIN notification_opt_out
-    ON notification_opt_out.type_id = notification_type.id
+  LEFT JOIN notification_opt_out 
+    ON notification_opt_out.type_id = notification_type.id 
     AND notification_opt_out.people_id = ?::int
-  ORDER BY notification_type.name ASC
-`, peopleId);
+    AND notification_opt_out.active = true
+  WHERE notification_type.active = true
+  ORDER BY notification_type.id ASC
+`, loggedUserId);
 
-const types = _val.list();
+const list = _val.list();
 for (const dbType of dbTypes) {
-  types.add(
+  list.add(
     _val.map()
       .set("code", dbType.getString("code"))
       .set("name", dbType.getString("name"))
@@ -29,4 +34,4 @@ for (const dbType of dbTypes) {
   );
 }
 
-response.successWithData(types);
+response.successWithData(list);
