@@ -55,7 +55,6 @@ export default {
   stopWithCityNotFound: () => stopWithNotFound("city"),
   stopWithNameNotFound: () => stopWithNotFound("name"),
   stopWithEmailNotFound: () => stopWithNotFound("email"),
-  stopWithGroupNotFound: () => stopWithNotFound("group"),
   stopWithInstitutionNotFound: () => stopWithNotFound("institution"),
   stopWithSlugNotFound: () => stopWithNotFound("slug"),
   stopWithStateNotFound: () => stopWithNotFound("state"),
