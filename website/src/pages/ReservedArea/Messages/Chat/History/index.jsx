@@ -18,6 +18,8 @@ function History({ friend, reload }) {
   const refList = useRef(null);
   const prevScrollHeightRef = useRef(0);
 
+  const isInitialLoadRef = useRef(true);
+
   useEffect(() => {
     setLoading(true);
     setMessages([]);
@@ -25,13 +27,18 @@ function History({ friend, reload }) {
     setHasMore(true);
     setLoadingMore(false);
     prevScrollHeightRef.current = 0;
+    isInitialLoadRef.current = true;
     const listenerMessageRef = _ws.addListener({
       method: "POST",
       service: "message/list",
       success: ({ content, data }) => {
         const page = data?.page || 1;
         if (page > 1) {
-          setMessages((prev) => [...content, ...prev]);
+          setMessages((prev) => {
+            const existingUids = new Set(prev.map((m) => m.uid));
+            const newItems = content.filter((m) => !existingUids.has(m.uid));
+            return [...newItems, ...prev];
+          });
         } else {
           setMessages(content);
         }
@@ -58,16 +65,24 @@ function History({ friend, reload }) {
       method: "POST",
       service: "message/new",
       success: ({ data, content }) => {
-        if (data.with === friend.uid) {
+        if (data.with === friend.uid || content.to === friend.uid || content.from === friend.uid) {
+          const appendMessage = () => {
+            setMessages((prev) => {
+              if (prev.some((m) => m.uid === content.uid)) {
+                return prev.map((m) => (m.uid === content.uid ? content : m));
+              }
+              return [...prev, content];
+            });
+          };
+
           _ws.sendService({
             service: "message/read/mark",
             data: {
               uid: content.uid,
               from: friend.uid
             },
-            success: () => {
-              setMessages((prev) => [...prev, content]);
-            }
+            success: appendMessage,
+            fail: appendMessage
           });
         }
       }
@@ -127,21 +142,69 @@ function History({ friend, reload }) {
   }, [friend]);
 
   useEffect(() => {
-    if (refList.current) {
-      if (prevScrollHeightRef.current > 0) {
-        const newScrollHeight = refList.current.scrollHeight;
-        refList.current.scrollTop = newScrollHeight - prevScrollHeightRef.current;
-        prevScrollHeightRef.current = 0;
-      } else {
-        refList.current.scrollTo({ top: refList.current.scrollHeight });
+    if (!refList.current || messages.length === 0) return;
+
+    const el = refList.current;
+    const lastMessage = messages[messages.length - 1];
+    const isOutgoing = lastMessage && lastMessage.from !== friend?.uid;
+
+    const scrollToBottom = () => {
+      if (!el) return;
+      el.scrollTop = el.scrollHeight;
+    };
+
+    if (isInitialLoadRef.current) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
+      isInitialLoadRef.current = false;
+      prevScrollHeightRef.current = 0;
+    } else if (prevScrollHeightRef.current > 0) {
+      const prevScrollHeight = prevScrollHeightRef.current;
+      prevScrollHeightRef.current = 0;
+      requestAnimationFrame(() => {
+        if (el) {
+          const newScrollHeight = el.scrollHeight;
+          el.scrollTop = newScrollHeight - prevScrollHeight;
+        }
+      });
+    } else if (isOutgoing) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
+    } else {
+      const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 250;
+      if (isNearBottom) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 50);
       }
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (!loading && !loadingMore && hasMore && refList.current && messages.length > 0) {
+      const el = refList.current;
+      if (el.scrollHeight <= el.clientHeight) {
+        const nextPage = Math.floor(messages.length / 10) + 1;
+        setCurrentPage(nextPage);
+        setLoadingMore(true);
+        _ws.sendService({
+          method: "POST",
+          service: "message/list",
+          data: {
+            with: friend.uid,
+            page: nextPage
+          }
+        });
+      }
+    }
+  }, [messages, loading, loadingMore, hasMore]);
+
   const handleScroll = (e) => {
     const { scrollTop } = e.currentTarget;
-    if (scrollTop === 0 && hasMore && !loading && !loadingMore) {
-      const nextPage = currentPage + 1;
+    if (scrollTop <= 50 && hasMore && !loading && !loadingMore) {
+      const nextPage = Math.floor(messages.length / 10) + 1;
       setCurrentPage(nextPage);
       setLoadingMore(true);
       prevScrollHeightRef.current = e.currentTarget.scrollHeight;
@@ -168,11 +231,14 @@ function History({ friend, reload }) {
       setMessages([]);
       return;
     }
+    setCurrentPage(1);
+    prevScrollHeightRef.current = 0;
     _ws.sendService({
       method: "POST",
       service: "message/list",
       data: {
-        with: friend.uid
+        with: friend.uid,
+        page: 1
       }
     });
   };
