@@ -38,19 +38,19 @@ for (const dbQueueItem of dbQueueItems) {
     INNER JOIN netuno_user ON people.people_user_id = netuno_user.id
     WHERE people.id = ?::int
   `, originatorId);
-  
+
   if (!dbOriginator) {
     _db.execute("DELETE FROM notification_queue WHERE id = ?::int", queueId);
     continue;
   }
-  
+
   const originatorUid = dbOriginator.getUID("uid");
   const originatorUsername = dbOriginator.getString("username");
   const originatorInstitutionId = dbOriginator.getInt("institution_id");
 
   let title = "@" + originatorUsername;
   let extraMap = _val.map();
-  
+
   const notifiedIds = {};
   notifiedIds[originatorId] = true;
 
@@ -91,10 +91,10 @@ for (const dbQueueItem of dbQueueItems) {
 
   extraMap.set("postUid", postUid);
 
-  if (typeCode === notificationTypes.FRIEND_POST || 
-      typeCode === notificationTypes.FRIEND_COMMENT || 
-      typeCode === notificationTypes.FRIEND_LIKE) {
-      
+  if (typeCode === notificationTypes.FRIEND_POST ||
+    typeCode === notificationTypes.FRIEND_COMMENT ||
+    typeCode === notificationTypes.FRIEND_LIKE) {
+
     const dbFriends = notifications.getFriends(originatorId);
     const friendsToNotify = _val.list();
     for (const dbFriend of dbFriends) {
@@ -116,9 +116,9 @@ for (const dbQueueItem of dbQueueItems) {
       extraMap
     );
 
-  } else if (typeCode === notificationTypes.INSTITUTION_POST || 
-             typeCode === notificationTypes.INSTITUTION_COMMENT || 
-             typeCode === notificationTypes.INSTITUTION_LIKE) {
+  } else if (typeCode === notificationTypes.INSTITUTION_POST ||
+    typeCode === notificationTypes.INSTITUTION_COMMENT ||
+    typeCode === notificationTypes.INSTITUTION_LIKE) {
 
     const dbFriends = notifications.getFriends(originatorId);
     for (const dbFriend of dbFriends) {
