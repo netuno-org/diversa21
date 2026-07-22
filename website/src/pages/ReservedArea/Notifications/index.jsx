@@ -96,7 +96,7 @@ function Notifications() {
   };
 
   const getNotificationTitle = (item) => {
-    if (['friend-request', 'friend-request-accepted'].includes(item.type) && item.originator?.name) {
+    if (item.originator?.name) {
       return item.originator.name;
     }
     return item.title;
