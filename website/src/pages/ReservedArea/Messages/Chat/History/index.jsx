@@ -9,7 +9,7 @@ import globalNotification from "../../../../../common/globalNotification.js";
 import Message from "./Message/index.jsx";
 import "./index.less";
 
-function History({ friend, reload }) {
+function History({ friend, reload, onRef }) {
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -229,6 +229,28 @@ function History({ friend, reload }) {
     }
   };
 
+  const appendNewMessage = (msg) => {
+    setMessages((prev) => {
+      if (prev.some((m) => m.uid === msg.uid)) {
+        return prev.map((m) => (m.uid === msg.uid ? msg : m));
+      }
+      return [...prev, msg];
+    });
+  };
+
+  useEffect(() => {
+    if (onRef) {
+      onRef({
+        appendMessage: appendNewMessage
+      });
+    }
+    return () => {
+      if (onRef) {
+        onRef(null);
+      }
+    };
+  }, [onRef]);
+
   useEffect(() => {
     if (reload > 0) {
       onLoad();
@@ -317,7 +339,7 @@ function History({ friend, reload }) {
 
             return (
               <Message
-                key={message.uid}
+                key={message.uid || index}
                 friend={friend}
                 data={message}
                 showTime={showTime}

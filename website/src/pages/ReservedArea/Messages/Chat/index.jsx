@@ -19,6 +19,7 @@ function Chat({ friend, onClose }) {
   const [form] = Form.useForm();
   const [messageSubmitting, setMessageSubmitting] = useState(false);
   const [historyReload, setHistoryReload] = useState(0);
+  const [historyApi, setHistoryApi] = useState(null);
 
   const screens = useBreakpoint();
   const isMobile = screens.lg === false;
@@ -36,9 +37,14 @@ function Chat({ friend, onClose }) {
         message
       },
       start: () => setMessageSubmitting(true),
-      success: () => {
+      success: (response) => {
         form.resetFields([["message"]]);
-        setHistoryReload((prev) => prev + 1);
+        const messageContent = response?.content?.content;
+        if (messageContent && historyApi) {
+          historyApi.appendMessage(messageContent);
+        } else {
+          setHistoryReload((prev) => prev + 1);
+        }
         _ws.sendService({
           service: "friend/list",
           data: { forMessages: true }
@@ -126,7 +132,7 @@ function Chat({ friend, onClose }) {
       </div>
 
       <div className="messages__chat-body">
-        <History friend={friend} reload={historyReload} />
+        <History friend={friend} reload={historyReload} onRef={setHistoryApi} />
       </div>
 
       <div className="messages__chat-footer">

@@ -89,4 +89,5 @@ people.wsSendAsService(
 _out.json(
   _val.map()
     .set("result", true)
+    .set("content", message.toData(dbPeopleFrom, dbPeopleTo, dbMessage))
 );
