@@ -134,7 +134,7 @@ function NotificationSettings() {
             {groupedSections.map((section) => (
               <div key={section.key} className="notification-settings-page__section">
                 <div className="notification-settings-page__section-title">
-                  <Text strong>{section.title}</Text>
+                  <h4>{section.title}</h4>
                 </div>
                 {section.items.map((type) => (
                   <div key={type.code} className="notification-settings-page__item">
@@ -148,6 +148,8 @@ function NotificationSettings() {
                       checked={!type.blocked}
                       loading={loadingCode === type.code}
                       onChange={() => onToggle(type.code, type.blocked)}
+                      aria-label={`Alternar ${labelMap[type.code] || type.name}`}
+                      aria-checked={!type.blocked}
                     />
                   </div>
                 ))}
