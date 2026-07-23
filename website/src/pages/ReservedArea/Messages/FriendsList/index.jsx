@@ -73,6 +73,7 @@ function FriendsList({ onFriendSelected, friend }) {
           const current = prev[index];
           const updated = {
             ...current,
+            last_message: content?.message ?? current.last_message,
             last_message_at: content?.sent_at ?? current.last_message_at,
             unread_messages: selectedFriendUidRef.current === data.with
               ? 0
@@ -163,6 +164,7 @@ function FriendsList({ onFriendSelected, friend }) {
               avatar={f.avatar}
               isActive={selectedFriendUidRef.current === f.uid}
               unreadMessages={f.unread_messages}
+              lastMessage={f.last_message}
               lastMessageAt={f.last_message_at}
               onClick={() => onFriendSelected && onFriendSelected(f)}
             />

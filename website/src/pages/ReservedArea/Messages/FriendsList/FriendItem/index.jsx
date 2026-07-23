@@ -16,13 +16,14 @@ function FriendItem({
   isActive,
   onClick,
   unreadMessages,
+  lastMessage,
   lastMessageAt,
 }) {
   const avatarSrc = avatar
     ? _service.url(`/asset?uid=${uid}&type=avatar&entity=people&${new Date().getTime()}`)
     : '/images/profile-default.png';
 
-    return (
+  return (
     <li
       onClick={onClick}
       className={`messages__friend-item ${isActive ? 'messages__friend-item--active' : ''}`}
@@ -51,9 +52,9 @@ function FriendItem({
           </Col>
         </div>
         <Text className="messages__friend-item-preview">
-          Toque para ver as mensagens...
+          {lastMessage || "Ainda não há mensagens."}
         </Text>
-          <TimeAgo sentAt={lastMessageAt} className="messages__friend-item-time" />
+        <TimeAgo sentAt={lastMessageAt} className="messages__friend-item-time" />
       </div>
     </li>
   );

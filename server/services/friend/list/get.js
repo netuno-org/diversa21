@@ -47,6 +47,8 @@ params.add(targetId);
 
 params.add(targetId).add(targetId);
 
+params.add(targetId).add(targetId);
+
 params.add(targetId).add(targetId).add(targetId).add(`%${name}%`);
 
 let sqlQuery = `
@@ -62,6 +64,14 @@ let sqlQuery = `
               AND m.recipient_id = ? 
               AND m.read_at IS NULL
         ) AS unread_messages,
+        (
+            SELECT m.message
+            FROM messages m
+            WHERE (m.originator_id = p.id AND m.recipient_id = ?)
+               OR (m.originator_id = ? AND m.recipient_id = p.id)
+            ORDER BY m.sent_at DESC, m.id DESC
+            LIMIT 1
+        ) AS last_message,
         (
             SELECT MAX(m.sent_at)
             FROM messages m
@@ -124,6 +134,7 @@ for (const dbFriend of dbFriends) {
   const friendData = people.getData(dbFriend.getUID("friend_uid"));
   friendData.set("unread_messages", dbFriend.getInt("unread_messages"));
   friendData.set("online", dbFriend.getInt("sessions") > 0);
+  friendData.set("last_message", dbFriend.getString("last_message") || "");
   friendData.set("last_message_at", dbFriend.getString("last_message_at") || "");
 
   friends.add(friendData);
