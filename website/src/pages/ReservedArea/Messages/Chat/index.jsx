@@ -29,12 +29,18 @@ function Chat({ friend, onClose }) {
   }, [friend]);
 
   const onFinish = ({ message }) => {
+    const cleanMessage = message.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{6,}/g, "\n\n").trim()
+
+    if (!cleanMessage){
+      return;
+    } 
+
     _ws.sendService({
       method: "POST",
       service: "message",
       data: {
         to: friend.uid,
-        message
+        message: cleanMessage,
       },
       start: () => setMessageSubmitting(true),
       success: (response) => {

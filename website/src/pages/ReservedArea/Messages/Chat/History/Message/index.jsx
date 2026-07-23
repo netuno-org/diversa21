@@ -17,8 +17,8 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
 
   const messageText = data.message || data.text;
   const isIncoming = friend.uid === data.from;
-
   const serverTimezone = Config.timezone();
+
   let messageMoment = dayjs.tz(data.sent_at, serverTimezone).tz(dayjs.tz.guess());
   let readMoment = dayjs.tz(data.read_at, serverTimezone).tz(dayjs.tz.guess());
 
@@ -120,7 +120,7 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
               >
                 <div className="messages__message-bubble" style={{ cursor: isIncoming ? 'default' : 'pointer' }}>
                   <Text className="messages__message-text">
-                    {messageText}
+                  {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
                   </Text>
                 </div>
               </Dropdown>
