@@ -178,6 +178,24 @@ function useNotifications(loggedUser) {
     };
   }, [connected]);
 
+  useEffect(() => {
+    const handleFriendActionSuccess = (event) => {
+      const detail = event?.detail || {};
+      const { action, uid } = detail;
+      if (!uid || !['accept', 'reject', 'cancel'].includes(action)) {
+        return;
+      }
+      setNotifications((prev) => prev.filter((n) =>
+        !(n.type === 'friend-request' && n.originator?.uid === uid)
+      ));
+    };
+
+    window.addEventListener('friend-action-success', handleFriendActionSuccess);
+    return () => {
+      window.removeEventListener('friend-action-success', handleFriendActionSuccess);
+    };
+  }, []);
+
   const processNotification = (n) => {
     n.id = n.uid;
     n.username = n.originator?.username;

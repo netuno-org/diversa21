@@ -65,6 +65,11 @@ function useFriendActions() {
             description: config.successDescription,
           });
         }
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('friend-action-success', {
+            detail: { action, uid, response }
+          }));
+        }
         onSuccess && onSuccess(response);
       },
       fail: (error) => {
