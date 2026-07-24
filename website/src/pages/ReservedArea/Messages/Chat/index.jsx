@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Typography, Avatar, Empty, Popconfirm, Grid } from "antd";
-import { SendOutlined, CloseOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import React, { useEffect, useState, useRef } from "react";
+import { Form, Input, Button, Typography, Avatar, Empty, Popconfirm, Grid, Popover } from "antd";
+import { SendOutlined, CloseOutlined, ArrowLeftOutlined, SmileOutlined } from "@ant-design/icons";
+import EmojiPicker from "emoji-picker-react";
 
 import _service from "@netuno/service-client";
 
@@ -20,6 +21,7 @@ function Chat({ friend, onClose }) {
   const [messageSubmitting, setMessageSubmitting] = useState(false);
   const [historyReload, setHistoryReload] = useState(0);
   const [historyApi, setHistoryApi] = useState(null);
+  const textAreaRef = useRef(null);
 
   const screens = useBreakpoint();
   const isMobile = screens.lg === false;
@@ -27,6 +29,31 @@ function Chat({ friend, onClose }) {
   useEffect(() => {
     setHistoryReload(0);
   }, [friend]);
+
+  const handleEmojiClick = (emojiData) => {
+    const message = form.getFieldValue("message") || "";
+    const emoji = emojiData.emoji;
+    
+    let selectionStart = message.length;
+    let selectionEnd = message.length;
+    
+    const textarea = textAreaRef.current?.resizableTextArea?.textArea;
+    if (textarea) {
+      selectionStart = textarea.selectionStart;
+      selectionEnd = textarea.selectionEnd;
+    }
+    
+    const updatedMessage = message.substring(0, selectionStart) + emoji + message.substring(selectionEnd);
+    form.setFieldsValue({ message: updatedMessage });
+    
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        const cursorPosition = selectionStart + emoji.length;
+        textarea.setSelectionRange(cursorPosition, cursorPosition);
+      }
+    }, 10);
+  };
 
   const onFinish = ({ message }) => {
     const cleanMessage = message.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{6,}/g, "\n\n").trim()
@@ -144,12 +171,35 @@ function Chat({ friend, onClose }) {
       <div className="messages__chat-footer">
         <Form form={form} layout="vertical" onFinish={onFinish} className="messages__chat-form">
           <div className="messages__chat-input-wrapper">
+            <Popover
+              content={
+                <EmojiPicker
+                  onEmojiClick={handleEmojiClick}
+                  previewConfig={{ showPreview: false }}
+                  height="360px"
+                  width="310px"
+                />
+              }
+              trigger="click"
+              placement="topLeft"
+              overlayClassName="messages__chat-emoji-popover"
+            >
+              <Button
+                type="text"
+                shape="circle"
+                icon={<SmileOutlined />}
+                className="messages__chat-emoji-btn"
+                style={{ fontSize: 20, color: '#8c8c8c', border: 'none', background: 'transparent' }}
+              />
+            </Popover>
+
             <Form.Item
               name="message"
               rules={[{ required: true, message: 'Insira a mensagem.' }]}
               style={{ marginBottom: 0, flex: 1 }}
             >
               <TextArea
+                ref={textAreaRef}
                 placeholder={`Mensagem para ${friend.name || 'o usuário'}...`}
                 autoSize={{ minRows: 1, maxRows: 4 }}
                 variant="borderless"

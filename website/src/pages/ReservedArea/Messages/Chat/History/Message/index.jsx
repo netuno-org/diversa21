@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Avatar, Typography, Dropdown, Button, Input, Popconfirm } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import React, { useState, useRef } from "react";
+import { Avatar, Typography, Dropdown, Button, Input, Popconfirm, Popover } from "antd";
+import { EditOutlined, DeleteOutlined, SmileOutlined } from "@ant-design/icons";
+import EmojiPicker from "emoji-picker-react";
 import _service from "@netuno/service-client";
 import Config from "../../../../../../common/Config";
 
@@ -14,6 +15,7 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editText, setEditText] = useState(data.message || data.text || "");
+  const editTextAreaRef = useRef(null);
 
   const messageText = data.message || data.text;
   const isIncoming = friend.uid === data.from;
@@ -21,6 +23,31 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
 
   let messageMoment = dayjs.tz(data.sent_at, serverTimezone).tz(dayjs.tz.guess());
   let readMoment = dayjs.tz(data.read_at, serverTimezone).tz(dayjs.tz.guess());
+
+  const handleEmojiClick = (emojiData) => {
+    const text = editText || "";
+    const emoji = emojiData.emoji;
+
+    let selectionStart = text.length;
+    let selectionEnd = text.length;
+
+    const textarea = editTextAreaRef.current?.resizableTextArea?.textArea;
+    if (textarea) {
+      selectionStart = textarea.selectionStart;
+      selectionEnd = textarea.selectionEnd;
+    }
+
+    const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
+    setEditText(updatedText);
+
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        const cursorPosition = selectionStart + emoji.length;
+        textarea.setSelectionRange(cursorPosition, cursorPosition);
+      }
+    }, 10);
+  };
 
   const handleSaveEdit = () => {
     if (editText.trim() !== "" && editText !== messageText) {
@@ -68,12 +95,37 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
         <div className="messages__message-content">
           {isEditing ? (
             <div className="messages__message-edit-wrapper">
-              <Input.TextArea
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                autoSize={{ minRows: 1, maxRows: 3 }}
-                className="messages__message-edit-input"
-              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <Input.TextArea
+                  ref={editTextAreaRef}
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  autoSize={{ minRows: 1, maxRows: 3 }}
+                  className="messages__message-edit-input"
+                  style={{ flex: 1 }}
+                />
+                <Popover
+                  content={
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiClick}
+                      skinTonesDisabled={false}
+                      previewConfig={{ showPreview: false }}
+                      height="360px"
+                      width="310px"
+                    />
+                  }
+                  trigger="click"
+                  placement="topRight"
+                  overlayClassName="messages__chat-emoji-popover"
+                >
+                  <Button
+                    type="text"
+                    shape="circle"
+                    icon={<SmileOutlined />}
+                    style={{ fontSize: 18, color: '#8c8c8c' }}
+                  />
+                </Popover>
+              </div>
               <div className="messages__message-edit-buttons">
                 <Button
                   size="small"
