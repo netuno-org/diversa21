@@ -122,7 +122,21 @@
 
   &-edit-buttons {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
     gap: 8px;
+
+    .ant-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center;
+      
+      > span {
+        margin: 0 !important;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+      }
+    }
   }
 }
