@@ -206,7 +206,8 @@ function Notifications() {
                         >
                           <Button
                             size="small"
-                            type="default"
+                            type="primary"
+                            className="profile__secondary-btn"
                             icon={<CloseOutlined />}
                             loading={isProcessing(item.originator.uid, 'reject')}
                             disabled={isProcessing(item.originator.uid)}

@@ -159,6 +159,34 @@
       justify-content: flex-start;
       flex-shrink: 0;
       margin-top: 8px;
+
+      .ant-space-item {
+        flex: none !important;
+      }
+
+      .ant-btn {
+        width: auto !important;
+        flex: none !important;
+        padding: 0 16px;
+        border-radius: 100px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center;
+        gap: 6px;
+
+        > span {
+          margin: 0 !important;
+          line-height: 1;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .anticon {
+          margin: 0 !important;
+          display: inline-flex;
+          align-items: center;
+        }
+      }
     }
 
     &-content {
