@@ -155,11 +155,22 @@ function History({ friend, reload, onRef }) {
     };
 
     if (isInitialLoadRef.current) {
-      setTimeout(() => {
+      scrollToBottom();
+      const resizeObserver = new ResizeObserver(() => {
         scrollToBottom();
-      }, 50);
-      isInitialLoadRef.current = false;
+      });
+      resizeObserver.observe(el);
+      
+      const timer = setTimeout(() => {
+        resizeObserver.disconnect();
+        isInitialLoadRef.current = false;
+      }, 800);
+
       prevScrollHeightRef.current = 0;
+      return () => {
+        resizeObserver.disconnect();
+        clearTimeout(timer);
+      };
     } else if (prevScrollHeightRef.current > 0) {
       const prevScrollHeight = prevScrollHeightRef.current;
       prevScrollHeightRef.current = 0;
