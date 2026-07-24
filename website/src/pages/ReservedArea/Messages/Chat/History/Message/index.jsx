@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Avatar, Typography, Dropdown, Button, Input, Popconfirm, Popover } from "antd";
 import { EditOutlined, DeleteOutlined, SmileOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
+import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 import _service from "@netuno/service-client";
 import Config from "../../../../../../common/Config";
 
@@ -110,6 +111,8 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
                       onEmojiClick={handleEmojiClick}
                       skinTonesDisabled={false}
                       previewConfig={{ showPreview: false }}
+                      emojiData={ptEmojis}
+                      searchPlaceholder="Pesquisar..."
                       height="360px"
                       width="310px"
                     />

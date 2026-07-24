@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Button, Form, Input, Space, Popconfirm, Popover } from "antd";
 import { SmileOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
+import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 import globalNotification from "../../../common/globalNotification";
 import _service from "@netuno/service-client";
 
@@ -186,6 +187,8 @@ function Editor({
                   onEmojiClick={handleEmojiClick}
                   skinTonesDisabled={false}
                   previewConfig={{ showPreview: false }}
+                  emojiData={ptEmojis}
+                  searchPlaceholder="Pesquisar..."
                   height="360px"
                   width="310px"
                 />

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Form, Input, Button, Typography, Avatar, Empty, Popconfirm, Grid, Popover } from "antd";
 import { SendOutlined, CloseOutlined, ArrowLeftOutlined, SmileOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
+import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 
 import _service from "@netuno/service-client";
 
@@ -176,6 +177,8 @@ function Chat({ friend, onClose }) {
                 <EmojiPicker
                   onEmojiClick={handleEmojiClick}
                   previewConfig={{ showPreview: false }}
+                  emojiData={ptEmojis}
+                  searchPlaceholder="Pesquisar..."
                   height="360px"
                   width="310px"
                 />
