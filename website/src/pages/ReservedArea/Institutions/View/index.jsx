@@ -5,7 +5,8 @@ import {
 } from "antd";
 import {
   EditOutlined, MailOutlined, TeamOutlined,
-  PhoneOutlined, EnvironmentOutlined, GlobalOutlined
+  PhoneOutlined, EnvironmentOutlined, GlobalOutlined,
+  FileTextOutlined, CommentOutlined, LikeOutlined
 } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
@@ -295,7 +296,12 @@ function View() {
             },
             {
               key: 'posts',
-              label: 'Publicações',
+              label: (
+                <Space>
+                  <FileTextOutlined style={{ fontSize: 18 }} />
+                  <span>Publicações</span>
+                </Space>
+              ),
               children: (
                 <div className="institution-view__tabs-content">
                   <ActivityList url="activity/post/list" institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />
@@ -304,7 +310,12 @@ function View() {
             },
             {
               key: 'comments',
-              label: 'Comentários',
+              label: (
+                <Space>
+                  <CommentOutlined style={{ fontSize: 18 }} />
+                  <span>Comentários</span>
+                </Space>
+              ),
               children: (
                 <div className="institution-view__tabs-content">
                   <ActivityList url="activity/comment/list" institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />
@@ -313,7 +324,12 @@ function View() {
             },
             {
               key: 'likes',
-              label: 'Curtidas',
+              label: (
+                <Space>
+                  <LikeOutlined style={{ fontSize: 18 }} />
+                  <span>Curtidas</span>
+                </Space>
+              ),
               children: (
                 <div className="institution-view__tabs-content">
                   <ActivityList url="activity/like/list" institution={institution.uid} onLoaded={() => { }} onItemRemoved={() => { }} />

@@ -10,6 +10,10 @@ import {
   CheckOutlined,
   CloseOutlined,
   MessageOutlined,
+  FileTextOutlined,
+  CommentOutlined,
+  LikeOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import { RiCommunityLine, RiFileEditLine } from "react-icons/ri";
 import { BsFillHouseGearFill } from "react-icons/bs";
@@ -198,7 +202,12 @@ function Profile({ user }) {
   const tabItems = [
     {
       key: 'posts',
-      label: 'Publicações',
+      label: (
+        <Space>
+          <FileTextOutlined style={{ fontSize: 18 }} />
+          <span>Publicações</span>
+        </Space>
+      ),
       children: (
         <div className="profile__tabs-content">
           <ActivityList url="activity/post/list" author={user.uid} />
@@ -207,7 +216,12 @@ function Profile({ user }) {
     },
     {
       key: 'comments',
-      label: 'Comentários',
+      label: (
+        <Space>
+          <CommentOutlined style={{ fontSize: 18 }} />
+          <span>Comentários</span>
+        </Space>
+      ),
       children: (
         <div className="profile__tabs-content">
           <ActivityList url="activity/comment/list" author={user.uid} />
@@ -216,7 +230,12 @@ function Profile({ user }) {
     },
     {
       key: 'likes',
-      label: 'Curtidas',
+      label: (
+        <Space>
+          <LikeOutlined style={{ fontSize: 18 }} />
+          <span>Curtidas</span>
+        </Space>
+      ),
       children: (
         <div className="profile__tabs-content">
           <ActivityList url="activity/like/list" author={user.uid} />
@@ -228,7 +247,12 @@ function Profile({ user }) {
   if (loggedUser?.data?.group?.code) {
     tabItems.push({
       key: 'friends',
-      label: 'Amigos',
+      label: (
+        <Space>
+          <TeamOutlined style={{ fontSize: 18 }} />
+          <span>Amigos</span>
+        </Space>
+      ),
       children: (
         <div className="profile__tabs-content">
           <FriendList userUid={user.uid} />

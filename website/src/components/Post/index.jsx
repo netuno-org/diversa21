@@ -6,6 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaRegComment } from "react-icons/fa";
+import { VscCommentDiscussionQuote } from "react-icons/vsc";
 
 import TimeAgo from "../../components/TimeAgo"
 import Editor from "./Editor";
@@ -310,7 +311,7 @@ function Post({
 
             {!showEditor && (
               <Button className="btn-reply" onClick={() => setShowEditor(true)}>
-                <RiArrowGoBackLine /> Responder
+                <VscCommentDiscussionQuote /> Comentar
               </Button>
             )}
           </div>
