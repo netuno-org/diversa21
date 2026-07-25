@@ -138,14 +138,14 @@ function Editor({
     comment: {
       submitButtonText: "Comentar",
       showCancelButton: true,
-      title: "Comentário",
+      title: "",
       cancelTitle: "Cancelar comentário?",
       onFinish: onCreatedPost
     },
     post: {
       submitButtonText: "Postar",
       showCancelButton: false,
-      title: "Postagem",
+      title: "",
       cancelTitle: "",
       onFinish: onCreatedPost
     },
