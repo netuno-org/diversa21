@@ -293,7 +293,7 @@ function Profile({ user }) {
                     className="profile__edit-btn"
                     icon={buttonIcon}
                     onClick={handleFriendAction}
-                    loading={isLoading}
+                    loading={isProcessing(user.uid, "send")}
                   >
                     {currentFriendship.label}
                   </Button>
@@ -308,7 +308,9 @@ function Profile({ user }) {
                       type="primary"
                       className={`profile__edit-btn ${friendStatus === "friends" || friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
                       icon={buttonIcon}
-                      loading={isLoading}
+                      disabled={isLoading}
+                      loading={isProcessing(user.uid, currentFriendship?.action)}
+                      
                     >
                       {currentFriendship.label}
                     </Button>
@@ -326,7 +328,8 @@ function Profile({ user }) {
                     type="primary"
                     className="profile__secondary-btn"
                     icon={<CloseOutlined />}
-                    loading={isLoading}
+                    disabled={isLoading}
+                    loading={isProcessing(user.uid, "reject")}
                   >
                     Recusar
                   </Button>
@@ -335,7 +338,7 @@ function Profile({ user }) {
               {!isOwnProfile && friendStatus === 'friends' && (
                 <Button
                   type="primary"
-                  loading={isLoading}
+                  disabled={isLoading}
                   onClick={() => handleOpenMessages(user)}
                   icon={<MessageOutlined />}
                 >
