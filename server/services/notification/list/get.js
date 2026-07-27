@@ -6,7 +6,7 @@ import response from "#core/lib/response.js";
 const loggedUserUid = people.getLogged().getUID("uid");
 const page = _req.getInt('page', 1);
 
-const pageSize = 5;
+const pageSize = _req.getInt('pageSize', 5);
 
 const offset = page > 0 ? (page - 1) * pageSize : 0
 

@@ -1,0 +1,80 @@
+import { useState, useEffect } from 'react';
+import _ws from '@netuno/ws-client';
+import useWS from './useWS';
+
+let messageCountLoaded = false;
+
+export default function useMessageCount() {
+  const ws = useWS();
+  const [count, setCount] = useState(0);
+  
+  const NO_DATA = 0;
+  const CONNECTED = 1;
+  const NOT_CONNECTED = -1;
+  const [connected, setConnected] = useState(NO_DATA);
+
+  useEffect(() => {
+    if (!ws.data) {
+      messageCountLoaded = false;
+      setConnected(NO_DATA);
+      return;
+    }
+    if (ws.data?.connected) {
+      setConnected(CONNECTED);
+    } else if (ws.data?.connected === false) {
+      messageCountLoaded = false;
+      setConnected(NOT_CONNECTED);
+    }
+  }, [ws.data]);
+
+  useEffect(() => {
+    if (connected !== CONNECTED || messageCountLoaded) {
+      return;
+    }
+    messageCountLoaded = true;
+
+    _ws.sendService({ method: "GET", service: "message/unread-count" });
+    
+    const listenerInitCount = _ws.addListener({
+      method: "GET",
+      service: "message/unread-count",
+      success: (data) => {
+        setCount(data.content?.count || 0);
+      }
+    });
+
+    const listenerNewMessage = _ws.addListener({
+      method: "POST",
+      service: "notification/new",
+      success: (data) => {
+        const newNotif = data.content;
+        if (newNotif?.type === 'message') {
+          setCount(prev => prev + 1);
+        }
+      }
+    });
+
+    const listenerMessageRead = _ws.addListener({
+      method: "POST",
+      service: "notification/read",
+      success: (data) => {
+        const content = data.content;
+        if (!content || content.type !== 'message') return;
+
+        if (content.all) {
+          setCount(0);
+        } else {
+          setCount(prev => Math.max(0, prev - 1));
+        }
+      }
+    });
+
+    return () => {
+      _ws.removeListener(listenerInitCount);
+      _ws.removeListener(listenerNewMessage);
+      _ws.removeListener(listenerMessageRead);
+    };
+  }, [connected]);
+
+  return { count };
+}
