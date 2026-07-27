@@ -192,10 +192,18 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
             </Popconfirm>
           )}
 
-          {!isIncoming && readMoment && showRead && (
+          {!isIncoming && (
             <div className="messages__message-meta">
               <Text type="secondary" className="messages__message-read">
-                Lida às {readMoment.format("HH:mm")}
+                {readMoment && showRead ? `Lida às ${readMoment.format("HH:mm")}` : ""} {data.edited_at ? "(editada)" : ""}
+              </Text>
+            </div>
+          )}
+
+          {isIncoming && data.edited_at && (
+            <div className="messages__message-meta">
+              <Text type="secondary" style={{ fontSize: '11px', color: '#b0b0b0' }}>
+                (editada)
               </Text>
             </div>
           )}

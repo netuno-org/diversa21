@@ -28,6 +28,7 @@ const dbPeopleTo = _db.get("people", dbMessage.getInt("recipient_id"));
 
 _db.form("messages")
   .set("message", updatedContent)
+  .set("edited_at", _db.timestamp())
   .where(_db.where("id").equal(dbMessage.getInt("id")))
   .update();
 
