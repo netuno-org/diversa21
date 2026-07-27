@@ -1,0 +1,18 @@
+{
+  "title": "Reagir a Mensagem",
+  "description": "Adiciona ou remove reações (emojis) a uma mensagem privada.",
+  "request": [
+    {
+      "name": "uid",
+      "type": "string",
+      "mandatory": true,
+      "description": "UID da mensagem a reagir."
+    },
+    {
+      "name": "reaction",
+      "type": "string",
+      "mandatory": false,
+      "description": "String com 1 emoji."
+    }
+  ]
+}
