@@ -36,6 +36,17 @@
       }
     }
 
+    .ant-table-thead > tr > th {
+      background-color: fade(@primary-color, 6%) !important;
+      color: @primary-color !important;
+      font-weight: 600 !important;
+      border-bottom: 2px solid fade(@primary-color, 15%) !important;
+      
+      &::before {
+        display: none !important;
+      }
+    }
+
     .ant-table-tbody>tr.ant-table-row {
       transition: all 0.2s ease;
 
