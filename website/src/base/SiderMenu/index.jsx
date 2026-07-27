@@ -1,7 +1,7 @@
 import _auth from "@netuno/auth-client";
 import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined, CloseOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
-import { RiCommunityLine } from "react-icons/ri";
+import { RiCommunityLine, RiArticleLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
 import { LuUserCheck } from "react-icons/lu";
 
@@ -20,7 +20,7 @@ const menuItems = [
   {
     key: "posts",
     label: "Postagens",
-    icon: <HomeOutlined />,
+    icon: <RiArticleLine />,
     link: "/posts"
   },
   {
