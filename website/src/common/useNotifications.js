@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import _service from '@netuno/service-client';
 import _ws from '@netuno/ws-client';
 
 import useWS from "./useWS.js";
 
-let loaded = false;
 let openChatFriendUid = null;
 
 export function setOpenChatFriendUid(uid) {
@@ -17,10 +16,6 @@ function useNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   fetchNotifications();
-  // }, []);
-
   const NO_DATA = 0;
   const CONNECTED = 1;
   const NOT_CONNECTED = -1;
@@ -28,17 +23,19 @@ function useNotifications() {
   const [connected, setConnected] = useState(NO_DATA);
   const [count, setCount] = useState(0);
 
+  const loadedRef = useRef(false);
+
   useEffect(() => {
     setCount(0);
     if (!ws.data) {
-      loaded = false;
+      loadedRef.current = false;
       setConnected(NO_DATA);
       return;
     }
     if (ws.data?.connected) {
       setConnected(CONNECTED);
     } else if (ws.data?.connected === false) {
-      loaded = false;
+      loadedRef.current = false;
       setConnected(NOT_CONNECTED);
     }
   }, [ws.data]);
@@ -48,10 +45,10 @@ function useNotifications() {
       return;
     }
 
-    if (loaded) {
+    if (loadedRef.current) {
       return;
     }
-    loaded = true;
+    loadedRef.current = true;
 
     const listenerNotification = _ws.addListener({
       method: "GET",
@@ -68,7 +65,10 @@ function useNotifications() {
 
     _ws.sendService({
       method: "GET",
-      service: "notification/list"
+      service: "notification/list",
+      data: {
+        pageSize: 5
+      }
     });
 
     const listenerNewNotification = _ws.addListener({
@@ -78,7 +78,6 @@ function useNotifications() {
         const newNotification = data.content;
         processNotification(newNotification);
 
-        // Chat aberto com o remetente: ignora a notificação.
         if (
           newNotification.type === 'message' &&
           openChatFriendUid &&
@@ -141,6 +140,7 @@ function useNotifications() {
     });
 
     return () => {
+      loadedRef.current = false;
       _ws.removeListener(listenerNotification);
       _ws.removeListener(listenerNewNotification);
       _ws.removeListener(listenerNotificationRead);
@@ -171,7 +171,6 @@ function useNotifications() {
     n.read = Boolean(n.read_at);
 
     if (n.type === 'message') {
-      // Se o servidor mandar um contador, respeitamos; senão começamos em 1.
       n.messageCount = n.messageCount || n.extra?.count || 1;
     } else {
       n.desc = n.content;
