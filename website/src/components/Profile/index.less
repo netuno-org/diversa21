@@ -80,7 +80,8 @@
   &__action-buttons {
     width: 100%;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: flex-end;
     gap: 12px;
 
     @media (max-width: @sm) {
@@ -117,7 +118,7 @@
   }
 
   &__edit-btn {
-    width: 100%;
+    width: auto; /* Alterado de 100% para auto para o botão abraçar o texto */
     margin-top: 24px;
     display: inline-flex !important;
     align-items: center !important;
@@ -143,7 +144,7 @@
   }
 
   &__secondary-btn {
-    width: 100%;
+    width: auto;
     color: @primary-color;
     border-color: @primary-color;
     background-color: transparent;
