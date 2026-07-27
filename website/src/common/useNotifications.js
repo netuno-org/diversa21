@@ -4,52 +4,14 @@ import _ws from '@netuno/ws-client';
 
 import useWS from "./useWS.js";
 
-import dayjs from 'dayjs';
-
+let loaded = false;
 let openChatFriendUid = null;
 
 export function setOpenChatFriendUid(uid) {
   openChatFriendUid = uid || null;
 }
 
-function useNotifications(loggedUser) {
-  const MOCK_NOTIFICATIONS = loggedUser.canChangeUserGroup() ?
-    [
-      // {
-      //   id: 1,
-      //   type: 'message',
-      //   title: '@test',
-      //   desc: 'Enviou-te uma nova mensagem.',
-      //   time: 'Há 5 min',
-      //   read: false,
-      //   username: 'test'
-      // },
-      {
-        id: 1,
-        type: 'security',
-        title: 'Novo Acesso',
-        desc: 'Sessão iniciada num novo dispositivo.',
-        time: 'Há 2 horas',
-        read: false
-      },
-      {
-        id: 2,
-        type: 'system',
-        title: 'Manutenção',
-        desc: 'O sistema estará offline esta madrugada.',
-        time: 'Ontem',
-        read: true
-      },
-      {
-        id: 3,
-        type: 'system',
-        title: 'Bem-vindo!',
-        desc: 'O teu perfil foi criado com sucesso.',
-        time: 'Há 3 dias',
-        read: true
-      },
-    ] : [];
-
+function useNotifications() {
   const ws = useWS();
 
   const [notifications, setNotifications] = useState([]);
@@ -69,12 +31,14 @@ function useNotifications(loggedUser) {
   useEffect(() => {
     setCount(0);
     if (!ws.data) {
+      loaded = false;
       setConnected(NO_DATA);
       return;
     }
     if (ws.data?.connected) {
       setConnected(CONNECTED);
     } else if (ws.data?.connected === false) {
+      loaded = false;
       setConnected(NOT_CONNECTED);
     }
   }, [ws.data]);
@@ -83,6 +47,11 @@ function useNotifications(loggedUser) {
     if (connected !== CONNECTED) {
       return;
     }
+
+    if (loaded) {
+      return;
+    }
+    loaded = true;
 
     const listenerNotification = _ws.addListener({
       method: "GET",
