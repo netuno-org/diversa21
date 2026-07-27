@@ -260,15 +260,25 @@
 
   &__tabs {
     .ant-tabs-nav {
-      padding: 0 24px;
+      padding: 0 0 0 24px;
       margin-bottom: 24px;
 
       @media (max-width: @md) {
-        padding: 0 20px;
+        padding: 0 0 0 20px;
       }
 
       .ant-tabs-tab {
         font-size: 16px;
+      }
+
+      .ant-tabs-nav-list::after {
+        content: '';
+        width: 24px;
+        flex-shrink: 0;
+
+        @media (max-width: @md) {
+          width: 20px;
+        }
       }
     }
   }
