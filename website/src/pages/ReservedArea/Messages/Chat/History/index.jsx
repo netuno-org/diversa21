@@ -160,7 +160,7 @@ function History({ friend, reload, onRef }) {
         scrollToBottom();
       });
       resizeObserver.observe(el);
-      
+
       const timer = setTimeout(() => {
         resizeObserver.disconnect();
         isInitialLoadRef.current = false;
