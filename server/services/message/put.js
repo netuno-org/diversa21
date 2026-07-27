@@ -24,6 +24,13 @@ if (dbMessage.getInt("originator_id") !== dbPeopleLogged.getInt("id")) {
   _exit();
 }
 
+const sentTime = dbMessage.getSQLTimestamp("sent_at").getTime();
+const currentTime = new Date().getTime();
+if (currentTime - sentTime > 3600000) {
+  _out.json(_val.map().set("result", false).set("error", "edit_time_expired"));
+  _exit();
+}
+
 const dbPeopleTo = _db.get("people", dbMessage.getInt("recipient_id"));
 
 _db.form("messages")

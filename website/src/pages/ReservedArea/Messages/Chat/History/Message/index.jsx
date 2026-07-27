@@ -57,13 +57,15 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
     setIsEditing(false);
   };
 
+  const isEditAllowed = new Date().getTime() - messageMoment.valueOf() <= 3600000;
+
   const menuItems = [
-    {
+    ...(isEditAllowed ? [{
       key: 'edit',
       label: 'Editar',
       icon: <EditOutlined />,
       onClick: () => setIsEditing(true)
-    },
+    }] : []),
     {
       key: 'delete',
       label: 'Eliminar',
@@ -174,8 +176,8 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
                 placement="bottomRight"
                 disabled={isIncoming || !!data.deleted_at}
               >
-                <div 
-                  className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`} 
+                <div
+                  className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
                   style={{ cursor: (isIncoming || !!data.deleted_at) ? 'default' : 'pointer' }}
                 >
                   {data.deleted_at ? (
