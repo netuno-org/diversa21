@@ -286,6 +286,15 @@ function Profile({ user }) {
                 >
                   Editar Perfil
                 </Button>
+              ) : canEditProfile ? (
+                <Button
+                  type="primary"
+                  className="profile__edit-btn"
+                  icon={<EditOutlined />}
+                  onClick={handleEdit}
+                >
+                  Editar Perfil
+                </Button>
               ) : currentFriendship && (canRequestFriend || friendStatus !== "none") ? (
                 friendStatus === "none" ? (
                   <Button
