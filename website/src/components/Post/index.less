@@ -1,17 +1,13 @@
 @import '../../styles/variables.less';
 
 .post-container {
-  margin-top: 24px;
+  margin-top: 16px;
   border-radius: 8px;
   transition: all 0.2s ease;
 
-  &:first-child{
+  &:first-child {
     margin-top: 0;
   }
-
-  .ant-card-body {
-    padding: 24px;
-    transition: all 0.2s ease;
 
   &:hover {
     border-color: @primary-color;
@@ -19,20 +15,21 @@
     transform: translateY(-2px);
   }
 
-    @media (max-width: @mobile-width) {
-      padding: 16px;
-    }
-  }
-
   &--clickable {
+    cursor: pointer;
     &:hover {
       border-color: @primary-color;
       box-shadow: 0 4px 12px fade(@primary-color, 15%);
     }
   }
 
-  .post-container {
-    margin-top: 24px;
+  .ant-card-body {
+    padding: 16px 24px;
+    transition: all 0.2s ease;
+
+    @media (max-width: @mobile-width) {
+      padding: 16px;
+    }
   }
 
   .activity-context-bar {
