@@ -74,6 +74,16 @@
       background-color: #f0f0f0;
       color: rgba(0, 0, 0, 0.85);
       border-bottom-left-radius: 4px;
+
+      &--deleted {
+        background-color: fade(@primary-color, 4%) !important;
+        color: fade(@primary-color, 65%) !important;
+        border: 1px dashed fade(@primary-color, 50%);
+        
+        .messages__message-text {
+          color: fade(@primary-color, 65%) !important;
+        }
+      }
     }
   }
 
@@ -93,6 +103,16 @@
 
       .messages__message-text {
         color: #ffffff;
+      }
+
+      &--deleted {
+        background-color: fade(@primary-color, 4%) !important;
+        color: fade(@primary-color, 65%) !important;
+        border: 1px dashed fade(@primary-color, 50%);
+        
+        .messages__message-text {
+          color: fade(@primary-color, 65%) !important;
+        }
       }
     }
   }

@@ -171,12 +171,22 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
               <Dropdown
                 menu={{ items: menuItems }}
                 trigger={['click']}
-                placement="bottomRight" disabled={isIncoming}
+                placement="bottomRight"
+                disabled={isIncoming || !!data.deleted_at}
               >
-                <div className="messages__message-bubble" style={{ cursor: isIncoming ? 'default' : 'pointer' }}>
-                  <Text className="messages__message-text">
-                  {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
-                  </Text>
+                <div 
+                  className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`} 
+                  style={{ cursor: (isIncoming || !!data.deleted_at) ? 'default' : 'pointer' }}
+                >
+                  {data.deleted_at ? (
+                    <Text italic type="secondary" className="messages__message-text">
+                      Esta mensagem foi eliminada
+                    </Text>
+                  ) : (
+                    <Text className="messages__message-text">
+                      {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
+                    </Text>
+                  )}
                 </div>
               </Dropdown>
             </Popconfirm>

@@ -25,7 +25,11 @@ if (dbMessage.getInt("originator_id") !== dbPeopleLogged.getInt("id")) {
 
 const dbPeopleTo = _db.get("people", dbMessage.getInt("recipient_id"));
 
-_db.delete("messages", dbMessage.getInt("id"));
+_db.form("messages")
+  .set("deleted_at", _db.timestamp())
+  .set("message", "")
+  .where(_db.where("id").equal(dbMessage.getInt("id")))
+  .update();
 
 if (dbPeopleTo) {
   people.wsSendAsService(

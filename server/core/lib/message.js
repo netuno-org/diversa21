@@ -19,6 +19,9 @@ export default {
       .set("to", dbPeopleTo.getString("uid"))
       .set("message", dbMessage.getString("message"))
       .set("sent_at", dbMessage.getSQLTimestamp("sent_at"))
-      .set("read_at", dbMessage.getSQLTimestamp("read_at"));
+      .set("read_at", dbMessage.getSQLTimestamp("read_at"))
+      .set("deleted_at", dbMessage.getSQLTimestamp("deleted_at"))
+      .set("edited_at", dbMessage.getSQLTimestamp("edited_at"))
+      .set("reactions", dbMessage.getString("reactions"));
   }
 }
