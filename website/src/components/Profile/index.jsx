@@ -275,7 +275,9 @@ function Profile({ user }) {
           <div className="profile__avatar">
             <Avatar src={avatarUrl} size={120} shape="square" />
           </div>
-          <div className="profile__action-buttons">
+          <div className="profile__actions">
+            
+            <div className="profile__action-buttons">
               {canEditProfile && (
                 <Button
                   type="primary"
@@ -346,6 +348,17 @@ function Profile({ user }) {
                 </Button>
               )}
             </div>
+            {friendStatus === "received" && (
+              <div className="profile__friend-request-text">
+                Deseja aceitar o pedido de amizade de
+                <span className="profile__friend-request-text__name">
+                  {" " + user.name}
+                </span>
+                ?
+              </div>
+            )}
+
+          </div>
         </div>
         <div className="profile__info">
           <Title level={2} className="profile__name">

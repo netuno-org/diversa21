@@ -118,8 +118,8 @@
   }
 
   &__edit-btn {
-    width: auto; /* Alterado de 100% para auto para o botão abraçar o texto */
-    margin-top: 24px;
+    margin: 0 !important;
+    width: auto;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -138,12 +138,12 @@
     }
 
     @media (max-width: @sm) {
-      margin-top: 16px;
       width: 100%;
     }
   }
 
   &__secondary-btn {
+    margin: 0 !important;
     width: auto;
     color: @primary-color;
     border-color: @primary-color;
