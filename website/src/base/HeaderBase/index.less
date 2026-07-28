@@ -4,7 +4,7 @@
   position: fixed;
   width: 100vw;
   top: 0;
-  padding: 0 calc((100vw - @desktop-width)/2);
+  padding: 0 24px 0 0;
   z-index: 100;
   box-shadow: 10px 0 10px rgb(0 0 0 / 20%);
   display: flex;
@@ -13,7 +13,7 @@
   flex-wrap: nowrap;
 
   @media screen and (max-width: @desktop-width) {
-    padding: 0 40px;
+    padding: 0 24px;
   }
 
   @media screen and (max-width: 450px) {
@@ -81,19 +81,24 @@
   }
 
   .logo-container {
-    max-width: 200px;
-    height: 90%;
+    width: 200px; 
+    height: 100%;
     display: flex;
     align-items: center;
+    
+    justify-content: center; 
 
     @media screen and (max-width: @mobile-width) {
+      width: auto;
       max-width: 50%;
+      justify-content: flex-start;
+      padding-left: 16px;
     }
 
     img {
-      max-width: 100%;
-      height: auto;
-      margin-top: -5px;
+      max-width: 90%; 
+      height: 40px; 
+      object-fit: contain;
     }
   }
 }

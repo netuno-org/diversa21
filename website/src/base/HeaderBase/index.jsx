@@ -59,7 +59,7 @@ function HeaderBase() {
     >
       {!isLogged && (
         <Link to="/" className="logo-container">
-          <img alt="logo" src="/images/logo.svg" />
+          <img alt="logo" src="/images/logo.png" />
         </Link>
       )}
       {isLogged && (
