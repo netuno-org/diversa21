@@ -290,6 +290,7 @@ function InstitutionForm({
                         onChange={(opt) => setSelectedCity(opt)}
                         allowClear
                         disabled={submitting}
+                        notFoundContent={false}
                       />
                     </Form.Item>
                   </Col>
