@@ -39,6 +39,7 @@ function Profile({ user }) {
   const [coverUrl, setCoverUrl] = useState();
   const [friendStatus, setFriendStatus] = useState(null);
   const [canRequestFriend, setCanRequestFriend] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const { run, isProcessing } = useFriendActions();
 
@@ -76,6 +77,12 @@ function Profile({ user }) {
       user.cover_image && setCoverUrl(_service.url(`/asset?uid=${user.uid}&type=cover_image&entity=people&${new Date().getTime()}`));
     }
   }, [user]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!user?.uid) {
@@ -393,16 +400,23 @@ function Profile({ user }) {
             )}
 
             {user.institution && (
-              <Popover
-                content={<div className="profile__popover">Visitar página da instituição</div>}
-                placement="bottom"
-                trigger="hover"
-              >
+              isMobile ? (
                 <Link to={`/institutions/${user.institution.slug}`} className="profile__detail-item profile__detail-link">
                   <RiCommunityLine />
                   <span>{user.institution.name}</span>
                 </Link>
-              </Popover>
+              ) : (
+                <Popover
+                  content={<div className="profile__popover">Visitar página da instituição</div>}
+                  placement="bottom"
+                  trigger="hover"
+                >
+                  <Link to={`/institutions/${user.institution.slug}`} className="profile__detail-item profile__detail-link">
+                    <RiCommunityLine />
+                    <span>{user.institution.name}</span>
+                  </Link>
+                </Popover>
+              )
             )}
           </Space>
         </div>
