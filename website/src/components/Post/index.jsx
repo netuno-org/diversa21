@@ -60,21 +60,7 @@ function Post({
     }
   }, [people]);
 
-  useEffect(() => {
-    if (isAlreadyIsolated) {
-      setIsHighlighted(true);
-      setTimeout(() => {
-        postCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (countComments > 0 && !showComments) {
-          setShowComments(true);
-          setLoadingComments(true);
-        }
-        setTimeout(() => setIsHighlighted(false), 3000);
-      }, 500);
-    }
-  }, [location.state, uid, countComments, showComments, isAlreadyIsolated]);
-
-  useEffect(() => {
+   useEffect(() => {
     if (isolatedCommentUid && countComments > 0 && !showComments) {
       setShowComments(true);
       setLoadingComments(true);
