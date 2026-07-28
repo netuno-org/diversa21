@@ -106,8 +106,9 @@
   }
 
   &__item {
+    position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     padding: 16px 24px;
     cursor: pointer;
@@ -140,9 +141,10 @@
 
     &-meta {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       flex: 1;
       gap: 16px;
+      padding-right: 24px;
     }
 
     .ant-avatar {
@@ -215,13 +217,14 @@
     }
 
     &-extra {
-      margin-left: 16px;
+      position: absolute;
+      top: 32px;
+      right: 24px;
+      margin: 0;
       width: auto;
       display: flex;
-      gap: 8px;
       align-items: center;
       justify-content: flex-end;
-      flex-shrink: 0;
     }
   }
 
