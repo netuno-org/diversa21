@@ -16,6 +16,8 @@ function useNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [pagination, setPagination] = useState({ current: 1, size: 10, total: 0 });
+
   const NO_DATA = 0;
   const CONNECTED = 1;
   const NOT_CONNECTED = -1;
@@ -40,6 +42,18 @@ function useNotifications() {
     }
   }, [ws.data]);
 
+  const handlePaginationChange = (page, pageSize) => {
+    setPagination(prev => ({ ...prev, current: page, size: pageSize }));
+    _ws.sendService({
+      method: "GET",
+      service: "notification/list",
+      data: {
+        page: String(page),
+        pageSize: String(pageSize)
+      }
+    });
+  };
+
   useEffect(() => {
     if (connected !== CONNECTED) {
       return;
@@ -58,7 +72,11 @@ function useNotifications() {
         const items = data.content.data.items || [];
         items.forEach(n => processNotification(n));
         setNotifications(items);
-        setCount(data.content.data.pagination?.totalCount ?? items.length);
+        
+        const totalCount = data.content.data.pagination?.totalCount ?? items.length;
+        setCount(totalCount);
+        
+        setPagination(prev => ({ ...prev, total: totalCount })); 
       },
       end: () => setLoading(false)
     });
@@ -67,7 +85,8 @@ function useNotifications() {
       method: "GET",
       service: "notification/list",
       data: {
-        pageSize: 5
+        page: String(pagination.current),
+        pageSize: String(pagination.size)
       }
     });
 
@@ -229,7 +248,6 @@ function useNotifications() {
 
   const removeNotification = (id) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
-    // ensure server marks as read/handled
     _service({
       url: 'notification',
       method: 'PUT',
@@ -295,7 +313,9 @@ function useNotifications() {
     onNotificationClick,
     markAsRead,
     removeNotification,
-    count
+    count,
+    pagination,
+    handlePaginationChange
   };
 }
 

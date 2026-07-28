@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm } from 'antd';
+import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm, Pagination } from 'antd';
 import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import _service from '@netuno/service-client';
@@ -19,7 +19,7 @@ function Notifications() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
-  const { notifications, loading, markAllAsRead, onNotificationClick, markAsRead, removeNotification } = useNotifications(loggedUser);
+  const { notifications, loading, markAllAsRead, onNotificationClick, markAsRead, removeNotification, pagination, handlePaginationChange } = useNotifications(loggedUser);
   const { run: runFriendAction, isProcessing } = useFriendActions();
 
   // Mensagens ficam só no header de mensagens — não aparecem nesta página.
@@ -226,6 +226,16 @@ function Notifications() {
               </div>
             ))
           )}
+        </div>
+        <div className="notifications-page__footer">
+          <Pagination
+            className={`notifications-page__pagination ${filteredNotifications.length === 0 && !loading ? 'notifications-page__pagination--hidden' : ''}`}
+            align="center"
+            total={pagination.total}
+            current={pagination.current}
+            pageSize={pagination.size}
+            onChange={handlePaginationChange}
+          />
         </div>
       </Card>
     </section>
