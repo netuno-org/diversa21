@@ -96,12 +96,14 @@ function Chat({ friend, onClose }) {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-
-      const currentMessage = form.getFieldValue('message');
-      if (currentMessage && currentMessage.trim() !== '') {
-        form.submit();
+    if(!isMobile) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+  
+        const currentMessage = form.getFieldValue('message');
+        if (currentMessage && currentMessage.trim() !== '') {
+          form.submit();
+        }
       }
     }
   };
