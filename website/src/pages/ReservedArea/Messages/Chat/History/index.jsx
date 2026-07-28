@@ -98,7 +98,7 @@ function History({ friend, reload, onRef }) {
 
     const listenerEditMessageRef = _ws.addListener({
       method: "PUT",
-      service: "message/edit",
+      service: "message",
       success: ({ content }) => {
         setMessages((prev) => prev.map((m) => m.uid === content.uid ? content : m));
       }
@@ -302,6 +302,14 @@ function History({ friend, reload, onRef }) {
     });
   };
 
+  const handleReactMessage = (uid, reaction) => {
+    _ws.sendService({
+      method: "PUT",
+      service: "message/reaction",
+      data: { uid, reaction }
+    });
+  };
+
   return (
     <div className="messages__history-wrapper" ref={refList} onScroll={handleScroll}>
       {loading && (
@@ -357,6 +365,7 @@ function History({ friend, reload, onRef }) {
                 showRead={showRead}
                 onDelete={handleDeleteMessage}
                 onEdit={handleEditMessage}
+                onReact={handleReactMessage}
               />
             );
           })}

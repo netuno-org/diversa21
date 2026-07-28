@@ -56,6 +56,10 @@
     gap: 8px;
   }
 
+  &-bubble-wrapper {
+    margin-bottom: 6px;
+  }
+
   &-read {
     font-size: 11px;
     color: #b0b0b0;
@@ -150,13 +154,18 @@
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center;
-
-      >span {
-        margin: 0 !important;
-        line-height: 1;
-        display: inline-flex;
-        align-items: center;
-      }
     }
+  }
+
+  &-reaction-badge {
+    position: absolute;
+    bottom: -16px;
+    font-size: 15px;
+    z-index: 2;
+    user-select: none;
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    white-space: nowrap;
   }
 }

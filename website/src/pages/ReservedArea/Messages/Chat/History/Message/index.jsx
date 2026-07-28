@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Avatar, Typography, Dropdown, Button, Input, Popconfirm, Popover } from "antd";
-import { EditOutlined, DeleteOutlined, SmileOutlined } from "@ant-design/icons";
+import { Avatar, Typography, Dropdown, Button, Input, Popconfirm, Popover, Space } from "antd";
+import { EditOutlined, DeleteOutlined, SmileOutlined, PlusOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 import _service from "@netuno/service-client";
@@ -12,9 +12,10 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
+function Message({ friend, data, onDelete, onEdit, onReact, showTime, showRead }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [reactionPopoverOpen, setReactionPopoverOpen] = useState(false);
   const [editText, setEditText] = useState(data.message || data.text || "");
   const editTextAreaRef = useRef(null);
 
@@ -59,6 +60,15 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
 
   const isEditAllowed = new Date().getTime() - messageMoment.valueOf() <= 3600000;
 
+  const getEmojiSegments = (text) => {
+    if (!text) return [];
+    if (typeof Intl.Segmenter === "function") {
+      const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+      return Array.from(segmenter.segment(text)).map((s) => s.segment);
+    }
+    return Array.from(text);
+  };
+
   const menuItems = [
     ...(isEditAllowed ? [{
       key: 'edit',
@@ -72,6 +82,15 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
       icon: <DeleteOutlined />,
       danger: true,
       onClick: () => setShowDeleteConfirm(true)
+    }
+  ];
+
+  const incomingMenuItems = [
+    {
+      key: 'react',
+      label: 'Reagir...',
+      icon: <SmileOutlined />,
+      onClick: () => setReactionPopoverOpen(true)
     }
   ];
 
@@ -158,40 +177,103 @@ function Message({ friend, data, onDelete, onEdit, showTime, showRead }) {
               </div>
             </div>
           ) : (
-            <Popconfirm
-              title="Eliminar mensagem?"
-              open={showDeleteConfirm}
-              onConfirm={() => {
-                onDelete && onDelete(data.uid);
-                setShowDeleteConfirm(false);
-              }}
-              onCancel={() => setShowDeleteConfirm(false)}
-              okText="Sim"
-              cancelText="Não"
-              placement="left"
-            >
-              <Dropdown
-                menu={{ items: menuItems }}
-                trigger={['click']}
-                placement="bottomRight"
-                disabled={isIncoming || !!data.deleted_at}
+            <div className="messages__message-bubble-wrapper" style={{ position: 'relative' }}>
+              <Popconfirm
+                title="Eliminar mensagem?"
+                open={showDeleteConfirm}
+                onConfirm={() => {
+                  onDelete && onDelete(data.uid);
+                  setShowDeleteConfirm(false);
+                }}
+                onCancel={() => setShowDeleteConfirm(false)}
+                okText="Sim"
+                cancelText="Não"
+                placement="left"
               >
+                {isIncoming && !data.deleted_at ? (
+                  <Popover
+                    content={
+                      <div style={{ margin: '-12px' }} onClick={(e) => e.stopPropagation()}>
+                        <EmojiPicker
+                          onEmojiClick={(emojiData) => {
+                            const rawReaction = data.reaction || "";
+                            const currentReaction = rawReaction.replace(/\uFE0F/g, "");
+                            const clickedEmoji = emojiData.emoji;
+                            const clickedEmojiNormalized = clickedEmoji.replace(/\uFE0F/g, "");
+
+                            const updated = currentReaction === clickedEmojiNormalized ? "" : clickedEmoji;
+
+                            setReactionPopoverOpen(false);
+                            onReact && onReact(data.uid, updated);
+                          }}
+                          skinTonesDisabled={false}
+                          previewConfig={{ showPreview: false }}
+                          emojiData={ptEmojis}
+                          searchPlaceholder="Pesquisar..."
+                          height="360px"
+                          width="310px"
+                        />
+                      </div>
+                    }
+                    trigger="contextMenu"
+                    open={reactionPopoverOpen}
+                    onOpenChange={(visible) => {
+                      setReactionPopoverOpen(visible);
+                    }}
+                    placement="top"
+                    overlayClassName="messages__chat-emoji-popover"
+                  >
+                    <Dropdown
+                      menu={{ items: incomingMenuItems }}
+                      trigger={['click']}
+                      placement="bottomRight"
+                    >
+                      <div
+                        className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <Text className="messages__message-text">
+                          {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
+                        </Text>
+                      </div>
+                    </Dropdown>
+                  </Popover>
+                ) : (
+                  <Dropdown
+                    menu={{ items: menuItems }}
+                    trigger={['click']}
+                    placement="bottomRight"
+                    disabled={!!data.deleted_at}
+                  >
+                    <div
+                      className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
+                      style={{ cursor: data.deleted_at ? 'default' : 'pointer' }}
+                    >
+                      {data.deleted_at ? (
+                        <Text italic type="secondary" className="messages__message-text">
+                          Esta mensagem foi eliminada
+                        </Text>
+                      ) : (
+                        <Text className="messages__message-text">
+                          {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
+                        </Text>
+                      )}
+                    </div>
+                  </Dropdown>
+                )}
+              </Popconfirm>
+
+              {data.reaction && (
                 <div
-                  className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
-                  style={{ cursor: (isIncoming || !!data.deleted_at) ? 'default' : 'pointer' }}
+                  className="messages__message-reaction-badge"
+                  style={{
+                    [isIncoming ? 'left' : 'right']: '-2px'
+                  }}
                 >
-                  {data.deleted_at ? (
-                    <Text italic type="secondary" className="messages__message-text">
-                      Esta mensagem foi eliminada
-                    </Text>
-                  ) : (
-                    <Text className="messages__message-text">
-                      {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
-                    </Text>
-                  )}
+                  <span>{data.reaction}</span>
                 </div>
-              </Dropdown>
-            </Popconfirm>
+              )}
+            </div>
           )}
 
           {!isIncoming && (
