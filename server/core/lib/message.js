@@ -13,7 +13,7 @@ export default {
     return dbMessagesUnread.getInt("total", 0)
   },
   toData: (dbPeopleFrom, dbPeopleTo, dbMessage) => {
-    return _val.map()
+    const data = _val.map()
       .set("uid", dbMessage.getString("uid"))
       .set("from", dbPeopleFrom.getString("uid"))
       .set("to", dbPeopleTo.getString("uid"))
@@ -23,5 +23,19 @@ export default {
       .set("deleted_at", dbMessage.getSQLTimestamp("deleted_at"))
       .set("edited_at", dbMessage.getSQLTimestamp("edited_at"))
       .set("reaction", dbMessage.getString("reaction"));
+
+    const parentId = dbMessage.getInt("parent_id");
+    if (parentId > 0) {
+      const dbParentMessage = _db.form("messages").get(parentId);
+      if (dbParentMessage) {
+        const dbParentOriginator = _db.get("people", dbParentMessage.getInt("originator_id"));
+        data.set("parent", _val.map()
+          .set("uid", dbParentMessage.getString("uid"))
+          .set("message", dbParentMessage.getString("message"))
+          .set("from", dbParentOriginator ? dbParentOriginator.getString("name") : "")
+        );
+      }
+    }
+    return data;
   }
 }

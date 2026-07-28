@@ -11,6 +11,9 @@
     },
     "message": {
       "type": "string"
+    },
+    "parent_uid": {
+      "type": "string"
     }
   },
   "required": [

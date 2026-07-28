@@ -7,11 +7,23 @@ import notifications, { notificationTypes, notificationMessages } from "#core/li
 const dbPeopleFrom = people.getLogged();
 const dbPeopleTo = people.getByUid(_req.getString("to"));
 const inputMessage = _req.getString("message");
+const parentUid = _req.getString("parent_uid", "");
+
+let parentId = 0;
+if (parentUid !== "") {
+  const dbParentMessage = _db.form("messages")
+    .where(_db.where("uid").equal(parentUid))
+    .first();
+  if (dbParentMessage) {
+    parentId = dbParentMessage.getInt("id");
+  }
+}
 
 const dbMessageInserted = _db.form("messages")
   .set("originator_id", dbPeopleFrom.getInt("id"))
   .set("recipient_id", dbPeopleTo.getInt("id"))
   .set("message", inputMessage)
+  .set("parent_id", parentId)
   .set("sent_at", _db.timestamp())
   .insert();
 
