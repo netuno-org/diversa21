@@ -251,7 +251,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, showTime, showRead }
                     >
                       {data.deleted_at ? (
                         <Text italic type="secondary" className="messages__message-text">
-                          Esta mensagem foi eliminada
+                          Mensagem apagada
                         </Text>
                       ) : (
                         <Text className="messages__message-text">
