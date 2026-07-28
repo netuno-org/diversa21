@@ -85,6 +85,7 @@ function Notifications() {
       return (
         <Avatar
           size={40}
+          shape="square"
           src={item.originator?.avatar
             ? _service.url(`/asset?uid=${item.originator.uid}&type=avatar&entity=people&${new Date().getTime()}`)
             : "/images/profile-default.png"
