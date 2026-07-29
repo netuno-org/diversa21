@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Form, Input, Button, Typography, Avatar, Empty, Popconfirm, Grid, Popover } from "antd";
 import { SendOutlined, CloseOutlined, ArrowLeftOutlined, SmileOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
@@ -136,17 +137,27 @@ function Chat({ friend, onClose }) {
               style={{ marginRight: 8, padding: '4px 8px' }}
             />
           )}
-          <Avatar
-            src={friend.avatar
-              ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&t=${new Date().getTime()}`)
-              : '/images/profile-default.png'}
-            size="large"
-            shape="square"
-            className="messages__chat-header-avatar"
-          />
+          
+          <Link to={`/u/${friend.username}`}>
+            <Avatar
+              src={friend.avatar
+                ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&t=${new Date().getTime()}`)
+                : '/images/profile-default.png'}
+              size="large"
+              shape="square"
+              className="messages__chat-header-avatar"
+            />
+          </Link>
+
           <div className="messages__chat-header-info">
-            <Text strong className="messages__chat-name">{friend.name || "Usuário"}</Text>
-            {friend.username && <Text type="secondary" className="messages__chat-username">@{friend.username}</Text>}
+            <Link to={`/u/${friend.username}`} className="user-name-link" style={{ color: 'inherit', textDecoration: 'none' }}>
+              <Text strong className="messages__chat-name">{friend.name || "Usuário"}</Text>
+            </Link>
+            {friend.username && (
+              <Text type="secondary" className="messages__chat-username" style={{ display: 'block' }}>
+                @{friend.username}
+              </Text>
+            )}
           </div>
         </div>
 
