@@ -13,7 +13,7 @@
       "type": "string"
     },
     "email": {
-      "type": "string"
+      "type": "string-not-empty"
     },
     "telephone": {
       "type": "string"
@@ -39,6 +39,11 @@
   },
   "required": [
     "name",
+    "description",
+    "email",
+    "telephone",
+    "address",
+    "post_code",
     "city"
   ]
 }
