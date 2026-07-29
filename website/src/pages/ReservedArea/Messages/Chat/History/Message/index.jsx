@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Avatar, Typography, Dropdown, Button, Input, Popconfirm, Popover, Space } from "antd";
-import { EditOutlined, DeleteOutlined, SmileOutlined, PlusOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, SmileOutlined, PlusOutlined, EnterOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 import _service from "@netuno/service-client";
@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-function Message({ friend, data, onDelete, onEdit, onReact, showTime, showRead }) {
+function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, showRead }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reactionPopoverOpen, setReactionPopoverOpen] = useState(false);
@@ -91,6 +91,12 @@ function Message({ friend, data, onDelete, onEdit, onReact, showTime, showRead }
       label: 'Reagir...',
       icon: <SmileOutlined />,
       onClick: () => setReactionPopoverOpen(true)
+    },
+    {
+      key: 'reply',
+      label: 'Responder',
+      icon: <EnterOutlined style={{ transform: 'scaleX(-1)' }} />,
+      onClick: () => onReply && onReply(data)
     }
   ];
 
