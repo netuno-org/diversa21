@@ -14,8 +14,16 @@
       "type": "string"
     },
     "email": {
-      "type": "string-not-empty",
-      "format": "email"
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "email"
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        }
+      ]
     },
     "telephone": {
       "type": "string"
@@ -50,14 +58,7 @@
   },
   "required": [
     "uid",
-    "slug",
     "name",
-    "description",
-    "email",
-    "telephone",
-    "website",
-    "address",
-    "post_code",
     "city",
     "state",
     "country",

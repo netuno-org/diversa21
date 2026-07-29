@@ -35,14 +35,22 @@ const slug = _convert.slug(name);
 const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
-  .set("email", email)
   .set("active", "true")
   .set("slug", slug)
-  .set("telephone", telephone.replace(/\s/g, ''))
-  .set("address", address)
-  .set("post_code", post_code)
   .set("city_id", cityId);
 
+if (email) {
+  institutionData.set("email", email);
+}
+if (telephone) {
+  institutionData.set("telephone", telephone.replace(/\s/g, ''));
+}
+if (address) {
+  institutionData.set("address", address);
+}
+if (post_code) {
+  institutionData.set("post_code", post_code);
+}
 if (website) {
   institutionData.set("website", website);
 }
@@ -53,7 +61,7 @@ if (avatar) {
       .init(avatar)
       .resize(500, 500)
       .file(avatar.name(), "jpeg")
-  )
+  );
 }
 if (cover_image) {
   institutionData.set(
@@ -62,11 +70,9 @@ if (cover_image) {
       .init(cover_image)
       .resize(1200, 400)
       .file(cover_image.name(), "jpeg")
-  )
+  );
 }
 
-// TODO: acho que dá pra inserir a instituição passando o UID como se fosse ID
-// assim evitaria-se essa query
 const institutionId = _db.insert("institution", institutionData);
 
 _db.execute("UPDATE institution SET slug = ? WHERE id = ?", slug, institutionId);
