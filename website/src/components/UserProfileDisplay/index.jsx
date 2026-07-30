@@ -69,14 +69,14 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
       {canShowEditButton && (
         <div className="user-profile-display__actions">
           {user.active === false && (
-            <Tag variant="filled" color="error" className="people-list__card-status-tag" style={{ borderRadius: '32px' }}>
+            <Tag variant="filled" color="error" style={{ borderRadius: '32px' }}>
               Inativo
             </Tag>
           )}
           <Button
             type="link"
             onClick={() => navigate(`/e/${user.username}`)}
-            className="people-list__card-btn people-list__card-btn--edit"
+            className="people-list__card-btn"
           >
             <EditOutlined />
           </Button>
