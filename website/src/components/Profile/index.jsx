@@ -190,7 +190,7 @@ function Profile({ user }) {
 
     if (user.group.code === "super-admin") {
       Icon = SafetyOutlined;
-      color = "#8A6AA2";
+      color = "#D0990F";
     } else if (user.group.code === "management") {
       Icon = BsFillHouseGearFill;
       color = "#4e5fa0";
