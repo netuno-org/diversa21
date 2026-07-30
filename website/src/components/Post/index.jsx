@@ -60,7 +60,7 @@ function Post({
     }
   }, [people]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (isolatedCommentUid && countComments > 0 && !showComments) {
       setShowComments(true);
       setLoadingComments(true);
@@ -157,7 +157,6 @@ function Post({
     </React.Fragment>
   ));
 
-  // Texto contextual de atividade
   const activityLabel = type === 'comment' && parentPeopleUser
     ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> comentou num post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
     : type === 'like' && parentPeopleUser
@@ -178,7 +177,6 @@ function Post({
           {activityLabel}
         </div>
       )}
-
       <div className="header-user-info-container">
         <div className="user-info-left">
           <Link to={`/u/${people.user}`}>
@@ -196,27 +194,26 @@ function Post({
             </Link>
             <TimeAgo sentAt={moment} className="post-date" />
             <div className="parent-nav-tags" onClick={(e) => e.stopPropagation()}>
-            {parentUid && (
-              <Tag
-                className="btn-parent-nav"
-                color="purple"
-                onClick={() => navigate(`/p/${parentUid}`)}
-              >
-                Ver resposta
-              </Tag>
-            )}
-            {rootUid && rootUid !== parentUid && rootUid !== uid && (
-              <Tag
-                className="btn-parent-nav"
-                onClick={() => {navigate(`/p/${rootUid}`); }}
-              >
-                Ver post original
-              </Tag>
-            )}
-          </div>
+              {parentUid && (
+                <Tag
+                  className="btn-parent-nav"
+                  color="purple"
+                  onClick={() => navigate(`/p/${parentUid}`)}
+                >
+                  Ver resposta
+                </Tag>
+              )}
+              {rootUid && rootUid !== parentUid && rootUid !== uid && (
+                <Tag
+                  className="btn-parent-nav"
+                  onClick={() => { navigate(`/p/${rootUid}`) }}
+                >
+                  Ver post original
+                </Tag>
+              )}
+            </div>
           </div>
         </div>
-
         <div className="user-info-actions">
           {canViewDeletePostButton && (
             <>
@@ -240,7 +237,6 @@ function Post({
           )}
         </div>
       </div>
-
       {editMode ? (
         <Editor
           uid={uid}
@@ -258,7 +254,6 @@ function Post({
       ) : (
         <div className="post-text-container">{displayContent}</div>
       )}
-
       {!editMode && (
         <div className="post-actions-wrapper">
           <div className="post-actions-buttons">
@@ -266,7 +261,6 @@ function Post({
               {isLiked ? <LikeFilled /> : <LikeOutlined />}
               &nbsp;{likesCounter}
             </Button>
-
             {countComments > 0 && (
               <Button
                 type="link"
@@ -291,14 +285,12 @@ function Post({
                 )}
               </Button>
             )}
-
             {!showEditor && (
               <Button className="btn-reply" onClick={() => setShowEditor(true)}>
                 <VscCommentDiscussionQuote /> Comentar
               </Button>
             )}
           </div>
-
           {showEditor && (
             <Editor
               type="comment"
@@ -307,7 +299,6 @@ function Post({
               parent={uid}
             />
           )}
-
           {showComments && (
             <PostList
               ref={refPostList}

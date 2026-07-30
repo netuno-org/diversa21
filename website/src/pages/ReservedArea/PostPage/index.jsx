@@ -15,7 +15,7 @@ function PostPage({ uid }) {
 
   useEffect(() => {
     fetchPost();
-  }, []);
+  }, [uid]);
 
   const fetchPost = () => {
     _service({
