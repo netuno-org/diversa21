@@ -137,6 +137,7 @@ const post = _val.map()
     _val.map()
       .set("uid", loggedUser.getUID("uid"))
       .set("name", loggedUser.getString("name"))
+      .set("user", loggedUsername)
       .set("avatar", loggedUser.getString("avatar") !== "")
   );
 

@@ -179,6 +179,8 @@ function Editor({
             rows={4}
             placeholder={`Escreva ${parent ? "o seu comentário" : "a sua postagem"}`}
             style={{ paddingBottom: '40px' }}
+            value={contentValue}
+            onChange={(e) => form.setFieldsValue({ content: e.target.value })}
           />
           <div style={{ position: 'absolute', bottom: '8px', left: '16px', zIndex: 5 }}>
             <Popover
