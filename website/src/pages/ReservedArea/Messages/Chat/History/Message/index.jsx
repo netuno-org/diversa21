@@ -109,17 +109,6 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
       )}
 
       <div className="messages__message-row">
-        {isIncoming && (
-          <Avatar
-            size={36}
-            src={friend.avatar
-              ? _service.url(`/asset?uid=${friend.uid}&type=avatar&entity=people&${new Date().getTime()}`)
-              : '/images/profile-default.png'}
-            shape="square"
-            className="messages__message-avatar"
-          />
-        )}
-
         <div className="messages__message-content">
           {isEditing ? (
             <div className="messages__message-edit-wrapper">
