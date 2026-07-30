@@ -195,16 +195,11 @@ function Post({
               <p className="user-name">{people.name}</p>
             </Link>
             <TimeAgo sentAt={moment} className="post-date" />
-          </div>
-        </div>
-
-        <div className="user-info-actions">
-          <div className="parent-nav-tags" onClick={(e) => e.stopPropagation()}>
+            <div className="parent-nav-tags" onClick={(e) => e.stopPropagation()}>
             {parentUid && (
               <Tag
                 className="btn-parent-nav"
                 color="purple"
-                style={{ cursor: 'pointer' }}
                 onClick={() => navigate(`/p/${parentUid}`)}
               >
                 Ver resposta
@@ -213,14 +208,16 @@ function Post({
             {rootUid && rootUid !== parentUid && rootUid !== uid && (
               <Tag
                 className="btn-parent-nav"
-                color="default"
-                style={{ cursor: 'pointer' }}
-                onClick={() => { console.log('tag clicked', rootUid); navigate(`/p/${rootUid}`); }}
+                onClick={() => {navigate(`/p/${rootUid}`); }}
               >
                 Ver post original
               </Tag>
             )}
           </div>
+          </div>
+        </div>
+
+        <div className="user-info-actions">
           {canViewDeletePostButton && (
             <>
               <Popconfirm

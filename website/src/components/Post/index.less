@@ -93,18 +93,26 @@
 
   .user-info-actions {
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 4px;
   }
 
+  .parent-nav-tags {
+    margin-top: 5px;
+    display: flex;
+    gap: 5px;
+  }
+
   .btn-parent-nav {
+    cursor: pointer;
+    padding: 0 2px;
     font-size: 12px;
-    padding: 0 8px;
     color: @primary-color;
     opacity: 0.8;
 
     &:hover {
       opacity: 1;
+      border: 1px solid @primary-color ;
     }
   }
 
@@ -147,9 +155,8 @@
         background-color: fade(@primary-color, 5%);
       }
 
-      @media (max-width: 445.60px) {
-        width: 100% !important;
-        margin-top: 8px;
+      @media (max-width: 461px) {
+        width: 100%;
       }
     }
   }
