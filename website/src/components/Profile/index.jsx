@@ -40,11 +40,13 @@ function Profile({ user }) {
   const [friendStatus, setFriendStatus] = useState(null);
   const [canRequestFriend, setCanRequestFriend] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 576);
 
   const { run, isProcessing } = useFriendActions();
 
   const isOwnProfile = user?.username === loggedUser?.data?.username;
   const canEditProfile = isOwnProfile || loggedUser?.canManageUser(user);
+  const isLoggedSuperAdmin = loggedUser?.data?.group?.code === "super-admin";
 
   const friendshipStatus = {
     none: { label: "Adicionar amigo", action: "request" },
@@ -53,6 +55,14 @@ function Profile({ user }) {
     friends: { label: "Amigos", action: "remove", title: "Deseja desfazer a amizade?" },
   };
   const currentFriendship = friendshipStatus[friendStatus];
+  const canShowFriendButton = !isOwnProfile && currentFriendship && (canRequestFriend || friendStatus !== "none");
+  const canShowMessageButton = !isOwnProfile && friendStatus === "friends";
+  const shouldUseEditIconOnly = isLoggedSuperAdmin
+    && !isOwnProfile
+    && canEditProfile
+    && canShowFriendButton
+    && canShowMessageButton
+    && !isSmallScreen;
 
   const isLoading = user?.uid ? isProcessing(user.uid) : false;
 
@@ -79,7 +89,10 @@ function Profile({ user }) {
   }, [user]);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      setIsSmallScreen(window.innerWidth <= 576);
+    };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -190,7 +203,7 @@ function Profile({ user }) {
 
     if (user.group.code === "super-admin") {
       Icon = SafetyOutlined;
-      color = "#D0990F";
+      color = "#8A6AA2";
     } else if (user.group.code === "management") {
       Icon = BsFillHouseGearFill;
       color = "#4e5fa0";
@@ -283,19 +296,19 @@ function Profile({ user }) {
             <Avatar src={avatarUrl} size={120} shape="square" />
           </div>
           <div className="profile__actions">
-            
             <div className="profile__action-buttons">
               {canEditProfile && (
                 <Button
                   type="primary"
-                  className="profile__edit-btn"
+                  className={`profile__edit-btn ${shouldUseEditIconOnly ? "profile__edit-btn--icon-only" : ""}`}
                   icon={<EditOutlined />}
                   onClick={handleEdit}
+                  title={shouldUseEditIconOnly ? `Editar perfil de ${user.name}` : undefined}
                 >
-                  Editar Perfil
+                  {!shouldUseEditIconOnly && "Editar Perfil"}
                 </Button>
               )}
-              {!isOwnProfile && currentFriendship && (canRequestFriend || friendStatus !== "none") && (
+              {canShowFriendButton && (
                 friendStatus === "none" ? (
                   <Button
                     type="primary"
@@ -351,7 +364,7 @@ function Profile({ user }) {
                   onClick={() => handleOpenMessages(user)}
                   icon={<MessageOutlined />}
                 >
-                  Enviar mensagem
+                  Mensagem
                 </Button>
               )}
             </div>
@@ -364,7 +377,6 @@ function Profile({ user }) {
                 ?
               </div>
             )}
-
           </div>
         </div>
         <div className="profile__info">
