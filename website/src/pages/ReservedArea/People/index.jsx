@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Button, Space, Popconfirm, Switch, Tag } from 'antd';
-import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Spin, Pagination, Empty, Typography, Grid } from 'antd';
+import { UserAddOutlined } from '@ant-design/icons';
 
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
@@ -12,7 +12,7 @@ import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
 
 import "./index.less";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 const { useBreakpoint } = Grid;
 
 function People() {
@@ -89,22 +89,6 @@ function People() {
                   <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
                 </Link>
               </div>
-              {loggedUser.canManageUser(person) && (
-                <div className="people-list__card-actions">
-                  {person.active === false && (
-                    <Tag variant="filled" color="error" className="people-list__card-status-tag" style={{ borderRadius: '32px' }}>
-                      Inativo
-                    </Tag>
-                  )}
-                  <Button
-                    type="link"
-                    onClick={() => navigate(`/e/${person.username}`)}
-                    className="people-list__card-btn people-list__card-btn--edit"
-                  >
-                    <EditOutlined />
-                  </Button>
-                </div>
-              )}
             </div>
           </Card>
         ))}

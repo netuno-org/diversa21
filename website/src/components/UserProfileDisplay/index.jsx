@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Avatar } from 'antd';
-import { UserOutlined, EnvironmentOutlined, CalendarOutlined, SafetyOutlined } from '@ant-design/icons';
+import { Avatar, Button, Tag } from 'antd';
+import { UserOutlined, EnvironmentOutlined, CalendarOutlined, SafetyOutlined, EditOutlined } from '@ant-design/icons';
 import { BsFillHouseGearFill } from "react-icons/bs";
 import { RiFileEditLine } from "react-icons/ri";
 
 import _service from '@netuno/service-client';
 import dayjs from 'dayjs';
+import usePeople from '../../common/usePeople';
 
 import './index.less';
+import { useNavigate } from 'react-router-dom';
 
 function UserProfileDisplay({ user, avatarStyle, children }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
+
+  const loggedUser = usePeople();
+  const navigate = useNavigate()
+
+  const isLoggedSuperAdmin = loggedUser.data?.group?.code === 'super-admin';
+  const isOwnProfile = loggedUser.data?.uid === user?.uid;
+  const canShowEditButton =
+    loggedUser.canManageUser(user) && !(isLoggedSuperAdmin && isOwnProfile);
+
   const iconSize = 16
 
   useEffect(() => {
@@ -22,9 +33,8 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
   if (!user) {
     return null;
   }
-
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div className="user-profile-display">
       <Avatar style={avatarStyle} src={avatarUrl} shape="square" />
       <div className="user-profile-display-content">
         <div><UserOutlined /> {user.name}</div>
@@ -56,6 +66,22 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
         <div><CalendarOutlined /> {dayjs().diff(dayjs(user.birthDate), 'year')} anos</div>
         {children}
       </div>
+      {canShowEditButton && (
+        <div className="user-profile-display__actions">
+          {user.active === false && (
+            <Tag variant="filled" color="error" className="people-list__card-status-tag" style={{ borderRadius: '32px' }}>
+              Inativo
+            </Tag>
+          )}
+          <Button
+            type="link"
+            onClick={() => navigate(`/e/${user.username}`)}
+            className="people-list__card-btn people-list__card-btn--edit"
+          >
+            <EditOutlined />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
