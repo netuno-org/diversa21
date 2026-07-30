@@ -13,6 +13,7 @@ const address = _req.getString("address");
 const post_code = _req.getString("post_code");
 const cityUid = _req.getUID("city");
 const website = _req.getString("website");
+const instagram = _req.getString("instagram");
 const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
 
@@ -70,6 +71,10 @@ const institutionData = _val.map()
 
 if (website) {
   institutionData.set("website", website);
+}
+
+if (instagram) {
+  institutionData.set("instagram", instagram);
 }
 
 if (avatar) {

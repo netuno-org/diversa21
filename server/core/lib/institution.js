@@ -9,6 +9,7 @@ export const baseQuery = `
     institution.email,
     institution.telephone,
     institution.website,
+    institution.instagram,
     institution.address,
     institution.post_code,
     institution.avatar,
@@ -38,6 +39,7 @@ export const mapInstitution = (dbInstitution) =>
     .set("address", dbInstitution.getString("address"))
     .set("post_code", dbInstitution.getString("post_code"))
     .set("website", dbInstitution.getString("website"))
+    .set("instagram", dbInstitution.getString("instagram"))
     .set("avatar", dbInstitution.getString("avatar") !== "")
     .set("cover_image", dbInstitution.getString("cover_image") !== "")
     .set("city", _val.map()

@@ -13,21 +13,24 @@
       "type": "string"
     },
     "email": {
-      "type": "string"
+      "type": "string-not-empty"
     },
     "telephone": {
-      "type": "string"
+      "type": "string-not-empty"
     },
     "address": {
-      "type": "string"
+      "type": "string-not-empty"
     },
     "post_code": {
-      "type": "string"
+      "type": "string-not-empty"
     },
     "city": {
       "type": "uid"
     },
     "website": {
+      "type": "string"
+    },
+    "instagram": {
       "type": "string"
     },
     "avatar": {
@@ -39,6 +42,10 @@
   },
   "required": [
     "name",
+    "email",
+    "telephone",
+    "address",
+    "post_code",
     "city"
   ]
 }

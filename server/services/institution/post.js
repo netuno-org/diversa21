@@ -1,4 +1,4 @@
-import { _req, _db, _val, _out, _header, _exec, _convert } from "@netuno/server-types"
+import { _req, _db, _val, _out, _header, _exec, _convert, _image } from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -11,6 +11,7 @@ const address = _req.getString("address");
 const post_code = _req.getString("post_code");
 const cityUid = _req.getUID("city");
 const website = _req.getString("website");
+const instagram = _req.getString("instagram");
 const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
 
@@ -53,6 +54,9 @@ if (post_code) {
 }
 if (website) {
   institutionData.set("website", website);
+}
+if (instagram) {
+  institutionData.set("instagram", instagram);
 }
 if (avatar) {
   institutionData.set(

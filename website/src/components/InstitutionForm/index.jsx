@@ -87,6 +87,7 @@ function InstitutionForm({
               telephone: data.telephone,
               address: data.address,
               post_code: data.post_code,
+              instagram: data.instagram,
               city: cityObject,
               website: data.website,
               active: data.active === "true" || data.active === true
@@ -113,16 +114,15 @@ function InstitutionForm({
   };
 
   const onFinish = (values) => {
-
     setSubmitting(true);
     const formData = new FormData();
-
 
     const allValues = {
       address: institution?.address || "",
       post_code: institution?.post_code || "",
       telephone: institution?.telephone || "",
       website: institution?.website || "",
+      instagram: institution?.instagram || "",
       active: institution?.active !== undefined ? String(institution.active) : "true",
       ...values,
       description: (values.description || "")
@@ -222,7 +222,6 @@ function InstitutionForm({
                 : "Não tem permissão para criar instituições."
             }
             icon={
-              // test
               <img
                 src="/images/logo.png"
                 alt="Não Autorizado"
@@ -276,8 +275,27 @@ function InstitutionForm({
                 </div>
 
                 <Row gutter={16}>
-                  <Col xs={24} md={12}><Form.Item name="email" label="E-mail"><Input disabled={submitting} /></Form.Item></Col>
-                  <Col xs={24} md={12}><Form.Item name="telephone" label="Telefone"><Input disabled={submitting} /></Form.Item></Col>
+                  <Col xs={24} md={12}>
+                    <Form.Item 
+                      name="email" 
+                      label="E-mail"
+                      rules={[
+                        { required: true, message: 'O e-mail é obrigatório.' },
+                        { type: 'email', message: 'Insira um e-mail válido.' }
+                      ]}
+                    >
+                      <Input disabled={submitting} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <Form.Item 
+                      name="telephone" 
+                      label="Telefone"
+                      rules={[{ required: true, message: 'O telefone é obrigatório.' }]}
+                    >
+                      <Input disabled={submitting} />
+                    </Form.Item>
+                  </Col>
                 </Row>
 
                 <Row gutter={16}>
@@ -302,8 +320,32 @@ function InstitutionForm({
                 </Row>
 
                 <Row gutter={16}>
-                  <Col xs={24} md={12}><Form.Item name="address" label="Endereço"><Input disabled={submitting} /></Form.Item></Col>
-                  <Col xs={24} md={12}><Form.Item name="post_code" label="Código de Endereçamento Postal"><Input disabled={submitting} /></Form.Item></Col>
+                  <Col xs={24} md={12}>
+                    <Form.Item 
+                      name="address" 
+                      label="Endereço"
+                      rules={[{ required: true, message: 'O endereço é obrigatório.' }]}
+                    >
+                      <Input disabled={submitting} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <Form.Item 
+                      name="post_code" 
+                      label="Código Postal"
+                      rules={[{ required: true, message: 'O código postal é obrigatório.' }]}
+                    >
+                      <Input disabled={submitting} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={16}>
+                  <Col xs={24} md={12}>
+                    <Form.Item name="instagram" label="Instagram">
+                      <Input prefix="@" placeholder="nome_da_instituicao" disabled={submitting} />
+                    </Form.Item>
+                  </Col>
                 </Row>
 
                 {isEditMode && (

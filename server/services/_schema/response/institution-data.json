@@ -31,6 +31,9 @@
     "website": {
       "type": "string"
     },
+    "instagram": {
+      "type": "string"
+    },
     "address": {
       "type": "string"
     },

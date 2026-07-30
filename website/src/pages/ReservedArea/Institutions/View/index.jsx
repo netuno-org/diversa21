@@ -6,7 +6,8 @@ import {
 import {
   EditOutlined, MailOutlined, TeamOutlined,
   PhoneOutlined, EnvironmentOutlined, GlobalOutlined,
-  FileTextOutlined, CommentOutlined, LikeOutlined
+  FileTextOutlined, CommentOutlined, LikeOutlined,
+  InstagramOutlined
 } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
@@ -258,6 +259,19 @@ function View() {
                   className="institution-view__detail-link"
                 >
                   Website
+                </a>
+              </div>
+            )}
+            {institution.instagram && (
+              <div className="institution-view__detail-item">
+                <InstagramOutlined />
+                <a
+                  href={`https://instagram.com/${institution.instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="institution-view__detail-link"
+                >
+                  @{institution.instagram.replace('@', '')}
                 </a>
               </div>
             )}

@@ -29,6 +29,7 @@ Table institution {
   cover_image text [note: 'Imagem de Capa']
   description text [note: 'Descrição']
   email varchar(250) [note: 'E-mail']
+  instagram varchar(250) [note: 'Instagram']
   name varchar(250) [not null, note: 'Nome']
   post_code varchar(250) [note: 'Código Postal']
   telephone int [note: 'Telefone']
