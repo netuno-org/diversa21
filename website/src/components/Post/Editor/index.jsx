@@ -20,11 +20,19 @@ function Editor({
 }) {
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm();
-  const contentValue = Form.useWatch("content", form) || "";
+  const [contentValue, setContentValue] = useState(content || "");
   const textAreaRef = useRef(null);
 
+  const getGraphemeCount = (str) => {
+    if (typeof Intl.Segmenter === "function") {
+      const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+      return Array.from(segmenter.segment(str)).length;
+    }
+    return str.length;
+  };
+
   const handleEmojiClick = (emojiData) => {
-    const text = form.getFieldValue("content") || "";
+    const text = contentValue;
     const emoji = emojiData.emoji;
 
     let selectionStart = text.length;
@@ -37,7 +45,12 @@ function Editor({
     }
 
     const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
-    form.setFieldsValue({ content: updatedText });
+    
+    if (getGraphemeCount(updatedText) > 500) {
+      return;
+    }
+
+    setContentValue(updatedText);
 
     setTimeout(() => {
       if (textarea) {
@@ -56,12 +69,9 @@ function Editor({
     const cleanedContent = clearContentForSubmit(values.content);
 
     if (!cleanedContent) {
-      form.setFields([
-        {
-          name: "content",
-          errors: ["Digite algum conteúdo."]
-        }
-      ]);
+      globalNotification.info({
+        title: "Digite algum conteúdo."
+      });
       return;
     }
 
@@ -76,7 +86,7 @@ function Editor({
         post.comments = 0;
         if (onSubmitted) {
           onSubmitted(post);
-          form.setFieldsValue({ content: "" });
+          setContentValue("");
         }
         globalNotification.success({
           title: `${parent ? "Comentário criado" : "Postagem criada"} com sucesso.`
@@ -96,12 +106,9 @@ function Editor({
     const cleanedContent = clearContentForSubmit(values.content);
 
     if (!cleanedContent) {
-      form.setFields([
-        {
-          name: "content",
-          errors: ["Digite algum conteúdo."]
-        }
-      ]);
+      globalNotification.info({
+        title: "Digite algum conteúdo."
+      });
       return;
     }
 
@@ -162,27 +169,31 @@ function Editor({
     <Form
       className={`editor-form editor-form--${type}`}
       form={form}
-      onFinish={types[type].onFinish}
+      onFinish={(values) => {
+        types[type].onFinish({ ...values, content: contentValue });
+      }}
       onClick={(e) => e.stopPropagation()}
       layout="vertical"
       initialValues={{ content }}
     >
       <Form.Item
-        name="content"
         label={types[type].title}
       >
-        <div style={{ position: 'relative' }}>
+        <div className="editor-form__custom-container">
           <TextArea
             ref={textAreaRef}
             className="editor-form__text-area"
-            maxLength={500}
-            rows={4}
+            rows={5}
             placeholder={`Escreva ${parent ? "o seu comentário" : "a sua postagem"}`}
-            style={{ paddingBottom: '40px' }}
             value={contentValue}
-            onChange={(e) => form.setFieldsValue({ content: e.target.value })}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (getGraphemeCount(val) <= 500 || getGraphemeCount(val) < getGraphemeCount(contentValue)) {
+                setContentValue(val);
+              }
+            }}
           />
-          <div style={{ position: 'absolute', bottom: '8px', left: '16px', zIndex: 5 }}>
+          <div className="editor-form__emoji-bar">
             <Popover
               content={
                 <EmojiPicker
@@ -211,10 +222,17 @@ function Editor({
       </Form.Item>
 
       <Form.Item className="editor-form__footer-item">
-        <div className="editor-form__actions">
-          <Space size="middle" className="editor-form__actions-group" align="center">
+        <div className="editor-form__actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ flex: '1 1 auto', minWidth: '200px' }}>
+            {getGraphemeCount(contentValue) >= 500 && (
+              <span style={{ color: '#ff4d4f', fontSize: '13px', fontWeight: '500', fontFamily: 'inherit', display: 'block', textAlign: 'left' }}>
+                Você não pode ultrapassar o limite de 500 caracteres.
+              </span>
+            )}
+          </div>
+          <Space size="middle" className="editor-form__actions-group" align="center" style={{ flex: '0 0 auto' }}>
             <span className="editor-form__word-count">
-              {contentValue.length}/500
+              {getGraphemeCount(contentValue)}/500
             </span>
 
             {types[type].showCancelButton && (

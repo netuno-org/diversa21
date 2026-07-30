@@ -7,7 +7,7 @@ import response from "#core/lib/response.js";
 const content = _req.getString('content')
 const parent = _req.getString('parent')
 
-if (content.length > 500) {
+if (content.length > 2000) {
   response.stopWithTextTooLarge();
 }
 
