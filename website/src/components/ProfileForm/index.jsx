@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, Row, Col, Popconfirm } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, Row, Col, Popconfirm, Typography } from 'antd';
 import { PasswordInput } from "antd-password-input-strength";
 import dayjs from 'dayjs';
 
@@ -12,6 +12,8 @@ import usePeople from "../../common/usePeople.js";
 import Avatar from '../Avatar/index.jsx';
 import CoverImage from '../CoverImage/index.jsx';
 import './index.less';
+
+const { Title } = Typography;
 
 function ProfileForm({
   operation,
@@ -232,6 +234,7 @@ function ProfileForm({
   return (
     <div className="profile-form">
       <div className="profile-form__body">
+        <Title level={2}>{operation === 'create' ? 'Novo Usuário' : 'Editar Perfil'}</Title>
         <Form
           form={form}
           style={{ width: '100%' }}
