@@ -250,10 +250,10 @@ function useNotifications() {
     setNotifications(prev => prev.filter(n => n.id !== id));
     _service({
       url: 'notification',
-      method: 'PUT',
+      method: 'DELETE',
       data: { uid: id },
       fail: (e) => {
-        console.error("Falha ao marcar notificação como lida ao remover:", e);
+        console.error("Falha ao remover notificação:", e);
       }
     });
   };
