@@ -115,11 +115,28 @@ function FriendsList({ onFriendSelected, friend }) {
       }
     });
 
+    const listenerDeleteMessage = _ws.addListener({
+      method: "DELETE",
+      service: "message/delete",
+      success: ({ data }) => {
+        setPeopleList((prev) => prev.map((item) => {
+          if (item.uid === data.with) {
+            return {
+              ...item,
+              last_message: "Mensagem apagada"
+            };
+          }
+          return item;
+        }));
+      }
+    });
+
     return () => {
       _ws.removeListener(listenerList);
       _ws.removeListener(listenerStatusChanged);
       _ws.removeListener(listenerNewMessage);
       _ws.removeListener(listenerMessageReadMark);
+      _ws.removeListener(listenerDeleteMessage);
     }
   }, [ws.data]);
 

@@ -65,7 +65,11 @@ let sqlQuery = `
               AND m.read_at IS NULL
         ) AS unread_messages,
         (
-            SELECT m.message
+            SELECT 
+                CASE 
+                    WHEN m.deleted_at IS NOT NULL OR m.active = false THEN 'Mensagem apagada'
+                    ELSE m.message
+                END
             FROM messages m
             WHERE (m.originator_id = p.id AND m.recipient_id = ?)
                OR (m.originator_id = ? AND m.recipient_id = p.id)
