@@ -49,9 +49,16 @@
   &__emoji-bar {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 4px 12px 8px 12px;
     background-color: #fafafa;
-    cursor: pointer;
+    cursor: default;
+
+    .editor-form__word-count {
+      padding-right: 8px;
+      font-weight: 700;
+      user-select: none;
+    }
   }
 
   &__footer-item {
@@ -83,7 +90,7 @@
       align-items: center;
     }
 
-    > span {
+    >span {
       line-height: 1;
       display: inline-flex;
       align-items: center;

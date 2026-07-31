@@ -217,6 +217,9 @@ function Editor({
                 style={{ fontSize: 20, color: '#8c8c8c' }}
               />
             </Popover>
+            <span className="editor-form__word-count" style={{ marginLeft: 'auto', color: '#8c8c8c', fontSize: '12px' }}>
+              {getGraphemeCount(contentValue)}/500
+            </span>
           </div>
         </div>
       </Form.Item>
@@ -231,9 +234,6 @@ function Editor({
             )}
           </div>
           <Space size="middle" className="editor-form__actions-group" align="center" style={{ flex: '0 0 auto' }}>
-            <span className="editor-form__word-count">
-              {getGraphemeCount(contentValue)}/500
-            </span>
 
             {types[type].showCancelButton && (
               <Popconfirm
