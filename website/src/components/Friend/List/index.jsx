@@ -61,7 +61,11 @@ function FriendList({ userUid, title }) {
       </div>
       <div className="friend-list__items">
         {friendsList.map((friend) => (
-          <Card key={friend.uid} className="friend-list__card" hoverable>
+          <Card 
+            key={friend.uid} 
+            className={`friend-list__card ${friend.active === false ? 'friend-list__card--inactive' : ''}`} 
+            hoverable={friend.active !== false}
+          >
             <Link to={`/u/${friend.username}`} className="friend-list__link">
               <UserProfileDisplay user={friend} avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }} />
             </Link>
