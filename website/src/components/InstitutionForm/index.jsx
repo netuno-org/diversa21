@@ -300,6 +300,34 @@ function InstitutionForm({
 
                 <Row gutter={16}>
                   <Col xs={24} md={12}>
+                    <Form.Item name="website" label="Website">
+                      <Input placeholder="https://" disabled={submitting} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <Form.Item name="instagram" label="Instagram">
+                      <Input prefix="@" placeholder="conta_instagram" disabled={submitting} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Form.Item 
+                  name="address" 
+                  label="Endereço"
+                  rules={[{ required: true, message: 'O endereço é obrigatório.' }]}
+                >
+                  <Input disabled={submitting} />
+                </Form.Item> 
+                <Row gutter={16}>
+                  <Col xs={24} md={12}>
+                    <Form.Item 
+                      name="post_code" 
+                      label="Código Postal"
+                      rules={[{ required: true, message: 'O código postal é obrigatório.' }]}
+                    >
+                      <Input disabled={submitting} />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12}>
                     <Form.Item name="city" label="Cidade" rules={[{ required: true }]}>
                       <Select
                         labelInValue
@@ -310,40 +338,6 @@ function InstitutionForm({
                         disabled={submitting}
                         notFoundContent={false}
                       />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Form.Item name="website" label="Website">
-                      <Input placeholder="https://" disabled={submitting} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col xs={24} md={12}>
-                    <Form.Item 
-                      name="address" 
-                      label="Endereço"
-                      rules={[{ required: true, message: 'O endereço é obrigatório.' }]}
-                    >
-                      <Input disabled={submitting} />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <Form.Item 
-                      name="post_code" 
-                      label="Código Postal"
-                      rules={[{ required: true, message: 'O código postal é obrigatório.' }]}
-                    >
-                      <Input disabled={submitting} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                <Row gutter={16}>
-                  <Col xs={24} md={12}>
-                    <Form.Item name="instagram" label="Instagram">
-                      <Input prefix="@" placeholder="nome_da_instituicao" disabled={submitting} />
                     </Form.Item>
                   </Col>
                 </Row>
