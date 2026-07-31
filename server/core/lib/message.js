@@ -8,9 +8,9 @@ export default {
   },
   getUnreadTotal: (dbPeople) => {
     const dbMessagesUnread = _db.queryFirst(`
-      SELECT COUNT(id) AS total FROM messages WHERE recipient_id = ? AND read_at IS NULL
-    `, dbPeople.getInt("id"))
-    return dbMessagesUnread.getInt("total", 0)
+      SELECT COUNT(DISTINCT originator_id) AS total FROM messages WHERE recipient_id = ? AND read_at IS NULL
+    `, dbPeople.getInt("id"));
+    return dbMessagesUnread.getInt("total", 0);
   },
   toData: (dbPeopleFrom, dbPeopleTo, dbMessage) => {
     const data = _val.map()

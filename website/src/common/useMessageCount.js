@@ -33,13 +33,18 @@ export default function useMessageCount() {
     }
     messageCountLoaded = true;
 
-    _ws.sendService({ method: "GET", service: "message/unread-count" });
+    const fetchCount = () => {
+      _ws.sendService({ method: "GET", service: "message/unread-count" });
+    };
+
+    fetchCount();
     
     const listenerInitCount = _ws.addListener({
       method: "GET",
       service: "message/unread-count",
       success: (data) => {
-        setCount(data.content?.count || 0);
+        const unreadCount = data.content?.data?.count || 0;
+        setCount(unreadCount);
       }
     });
 
@@ -49,7 +54,7 @@ export default function useMessageCount() {
       success: (data) => {
         const newNotif = data.content;
         if (newNotif?.type === 'message') {
-          setCount(prev => prev + 1);
+          fetchCount();
         }
       }
     });
@@ -64,7 +69,7 @@ export default function useMessageCount() {
         if (content.all) {
           setCount(0);
         } else {
-          setCount(prev => Math.max(0, prev - 1));
+          fetchCount();
         }
       }
     });

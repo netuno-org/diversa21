@@ -6,6 +6,8 @@ import response from "#core/lib/response.js";
 
 const dbPeopleLogged = people.getLogged();
 
-const data = message.getUnreadTotal(dbPeopleLogged);
+const totalCount = message.getUnreadTotal(dbPeopleLogged);
 
-response.successWithData(data);
+response.successWithData(
+  _val.map().set("count", totalCount)
+);

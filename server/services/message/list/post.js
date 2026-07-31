@@ -21,7 +21,7 @@ if (totalMessagesMarkedAsRead > 0 || cleared > 0) {
   people.wsSendService(
     dbPeopleLogged,
     _val.map()
-      .set("service", "message/unread/count")
+      .set("service", "message/unread-count")
   );
   people.wsSendService(
     dbPeopleLogged,
