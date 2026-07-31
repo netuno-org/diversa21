@@ -258,7 +258,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
                 )}
               </Popconfirm>
 
-              {data.reaction && (
+              {!data.deleted_at && data.reaction && (
                 <div
                   className="messages__message-reaction-badge"
                   style={{
@@ -274,12 +274,12 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
           {!isIncoming && (
             <div className="messages__message-meta">
               <Text type="secondary" className="messages__message-read">
-                {readMoment && showRead ? `Lida às ${readMoment.format("HH:mm")}` : ""} {data.edited_at ? "(editada)" : ""}
+                {readMoment && showRead ? `Lida às ${readMoment.format("HH:mm")}` : ""} {!data.deleted_at && data.edited_at ? "(editada)" : ""}
               </Text>
             </div>
           )}
 
-          {isIncoming && data.edited_at && (
+          {isIncoming && !data.deleted_at && data.edited_at && (
             <div className="messages__message-meta">
               <Text type="secondary" style={{ fontSize: '11px', color: '#b0b0b0' }}>
                 (editada)

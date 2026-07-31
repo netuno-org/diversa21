@@ -27,7 +27,7 @@ const dbPeopleTo = _db.get("people", dbMessage.getInt("recipient_id"));
 
 _db.form("messages")
   .set("deleted_at", _db.timestamp())
-  .set("message", "")
+  .set("active", false)
   .where(_db.where("id").equal(dbMessage.getInt("id")))
   .update();
 

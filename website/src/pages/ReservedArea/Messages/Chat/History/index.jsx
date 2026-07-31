@@ -92,11 +92,19 @@ function History({ friend, reload, onRef }) {
       method: "DELETE",
       service: "message/delete",
       success: ({ data }) => {
-        setMessages((prev) => prev.filter((m) => m.uid !== data.uid));
+        setMessages((prev) => prev.map((m) => m.uid === data.uid ? { ...m, deleted_at: new Date().toISOString() } : m));
       }
     });
 
     const listenerEditMessageRef = _ws.addListener({
+      method: "PUT",
+      service: "message/edit",
+      success: ({ content }) => {
+        setMessages((prev) => prev.map((m) => m.uid === content.uid ? content : m));
+      }
+    });
+
+    const listenerReactMessageRef = _ws.addListener({
       method: "PUT",
       service: "message",
       success: ({ content }) => {
@@ -138,6 +146,7 @@ function History({ friend, reload, onRef }) {
       _ws.removeListener(listenerNewMessageRef);
       _ws.removeListener(listenerDeleteMessageRef);
       _ws.removeListener(listenerEditMessageRef);
+      _ws.removeListener(listenerReactMessageRef);
       _ws.removeListener(listenerMessageReadRef);
     }
   }, [friend]);
@@ -290,7 +299,10 @@ function History({ friend, reload, onRef }) {
     _ws.sendService({
       method: "DELETE",
       service: "message",
-      data: { uid }
+      data: { uid },
+      success: () => {
+        setMessages((prev) => prev.map((m) => m.uid === uid ? { ...m, deleted_at: new Date().toISOString() } : m));
+      }
     });
   };
 
@@ -298,7 +310,10 @@ function History({ friend, reload, onRef }) {
     _ws.sendService({
       method: "PUT",
       service: "message",
-      data: { uid, message: text }
+      data: { uid, message: text },
+      success: () => {
+        setMessages((prev) => prev.map((m) => m.uid === uid ? { ...m, message: text } : m));
+      }
     });
   };
 
@@ -306,7 +321,10 @@ function History({ friend, reload, onRef }) {
     _ws.sendService({
       method: "PUT",
       service: "message/reaction",
-      data: { uid, reaction }
+      data: { uid, reaction },
+      success: () => {
+        setMessages((prev) => prev.map((m) => m.uid === uid ? { ...m, reaction } : m));
+      }
     });
   };
 
