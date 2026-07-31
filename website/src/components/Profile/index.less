@@ -269,11 +269,15 @@
       margin-bottom: 24px;
 
       @media (max-width: @md) {
-        padding: 0 0 0 20px;
+        padding: 0 0 0 16px;
       }
 
       .ant-tabs-tab {
         font-size: 16px;
+      }
+
+      .ant-tabs-nav-operations {
+        display: none !important;
       }
 
       .ant-tabs-nav-list::after {
@@ -282,7 +286,7 @@
         flex-shrink: 0;
 
         @media (max-width: @md) {
-          width: 20px;
+          width: 16px;
         }
       }
     }
