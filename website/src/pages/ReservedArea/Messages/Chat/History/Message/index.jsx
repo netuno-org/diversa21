@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, showRead }) {
+function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPreviousPage, showTime, showRead }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reactionPopoverOpen, setReactionPopoverOpen] = useState(false);
@@ -25,6 +25,33 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
 
   let messageMoment = dayjs.tz(data.sent_at, serverTimezone).tz(dayjs.tz.guess());
   let readMoment = dayjs.tz(data.read_at, serverTimezone).tz(dayjs.tz.guess());
+
+  const scrollToParent = (parentUid) => {
+    if (!parentUid) return;
+    const parentEl = document.getElementById(`message-${parentUid}`);
+    if (parentEl) {
+      parentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      parentEl.classList.add('messages__message--highlight');
+      setTimeout(() => {
+        parentEl.classList.remove('messages__message--highlight');
+      }, 6000);
+    } else if (onLoadPreviousPage) {
+      onLoadPreviousPage(parentUid, (found) => {
+        if (found) {
+          setTimeout(() => {
+            const targetEl = document.getElementById(`message-${parentUid}`);
+            if (targetEl) {
+              targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              targetEl.classList.add('messages__message--highlight');
+              setTimeout(() => {
+                targetEl.classList.remove('messages__message--highlight');
+              }, 6000);
+            }
+          }, 100);
+        }
+      });
+    }
+  };
 
   const handleEmojiClick = (emojiData) => {
     const text = editText || "";
@@ -70,6 +97,12 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
   };
 
   const menuItems = [
+    ...(data.parent ? [{
+      key: 'view-original',
+      label: 'Ver original',
+      icon: <EnterOutlined style={{ transform: 'rotate(90deg)' }} />,
+      onClick: () => scrollToParent(data.parent.uid)
+    }] : []),
     ...(isEditAllowed ? [{
       key: 'edit',
       label: 'Editar',
@@ -97,11 +130,17 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
       label: 'Responder',
       icon: <EnterOutlined style={{ transform: 'scaleX(-1)' }} />,
       onClick: () => onReply && onReply(data)
-    }
+    },
+    ...(data.parent ? [{
+      key: 'view-original',
+      label: 'Ver original',
+      icon: <EnterOutlined style={{ transform: 'rotate(90deg)' }} />,
+      onClick: () => scrollToParent(data.parent.uid)
+    }] : [])
   ];
 
   return (
-    <li className={`messages__message ${isIncoming ? 'messages__message--incoming' : 'messages__message--outgoing'}`}>
+    <li id={`message-${data.uid}`} className={`messages__message ${isIncoming ? 'messages__message--incoming' : 'messages__message--outgoing'}`}>
       {showTime && (
         <Text type="secondary" className="messages__message-time">
           {messageMoment.format("DD/MM/YYYY HH:mm")}

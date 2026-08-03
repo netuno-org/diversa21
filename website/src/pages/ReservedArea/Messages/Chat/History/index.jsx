@@ -258,10 +258,47 @@ function History({ friend, reload, onRef, onReply }) {
     });
   };
 
+  const loadPreviousPage = (targetUid, onDone) => {
+    if (!hasMore || loading || loadingMore) {
+      onDone && onDone(false);
+      return;
+    }
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    setLoadingMore(true);
+    if (refList.current) {
+      prevScrollHeightRef.current = refList.current.scrollHeight;
+    }
+    _ws.sendService({
+      method: "POST",
+      service: "message/list",
+      data: {
+        with: friend.uid,
+        page: nextPage
+      },
+      success: ({ content }) => {
+        setTimeout(() => {
+          const exists = document.getElementById(`message-${targetUid}`);
+          if (exists) {
+            onDone && onDone(true);
+          } else if (content.length === 10) {
+            loadPreviousPage(targetUid, onDone);
+          } else {
+            onDone && onDone(false);
+          }
+        }, 150);
+      },
+      fail: () => {
+        onDone && onDone(false);
+      }
+    });
+  };
+
   useEffect(() => {
     if (onRef) {
       onRef({
-        appendMessage: appendNewMessage
+        appendMessage: appendNewMessage,
+        loadPreviousPage
       });
     }
     return () => {
@@ -269,7 +306,7 @@ function History({ friend, reload, onRef, onReply }) {
         onRef(null);
       }
     };
-  }, [onRef]);
+  }, [onRef, hasMore, currentPage, loading, loadingMore]);
 
   useEffect(() => {
     if (reload > 0) {
@@ -375,6 +412,7 @@ function History({ friend, reload, onRef, onReply }) {
                 onEdit={handleEditMessage}
                 onReact={handleReactMessage}
                 onReply={onReply}
+                onLoadPreviousPage={loadPreviousPage}
               />
             );
           })}
