@@ -24,9 +24,11 @@ export default {
       .set("edited_at", dbMessage.getSQLTimestamp("edited_at"))
       .set("reaction", dbMessage.getString("reaction"));
 
-    const parentId = dbMessage.getInt("parent_id");
+    const parentId = dbMessage.getInt("parent_id", 0);
     if (parentId > 0) {
-      const dbParentMessage = _db.form("messages").get(parentId);
+      const dbParentMessage = _db.form("messages")
+        .where(_db.where("id").equal(parentId))
+        .first();
       if (dbParentMessage) {
         const dbParentOriginator = _db.get("people", dbParentMessage.getInt("originator_id"));
         data.set("parent", _val.map()

@@ -9,7 +9,7 @@ import globalNotification from "../../../../../common/globalNotification.js";
 import Message from "./Message/index.jsx";
 import "./index.less";
 
-function History({ friend, reload, onRef }) {
+function History({ friend, reload, onRef, onReply }) {
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -361,17 +361,7 @@ function History({ friend, reload, onRef }) {
             const isOutgoing = friend.uid !== message.from;
 
             if (isOutgoing && message.read_at) {
-              if (!nextMessage) {
-                showRead = true;
-              } else {
-                const nextIsIncoming = friend.uid === nextMessage.from;
-                const nextIsUnread = !nextMessage.read_at;
-                const diffNextMinutes = dayjs(nextMessage.sent_at).diff(dayjs(message.sent_at), 'minute');
-
-                if (nextIsIncoming || nextIsUnread || diffNextMinutes >= 5) {
-                  showRead = true;
-                }
-              }
+              showRead = true;
             }
 
             return (
@@ -384,6 +374,7 @@ function History({ friend, reload, onRef }) {
                 onDelete={handleDeleteMessage}
                 onEdit={handleEditMessage}
                 onReact={handleReactMessage}
+                onReply={onReply}
               />
             );
           })}

@@ -31,23 +31,26 @@
   &-content {
     display: flex;
     flex-direction: column;
-    max-width: 70%;
+    max-width: 82%;
+    min-width: 0;
 
     @media (max-width: @md) {
-      max-width: 85%;
+      max-width: 92%;
     }
   }
 
   &-bubble {
-    padding: 4px 14px;
+    padding: 6px 10px;
     border-radius: 12px;
-    word-break: break-word;
+    word-break: break-all;
+    min-width: 0;
   }
 
   &-text {
     font-size: 15px;
     line-height: 1.4;
     white-space: pre-wrap;
+    word-break: break-all;
   }
 
   &-meta {
@@ -58,11 +61,46 @@
 
   &-bubble-wrapper {
     margin-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
   }
 
   &-read {
     font-size: 11px;
     color: #b0b0b0;
+  }
+
+  &-reply-quote {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    line-height: 1.3;
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
+    border-left: 3px solid;
+    box-sizing: border-box;
+
+    &-sender {
+      font-weight: 600;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+
+    &-text {
+      opacity: 0.9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      max-width: 100%;
+    }
   }
 
   &--incoming {
@@ -72,6 +110,16 @@
 
     .messages__message-content {
       align-items: flex-start;
+    }
+
+    .messages__message-reply-quote {
+      background-color: rgba(0, 0, 0, 0.05);
+      border-left-color: @primary-color;
+      color: rgba(0, 0, 0, 0.7);
+
+      &-sender {
+        color: @primary-color;
+      }
     }
 
     .messages__message-bubble {
@@ -99,6 +147,16 @@
 
     .messages__message-content {
       align-items: flex-end;
+    }
+
+    .messages__message-reply-quote {
+      background-color: rgba(255, 255, 255, 0.15);
+      border-left-color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.9);
+
+      &-sender {
+        color: #ffffff;
+      }
     }
 
     .messages__message-bubble {
@@ -169,5 +227,31 @@
     flex-direction: row;
     gap: 2px;
     white-space: nowrap;
+  }
+
+  &-bubble-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 2px;
+    user-select: none;
+    line-height: 1;
+
+    &-text {
+      font-size: 10px;
+      font-weight: 400;
+    }
+  }
+
+  &--incoming {
+    .messages__message-bubble-meta-text {
+      color: #999999;
+    }
+  }
+
+  &--outgoing {
+    .messages__message-bubble-meta-text {
+      color: rgba(255, 255, 255, 0.7);
+    }
   }
 }

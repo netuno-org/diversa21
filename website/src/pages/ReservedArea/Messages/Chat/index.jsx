@@ -23,6 +23,7 @@ function Chat({ friend, onClose }) {
   const [messageSubmitting, setMessageSubmitting] = useState(false);
   const [historyReload, setHistoryReload] = useState(0);
   const [historyApi, setHistoryApi] = useState(null);
+  const [replyMessage, setReplyMessage] = useState(null);
   const textAreaRef = useRef(null);
 
   const screens = useBreakpoint();
@@ -30,6 +31,7 @@ function Chat({ friend, onClose }) {
 
   useEffect(() => {
     setHistoryReload(0);
+    setReplyMessage(null);
   }, [friend]);
 
   const handleEmojiClick = (emojiData) => {
@@ -64,16 +66,22 @@ function Chat({ friend, onClose }) {
       return;
     } 
 
+    const sendData = {
+      to: friend.uid,
+      message: cleanMessage,
+    };
+    if (replyMessage) {
+      sendData.parent_uid = replyMessage.uid;
+    }
+
     _ws.sendService({
       method: "POST",
       service: "message",
-      data: {
-        to: friend.uid,
-        message: cleanMessage,
-      },
+      data: sendData,
       start: () => setMessageSubmitting(true),
       success: (response) => {
         form.resetFields([["message"]]);
+        setReplyMessage(null);
         const messageContent = response?.content?.content;
         if (messageContent && historyApi) {
           historyApi.appendMessage(messageContent);
@@ -84,6 +92,9 @@ function Chat({ friend, onClose }) {
           service: "friend/list",
           data: { forMessages: true }
         });
+        if (textAreaRef.current) {
+          textAreaRef.current.focus();
+        }
       },
       fail: (error) => {
         console.error(error);
@@ -179,11 +190,31 @@ function Chat({ friend, onClose }) {
       </div>
 
       <div className="messages__chat-body">
-        <History friend={friend} reload={historyReload} onRef={setHistoryApi} />
+        <History friend={friend} reload={historyReload} onRef={setHistoryApi} onReply={setReplyMessage} />
       </div>
 
       <div className="messages__chat-footer">
         <Form form={form} layout="vertical" onFinish={onFinish} className="messages__chat-form">
+          {replyMessage && (
+            <div className="messages__chat-reply-preview">
+              <div className="messages__chat-reply-preview-content">
+                <Text strong className="messages__chat-reply-title">
+                  Responder a {replyMessage.from === friend.uid ? friend.name : "ti"}
+                </Text>
+                <Text ellipsis className="messages__chat-reply-text">
+                  {replyMessage.message || replyMessage.text}
+                </Text>
+              </div>
+              <Button
+                type="text"
+                shape="circle"
+                size="small"
+                icon={<CloseOutlined style={{ fontSize: 12 }} />}
+                onClick={() => setReplyMessage(null)}
+                className="messages__chat-reply-cancel"
+              />
+            </div>
+          )}
           <div className="messages__chat-input-wrapper">
             <Popover
               content={

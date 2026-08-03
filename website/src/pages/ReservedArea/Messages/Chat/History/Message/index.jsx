@@ -222,14 +222,33 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
                       menu={{ items: incomingMenuItems }}
                       trigger={['click']}
                       placement="bottomRight"
+                      style={{ minWidth: 0, width: '100%' }}
                     >
                       <div
                         className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: 'pointer', minWidth: 0, width: '100%' }}
                       >
-                        <Text className="messages__message-text">
+                        {!data.deleted_at && data.parent && (
+                          <div className="messages__message-reply-quote">
+                            <span className="messages__message-reply-quote-sender">
+                              {data.parent.from || "Usuário"}
+                            </span>
+                            <span className="messages__message-reply-quote-text">
+                              {data.parent.message}
+                            </span>
+                          </div>
+                        )}
+                        <Text className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
                           {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
                         </Text>
+                        {!data.deleted_at && (
+                          <div className="messages__message-bubble-meta">
+                            <span className="messages__message-bubble-meta-text">
+                              {messageMoment.format("HH:mm")}
+                              {data.edited_at ? " (editada)" : ""}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </Dropdown>
                   </Popover>
@@ -239,19 +258,40 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
                     trigger={['click']}
                     placement="bottomRight"
                     disabled={!!data.deleted_at}
+                    style={{ minWidth: 0, width: '100%' }}
                   >
                     <div
                       className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
-                      style={{ cursor: data.deleted_at ? 'default' : 'pointer' }}
+                      style={{ cursor: data.deleted_at ? 'default' : 'pointer', minWidth: 0, width: '100%' }}
                     >
                       {data.deleted_at ? (
-                        <Text italic type="secondary" className="messages__message-text">
+                        <Text italic type="secondary" className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
                           Mensagem apagada
                         </Text>
                       ) : (
-                        <Text className="messages__message-text">
-                          {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
-                        </Text>
+                        <>
+                          {data.parent && (
+                            <div className="messages__message-reply-quote">
+                              <span className="messages__message-reply-quote-sender">
+                                {data.parent.from || "Usuário"}
+                              </span>
+                              <span className="messages__message-reply-quote-text">
+                                {data.parent.message}
+                              </span>
+                            </div>
+                          )}
+                          <Text className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
+                            {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
+                          </Text>
+                          {((readMoment && showRead) || data.edited_at) && (
+                            <div className="messages__message-bubble-meta">
+                              <span className="messages__message-bubble-meta-text">
+                                {readMoment && showRead ? `Lida às ${readMoment.format("HH:mm")}` : ""}
+                                {data.edited_at ? " (editada)" : ""}
+                              </span>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </Dropdown>
@@ -268,22 +308,6 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, showTime, s
                   <span>{data.reaction}</span>
                 </div>
               )}
-            </div>
-          )}
-
-          {!isIncoming && (
-            <div className="messages__message-meta">
-              <Text type="secondary" className="messages__message-read">
-                {readMoment && showRead ? `Lida às ${readMoment.format("HH:mm")}` : ""} {!data.deleted_at && data.edited_at ? "(editada)" : ""}
-              </Text>
-            </div>
-          )}
-
-          {isIncoming && !data.deleted_at && data.edited_at && (
-            <div className="messages__message-meta">
-              <Text type="secondary" style={{ fontSize: '11px', color: '#b0b0b0' }}>
-                (editada)
-              </Text>
             </div>
           )}
         </div>

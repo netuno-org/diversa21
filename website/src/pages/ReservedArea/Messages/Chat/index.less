@@ -104,6 +104,46 @@
     width: 100%;
   }
 
+  &-reply-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fafafa;
+    border-left: 4px solid @primary-color;
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    animation: slideUp 0.2s ease;
+
+    &-content {
+      display: flex;
+      flex-direction: column;
+      max-width: 90%;
+    }
+  }
+
+  &-reply-title {
+    font-size: 12px;
+    color: @primary-color;
+    margin-bottom: 2px;
+  }
+
+  &-reply-text {
+    font-size: 13px;
+    color: #595959;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   &-input-wrapper {
     display: flex;
     align-items: center;
