@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { connect } from 'react-redux';
 import _service from "@netuno/service-client";
-import { Space, Tag, Card, Avatar, Button, Popconfirm } from "antd";
+import { Space, Tag, Card, Avatar, Button, Popconfirm, Modal } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { RiArrowGoBackLine } from "react-icons/ri";
@@ -71,7 +71,8 @@ function Post({
     if (isAlreadyIsolated || editMode) {
       return;
     }
-    if (e.target.closest('.post-actions-wrapper')
+    if (e.target.closest('.ant-modal-root') 
+      || e.target.closest('.post-actions-wrapper')
       || e.target.closest('.user-info-actions')
       || e.target.closest('a')) {
       return;
@@ -291,14 +292,26 @@ function Post({
               </Button>
             )}
           </div>
-          {showEditor && (
-            <Editor
-              type="comment"
-              onCancel={() => setShowEditor(false)}
-              onSubmitted={onCreated}
-              parent={uid}
-            />
-          )}
+          <Modal
+            open={showEditor}
+            onCancel={() => setShowEditor(false)}
+            footer={null}
+            title="Responder à publicação"
+            destroyOnHidden
+            centered
+          >
+            <div style={{ marginTop: '16px' }}>
+              <Editor
+                type="comment"
+                onCancel={() => setShowEditor(false)}
+                onSubmitted={(values) => {
+                  onCreated(values);
+                  setShowEditor(false);
+                }}
+                parent={uid}
+              />
+            </div>
+          </Modal>
           {showComments && (
             <PostList
               ref={refPostList}
