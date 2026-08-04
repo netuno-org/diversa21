@@ -1,0 +1,19 @@
+{
+  "tags": [
+    "forum-reply"
+  ],
+  "summary": "List topic replies",
+  "description": "List replies of a forum topic with pagination.",
+  "properties": {
+    "topicUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  },
+  "required": [
+    "topicUid"
+  ]
+}

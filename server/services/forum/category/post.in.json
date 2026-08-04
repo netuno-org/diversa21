@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "forum-category"
+  ],
+  "summary": "Create forum category",
+  "description": "Create a new forum category.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

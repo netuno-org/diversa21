@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "forum-category"
+  ],
+  "summary": "Delete forum category",
+  "description": "Deactivate an existing forum category.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

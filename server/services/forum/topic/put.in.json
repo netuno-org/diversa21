@@ -1,0 +1,24 @@
+{
+  "tags": [
+    "forum-topic"
+  ],
+  "summary": "Update forum topic",
+  "description": "Update title and content of an existing forum topic.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "title": {
+      "type": "string-not-empty"
+    },
+    "content": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "uid",
+    "title",
+    "content"
+  ]
+}

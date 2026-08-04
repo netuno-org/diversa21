@@ -1,0 +1,20 @@
+{
+  "tags": [
+    "forum-reply"
+  ],
+  "summary": "Create forum reply",
+  "description": "Create a new reply for a forum topic.",
+  "type": "object",
+  "properties": {
+    "topicUid": {
+      "type": "uid"
+    },
+    "content": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "topicUid",
+    "content"
+  ]
+}

@@ -60,6 +60,9 @@ export default {
   stopWithStateNotFound: () => stopWithNotFound("state"),
   stopWithCountryNotFound: () => stopWithNotFound("country"),
   stopWithPostNotFound: () => stopWithNotFound("post"),
+  stopWithForumCategoryNotFound: () => stopWithNotFound("forum-category"),
+  stopWithForumTopicNotFound: () => stopWithNotFound("forum-topic"),
+  stopWithForumReplyNotFound: () => stopWithNotFound("forum-reply"),
   stopWithAssetNotFound: () => stopWithNotFound("asset"),
 
   stopWithCityNotCreated: () => stopWithNotCreated("city"),
@@ -67,6 +70,9 @@ export default {
   stopWithCountryNotCreated: () => stopWithNotCreated("country"),
   stopWithUserNotCreated: () => stopWithNotCreated("user"),
   stopWithPostNotCreated: () => stopWithNotCreated("post"),
+  stopWithForumCategoryNotCreated: () => stopWithNotCreated("forum-category"),
+  stopWithForumTopicNotCreated: () => stopWithNotCreated("forum-topic"),
+  stopWithForumReplyNotCreated: () => stopWithNotCreated("forum-reply"),
   stopWithLikeNotCreated: () => stopWithNotCreated("like"),
 
   stopWithTextTooLarge: () => stopWithError(413, "text-too-large"),

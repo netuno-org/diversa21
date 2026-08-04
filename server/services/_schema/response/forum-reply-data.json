@@ -1,0 +1,47 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "content": {
+      "type": "string-not-empty"
+    },
+    "moment": {
+      "type": "string-not-empty"
+    },
+    "topicUid": {
+      "type": "uid"
+    },
+    "people": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        },
+        "user": {
+          "type": "string-not-empty"
+        },
+        "avatar": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "uid",
+        "name",
+        "user",
+        "avatar"
+      ]
+    }
+  },
+  "required": [
+    "uid",
+    "content",
+    "moment",
+    "topicUid",
+    "people"
+  ]
+}

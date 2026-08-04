@@ -1,0 +1,71 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "title": {
+      "type": "string-not-empty"
+    },
+    "content": {
+      "type": "string-not-empty"
+    },
+    "moment": {
+      "type": "string-not-empty"
+    },
+    "lastActivityAt": {
+      "type": "string-not-empty"
+    },
+    "repliesCount": {
+      "type": "integer"
+    },
+    "category": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        }
+      },
+      "required": [
+        "uid",
+        "name"
+      ]
+    },
+    "people": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        },
+        "user": {
+          "type": "string-not-empty"
+        },
+        "avatar": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "uid",
+        "name",
+        "user",
+        "avatar"
+      ]
+    }
+  },
+  "required": [
+    "uid",
+    "title",
+    "content",
+    "moment",
+    "lastActivityAt",
+    "repliesCount",
+    "category",
+    "people"
+  ]
+}

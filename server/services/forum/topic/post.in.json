@@ -1,0 +1,24 @@
+{
+  "tags": [
+    "forum-topic"
+  ],
+  "summary": "Create forum topic",
+  "description": "Create a new topic inside a forum category.",
+  "type": "object",
+  "properties": {
+    "categoryUid": {
+      "type": "uid"
+    },
+    "title": {
+      "type": "string-not-empty"
+    },
+    "content": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "categoryUid",
+    "title",
+    "content"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "tags": [
+    "forum-category"
+  ],
+  "summary": "List forum categories",
+  "description": "List all active forum categories without pagination.",
+  "properties": {}
+}

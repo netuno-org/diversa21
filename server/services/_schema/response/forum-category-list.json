@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "_schema": "response/forum-category-data"
+      }
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "tags": [
+    "forum-topic"
+  ],
+  "summary": "List forum topics by category",
+  "description": "List forum topics in a category with pagination and recent activity ordering.",
+  "properties": {
+    "categoryUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  },
+  "required": [
+    "categoryUid"
+  ]
+}

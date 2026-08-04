@@ -1,0 +1,20 @@
+{
+  "tags": [
+    "forum-category"
+  ],
+  "summary": "Update forum category",
+  "description": "Update an existing forum category.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "uid",
+    "name"
+  ]
+}
