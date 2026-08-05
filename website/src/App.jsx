@@ -27,6 +27,8 @@ import LoginCallback from './pages/LoginCallback';
 import Recovery from './pages/Recovery';
 import NotFound from './pages/NotFound';
 import ReservedArea from "./pages/ReservedArea";
+import TermsPage from './pages/Terms';
+import PrivacyPage from './pages/Privacy';
 
 import 'dayjs/locale/pt-br';
 
@@ -144,6 +146,8 @@ export default function App() {
                 <Route path="/notifications" element={<ReservedArea />} />
                 <Route path="/notification-settings" element={<ReservedArea />} />
                 <Route path="/friends" element={<ReservedArea />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
 
                 {/** // RESERVED AREA **/}
                 <Route path="*" element={<NotFound/>} />

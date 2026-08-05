@@ -24,6 +24,7 @@ import MyConnections from "./MyConnections/index.jsx";
 import Messages from "./Messages";
 import Notifications from "./Notifications";
 import NotificationSettings from "./NotificationSettings";
+import LegalAcceptanceModal from "../../components/LegalAcceptanceModal";
 
 import "./index.less";
 
@@ -33,6 +34,7 @@ function ReservedArea() {
   const params = useParams();
   if (_auth.isLogged()) {
     const [loading, setLoading] = useState(true);
+    const [legalModalVisible, setLegalModalVisible] = useState(false);
     const people = usePeople();
 
     const ws = useWS();
@@ -63,6 +65,12 @@ function ReservedArea() {
         return;
       }
     }, [people.data]);
+
+    useEffect(() => {
+      if (!loading && people.data && !people.data.acceptedTermsAt) {
+        setLegalModalVisible(true);
+      }
+    }, [loading, people.data]);
 
     const getContent = () => {
       if (loading) {
@@ -147,6 +155,13 @@ function ReservedArea() {
     return (
       <section className="reserved-area">
         {content}
+        <LegalAcceptanceModal
+          visible={legalModalVisible}
+          onAccepted={() => {
+            setLegalModalVisible(false);
+            people.reload();
+          }}
+        />
       </section>
     );
   }

@@ -8,6 +8,7 @@ export default {
           netuno_user.user,
           people.description,
           people.email,
+          people.accepted_terms_at,
           people.avatar,
           people.cover_image,
           people.birth_date,
@@ -69,6 +70,7 @@ export default {
             .set("slug", dbPeople.getString("institution_slug"))
         )
         .set("active", dbPeople.getBoolean("active"))
+        .set("acceptedTermsAt", dbPeople.getString("accepted_terms_at"))
     }
     return null;
   },
