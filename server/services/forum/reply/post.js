@@ -11,10 +11,12 @@ if (content.length > 2000) {
 }
 
 const dbTopic = _db.queryFirst(`
-    SELECT id, uid
-    FROM forum_topico
-    WHERE uid = ?::uuid
-      AND active = true
+    SELECT forum_topico.id, forum_topico.uid, people.uid as "people_uid"
+      FROM forum_topico
+    INNER JOIN people
+      ON forum_topico.people_id = people.id
+    WHERE forum_topico.uid = ?::uuid
+    AND forum_topico.active = true
 `, topicUid);
 
 if (!dbTopic) {
@@ -23,6 +25,10 @@ if (!dbTopic) {
 
 const loggedUser = people.getLogged();
 const replyMoment = _db.timestamp();
+
+if (!loggedUser) {
+  response.stopWithUserNotFound();
+}
 
 const replyId = _db.insert(
   "forum_resposta",
@@ -67,6 +73,7 @@ response.successWithData(
     .set("content", dbReply.getString("content"))
     .set("moment", dbReply.getString("moment"))
     .set("topicUid", dbReply.getUID("topic_uid"))
+    .set("authorUid", dbTopic.getUID("people_uid"))
     .set(
       "people",
       _val.map()
