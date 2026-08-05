@@ -1,0 +1,10 @@
+{
+  "tags": [
+    "people"
+  ],
+  "summary": "Accept Terms and Privacy",
+  "description": "Record that the logged user accepted the terms and privacy policy.",
+  "type": "object",
+  "properties": {},
+  "required": []
+}

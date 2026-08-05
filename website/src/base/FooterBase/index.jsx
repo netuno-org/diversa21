@@ -11,30 +11,34 @@ function FooterBase() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <>
-      {!_auth.isLogged() && (
-        <Footer className="footer-base">
-          <Space separator={<Divider orientation="vertical" className="footer-base__divider" />}>
+    <Footer className="footer-base">
+      <Space separator={<Divider orientation="vertical" className="footer-base__divider" />}>
 
-            <Text className="footer-base__text">
-              © diversa21.org {currentYear}
-            </Text>
+        <Text className="footer-base__text">
+          © diversa21.org {currentYear}
+        </Text>
 
-            <Link
-              href="https://github.com/netuno-org/diversa21"
-              target="_blank"
-              className="footer-base__link"
-            >
-              <Space size={6}>
-                <GithubOutlined />
-                <span>Open Source</span>
-              </Space>
-            </Link>
+        <Link href="/terms" className="footer-base__link">
+          Termos e Condições
+        </Link>
 
+        <Link href="/privacy" className="footer-base__link">
+          Privacidade
+        </Link>
+
+        <Link
+          href="https://github.com/netuno-org/diversa21"
+          target="_blank"
+          className="footer-base__link"
+        >
+          <Space size={6}>
+            <GithubOutlined />
+            <span>Open Source</span>
           </Space>
-        </Footer>
-      )}
-    </>
+        </Link>
+
+      </Space>
+    </Footer>
   );
 }
 

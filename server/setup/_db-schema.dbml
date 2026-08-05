@@ -88,6 +88,7 @@ Table notification_type {
 
 Table people {
   id int [pk, increment]
+  accepted_terms_at timestamp [note: 'Termos Aceites Em']
   avatar text [note: 'Avatar']
   birth_date date [not null, note: 'Data de Nascimento']
   city_id int [not null, ref: > city.id, note: 'Cidade']

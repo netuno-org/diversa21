@@ -217,6 +217,7 @@ people.forEach((person) => {
         .set("people_user_id", user_id)
         .set("email", person.email)
         .set("birth_date", person.birthDate)
+        .set("accepted_terms_at", null)
         .set("institution_id", person.institution)
         .set("city_id", person.city)
       );
