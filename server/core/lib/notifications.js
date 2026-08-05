@@ -9,6 +9,7 @@ export const notificationTypes = {
   FRIEND_POST: "friend-post",
   FRIEND_COMMENT: "friend-comment",
   FRIEND_LIKE: "friend-like",
+  FORUM_REPLY: "forum-reply",
   INSTITUTION_POST: "institution-post",
   INSTITUTION_COMMENT: "institution-comment",
   INSTITUTION_LIKE: "institution-like"
@@ -23,6 +24,7 @@ export const notificationMessages = {
   FRIEND_POST: "publicou um novo post.",
   FRIEND_COMMENT: "comentou um post.",
   FRIEND_LIKE: "gostou de um post.",
+  FORUM_REPLY: "respondeu seu tópico.",
   INSTITUTION_POST: "publicou um post na instituição",
   INSTITUTION_COMMENT: "comentou um post na instituição",
   INSTITUTION_LIKE: "gostou de um post na instituição"

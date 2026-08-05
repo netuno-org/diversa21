@@ -28,7 +28,7 @@ function NotificationSettings() {
     {
       key: 'comments',
       title: 'Comentários',
-      codes: ['institution-comment', 'friend-comment', 'my-post-comment'],
+      codes: ['institution-comment', 'friend-comment', 'my-post-comment', 'forum-reply'],
     },
     {
       key: 'likes',
@@ -49,6 +49,7 @@ function NotificationSettings() {
     'institution-like': 'Curtida de alguém da instituição',
     'friend-like': 'Curtida de amigo',
     'my-post-like': 'Curtida em seu post',
+    'forum-reply': 'Resposta em seu tópico',
   };
 
   const descMap = {
@@ -62,7 +63,8 @@ function NotificationSettings() {
     'friend-like': 'Recebe quando um amigo curte uma publicação que você acompanha.',
     'institution-like': 'Recebe quando alguém da sua instituição curte uma publicação que você acompanha.',
     'my-post-like': 'Recebe quando alguém curte uma das suas postagens.',
-    'message': 'Recebe quando alguém envia uma mensagem privada para você.'
+    'message': 'Recebe quando alguém envia uma mensagem privada para você.',
+    'forum-reply': 'Recebe quando alguém responde um tópico criado por você.',
   };
 
   const groupedSections = sections.map((section) => ({

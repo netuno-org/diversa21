@@ -2,6 +2,7 @@ import { _req, _db, _val } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
+import notifications, { notificationTypes } from "#core/lib/notifications.js";
 
 const topicUid = _req.getUID("topicUid");
 const content = _req.getString("content");
@@ -29,6 +30,15 @@ const replyMoment = _db.timestamp();
 if (!loggedUser) {
   response.stopWithUserNotFound();
 }
+
+const dbTopicOwner = people.getByUid(
+  dbTopic.getUID("people_uid")
+);
+
+if (!dbTopicOwner) {
+  response.stopWithUserNotFound();
+}
+
 
 const replyId = _db.insert(
   "forum_resposta",
@@ -66,6 +76,60 @@ const dbReply = _db.queryFirst(`
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
     WHERE r.id = ?::int
 `, replyId);
+
+const notificationTypeId = notifications.getNotificationTypeId(notificationTypes.FORUM_REPLY);
+const loggedUserId = loggedUser.getInt("id");
+const topicOwnerId = dbTopicOwner.getInt("id");
+
+if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicOwnerId, notificationTypeId)) {
+  notifications.sendNotification(
+    "@" + dbReply.getString("people_user"),
+    "respondeu seu tópico.",
+    loggedUserId,
+    topicOwnerId,
+    `{ "topicUid": "${dbReply.getUID("topic_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`,
+    notificationTypeId
+  );
+
+  const dbCreated = _db.queryFirst(`
+    SELECT uid, sent_at
+    FROM notification
+    WHERE originator_id = ?::int
+      AND recipient_id = ?::int
+      AND type_id = ?::int
+    ORDER BY id DESC
+    LIMIT 1
+  `, loggedUserId, topicOwnerId, notificationTypeId);
+
+  if (dbCreated) {
+    people.wsSendAsService(
+      dbTopicOwner,
+      _val.map()
+        .set("method", "POST")
+        .set("service", "notification/new")
+        .set("data", _val.map().set("with", dbReply.getUID("people_uid")))
+        .set("content", _val.map()
+          .set("uid", dbCreated.getString("uid"))
+          .set("title", "@" + dbReply.getString("people_user"))
+          .set("content", "respondeu seu tópico.")
+          .set("originator", _val.map()
+            .set("uid", dbReply.getUID("people_uid"))
+            .set("username", dbReply.getString("people_user"))
+          )
+          .set("recipient", _val.map()
+            .set("uid", dbTopic.getUID("people_uid"))
+          )
+          .set("sent_at", dbCreated.getString("sent_at"))
+          .set("read_at", null)
+          .set("extra", _val.map()
+            .set("topicUid", dbReply.getUID("topic_uid"))
+            .set("replyUid", dbReply.getUID("uid"))
+          )
+          .set("type", notificationTypes.FORUM_REPLY)
+        )
+    );
+  }
+}
 
 response.successWithData(
   _val.map()

@@ -41,7 +41,7 @@ const dbRequestNotification = _db.queryFirst(`
       (originator_id = ?::int AND recipient_id = ?::int)
       OR (originator_id = ?::int AND recipient_id = ?::int)
     )
-  `, 
+  `,
   requestNotificationTypeId,
   loggedUserId, friendId,
   friendId, loggedUserId);
@@ -84,12 +84,12 @@ if (!notifications.isNotificationBlocked(friendId, acceptedNotificationTypeId)) 
         _val.map()
           .set("title", "@" + loggedUsername)
           .set("content", notificationMessages.FRIEND_REQUEST_ACCEPTED)
-          .set("originator", 
+          .set("originator",
             _val.map()
               .set("uid", loggedUserUid)
               .set("username", loggedUsername)
           )
-          .set("recipient", 
+          .set("recipient",
             _val.map()
               .set("uid", friendUid)
               .set("username", friendUsername)

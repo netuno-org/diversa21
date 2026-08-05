@@ -60,6 +60,11 @@ const types = [
     uid: "7f3a9c2e-1d4b-4e8a-9f6c-2b5d8e1a4c7f",
     name: "Mensagem",
     code: "message"
+  },
+  {
+    uid: "5c91a7ad-7b02-4f3c-b9cf-2fc08f8442f2",
+    name: "Resposta em seu tópico",
+    code: "forum-reply"
   }
 ];
 
