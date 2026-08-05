@@ -3,6 +3,7 @@ import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageO
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine, RiArticleLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
+import { FaRegHandshake } from "react-icons/fa6";
 import { LuUserCheck } from "react-icons/lu";
 
 import { Menu, Layout, Drawer, Button, Grid } from "antd";
@@ -64,6 +65,12 @@ const menuItems = [
     label: "Amigos",
     icon: <LuUserCheck />,
     link: "/friends"
+  },
+  {
+    key: "Support-community",
+    label: "Rede de apoio",
+    icon: <FaRegHandshake />,
+    link: "/support-community"
   },
 ];
 

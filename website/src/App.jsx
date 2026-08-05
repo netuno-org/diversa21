@@ -148,6 +148,7 @@ export default function App() {
                 <Route path="/friends" element={<ReservedArea />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/support-community" element={<ReservedArea />} />
 
                 {/** // RESERVED AREA **/}
                 <Route path="*" element={<NotFound/>} />
