@@ -147,6 +147,7 @@ function usePeople() {
     canCreateInstitutions: () => isSuperAdmin,
     canManageInstitution: (institutionUid) => (isSuperAdmin || (isManager && isLoggedUserInstitution(institutionUid))),
     canManagePosts: () => isReview || isSuperAdmin,
+    canManageForumCategories: () => isSuperAdmin,
     canManageLocations: () => isSuperAdmin,
   };
 }

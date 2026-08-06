@@ -18,6 +18,8 @@ function ListHeaderFilters({
   onLocationClear /* () => { ... } */,
   onSearchClear,
   hideInputs,
+  searchPlaceholder = "Buscar por nome",
+  hideLocation,
   searchValue,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -94,9 +96,9 @@ function ListHeaderFilters({
       {!hideInputs && (
         <div className="list-header-filters__inputs">
           <Row gutter={[16, 16]}>
-            <Col xs={24} md={12}>
+            <Col xs={24} md={hideLocation ? 24 : 12}>
               <Input.Search
-                placeholder="Buscar por nome"
+                placeholder={searchPlaceholder}
                 onSearch={() => onSearch && onSearch(searchTerm)}
                 onChange={handleSearchChange}
                 onClear={onSearchClear}
@@ -104,20 +106,23 @@ function ListHeaderFilters({
                 allowClear
                 value={searchTerm} />
             </Col>
-            <Col xs={24} md={12}>
-              <Select style={{ width: '100%' }}
-                notFoundContent={null}
-                placeholder="Cidade, estado ou país"
-                options={locationOptions}
-                showSearch={{
-                  filterOption: false,
-                  onSearch: handleLocationSearch
-                }}
-                onChange={(v, option) => onLocationChange && onLocationChange(option)}
-                onClear={handleLocationClear}
-                allowClear
-              />
-            </Col>
+            {!hideLocation && (
+              <Col xs={24} md={12}>
+                <Select
+                  style={{ width: '100%' }}
+                  notFoundContent={null}
+                  placeholder="Cidade, estado ou país"
+                  options={locationOptions}
+                  showSearch={{
+                    filterOption: false,
+                    onSearch: handleLocationSearch
+                  }}
+                  onChange={(v, option) => onLocationChange && onLocationChange(option)}
+                  onClear={handleLocationClear}
+                  allowClear
+                />
+              </Col>
+            )}
           </Row>
         </div>
       )}
