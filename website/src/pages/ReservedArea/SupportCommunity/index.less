@@ -1,10 +1,6 @@
 @import '../../../styles/variables.less';
 
 .support-community {
-  @media (max-width: 480px) {
-    padding: 0 10px;
-  }
-
   &__count,
   &__empty {
     margin-top: 16px;
@@ -52,25 +48,6 @@
     }
   }
 
-  &__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
-    background: @primary-color;
-    color: #fff;
-    font-size: 28px;
-
-    @media (max-width: 480px) {
-      width: 52px;
-      height: 52px;
-      font-size: 22px;
-    }
-  }
-
   &__content {
     display: flex;
     flex-direction: column;
@@ -97,16 +74,5 @@
   &__description {
     margin-bottom: 4px !important;
     font-size: 13px;
-  }
-
-  &__badge {
-    width: fit-content;
-    margin: 4px 0 0;
-    padding: 2px 10px;
-    border: none;
-    border-radius: 999px;
-    background: fade(@primary-color, 14%);
-    color: @primary-color;
-    font-size: 12px;
   }
 }
