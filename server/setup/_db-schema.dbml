@@ -14,6 +14,7 @@ Table country {
 
 Table forum_categoria {
   id int [pk, increment]
+  description varchar(150) [not null, note: 'Descrição']
   name varchar(250) [not null, unique, note: 'nome']
   Note: 'forum_categoria'
 }

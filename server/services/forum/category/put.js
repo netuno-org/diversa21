@@ -5,6 +5,7 @@ import response from "#core/lib/response.js";
 
 const uid = _req.getUID("uid");
 const name = _req.getString("name");
+const description = _req.getString("description");
 
 if (!permissions.canManageForumCategories()) {
   response.stopWithPermissionDenied();
@@ -25,6 +26,8 @@ _db.update(
   dbCategory.getInt("id"),
   _val.map()
     .set("name", name)
+    .set("description", description)
+    
 );
 
 response.successWithoutData();

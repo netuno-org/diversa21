@@ -6,6 +6,9 @@
     },
     "name": {
       "type": "string-not-empty"
+    },
+    "description": {
+      "type": "string"
     }
   },
   "required": [
