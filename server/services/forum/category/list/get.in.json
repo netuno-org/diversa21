@@ -3,6 +3,18 @@
     "forum-category"
   ],
   "summary": "List forum categories",
-  "description": "List all active forum categories without pagination.",
-  "properties": {}
+  "description": "List active forum categories with optional name filter and pagination.",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    },
+    "pageSize": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  }
 }

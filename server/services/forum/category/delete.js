@@ -26,4 +26,20 @@ _db.update(
     .set("active", false)
 );
 
+_db.execute(`
+  UPDATE forum_topico
+  SET active = false
+  WHERE forum_category_id = ?::int
+`, dbCategory.getInt("id"));
+
+_db.execute(`
+  UPDATE forum_resposta
+  SET active = false
+  WHERE topic_id IN (
+    SELECT id
+    FROM forum_topico
+    WHERE forum_category_id = ?::int
+  )
+`, dbCategory.getInt("id"));
+
 response.successWithoutData();

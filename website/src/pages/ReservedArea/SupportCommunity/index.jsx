@@ -141,8 +141,15 @@ function SupportCommunity() {
             >
               <Input placeholder="Nome da categoria" />
             </Form.Item>
-            <Form.Item name="description" label="Descrição"
-              rules={[{ required: true, message: "A descrição é obrigatória!" }]}>
+            <Form.Item
+              name="description"
+              label="Descrição"
+              rules={[
+                { required: true, message: "A descrição é obrigatória!" },
+                { min: 50, message: "A descrição deve ter no mínimo 50 caracteres." },
+                { max: 150, message: "A descrição deve ter no máximo 150 caracteres." },
+              ]}
+            >
               <TextArea
                 placeholder="Descrição da categoria"
                 rows={4}

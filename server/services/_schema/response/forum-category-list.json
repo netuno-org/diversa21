@@ -5,14 +5,25 @@
       "type": "boolean"
     },
     "data": {
-      "type": "array",
-      "items": {
-        "_schema": "response/forum-category-data"
-      }
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "_schema": "response/forum-category-data"
+          }
+        },
+        "pagination": {
+          "_schema": "response/pagination"
+        }
+      },
+      "required": [
+        "items",
+        "pagination"
+      ]
     }
   },
   "required": [
-    "result",
-    "data"
+    "result"
   ]
 }

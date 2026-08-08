@@ -13,11 +13,14 @@
       "type": "string-not-empty"
     },
     "description": {
-      "type": "string"
+      "type": "string-not-empty",
+      "minLength": 50,
+      "maxLength": 150
     }
   },
   "required": [
     "uid",
-    "name"
+    "name",
+    "description"
   ]
 }
