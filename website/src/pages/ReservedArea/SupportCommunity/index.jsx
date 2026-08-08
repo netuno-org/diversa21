@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import _service from '@netuno/service-client';
 import usePeople from "../../../common/usePeople.js";
 
-import { Card, Empty, Form, Input, Typography, Modal, Spin, Button } from "antd";
-
-import {
-  MessageOutlined,
-  PlusOutlined,
-  QuestionCircleOutlined,
-  EnterOutlined
-} from "@ant-design/icons";
-import { RiMegaphoneLine } from "react-icons/ri";
-import { IoMegaphoneOutline } from "react-icons/io5";
-import { LuReply } from "react-icons/lu";
+import globalNotification from "../../../common/globalNotification.js";
 
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
+
+import { Card, Empty, Form, Input, Typography, Modal, Spin, Button, Popconfirm } from "antd";
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import { IoMegaphoneOutline } from "react-icons/io5";
+import { LuReply } from "react-icons/lu";
 
 import "./index.less";
 
@@ -25,21 +24,23 @@ function SupportCommunity() {
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [form] = Form.useForm();
   const loggedUser = usePeople();
 
   useEffect(() => {
-    fetchCategories();
-  }, [])
+    handleListCategories();
+  }, []);
 
-  const fetchCategories = (name = '') => {
+  const handleListCategories = (name = '') => {
     setLoading(true);
     _service({
-      url: "/forum/category/list",
       method: 'GET',
+      url: "/forum/category/list",
       data: { name },
       success: ({ json }) => {
         if (json) {
-          setCategoryList(json.data);
+          setCategoryList(json.data.items);
         }
         setLoading(false);
       },
@@ -50,28 +51,146 @@ function SupportCommunity() {
     });
   };
 
+  const handleCreateCategory = (values) => {
+    setLoading(true);
+    _service({
+      method: 'POST',
+      url: "/forum/category",
+      data: {
+        name: values.name,
+        description: values.description
+      },
+      success: ({ json }) => {
+        if (json) {
+          globalNotification.success({
+            title: 'Categoria Criada',
+            description: 'A categoria foi criada com sucesso.',
+          });
+          closeModal();
+          handleListCategories();
+          return;
+        }
+        setLoading(false);
+      },
+      fail: (e) => {
+        globalNotification.error({
+          title: "Error",
+          description: "Não foi possível criar a categoria.",
+        });
+        console.log("Service Error", e);
+        setLoading(false);
+      }
+    });
+  };
+
+  const handleUpdateCategory = (values) => {
+    setLoading(true);
+    _service({
+      method: 'PUT',
+      url: "/forum/category",
+      data: {
+        uid: editingCategory.uid,
+        name: values.name,
+        description: values.description,
+      },
+      success: ({ json }) => {
+        if (json) {
+          globalNotification.success({
+            title: 'Categoria Atualizada',
+            description: 'A categoria foi atualizada com sucesso.',
+          });
+          closeModal();
+          handleListCategories();
+          return;
+        }
+        setLoading(false);
+      },
+      fail: (e) => {
+        globalNotification.error({
+          title: "Error",
+          description: "Não foi possível atualizar a categoria.",
+        });
+        console.log("Service Error", e);
+        setLoading(false);
+      }
+    });
+  };
+
+  const handleDeleteCategory = (uid) => {
+    setLoading(true);
+    _service({
+      method: 'DELETE',
+      url: "/forum/category",
+      data: { uid },
+      success: ({ json }) => {
+        if (json) {
+          globalNotification.success({
+            title: 'Categoria Removida',
+            description: 'A categoria foi removida com sucesso.',
+          });
+          handleListCategories();
+          return;
+        }
+        setLoading(false);
+      },
+      fail: (e) => {
+        globalNotification.error({
+          title: "Error",
+          description: "Não foi possível remover a categoria.",
+        });
+        console.log("Service Error", e);
+        setLoading(false);
+      }
+    });
+  };
+
   const handleSearchCategory = (value) => {
-    fetchCategories(value);
+    handleListCategories(value);
+  };
+
+  const openCreateModal = () => {
+    setEditingCategory(null);
+    form.resetFields();
+    setShowModal(true);
+  };
+
+  const openEditModal = (category) => {
+    setEditingCategory(category);
+    form.setFieldsValue({
+      name: category.name,
+      description: category.description,
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingCategory(null);
+    form.resetFields();
+  };
+
+  const onFinish = (values) => {
+    if (editingCategory) {
+      handleUpdateCategory(values);
+      return;
+    }
+    handleCreateCategory(values);
   };
 
   return (
     <div className="support-community">
-      <div className="support-community__header">
         <ListHeaderFilters
           title="Rede de apoio"
           searchPlaceholder="Buscar por categoria"
           createButton={loggedUser.canManageForumCategories() && {
             icon: <PlusOutlined />,
             text: "Criar categoria",
-            onClick: () => {
-              setShowModal(true);
-            },
+            onClick: openCreateModal,
           }}
           hideLocation={true}
           onSearch={handleSearchCategory}
-          onSearchClear={() => fetchCategories("")}
+          onSearchClear={() => handleListCategories("")}
         />
-      </div>
       {loading && (
         <div className="support-community__loading">
           <Spin size="large" />
@@ -92,27 +211,49 @@ function SupportCommunity() {
             <Card key={category.uid} className="support-community__card" hoverable>
               <div className="support-community__card-body">
                 <div className="support-community__content">
-                  <Title level={4} className="support-community__title">
-                    {category.name}
-                  </Title>
+                  <div className="support-community__title-row">
+                    <Title level={4} className="support-community__title">
+                      {category.name}
+                    </Title>
+                    {loggedUser.canManageForumCategories() && (
+                      <div className="support-community__actions">
+                        <Popconfirm
+                          title="Tem a certeza que deseja apagar a categoria?"
+                          description="Esta ação é irreversível"
+                          onConfirm={() => handleDeleteCategory(category.uid)}
+                          okText="Sim"
+                          cancelText="Não"
+                        >
+                          <Button danger type="link" className="support-community__action-btn">
+                            <DeleteOutlined />
+                          </Button>
+                        </Popconfirm>
+                        <Button
+                          type="link"
+                          className="support-community__action-btn"
+                          onClick={() => openEditModal(category)}
+                        >
+                          <EditOutlined />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                   <div className="support-community__stats">
                     <IoMegaphoneOutline />
                     <Text type="secondary">
                       {category.topicsCount} tópico{category.topicsCount !== 1 ? "s" : ""}
-                      {" · "}
+                      {" | "}
                       <LuReply />
                       {category.repliesCount} resposta{category.repliesCount !== 1 ? "s" : ""}
                     </Text>
                   </div>
-                  {category.description && (
                     <Paragraph
                       type="secondary"
-                      ellipsis={{ rows: 2, tooltip: true }}
+                      ellipsis={{ rows: 1, tooltip: true }}
                       className="support-community__description"
                     >
                       {category.description}
                     </Paragraph>
-                  )}
                 </div>
               </div>
             </Card>
@@ -126,14 +267,14 @@ function SupportCommunity() {
       )}
       <Modal
         open={showModal}
-        onCancel={() => setShowModal(false)}
+        onCancel={closeModal}
         footer={null}
-        title="Criar uma nova categoria"
+        title={editingCategory ? "Editar categoria" : "Criar uma nova categoria"}
         destroyOnHidden
         centered
       >
         <div style={{ marginTop: "16px" }}>
-          <Form layout="vertical">
+          <Form form={form} layout="vertical" onFinish={onFinish}>
             <Form.Item
               name="name"
               label="Nome da categoria"
@@ -158,10 +299,11 @@ function SupportCommunity() {
                 style={{ resize: "none" }}
               />
             </Form.Item>
-            <Button
-              type="primary"
-              >Criar
-            </Button>
+            <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+              <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
+                {editingCategory ? "Editar" : "Criar"}
+              </Button>
+            </Form.Item>
           </Form>
         </div>
       </Modal>
