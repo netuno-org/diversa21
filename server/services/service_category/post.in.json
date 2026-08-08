@@ -1,0 +1,18 @@
+{
+  "tags": [
+    "service-category"
+  ],
+  "summary": "Create service category",
+  "description": "Create a new service category. Restricted to super-admin users.",
+  "properties": {
+    "name": {
+      "type": "string-not-empty"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

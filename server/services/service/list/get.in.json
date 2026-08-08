@@ -1,0 +1,28 @@
+{
+  "tags": [
+    "service"
+  ],
+  "summary": "List services",
+  "description": "Retrieve paginated service listings filtered by name, category or location.",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "categoryUid": {
+      "type": "uid"
+    },
+    "cityUid": {
+      "type": "uid"
+    },
+    "stateUid": {
+      "type": "uid"
+    },
+    "countryUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  }
+}

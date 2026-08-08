@@ -1,0 +1,22 @@
+{
+  "tags": [
+    "service"
+  ],
+  "summary": "Create new service",
+  "description": "Create a new service/ad. Restricted to super-admin and management users.",
+  "properties": {
+    "name": { "type": "string-not-empty" },
+    "category": { "type": "string-not-empty" },
+    "city": { "type": "string-not-empty" },
+    "description": { "type": "string-not-empty" },
+    "phone": { "type": "string" },
+    "website": { "type": "string" },
+    "instagram": { "type": "string" }
+  },
+  "required": [
+    "name",
+    "category",
+    "city",
+    "description"
+  ]
+}

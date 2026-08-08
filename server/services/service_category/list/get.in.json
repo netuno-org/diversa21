@@ -1,0 +1,12 @@
+{
+  "tags": [
+    "service-category"
+  ],
+  "summary": "List service categories",
+  "description": "Retrieve active service categories to support front-end filters.",
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  }
+}

@@ -43,6 +43,12 @@ const menuItems = [
     link: "/people"
   },
   {
+    key: "services",
+    label: "Prestação de Serviços",
+    icon: <FaRegHandshake />,
+    link: "/services"
+  },
+  {
     key: "locations",
     label: "Localizações",
     icon: <EnvironmentOutlined />,

@@ -36,6 +36,8 @@ export default {
   canCreateInstitutions: () => isSuperAdmin,
   canManageInstitution: (institutionUid) => (isSuperAdmin || (isManager && isLoggedUserInstitution(institutionUid))),
   canManageForumCategories: () => isSuperAdmin,
+  canManageServiceCategories: () => isSuperAdmin,
+  canManageServices: () => isSuperAdmin,
   canManagePosts: () => isReview,
   canManageLocations: () => isSuperAdmin,
 }

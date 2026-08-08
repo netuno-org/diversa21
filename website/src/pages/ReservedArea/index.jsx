@@ -26,6 +26,7 @@ import Notifications from "./Notifications";
 import NotificationSettings from "./NotificationSettings";
 import LegalAcceptanceModal from "../../components/LegalAcceptanceModal";
 import SupportCommunity from "./SupportCommunity/index.jsx"
+import Services from "./Services/index.jsx"
 
 import "./index.less";
 
@@ -150,6 +151,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/support-community") {
         return <SupportCommunity />;
+      }
+      if (location.pathname === "/services") {
+        return <Services />;
       }
       return <NotFound />;
     };

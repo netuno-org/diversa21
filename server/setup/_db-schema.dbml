@@ -71,8 +71,7 @@ Table messages {
   message text [note: 'Mensagem']
   originator_id int [ref: > people.id, note: 'Originador']
   parent_id int [ref: > messages.id, note: 'Pai']
-  reaction varchar(20) [note: 'Reação']
-  reactions varchar(3) [note: 'Reações']
+  reaction varchar(1) [note: 'Reação']
   read_at timestamp [note: 'Lido Em']
   recipient_id int [not null, ref: > people.id, note: 'Destinatário']
   sent_at timestamp [not null, note: 'Enviado Em']
@@ -156,6 +155,25 @@ Table post_like {
   people_id int [not null, ref: > people.id, note: 'Pessoa']
   post_id int [not null, ref: > post.id, note: 'Publicação']
   Note: 'Like'
+}
+
+Table service {
+  id int [pk, increment]
+  category_id int [not null, ref: > service_category.id, note: 'Categoria']
+  city_id int [not null, ref: > city.id, note: 'Cidade']
+  description varchar(250) [note: 'Descrição']
+  instagram varchar(250) [note: 'Instagram']
+  name varchar(250) [not null, note: 'Nome']
+  phone varchar(250) [note: 'Telefone']
+  website varchar(250) [note: 'Website']
+  Note: 'Prestação de Serviço'
+}
+
+Table service_category {
+  id int [pk, increment]
+  description varchar(250) [note: 'Descrição']
+  name varchar(250) [not null, note: 'Nome']
+  Note: 'Categoria de Serviço'
 }
 
 Table state {
