@@ -151,12 +151,33 @@ function Post({
     }
   };
 
-  const displayContent = content.split('\n').map((line, index, array) => (
-    <React.Fragment key={index}>
-      {line}
-      {index < array.length - 1 && <br />}
-    </React.Fragment>
-  ));
+  const linkRegex = /(https?:\/\/[^\s]+)/g;
+
+  const displayContent = content.split('\n').map((line, index, array) => {
+    const parts = line.split(linkRegex);
+    return (
+      <React.Fragment key={index}>
+        {parts.map((part, pIdx) => {
+          if (part.match(linkRegex)) {
+            return (
+              <a
+                key={pIdx}
+                href={part}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                style={{ color: '#1890ff', textDecoration: 'underline' }}
+              >
+                {part}
+              </a>
+            );
+          }
+          return part;
+        })}
+        {index < array.length - 1 && <br />}
+      </React.Fragment>
+    );
+  });
 
   const activityLabel = type === 'comment' && parentPeopleUser
     ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> comentou num post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>

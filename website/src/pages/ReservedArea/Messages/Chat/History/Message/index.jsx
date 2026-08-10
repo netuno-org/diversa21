@@ -78,6 +78,38 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
     }, 10);
   };
 
+  const linkRegex = /(https?:\/\/[^\s]+)/g;
+
+  const renderMessageText = (text) => {
+    if (!text) return "";
+    const cleanedText = text.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim();
+    return cleanedText.split('\n').map((line, index, array) => {
+      const parts = line.split(linkRegex);
+      return (
+        <React.Fragment key={index}>
+          {parts.map((part, pIdx) => {
+            if (part.match(linkRegex)) {
+              return (
+                <a
+                  key={pIdx}
+                  href={part}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{ color: isIncoming ? '#1890ff' : '#e6f7ff', textDecoration: 'underline' }}
+                >
+                  {part}
+                </a>
+              );
+            }
+            return part;
+          })}
+          {index < array.length - 1 && <br />}
+        </React.Fragment>
+      );
+    });
+  };
+
   const handleSaveEdit = () => {
     if (editText.trim() !== "" && editText !== messageText) {
       onEdit && onEdit(data.uid, editText);
@@ -278,7 +310,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                           </div>
                         )}
                         <Text className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
-                          {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
+                          {renderMessageText(messageText)}
                         </Text>
                         {!data.deleted_at && (
                           <div className="messages__message-bubble-meta">
@@ -320,7 +352,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                             </div>
                           )}
                           <Text className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
-                            {messageText.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim()}
+                            {renderMessageText(messageText)}
                           </Text>
                           {((readMoment && showRead) || data.edited_at) && (
                             <div className="messages__message-bubble-meta">
