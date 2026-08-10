@@ -216,29 +216,31 @@ function Chat({ friend, onClose }) {
             </div>
           )}
           <div className="messages__chat-input-wrapper">
-            <Popover
-              content={
-                <EmojiPicker
-                  onEmojiClick={handleEmojiClick}
-                  previewConfig={{ showPreview: false }}
-                  emojiData={ptEmojis}
-                  searchPlaceholder="Pesquisar..."
-                  height="360px"
-                  width="310px"
+            {!isMobile && (
+              <Popover
+                content={
+                  <EmojiPicker
+                    onEmojiClick={handleEmojiClick}
+                    previewConfig={{ showPreview: false }}
+                    emojiData={ptEmojis}
+                    searchPlaceholder="Pesquisar..."
+                    height="360px"
+                    width="310px"
+                  />
+                }
+                trigger="click"
+                placement="topLeft"
+                overlayClassName="messages__chat-emoji-popover"
+              >
+                <Button
+                  type="text"
+                  shape="circle"
+                  icon={<SmileOutlined />}
+                  className="messages__chat-emoji-btn"
+                  style={{ fontSize: 20, color: '#8c8c8c', border: 'none', background: 'transparent' }}
                 />
-              }
-              trigger="click"
-              placement="topLeft"
-              overlayClassName="messages__chat-emoji-popover"
-            >
-              <Button
-                type="text"
-                shape="circle"
-                icon={<SmileOutlined />}
-                className="messages__chat-emoji-btn"
-                style={{ fontSize: 20, color: '#8c8c8c', border: 'none', background: 'transparent' }}
-              />
-            </Popover>
+              </Popover>
+            )}
 
             <Form.Item
               name="message"

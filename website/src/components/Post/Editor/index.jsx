@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Button, Form, Input, Space, Popconfirm, Popover } from "antd";
+import { Button, Form, Input, Space, Popconfirm, Popover, Grid } from "antd";
 import { SmileOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
@@ -22,6 +22,9 @@ function Editor({
   const [form] = Form.useForm();
   const [contentValue, setContentValue] = useState(content || "");
   const textAreaRef = useRef(null);
+
+  const screens = Grid.useBreakpoint();
+  const isMobile = screens.lg === false;
 
   const getGraphemeCount = (str) => {
     if (typeof Intl.Segmenter === "function") {
@@ -194,29 +197,31 @@ function Editor({
             }}
           />
           <div className="editor-form__emoji-bar">
-            <Popover
-              content={
-                <EmojiPicker
-                  onEmojiClick={handleEmojiClick}
-                  skinTonesDisabled={false}
-                  previewConfig={{ showPreview: false }}
-                  emojiData={ptEmojis}
-                  searchPlaceholder="Pesquisar..."
-                  height="360px"
-                  width="310px"
+            {!isMobile && (
+              <Popover
+                content={
+                  <EmojiPicker
+                    onEmojiClick={handleEmojiClick}
+                    skinTonesDisabled={false}
+                    previewConfig={{ showPreview: false }}
+                    emojiData={ptEmojis}
+                    searchPlaceholder="Pesquisar..."
+                    height="360px"
+                    width="310px"
+                  />
+                }
+                trigger="click"
+                placement="topRight"
+                overlayClassName="messages__chat-emoji-popover"
+              >
+                <Button
+                  type="text"
+                  shape="circle"
+                  icon={<SmileOutlined />}
+                  style={{ fontSize: 20, color: '#8c8c8c' }}
                 />
-              }
-              trigger="click"
-              placement="topRight"
-              overlayClassName="messages__chat-emoji-popover"
-            >
-              <Button
-                type="text"
-                shape="circle"
-                icon={<SmileOutlined />}
-                style={{ fontSize: 20, color: '#8c8c8c' }}
-              />
-            </Popover>
+              </Popover>
+            )}
             <span className="editor-form__word-count" style={{ marginLeft: 'auto', color: '#8c8c8c', fontSize: '12px' }}>
               {getGraphemeCount(contentValue)}/500
             </span>
