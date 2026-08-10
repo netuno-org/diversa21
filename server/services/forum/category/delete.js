@@ -19,27 +19,16 @@ if (!dbCategory) {
   response.stopWithForumCategoryNotFound();
 }
 
-_db.update(
-  "forum_categoria",
-  dbCategory.getInt("id"),
-  _val.map()
-    .set("active", false)
-);
-
-_db.execute(`
-  UPDATE forum_topico
-  SET active = false
-  WHERE forum_category_id = ?::int
-`, dbCategory.getInt("id"));
-
-_db.execute(`
-  UPDATE forum_resposta
-  SET active = false
-  WHERE topic_id IN (
-    SELECT id
+const dbHasTopics = _db.queryFirst(`
+  SELECT EXISTS (
+    SELECT 1
     FROM forum_topico
     WHERE forum_category_id = ?::int
-  )
+  ) AS has_topics
 `, dbCategory.getInt("id"));
 
+if (dbHasTopics.getBoolean("has_topics")) {
+  response.stopWithBadRequest("forum-category-has-topics");
+}
+_db.delete("forum_categoria", dbCategory.getInt("id"));
 response.successWithoutData();

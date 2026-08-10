@@ -23,11 +23,12 @@ _form.sync(
 		.set("export_xml", true)
 		.set("firebase", "")
 		.set("name", "forum_categoria")
+		.set("parent_uid", "92c6632b-0506-4354-abb4-c7b574f09415")
 		.set("reorder", 0)
 		.set("report", false)
 		.set("report_behaviour", 0)
 		.set("show_id", true)
-		.set("title", "forum_categoria")
+		.set("title", "Categoria")
 		.set("uid", "debd546f-770a-4a1b-bba1-e1fcfb9acb96")
 );
 _form.syncField(

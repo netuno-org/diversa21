@@ -133,12 +133,18 @@ function SupportCommunity() {
         }
         setLoading(false);
       },
-      fail: (e) => {
-        globalNotification.error({
-          title: "Error",
-          description: "Não foi possível remover a categoria.",
-        });
-        console.log("Service Error", e);
+      fail: ({ json }) => {
+        if (json.error === "forum-category-has-topics") {
+          globalNotification.error({
+            title: "Error",
+            description: "Não é possivel apagar a categoria, pois existe pelo menos um tópico criado.",
+          });
+        } else {
+          globalNotification.error({
+            title: "Error",
+            description: "Não foi possível remover a categoria.",
+          });
+        }
         setLoading(false);
       }
     });
@@ -179,18 +185,18 @@ function SupportCommunity() {
 
   return (
     <div className="support-community">
-        <ListHeaderFilters
-          title="Rede de apoio"
-          searchPlaceholder="Buscar por categoria"
-          createButton={loggedUser.canManageForumCategories() && {
-            icon: <PlusOutlined />,
-            text: "Criar categoria",
-            onClick: openCreateModal,
-          }}
-          hideLocation={true}
-          onSearch={handleSearchCategory}
-          onSearchClear={() => handleListCategories("")}
-        />
+      <ListHeaderFilters
+        title="Rede de apoio"
+        searchPlaceholder="Buscar por categoria"
+        createButton={loggedUser.canManageForumCategories() && {
+          icon: <PlusOutlined />,
+          text: "Criar categoria",
+          onClick: openCreateModal,
+        }}
+        hideLocation={true}
+        onSearch={handleSearchCategory}
+        onSearchClear={() => handleListCategories("")}
+      />
       {loading && (
         <div className="support-community__loading">
           <Spin size="large" />
@@ -247,13 +253,13 @@ function SupportCommunity() {
                       {category.repliesCount} resposta{category.repliesCount !== 1 ? "s" : ""}
                     </Text>
                   </div>
-                    <Paragraph
-                      type="secondary"
-                      ellipsis={{ rows: 1, tooltip: true }}
-                      className="support-community__description"
-                    >
-                      {category.description}
-                    </Paragraph>
+                  <Paragraph
+                    type="secondary"
+                    ellipsis={{ rows: 1, tooltip: true }}
+                    className="support-community__description"
+                  >
+                    {category.description}
+                  </Paragraph>
                 </div>
               </div>
             </Card>
