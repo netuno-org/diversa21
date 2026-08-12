@@ -1,11 +1,12 @@
 import _auth from "@netuno/auth-client";
 import { Layout, Typography, Space, Divider } from "antd";
 import { GithubOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 import './index.less';
 
 const { Footer } = Layout;
-const { Link, Text } = Typography;
+const { Text, Link: AntLink } = Typography; 
 
 function FooterBase() {
   const currentYear = new Date().getFullYear();
@@ -18,15 +19,15 @@ function FooterBase() {
           © diversa21.org {currentYear}
         </Text>
 
-        <Link href="/terms" className="footer-base__link">
+        <Link to="/terms" className="footer-base__link">
           Termos e Condições
         </Link>
 
-        <Link href="/privacy" className="footer-base__link">
+        <Link to="/privacy" className="footer-base__link">
           Privacidade
         </Link>
 
-        <Link
+        <AntLink
           href="https://github.com/netuno-org/diversa21"
           target="_blank"
           className="footer-base__link"
@@ -35,7 +36,7 @@ function FooterBase() {
             <GithubOutlined />
             <span>Open Source</span>
           </Space>
-        </Link>
+        </AntLink>
 
       </Space>
     </Footer>
