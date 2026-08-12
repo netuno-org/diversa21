@@ -1,0 +1,48 @@
+@import '../../styles/variables.less';
+
+.support-community {
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__category {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #fafafa;
+    padding: 24px;
+    margin-top: 16px;
+    border-radius: 8px;
+  }
+
+  &__category-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__category-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  &__category-name {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  &__icon-material {
+    margin-right: 0;
+    flex-shrink: 0;
+    background-color: #f0f0f0;
+    border: 1px solid @primary-color;
+
+    &,
+    img {
+      border-radius: 8px !important;
+      color: @primary-color;
+    }
+  }
+}

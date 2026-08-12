@@ -1,32 +1,27 @@
 import { useEffect, useState } from "react";
 import _service from '@netuno/service-client';
 import usePeople from "../../../common/usePeople.js";
+import { useNavigate } from "react-router-dom";
 
 import globalNotification from "../../../common/globalNotification.js";
 
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
+import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay/index.jsx"
 
-import { Card, Empty, Form, Input, Typography, Modal, Spin, Button, Popconfirm } from "antd";
 import {
   PlusOutlined,
-  DeleteOutlined,
-  EditOutlined,
 } from "@ant-design/icons";
-import { IoMegaphoneOutline } from "react-icons/io5";
-import { LuReply } from "react-icons/lu";
 
 import "./index.less";
-
-const { Paragraph, Text, Title } = Typography;
-const { TextArea } = Input;
 
 function SupportCommunity() {
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [form] = Form.useForm();
   const loggedUser = usePeople();
+  const navigate = useNavigate()
+  const mode = 'category'
 
   useEffect(() => {
     handleListCategories();
@@ -115,7 +110,7 @@ function SupportCommunity() {
       }
     });
   };
-
+  
   const handleDeleteCategory = (uid) => {
     setLoading(true);
     _service({
@@ -156,23 +151,17 @@ function SupportCommunity() {
 
   const openCreateModal = () => {
     setEditingCategory(null);
-    form.resetFields();
     setShowModal(true);
   };
 
   const openEditModal = (category) => {
     setEditingCategory(category);
-    form.setFieldsValue({
-      name: category.name,
-      description: category.description,
-    });
     setShowModal(true);
   };
 
   const closeModal = () => {
     setShowModal(false);
     setEditingCategory(null);
-    form.resetFields();
   };
 
   const onFinish = (values) => {
@@ -182,6 +171,10 @@ function SupportCommunity() {
     }
     handleCreateCategory(values);
   };
+
+  const handleCardClick = (uid) => {
+    navigate(`/c/${uid}`)
+  }
 
   return (
     <div className="support-community">
@@ -197,122 +190,19 @@ function SupportCommunity() {
         onSearch={handleSearchCategory}
         onSearchClear={() => handleListCategories("")}
       />
-      {loading && (
-        <div className="support-community__loading">
-          <Spin size="large" />
-        </div>
-      )}
-      {!loading && (
-        <div className="support-community__count">
-          <Text type="secondary">
-            {categoryList.length}{" "}
-            {categoryList.length !== 1 ? "categorias" : "categoria"} encontrada
-            {categoryList.length !== 1 ? "s" : ""}
-          </Text>
-        </div>
-      )}
-      <div className="support-community__items">
-        {!loading && categoryList.map((category) => {
-          return (
-            <Card key={category.uid} className="support-community__card" hoverable>
-              <div className="support-community__card-body">
-                <div className="support-community__content">
-                  <div className="support-community__title-row">
-                    <Title level={4} className="support-community__title">
-                      {category.name}
-                    </Title>
-                    {loggedUser.canManageForumCategories() && (
-                      <div className="support-community__actions">
-                        <Popconfirm
-                          title="Tem a certeza que deseja apagar a categoria?"
-                          description="Esta ação é irreversível"
-                          onConfirm={() => handleDeleteCategory(category.uid)}
-                          okText="Sim"
-                          cancelText="Não"
-                        >
-                          <Button danger type="link" className="support-community__action-btn">
-                            <DeleteOutlined />
-                          </Button>
-                        </Popconfirm>
-                        <Button
-                          type="link"
-                          className="support-community__action-btn"
-                          onClick={() => openEditModal(category)}
-                        >
-                          <EditOutlined />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                  <div className="support-community__stats">
-                    <IoMegaphoneOutline />
-                    <Text type="secondary">
-                      {category.topicsCount} tópico{category.topicsCount !== 1 ? "s" : ""}
-                      {" | "}
-                      <LuReply />
-                      {category.repliesCount} resposta{category.repliesCount !== 1 ? "s" : ""}
-                    </Text>
-                  </div>
-                  <Paragraph
-                    type="secondary"
-                    ellipsis={{ rows: 1, tooltip: true }}
-                    className="support-community__description"
-                  >
-                    {category.description}
-                  </Paragraph>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-      {!loading && categoryList.length === 0 && (
-        <div className="support-community__empty">
-          <Empty description="Nenhuma categoria encontrada." />
-        </div>
-      )}
-      <Modal
-        open={showModal}
+      <SupportCommunityDisplay
+        loading={loading}
+        showModal={showModal}
         onCancel={closeModal}
-        footer={null}
-        title={editingCategory ? "Editar categoria" : "Criar uma nova categoria"}
-        destroyOnHidden
-        centered
-      >
-        <div style={{ marginTop: "16px" }}>
-          <Form form={form} layout="vertical" onFinish={onFinish}>
-            <Form.Item
-              name="name"
-              label="Nome da categoria"
-              rules={[{ required: true, message: "O título é obrigatório!" }]}
-            >
-              <Input placeholder="Nome da categoria" />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Descrição"
-              rules={[
-                { required: true, message: "A descrição é obrigatória!" },
-                { min: 50, message: "A descrição deve ter no mínimo 50 caracteres." },
-                { max: 150, message: "A descrição deve ter no máximo 150 caracteres." },
-              ]}
-            >
-              <TextArea
-                placeholder="Descrição da categoria"
-                rows={4}
-                maxLength={150}
-                showCount
-                style={{ resize: "none" }}
-              />
-            </Form.Item>
-            <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
-              <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
-                {editingCategory ? "Editar" : "Criar"}
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      </Modal>
+        editingCategory={editingCategory}
+        onFinish={onFinish}
+        listItems={categoryList}
+        loggedUser={loggedUser}
+        handleCardClick={handleCardClick}
+        openEditModal={openEditModal}
+        handleDelete={handleDeleteCategory}
+        mode={mode}
+      />
     </div>
   );
 }

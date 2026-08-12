@@ -1,0 +1,15 @@
+{
+  "tags": [
+    "forum-category"
+  ],
+  "summary": "Get forum category",
+  "description": "Get a forum category by uid.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}
