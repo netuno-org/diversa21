@@ -25,7 +25,7 @@ import Messages from "./Messages";
 import Notifications from "./Notifications";
 import NotificationSettings from "./NotificationSettings";
 import LegalAcceptanceModal from "../../components/LegalAcceptanceModal";
-import SupportCommunity from "./SupportCommunity/index.jsx"
+import CategoryTopics from "./CategoryTopics/index.jsx"
 import Services from "./Services/index.jsx"
 import CategoryPage from "./CategoryPage"
 
@@ -151,7 +151,7 @@ function ReservedArea() {
         return <NotificationSettings />;
       }
       if (location.pathname === "/support-community") {
-        return <SupportCommunity />;
+        return <CategoryTopics />;
       }
       if (location.pathname.startsWith("/c/")) {
         return <CategoryPage categoryUid={params.categoryUid} />;

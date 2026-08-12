@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import globalNotification from "../../../common/globalNotification.js";
 
-import ListHeaderFilters from "../../../components/ListHeaderFilters";
+import ListHeaderFilters from "../../../components/ListHeaderFilters/index.jsx";
 import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay/index.jsx"
 
 import {
@@ -14,7 +14,7 @@ import {
 
 import "./index.less";
 
-function SupportCommunity() {
+function CategoryTopics() {
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -207,4 +207,4 @@ function SupportCommunity() {
   );
 }
 
-export default SupportCommunity;
+export default CategoryTopics;
