@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined } from "@ant-design/icons";
+import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message } from "antd";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined } from "@ant-design/icons";
+import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
@@ -28,6 +29,10 @@ function Services() {
   const [cityOptions, setCityOptions] = useState([]);
   
   const [serviceDetails, setServiceDetails] = useState(null);
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const serviceIdFromUrl = searchParams.get('id');
+  const [fetchingDetail, setFetchingDetail] = useState(false);
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -59,6 +64,34 @@ function Services() {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    if (serviceIdFromUrl && !serviceDetails && !fetchingDetail) {
+      const foundService = services?.find((s) => s.uid === serviceIdFromUrl);
+
+      if (foundService) {
+        setServiceDetails(foundService);
+      } else if (!loading) {
+        setFetchingDetail(true);
+        _service({
+          url: 'service/list',
+          data: { uid: serviceIdFromUrl },
+          success: ({ json }) => {
+            if (json?.data && Array.isArray(json.data) && json.data.length > 0) {
+              setServiceDetails(json.data[0]);
+            } else if (json?.data && json.data.uid) {
+              setServiceDetails(json.data);
+            }
+            setFetchingDetail(false);
+          },
+          fail: () => {
+            setFetchingDetail(false);
+            message.error('Não foi possível carregar os detalhes do serviço partilhado.');
+          }
+        });
+      }
+    }
+  }, [serviceIdFromUrl, services, serviceDetails, fetchingDetail, loading]);
+
   const fetchCategories = (name = '') => {
     setCategoriesLoading(true);
     _service({
@@ -82,6 +115,17 @@ function Services() {
     if (pagination.current !== 1) {
       handlePaginationChange(1, pagination.size);
     }
+  };
+
+  const handleOpenService = (service) => {
+    setServiceDetails(service);
+    setSearchParams({ id: service.uid }, { replace: true });
+  };
+
+  const handleCloseService = () => {
+    setServiceDetails(null);
+    searchParams.delete('id');
+    setSearchParams(searchParams, { replace: true });
   };
 
   const handleCreateCategory = async () => {
@@ -242,7 +286,7 @@ function Services() {
             key={service.uid}
             className="services-list__card"
             hoverable
-            onClick={() => setServiceDetails(service)}
+            onClick={() => handleOpenService(service)}
           >
             <div className="services-list__card-content">
               <div className="services-list__card-main">
@@ -277,6 +321,7 @@ function Services() {
                       href={service.website.startsWith('http') ? service.website : `https://${service.website}`}
                       target="_blank"
                       rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       Site
                     </a>
@@ -289,6 +334,7 @@ function Services() {
                       href={`https://instagram.com/${service.instagram.replace(/^@/, '')}`}
                       target="_blank"
                       rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       @{service.instagram.replace(/^@/, '')}
                     </a>
@@ -319,8 +365,16 @@ function Services() {
       <Modal
         title={serviceDetails ? serviceDetails.name : ''}
         open={!!serviceDetails}
-        onCancel={() => setServiceDetails(null)}
-        footer={null}
+        onCancel={handleCloseService}
+        footer={[
+          <Button 
+            key="close" 
+            type="primary" 
+            onClick={handleCloseService}
+          >
+            Fechar
+          </Button>
+        ]}
         destroyOnHidden
       >
         {serviceDetails && (
@@ -364,6 +418,17 @@ function Services() {
                 </a>
               </div>
             )}
+
+            <div style={{ marginTop: '16px', borderTop: '1px solid #f0f0f0', paddingTop: '16px' }}>
+              <div style={{ marginBottom: '8px', fontWeight: 600, fontSize: '13px', color: 'rgba(0, 0, 0, 0.45)' }}>
+                Link direto para partilha (clique para selecionar):
+              </div>
+              <Input
+                value={`${window.location.origin}${window.location.pathname}?id=${serviceDetails.uid}`}
+                readOnly
+                onClick={(e) => e.target.select()}
+              />
+            </div>
           </div>
         )}
       </Modal>
