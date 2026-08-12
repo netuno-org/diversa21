@@ -65,19 +65,19 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
     >
       <Space direction="vertical" size="middle" className="legal-acceptance-modal__content">
         <Paragraph>
-          Para continuar a usar a plataforma, é necessário aceitar os <Link to="/terms">Termos e Condições</Link> e a <Link to="/privacy">Política de Privacidade</Link>.
+          Para continuar a usar a plataforma, é necessário aceitar:
         </Paragraph>
         <Checkbox
           checked={agreedTerms}
           onChange={(event) => setAgreedTerms(event.target.checked)}
         >
-          Li e aceito os Termos e Condições.
+          Li e aceito os <Link to="/terms">Termos e Condições</Link>.
         </Checkbox>
         <Checkbox
           checked={agreedPrivacy}
           onChange={(event) => setAgreedPrivacy(event.target.checked)}
         >
-          Li e aceito a Política de Privacidade.
+          Li e aceito a <Link to="/privacy">Política de Privacidade</Link>.
         </Checkbox>
       </Space>
     </Modal>

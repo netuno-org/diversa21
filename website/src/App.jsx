@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes as Switch, Route, useNavigate, Navigate } from "react-router-dom";
+import { Routes as Switch, Route, useNavigate, Navigate, useLocation } from "react-router-dom";
 
 import {ConfigProvider, Layout, notification} from 'antd';
 import antLocale_ptBR from 'antd/lib/locale/pt_BR';
@@ -57,8 +57,8 @@ const NavWithAuthCheck = () => {
 
 export default function App() {
   const [collapsed, setCollapsed] = useState(false);
-
   const navigate = useNavigate();
+  const location = useLocation();
   const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function App() {
         navigate('/login');
       }
     });
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     globalNotification.api(api);
@@ -77,6 +77,8 @@ export default function App() {
     setCollapsed(!collapsed);
   }
 
+  const isPublicStandalonePage = ['/login', '/recovery', '/terms', '/privacy'].includes(location.pathname) || location.pathname.startsWith('/login/');
+  
   return (
     <ConfigProvider
       locale={antLocale_ptBR}
@@ -117,7 +119,11 @@ export default function App() {
       {contextHolder}
       <Provider store={store}>
         <Layout className={'page ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
-          <SiderMenu collapsed={collapsed} onCollapse={onCollapse} />
+          
+          {!isPublicStandalonePage && (
+            <SiderMenu collapsed={collapsed} onCollapse={onCollapse} />
+          )}
+
           <Layout>
             <HeaderBase collapsed={collapsed} />
             <Content className={classNames({ 'auth ': _auth.isLogged() })}>
@@ -127,7 +133,10 @@ export default function App() {
                 <Route path="/login/:provider" element={<LoginCallback/>} />
                 <Route path="/login" element={<LoginPage/>} />
                 <Route path="/recovery" element={<Recovery/>} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
                 {/** // PUBLIC **/}
+                
                 {/** RESERVED AREA **/}
                 <Route path="/profile/edit" element={<ReservedArea />} />
                 <Route path="/profile/view" element={<ReservedArea />} />
@@ -147,8 +156,6 @@ export default function App() {
                 <Route path="/services" element={<ReservedArea />} />
                 <Route path="/notification-settings" element={<ReservedArea />} />
                 <Route path="/friends" element={<ReservedArea />} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/support-community" element={<ReservedArea />} />
 
                 {/** // RESERVED AREA **/}
