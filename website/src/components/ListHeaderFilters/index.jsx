@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Typography, Button, Input, Select, Row, Col } from 'antd';
+import { Typography, Button, Input, Select, Row, Col, Space } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
@@ -21,10 +21,13 @@ function ListHeaderFilters({
   searchPlaceholder = "Buscar por nome",
   hideLocation,
   searchValue,
+  fullWidthSearch,
+  extraActionButtons,
+  extraFilters
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
-  const hasHeaderTitle = title || createButton;
+  const hasHeaderTitle = title || createButton || extraActionButtons;
 
   // const loggedUser = usePeople();
 
@@ -75,19 +78,24 @@ function ListHeaderFilters({
         <div className="list-header-filters__header">
           <Row align="middle" gutter={[16, 16]}>
             {title && (
-              <Col xs={createButton ? 12 : 24} sm={createButton ? 12 : 24}>
+              <Col xs={(createButton || extraActionButtons) ? 12 : 24} sm={(createButton || extraActionButtons) ? 12 : 24}>
                 <Title>{title}</Title>
               </Col>
             )}
-            {createButton && (
+            {(createButton || extraActionButtons) && (
               <Col xs={12} sm={12}>
-                <Button
-                  type="primary"
-                  icon={(createButton && createButton.icon) || <PlusOutlined />}
-                  onClick={createButton && createButton.onClick}
-                >
-                  {(createButton && createButton.text) || 'Adicionar Novo'}
-                </Button>
+                <Space wrap style={{ justifyContent: 'flex-end', width: '100%' }}>
+                  {extraActionButtons}
+                  {createButton && (
+                    <Button
+                      type="primary"
+                      icon={(createButton && createButton.icon) || <PlusOutlined />}
+                      onClick={createButton && createButton.onClick}
+                    >
+                      {(createButton && createButton.text) || 'Adicionar Novo'}
+                    </Button>
+                  )}
+                </Space>
               </Col>
             )}
           </Row>
@@ -96,7 +104,7 @@ function ListHeaderFilters({
       {!hideInputs && (
         <div className="list-header-filters__inputs">
           <Row gutter={[16, 16]}>
-            <Col xs={24} md={hideLocation ? 24 : 12}>
+            <Col xs={24} md={fullWidthSearch ? 24 : (hideLocation ? 24 : 12)}>
               <Input.Search
                 placeholder={searchPlaceholder}
                 onSearch={() => onSearch && onSearch(searchTerm)}
@@ -107,7 +115,7 @@ function ListHeaderFilters({
                 value={searchTerm} />
             </Col>
             {!hideLocation && (
-              <Col xs={24} md={12}>
+              <Col xs={24} md={fullWidthSearch ? 12 : 12}>
                 <Select
                   style={{ width: '100%' }}
                   notFoundContent={null}
@@ -121,6 +129,11 @@ function ListHeaderFilters({
                   onClear={handleLocationClear}
                   allowClear
                 />
+              </Col>
+            )}
+            {extraFilters && (
+              <Col xs={24} md={fullWidthSearch ? 12 : 12}>
+                {extraFilters}
               </Col>
             )}
           </Row>

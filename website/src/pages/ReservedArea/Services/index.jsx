@@ -175,45 +175,52 @@ function Services() {
       <div className="services-list__header">
         <ListHeaderFilters
           title="Prestação de Serviços"
+          
           createButton={canCreateService ? {
             icon: <PlusOutlined />,
             text: "Novo Serviço",
             onClick: () => setServiceModalVisible(true),
           } : null}
+          
+          extraActionButtons={
+            loggedUser.canManageServiceCategories() ? (
+              <Button 
+                type="primary"
+                icon={<PlusOutlined />} 
+                onClick={() => setCategoryModalVisible(true)}
+              >
+                Nova categoria
+              </Button>
+            ) : null
+          }
+          
           onSearch={handleSearch}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
           searchPlaceholder="Buscar por nome do serviço"
+          
+          fullWidthSearch={true}
+          
+          extraFilters={
+            <Select
+              value={selectedCategory?.uid}
+              allowClear
+              showSearch
+              loading={categoriesLoading}
+              placeholder="Filtrar por categoria"
+              onChange={handleCategoryChange}
+              options={categories.map((category) => ({
+                label: category.name,
+                value: category.uid,
+              }))}
+              filterOption={(input, option) =>
+                option.label.toLowerCase().includes(input.toLowerCase())
+              }
+              style={{ width: '100%' }}
+            />
+          }
         />
-        <div className="services-list__filters">
-          <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} sm={12} md={10} lg={8}>
-              <Select
-                value={selectedCategory?.uid}
-                allowClear
-                showSearch
-                loading={categoriesLoading}
-                placeholder="Filtrar por categoria"
-                onChange={handleCategoryChange}
-                options={categories.map((category) => ({
-                  label: category.name,
-                  value: category.uid,
-                }))}
-                filterOption={(input, option) =>
-                  option.label.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Col>
-            {loggedUser.canManageServiceCategories() && (
-              <Col>
-                <Button type="dashed" icon={<PlusOutlined />} onClick={() => setCategoryModalVisible(true)}>
-                  Nova categoria
-                </Button>
-              </Col>
-            )}
-          </Row>
-        </div>
       </div>
 
       <div className="services-list__count">
