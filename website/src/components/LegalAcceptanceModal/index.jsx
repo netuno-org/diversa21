@@ -49,6 +49,7 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
       open={visible}
       closable={false}
       maskClosable={false}
+      maskStyle={{ backgroundColor: '#ffffff', opacity: 1 }}
       footer={[
         <Button
           key="accept"
