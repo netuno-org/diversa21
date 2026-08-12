@@ -11,16 +11,18 @@ function LegalPage({ title, sections }) {
   return (
     <section className="legal-page">
       <div className="legal-page__wrapper">
-        <Title level={2}>{title}</Title>
         
-        <Button 
-          type="link" 
-          icon={<ArrowLeftOutlined />} 
-          onClick={() => navigate(-1)} 
-          className="legal-page__back-button"
-        >
-          Voltar
-        </Button>
+        <div className="legal-page__header">
+          <Title level={2}>{title}</Title>
+          <Button 
+            type="link" 
+            icon={<ArrowLeftOutlined />} 
+            onClick={() => navigate(-1)} 
+            className="legal-page__back-button"
+          >
+            Voltar
+          </Button>
+        </div>
 
         {sections.map((section) => (
           <div key={section.title} className="legal-page__section">
@@ -31,9 +33,12 @@ function LegalPage({ title, sections }) {
           </div>
         ))}
         
-        <Paragraph className="legal-page__note">
-          Pode consultar a outra política aqui: <Link to="/privacy">Política de Privacidade</Link> ou <Link to="/terms">Termos e Condições</Link>.
-        </Paragraph>
+        <div className="legal-page__footer">
+          <Paragraph className="legal-page__note">
+            Pode consultar a outra política aqui: <Link to="/privacy">Política de Privacidade</Link> ou <Link to="/terms">Termos e Condições</Link>.
+          </Paragraph>
+        </div>
+
       </div>
     </section>
   );
