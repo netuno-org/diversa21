@@ -290,20 +290,22 @@ function Services() {
           >
             <div className="services-list__card-content">
               <div className="services-list__card-main">
+                {service.category?.name && (
+                  <div className="services-list__card-category">
+                    <Tag className="services-list__category-tag">{service.category.name}</Tag>
+                  </div>
+                )}
                 <div className="services-list__card-title">
                   <Title level={4} className="services-list__title">
                     {service.name}
                   </Title>
-                  {service.category?.name && (
-                    <Tag className="services-list__category-tag">{service.category.name}</Tag>
-                  )}
                 </div>
                 <div className="services-list__card-location">
                   <EnvironmentOutlined />{' '}
                   {service.city?.name}, {service.state?.name} / {service.country?.name}
                 </div>
                 {service.description && (
-                  <Paragraph className="services-list__description" ellipsis={{ rows: 3, tooltip: true }}>
+                  <Paragraph className="services-list__description" ellipsis={{ rows: 3 }}>
                     {service.description}
                   </Paragraph>
                 )}
