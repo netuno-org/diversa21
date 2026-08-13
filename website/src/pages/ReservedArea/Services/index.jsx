@@ -449,8 +449,15 @@ function Services() {
         <Form form={serviceForm} layout="vertical">
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item label="Nome" name="name" rules={[{ required: true, message: 'Insira o nome do serviço' }]}>
-                <Input placeholder="Nome do serviço ou profissional" />
+              <Form.Item
+                label="Nome"
+                name="name"
+                rules={[
+                  { required: true, message: 'Insira o nome do serviço' },
+                  { max: 100, message: 'O nome não pode ter mais de 100 caracteres' }
+                ]}
+              >
+                <Input maxLength={100} showCount placeholder="Nome do serviço ou profissional" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
@@ -480,25 +487,50 @@ function Services() {
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label="Telefone" name="phone">
-                <Input placeholder="Contacto telefónico" />
+              <Form.Item
+                label="Telefone"
+                name="phone"
+                rules={[
+                  { max: 30, message: 'O telefone não pode ter mais de 30 caracteres' }
+                ]}
+              >
+                <Input maxLength={30} placeholder="Contacto telefónico" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Descrição" name="description" rules={[{ required: true, message: 'A descrição é obrigatória' }]}>
-            <Input.TextArea rows={4} placeholder="Descreva os serviços prestados..." />
+          <Form.Item
+            label="Descrição"
+            name="description"
+            rules={[
+              { required: true, message: 'A descrição é obrigatória' },
+              { max: 250, message: 'A descrição não pode ter mais de 250 caracteres' }
+            ]}
+          >
+            <Input.TextArea maxLength={250} showCount rows={4} placeholder="Descreva os serviços prestados..." />
           </Form.Item>
 
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item label="Website" name="website">
-                <Input prefix={<LinkOutlined />} placeholder="https://" />
+              <Form.Item
+                label="Website"
+                name="website"
+                rules={[
+                  { max: 150, message: 'O website não pode ter mais de 150 caracteres' }
+                ]}
+              >
+                <Input maxLength={150} showCount prefix={<LinkOutlined />} placeholder="https://" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label="Instagram" name="instagram">
-                <Input prefix={<InstagramOutlined />} placeholder="@utilizador" />
+              <Form.Item
+                label="Instagram"
+                name="instagram"
+                rules={[
+                  { max: 150, message: 'O instagram não pode ter mais de 150 caracteres' }
+                ]}
+              >
+                <Input maxLength={150} showCount prefix={<InstagramOutlined />} placeholder="@utilizador" />
               </Form.Item>
             </Col>
           </Row>
