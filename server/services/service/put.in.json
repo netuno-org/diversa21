@@ -1,0 +1,24 @@
+{
+  "tags": [
+    "service"
+  ],
+  "summary": "Edit service",
+  "description": "Edit an existing service/ad. Restricted to super-admin and management users.",
+  "properties": {
+    "uid": { "type": "string-not-empty" },
+    "name": { "type": "string-not-empty" },
+    "category": { "type": "string-not-empty" },
+    "city": { "type": "string-not-empty" },
+    "description": { "type": "string-not-empty" },
+    "phone": { "type": "string" },
+    "website": { "type": "string" },
+    "instagram": { "type": "string" }
+  },
+  "required": [
+    "uid",
+    "name",
+    "category",
+    "city",
+    "description"
+  ]
+}
