@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined } from "@ant-design/icons";
+import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App } from "antd";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -12,6 +12,7 @@ import "./index.less";
 const { Paragraph, Text, Title } = Typography;
 
 function Services() {
+  const { message } = App.useApp();
   const loggedUser = usePeople();
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -26,6 +27,7 @@ function Services() {
   const [serviceModalVisible, setServiceModalVisible] = useState(false);
   const [savingService, setSavingService] = useState(false);
   const [serviceForm] = Form.useForm();
+  const [editingService, setEditingService] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   
   const [serviceDetails, setServiceDetails] = useState(null);
@@ -180,10 +182,12 @@ function Services() {
       const values = await serviceForm.validateFields();
       setSavingService(true);
       
+      const isEdit = !!editingService;
       _service({
         url: 'service',
-        method: 'POST',
+        method: isEdit ? 'PUT' : 'POST',
         data: {
+          ...(isEdit ? { uid: editingService.uid } : {}),
           name: values.name,
           category: values.category,
           city: values.city?.value || values.city,
@@ -195,9 +199,11 @@ function Services() {
         success: ({ json }) => {
           if (json?.result) {
             setServiceModalVisible(false);
+            setEditingService(null);
             serviceForm.resetFields();
+            message.success(isEdit ? 'Serviço editado com sucesso!' : 'Serviço publicado com sucesso!');
             
-            if (pagination.current !== 1) {
+            if (!isEdit && pagination.current !== 1) {
               handlePaginationChange(1, pagination.size);
             }
             setRefreshTrigger(prev => prev + 1); 
@@ -205,13 +211,52 @@ function Services() {
           setSavingService(false);
         },
         fail: (err) => {
-          console.error('Falha ao criar serviço', err);
+          console.error(isEdit ? 'Falha ao editar serviço' : 'Falha ao criar serviço', err);
+          message.error(isEdit ? 'Erro ao editar serviço.' : 'Erro ao criar serviço.');
           setSavingService(false);
         }
       });
     } catch (error) {
       console.log('Validação do formulário falhou:', error);
     }
+  };
+
+  const handleEditClick = (service, e) => {
+    if (e) e.stopPropagation();
+    setEditingService(service);
+    setCityOptions([{ label: `${service.city?.name}, ${service.state?.name} / ${service.country?.name}`, value: service.city?.uid }]);
+    setServiceModalVisible(true);
+    
+    setTimeout(() => {
+      serviceForm.setFieldsValue({
+        name: service.name,
+        category: service.category?.uid,
+        city: { label: `${service.city?.name}, ${service.state?.name} / ${service.country?.name}`, value: service.city?.uid },
+        phone: service.phone,
+        description: service.description,
+        website: service.website,
+        instagram: service.instagram
+      });
+    }, 50);
+  };
+
+  const handleDeleteService = (uid, e) => {
+    if (e) e.stopPropagation();
+    _service({
+      url: 'service',
+      method: 'DELETE',
+      data: { uid },
+      success: ({ json }) => {
+        if (json?.result) {
+          message.success('Serviço removido com sucesso!');
+          setRefreshTrigger(prev => prev + 1);
+        }
+      },
+      fail: (err) => {
+        console.error('Falha ao remover serviço', err);
+        message.error('Erro ao remover o serviço.');
+      }
+    });
   };
 
   return (
@@ -290,11 +335,29 @@ function Services() {
           >
             <div className="services-list__card-content">
               <div className="services-list__card-main">
-                {service.category?.name && (
-                  <div className="services-list__card-category">
+                <div className="services-list__card-category-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '8px' }}>
+                  {service.category?.name ? (
                     <Tag className="services-list__category-tag">{service.category.name}</Tag>
-                  </div>
-                )}
+                  ) : <div />}
+                  {canCreateService && (
+                    <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '16px' }}>
+                      <Popconfirm
+                        title="Tem a certeza que quer remover este serviço?"
+                        description="Esta ação é irreversível"
+                        onConfirm={(e) => handleDeleteService(service.uid, e)}
+                        okText="Sim"
+                        cancelText="Não"
+                      >
+                        <Button danger type="link" size="small" style={{ padding: 0 }}>
+                          <DeleteOutlined />
+                        </Button>
+                      </Popconfirm>
+                      <Button type="link" size="small" style={{ padding: 0 }} onClick={(e) => handleEditClick(service, e)}>
+                        <EditOutlined />
+                      </Button>
+                    </div>
+                  )}
+                </div>
                 <div className="services-list__card-title">
                   <Title level={4} className="services-list__title">
                     {service.name}
@@ -436,15 +499,16 @@ function Services() {
       </Modal>
 
       <Modal
-        title="Novo Anúncio de Serviço"
+        title={editingService ? "Editar Anúncio de Serviço" : "Novo Anúncio de Serviço"}
         open={serviceModalVisible}
         onCancel={() => {
           setServiceModalVisible(false);
+          setEditingService(null);
           serviceForm.resetFields();
         }}
         onOk={handleCreateService}
         confirmLoading={savingService}
-        okText="Publicar"
+        okText={editingService ? "Guardar" : "Publicar"}
         destroyOnHidden
         width={700}
       >
@@ -577,4 +641,8 @@ function Services() {
   );
 }
 
-export default Services;
+export default () => (
+  <App>
+    <Services />
+  </App>
+);
