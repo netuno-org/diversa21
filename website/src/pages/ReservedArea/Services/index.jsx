@@ -323,7 +323,7 @@ function Services() {
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      Site
+                      {service.website.startsWith('http') ? service.website : `https://${service.website}`}
                     </a>
                   </div>
                 )}
@@ -402,7 +402,7 @@ function Services() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {serviceDetails.website}
+                  {serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`}
                 </a>
               </div>
             )}
