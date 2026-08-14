@@ -1,4 +1,4 @@
-import { _req, _db, _val, _user } from "@netuno/server-types";
+import { _req, _db, _user } from "@netuno/server-types";
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -21,17 +21,11 @@ if (dbTopic.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
   response.stopWithPermissionDenied();
 }
 
-_db.update(
-  "forum_topico",
-  dbTopic.getInt("id"),
-  _val.map()
-    .set("active", false)
-);
-
 _db.execute(`
-    UPDATE forum_resposta
-    SET active = false
+    DELETE FROM forum_resposta
     WHERE topic_id = ?::int
 `, dbTopic.getInt("id"));
+
+_db.delete("forum_topico", dbTopic.getInt("id"));
 
 response.successWithoutData();

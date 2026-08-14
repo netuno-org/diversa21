@@ -21,12 +21,7 @@ if (dbReply.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
   response.stopWithPermissionDenied();
 }
 
-_db.update(
-  "forum_resposta",
-  dbReply.getInt("id"),
-  _val.map()
-    .set("active", false)
-);
+_db.delete("forum_resposta", dbReply.getInt("id"));
 
 const dbTopicActivity = _db.queryFirst(`
     SELECT
