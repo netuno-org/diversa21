@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar } from 'antd'
 import {
-  PlusOutlined,
   DeleteOutlined,
   EditOutlined,
   FolderOpenOutlined,
@@ -10,6 +9,8 @@ import {
 } from "@ant-design/icons";
 import { IoMegaphoneOutline } from "react-icons/io5";
 import { LuReply } from "react-icons/lu";
+
+import TimeAgo from "../TimeAgo";
 
 import './index.less'
 
@@ -22,16 +23,18 @@ function SupportCommunityDisplay({
   onCancel,
   editingCategory,
   editingTopic,
+  editingReply,
   onFinish,
   listItems,
   loggedUser,
   handleCardClick,
   openEditModal,
   handleDelete,
-  mode,
-  categoryName
+  mode
 }) {
   const [form] = Form.useForm();
+  const isReply = mode === 'reply';
+  const isTopic = mode === 'topic';
 
   useEffect(() => {
     if (!showModal) {
@@ -51,8 +54,88 @@ function SupportCommunityDisplay({
       });
       return;
     }
+    if (editingReply) {
+      form.setFieldsValue({
+        content: editingReply.content,
+      });
+      return;
+    }
     form.resetFields();
-  }, [showModal, editingCategory, editingTopic, form]);
+  }, [showModal, editingCategory, editingTopic, editingReply, form]);
+
+  const getCountLabel = () => {
+    if (isReply) {
+      return listItems.length !== 1 ? "respostas encontradas" : "resposta encontrada";
+    }
+    if (isTopic) {
+      return listItems.length !== 1 ? "tópicos encontrados" : "tópico encontrado";
+    }
+    return listItems.length !== 1 ? "categorias encontradas" : "categoria encontrada";
+  };
+
+  const getEmptyLabel = () => {
+    if (isReply) {
+      return "Nenhuma resposta encontrada";
+    }
+    if (isTopic) {
+      return "Nenhum Tópico encontrado";
+    }
+    return "Nenhuma categoria encontrada";
+  };
+
+  const getItemTitle = (item) => {
+    if (isReply) {
+      return item.people?.name;
+    }
+    if (isTopic) {
+      return item.title;
+    }
+    return item.name;
+  };
+
+  const getItemDescription = (item) => {
+    if (isReply || isTopic) {
+      return item.content;
+    }
+    return item.description;
+  };
+
+  const getDeleteTitle = () => {
+    if (isReply) {
+      return "Tem a certeza que deseja apagar a resposta?";
+    }
+    if (isTopic) {
+      return "Tem a certeza que deseja apagar o tópico?";
+    }
+    return "Tem a certeza que deseja apagar a categoria?";
+  };
+
+  const canManageItem = (item) => {
+    if (isReply) {
+      return loggedUser.canManagePosts() || item.people?.uid === loggedUser.data?.uid;
+    }
+    return loggedUser.canManageForumCategories();
+  };
+
+  const getModalTitle = () => {
+    if (isReply) {
+      return "Criar nova Resposta";
+    }
+    if (isTopic) {
+      return "Criar novo Tópico";
+    }
+    return "Cria nova categoria";
+  };
+
+  const getSubmitLabel = () => {
+    if (isReply) {
+      return editingReply ? "Editar" : "Responder";
+    }
+    if (isTopic) {
+      return editingTopic ? "Editar" : "Criar";
+    }
+    return editingCategory ? "Editar" : "Criar";
+  };
 
   return (
     <div className="support-community"
@@ -66,35 +149,19 @@ function SupportCommunityDisplay({
       {!loading && (
         <div className="support-community__count">
           <Text type="secondary">
-            {listItems.length}{" "}
-            {listItems.length !== 1 ? "categorias" : "categoria"} encontrada
-            {listItems.length !== 1 ? "s" : ""}
+            {listItems.length} {getCountLabel()}
           </Text>
-        </div>
-      )}
-      {categoryName && (
-        <div className="support-community__category">
-          <Avatar
-            size={50}
-            className="support-community__icon-material"
-            shape="square"
-          >
-            <FolderOpenOutlined />
-          </Avatar>
-          <div className="support-community__category-text">
-            <Text type="secondary" className="support-community__category-label">
-              Categoria selecionada:
-            </Text>
-            <Text type="secondary" className="support-community__category-name">
-              {categoryName}
-            </Text>
-          </div>
         </div>
       )}
       <div className="support-community__items">
         {!loading && listItems.map((item) => {
           return (
-            <Card key={item.uid} className="support-community__card" hoverable onClick={() => handleCardClick(item.uid)}>
+            <Card
+              key={item.uid}
+              className="support-community__card"
+              hoverable={!isReply}
+              onClick={() => handleCardClick?.(item.uid)}
+            >
               <div className="support-community__card-body">
                 <div className="support-community__content">
                   <div className="support-community__title-row">
@@ -104,14 +171,14 @@ function SupportCommunityDisplay({
                         className="support-community__icon-material"
                         shape="square"
                       >
-                        {mode === 'topic' ? <TagsOutlined /> : <FolderOpenOutlined />}
+                        {isReply ? <LuReply /> : isTopic ? <TagsOutlined /> : <FolderOpenOutlined />}
                       </Avatar>
-                      {mode === 'topic' ? item.title : item.name}
+                      {getItemTitle(item)}
                     </Title>
-                    {loggedUser.canManageForumCategories() && (
+                    {canManageItem(item) && (
                       <div className="support-community__actions">
                         <Popconfirm
-                          title="Tem a certeza que deseja apagar a categoria?"
+                          title={getDeleteTitle()}
                           description="Esta ação é irreversível"
                           onConfirm={(e) => {
                             e?.stopPropagation?.();
@@ -146,27 +213,35 @@ function SupportCommunityDisplay({
                     )}
                   </div>
                   <div className="support-community__stats">
-                    <IoMegaphoneOutline />
-                    {mode === 'topic' ? (
+                    {isReply ? (
                       <Text type="secondary">
-                        <LuReply /> {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
-                        {item.people?.name ? ` · ${item.people.name}` : ""}
+                        <TimeAgo sentAt={item.moment} />
                       </Text>
                     ) : (
-                      <Text type="secondary">
-                        {item.topicsCount} tópico{item.topicsCount !== 1 ? "s" : ""}
-                        {" | "}
-                        <LuReply />
-                        {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
-                      </Text>
+                      <>
+                        <IoMegaphoneOutline />
+                        {isTopic ? (
+                          <Text type="secondary">
+                            <LuReply /> {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
+                            {item.people?.name ? ` · ${item.people.name}` : ""}
+                          </Text>
+                        ) : (
+                          <Text type="secondary">
+                            {item.topicsCount} tópico{item.topicsCount !== 1 ? "s" : ""}
+                            {" | "}
+                            <LuReply />
+                            {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
+                          </Text>
+                        )}
+                      </>
                     )}
                   </div>
                   <Paragraph
                     type="secondary"
-                    ellipsis={{ rows: 1, tooltip: true }}
+                    ellipsis={{ rows: isReply ? 3 : 1, tooltip: true }}
                     className="support-community__description"
                   >
-                    {mode === 'topic' ? item.content : item.description}
+                    {getItemDescription(item)}
                   </Paragraph>
                 </div>
               </div>
@@ -176,53 +251,53 @@ function SupportCommunityDisplay({
       </div>
       {!loading && listItems.length === 0 && (
         <div className="support-community__empty">
-          <Empty description={`${mode === 'topic' ? 'Nenhum Tópico encontrado' : 'Nenhuma categoria encontrada'}`} />
+          <Empty description={getEmptyLabel()} />
         </div>
       )}
       <Modal
         open={showModal}
         onCancel={onCancel}
         footer={null}
-        title={`${mode === 'topic' ? 'Criar novo Tópico' : 'Cria nova categoria'}`}
+        title={getModalTitle()}
         destroyOnHidden
+        width={800}
         centered
       >
         <div style={{ marginTop: "16px" }}>
           <Form form={form} layout="vertical" onFinish={onFinish}>
+            {!isReply && (
+              <Form.Item
+                name={isTopic ? 'title' : 'name'}
+                label={isTopic ? 'Nome do Tópico' : 'Nome da categoria'}
+                rules={[{ required: true, message: "O título é obrigatório!" }]}
+              >
+                <Input placeholder={isTopic ? 'Nome do Tópico' : 'Nome da categoria'} />
+              </Form.Item>
+            )}
             <Form.Item
-              name={`${mode === 'topic' ? 'title' : 'name'}`}
-              label={`${mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}`}
-              rules={[{ required: true, message: "O título é obrigatório!" }]}
-            >
-              <Input placeholder={`${mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}`} />
-            </Form.Item>
-            <Form.Item
-              name={`${mode === 'topic' ? 'content' : 'description'}`}
-              label="Descrição"
-              rules={[
+              name={isReply || isTopic ? 'content' : 'description'}
+              label={isReply ? "Resposta" : "Descrição"}
+              rules={isReply ? [
+                { required: true, message: "A resposta é obrigatória!" },
+                { max: 2000, message: "A resposta deve ter no máximo 2000 caracteres." },
+              ] : [
                 { required: true, message: "A descrição é obrigatória!" },
                 { min: 50, message: "A descrição deve ter no mínimo 50 caracteres." },
                 { max: 150, message: "A descrição deve ter no máximo 150 caracteres." },
               ]}
             >
               <TextArea
-                placeholder={mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
+                placeholder={isReply ? 'Escreva a sua resposta' : isTopic ? 'Descrição do tópico' : 'Descrição da categoria'}
                 rows={4}
-                maxLength={mode === 'topic' ? 2000 : 150}
+                maxLength={isReply || isTopic ? 2000 : 150}
                 showCount
                 style={{ resize: "none" }}
               />
             </Form.Item>
             <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
-              {
-                mode === 'topic' ?
-                  <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
-                    {editingTopic ? "Editar" : "Criar"}
-                  </Button> :
-                  <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
-                    {editingCategory ? "Editar" : "Criar"}
-                  </Button>
-              }
+              <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
+                {getSubmitLabel()}
+              </Button>
             </Form.Item>
           </Form>
         </div>

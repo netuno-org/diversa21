@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import usePeople from "../../../common/usePeople.js";
 import _service from "@netuno/service-client";
 import globalNotification from "../../../common/globalNotification.js"
@@ -8,50 +7,51 @@ import ListHeaderFilters from "../../../components/ListHeaderFilters";
 import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay"
 import { PlusOutlined } from "@ant-design/icons";
 
-function TopicPage({ categoryUid }) {
+function Replies({ topicUid }) {
   const loggedUser = usePeople();
-  const navigate = useNavigate();
 
-  const [topicList, setTopicList] = useState([]);
+  const [replyList, setReplyList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editingTopic, setEditingTopic] = useState(null);
-  const [categoryName, setCategoryName] = useState("");
- 
-  const mode = 'topic'
+  const [editingReply, setEditingReply] = useState(null);
+  const [topicName, setTopicName] = useState("");
+  const [topicContent, setTopicContent] = useState("");
+
+  const mode = 'reply'
 
   useEffect(() => {
-    if (!categoryUid) {
+    if (!topicUid) {
       return
     };
     _service({
       method: "GET",
-      url: "/forum/category",
-      data: {uid: categoryUid},
+      url: "/forum/topic",
+      data: { uid: topicUid },
       success: ({ json }) => {
         if (json) {
-          setCategoryName(json.data.name);
+          setTopicName(json.data.title);
+          setTopicContent(json.data.content);
         }
       },
       fail: (e) => {
         console.log("Service Error", e);
       },
     });
-    handleListTopics();
-  }, [categoryUid]);
+    handleListReplies();
+  }, [topicUid]);
 
-  const handleListTopics = (title = '') => {
-    if (!categoryUid) {
+  const handleListReplies = () => {
+    if (!topicUid) {
       return
     };
     setLoading(true);
     _service({
       method: "GET",
-      url: "/forum/topic/list",
-      data: { categoryUid, title },
+      url: "/forum/reply/list",
+      data: { topicUid },
       success: ({ json }) => {
         if (json) {
-          setTopicList(json.data.items || []);
+          setReplyList(json.data.items || []);
         }
         setLoading(false);
       },
@@ -61,25 +61,24 @@ function TopicPage({ categoryUid }) {
       },
     });
   };
- 
-  const handleCreateTopic = (values) => {
+
+  const handleCreateReply = (values) => {
     setLoading(true);
     _service({
       method: "POST",
-      url: "/forum/topic",
+      url: "/forum/reply",
       data: {
-        categoryUid,
-        title: values.title,
+        topicUid,
         content: values.content,
       },
       success: ({ json }) => {
         if (json) {
           globalNotification.success({
-            title: "Tópico Criado",
-            description: "O tópico foi criado com sucesso.",
+            title: "Resposta Criada",
+            description: "A resposta foi criada com sucesso.",
           });
           closeModal();
-          handleListTopics();
+          handleListReplies();
           return;
         }
         setLoading(false);
@@ -87,7 +86,7 @@ function TopicPage({ categoryUid }) {
       fail: (e) => {
         globalNotification.error({
           title: "Error",
-          description: "Não foi possível criar o tópico.",
+          description: "Não foi possível criar a resposta.",
         });
         console.log("Service Error", e);
         setLoading(false);
@@ -95,24 +94,23 @@ function TopicPage({ categoryUid }) {
     });
   };
 
-  const handleUpdateTopic = (values) => {
+  const handleUpdateReply = (values) => {
     setLoading(true);
     _service({
       method: "PUT",
-      url: "/forum/topic",
+      url: "/forum/reply",
       data: {
-        uid: editingTopic.uid,
-        title: values.title,
+        uid: editingReply.uid,
         content: values.content,
       },
       success: ({ json }) => {
         if (json) {
           globalNotification.success({
-            title: "Tópico Atualizado",
-            description: "O tópico foi atualizado com sucesso.",
+            title: "Resposta Atualizada",
+            description: "A resposta foi atualizada com sucesso.",
           });
           closeModal();
-          handleListTopics();
+          handleListReplies();
           return;
         }
         setLoading(false);
@@ -120,7 +118,7 @@ function TopicPage({ categoryUid }) {
       fail: (e) => {
         globalNotification.error({
           title: "Error",
-          description: "Não foi possível atualizar o tópico.",
+          description: "Não foi possível atualizar a resposta.",
         });
         console.log("Service Error", e);
         setLoading(false);
@@ -128,19 +126,19 @@ function TopicPage({ categoryUid }) {
     });
   };
 
-  const handleDeleteTopic = (uid) => {
+  const handleDeleteReply = (uid) => {
     setLoading(true);
     _service({
       method: "DELETE",
-      url: "/forum/topic",
+      url: "/forum/reply",
       data: { uid },
       success: ({ json }) => {
         if (json) {
           globalNotification.success({
-            title: "Tópico Removido",
-            description: "O tópico foi removido com sucesso.",
+            title: "Resposta Removida",
+            description: "A resposta foi removida com sucesso.",
           });
-          handleListTopics();
+          handleListReplies();
           return;
         }
         setLoading(false);
@@ -148,7 +146,7 @@ function TopicPage({ categoryUid }) {
       fail: (e) => {
         globalNotification.error({
           title: "Error",
-          description: "Não foi possível remover o tópico.",
+          description: "Não foi possível remover a resposta.",
         });
         console.log("Service Error", e);
         setLoading(false);
@@ -156,69 +154,57 @@ function TopicPage({ categoryUid }) {
     });
   };
 
-
-
-  const handleSearchTopic = (value) => {
-    handleListTopics(value);
-  };
-
   const openCreateModal = () => {
-    setEditingTopic(null);
+    setEditingReply(null);
     setShowModal(true);
   };
 
-  const openEditModal = (topic) => {
-    setEditingTopic(topic);
+  const openEditModal = (reply) => {
+    setEditingReply(reply);
     setShowModal(true);
   };
 
   const closeModal = () => {
     setShowModal(false);
-    setEditingTopic(null);
+    setEditingReply(null);
   };
 
   const onFinish = (values) => {
-    if (editingTopic) {
-      handleUpdateTopic(values);
+    if (editingReply) {
+      handleUpdateReply(values);
       return;
     }
-    handleCreateTopic(values);
+    handleCreateReply(values);
   };
-
-  const handleCardClick = (uid) => {
-    navigate(`/c/${categoryUid}/t/${uid}`)
-  }
 
   return (
     <div>
       <ListHeaderFilters
         title='Rede de apoio'
-        searchPlaceholder="Buscar por Tópico"
-        createButton={loggedUser.canManagePosts() && {
+        createButton={{
           icon: <PlusOutlined />,
-          text: "Criar Tópico",
+          text: "Responder",
           onClick: openCreateModal,
         }}
         hideLocation={true}
-        onSearch={handleSearchTopic}
-        onSearchClear={() => handleListTopics("")}
-        categoryName={categoryName}
+        hideInputs={true}
+        topicName={topicName}
+        topicContent={topicContent}
       />
       <SupportCommunityDisplay
         loading={loading}
         showModal={showModal}
         onCancel={closeModal}
-        editingTopic={editingTopic}
+        editingReply={editingReply}
         onFinish={onFinish}
-        listItems={topicList}
+        listItems={replyList}
         loggedUser={loggedUser}
-        handleCardClick={handleCardClick}
         openEditModal={openEditModal}
-        handleDelete={handleDeleteTopic}
+        handleDelete={handleDeleteReply}
         mode={mode}
       />
     </div>
   );
 }
 
-export default TopicPage;
+export default Replies;

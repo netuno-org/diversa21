@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-import { Typography, Button, Input, Select, Row, Col, Space } from 'antd';
-import { PlusOutlined } from "@ant-design/icons";
+import { Typography, Button, Input, Select, Row, Col, Space, Avatar } from 'antd';
+import { PlusOutlined, FolderOpenOutlined, TagsOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../common/usePeople.js";
 
 import './index.less'
 
-const { Title } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 function ListHeaderFilters({
   title,
@@ -23,7 +23,10 @@ function ListHeaderFilters({
   searchValue,
   fullWidthSearch,
   extraActionButtons,
-  extraFilters
+  extraFilters,
+  categoryName,
+  topicName,
+  topicContent
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
@@ -99,6 +102,53 @@ function ListHeaderFilters({
               </Col>
             )}
           </Row>
+        </div>
+      )}
+      {categoryName && (
+        <div className="support-community__category">
+          <Avatar
+            size={50}
+            className="support-community__icon-material"
+            shape="square"
+          >
+            <FolderOpenOutlined />
+          </Avatar>
+          <div className="support-community__category-text">
+            <Text type="secondary" className="support-community__category-label">
+              Categoria selecionada:
+            </Text>
+            <Text type="secondary" className="support-community__category-name">
+              {categoryName}
+            </Text>
+          </div>
+        </div>
+      )}
+      {topicName && (
+        <div className="support-community__category">
+          <Avatar
+            size={50}
+            className="support-community__icon-material"
+            shape="square"
+          >
+            <TagsOutlined />
+          </Avatar>
+          <div className="support-community__category-text">
+            <Text type="secondary" className="support-community__category-label">
+              Tópico selecionado:
+            </Text>
+            <Text type="secondary" className="support-community__category-name">
+              {topicName}
+            </Text>
+            {topicContent && (
+              <Paragraph
+                type="secondary"
+                ellipsis={{ rows: 2, tooltip: true }}
+                className="support-community__category-description"
+              >
+                {topicContent}
+              </Paragraph>
+            )}
+          </div>
         </div>
       )}
       {!hideInputs && (

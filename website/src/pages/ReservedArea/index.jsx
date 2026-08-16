@@ -28,6 +28,7 @@ import LegalAcceptanceModal from "../../components/LegalAcceptanceModal";
 import CategoryTopics from "./CategoryTopics/index.jsx"
 import Services from "./Services/index.jsx"
 import CategoryPage from "./CategoryPage"
+import ReplyPage from "../ReplyPage"
 
 import "./index.less";
 
@@ -152,6 +153,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/support-community") {
         return <CategoryTopics />;
+      }
+      if (params.topicUid) {
+        return <ReplyPage topicUid={params.topicUid} />;
       }
       if (location.pathname.startsWith("/c/")) {
         return <CategoryPage categoryUid={params.categoryUid} />;

@@ -158,6 +158,7 @@ export default function App() {
                 <Route path="/friends" element={<ReservedArea />} />
                 <Route path="/support-community" element={<ReservedArea />} />
                 <Route path="/c/:categoryUid" element={<ReservedArea />} />
+                <Route path="/c/:categoryUid/t/:topicUid" element={<ReservedArea />} />
 
                 {/** // RESERVED AREA **/}
                 <Route path="*" element={<NotFound/>} />
