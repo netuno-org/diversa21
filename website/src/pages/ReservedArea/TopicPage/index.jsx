@@ -14,7 +14,6 @@ function TopicPage({ categoryUid }) {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingTopic, setEditingTopic] = useState(null);
-  const [searchValue, setSearchValue] = useState("");
   const [categoryName, setCategoryName] = useState("");
  
   const mode = 'topic'
@@ -39,7 +38,7 @@ function TopicPage({ categoryUid }) {
     handleListTopics();
   }, [categoryUid]);
 
-  const handleListTopics = () => {
+  const handleListTopics = (title = '') => {
     if (!categoryUid) {
       return
     };
@@ -47,7 +46,7 @@ function TopicPage({ categoryUid }) {
     _service({
       method: "GET",
       url: "/forum/topic/list",
-      data: { categoryUid },
+      data: { categoryUid, title },
       success: ({ json }) => {
         if (json) {
           setTopicList(json.data.items || []);
@@ -158,7 +157,7 @@ function TopicPage({ categoryUid }) {
 
 
   const handleSearchTopic = (value) => {
-    setSearchValue(value);
+    handleListTopics(value);
   };
 
   const openCreateModal = () => {
@@ -200,7 +199,7 @@ function TopicPage({ categoryUid }) {
         }}
         hideLocation={true}
         onSearch={handleSearchTopic}
-        onSearchClear={() => setSearchValue("")}
+        onSearchClear={() => handleListTopics("")}
       />
       <SupportCommunityDisplay
         loading={loading}

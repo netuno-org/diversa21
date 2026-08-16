@@ -206,9 +206,9 @@ function SupportCommunityDisplay({
               ]}
             >
               <TextArea
-                placeholder="Descrição da categoria"
+                placeholder={mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
                 rows={4}
-                maxLength={150}
+                maxLength={mode === 'topic' ? 2000 : 150}
                 showCount
                 style={{ resize: "none" }}
               />

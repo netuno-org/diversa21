@@ -3,10 +3,13 @@
     "forum-topic"
   ],
   "summary": "List forum topics by category",
-  "description": "List forum topics in a category with pagination and recent activity ordering.",
+  "description": "List forum topics in a category with optional title filter and pagination.",
   "properties": {
     "categoryUid": {
       "type": "uid"
+    },
+    "title": {
+      "type": "string"
     },
     "page": {
       "type": "string",

@@ -3,6 +3,7 @@ import { _req, _db, _val } from "@netuno/server-types";
 import response from "#core/lib/response.js";
 
 const categoryUid = _req.getUID("categoryUid");
+const title = _req.getString("title");
 let page = _req.getInt("page", 1);
 
 const pageSize = 10;
@@ -47,10 +48,11 @@ const dbTopics = _db.query(`
     ) r ON r.topic_id = t.id
     WHERE t.forum_category_id = ?::int
       AND t.active = true
+      AND (?::text = '' OR t.title ILIKE ?::text)
     ORDER BY COALESCE(t.last_activity_at, t.moment) DESC
     LIMIT ?::int
     OFFSET ?::int
-`, dbCategory.getInt("id"), pageSize, offset);
+`, dbCategory.getInt("id"), title, `%${title}%`, pageSize, offset);
 
 const topics = _val.list();
 for (const dbTopic of dbTopics) {
