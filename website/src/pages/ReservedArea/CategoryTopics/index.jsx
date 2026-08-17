@@ -12,8 +12,6 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 
-import "./index.less";
-
 function CategoryTopics() {
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);

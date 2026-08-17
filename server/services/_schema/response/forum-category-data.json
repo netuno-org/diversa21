@@ -11,6 +11,9 @@
       "type": "string-not-empty",
       "minLength": 50,
       "maxLength": 150
+    },
+    "topicsCount": {
+      "type": "integer"
     }
   },
   "required": [

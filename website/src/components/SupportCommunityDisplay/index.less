@@ -1,44 +1,117 @@
 @import '../../styles/variables.less';
 
 .support-community {
+  cursor: pointer;
+  
+  &__loading {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  &__count,
+  &__empty {
+    margin-top: 16px;
+    padding-left: 24px;
+  }
+
+  &__items {
+    width: 100%;
+  }
+
+  &__card {
+    width: 100%;
+    margin-top: 24px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+
+    &:first-child {
+      margin-top: 16px;
+    }
+
+    &:hover {
+      border-color: @primary-color;
+      box-shadow: 0 4px 12px fade(@primary-color, 15%);
+      transform: translateY(-2px);
+    }
+
+    .ant-card-body {
+      padding: 24px;
+
+      @media (max-width: 480px) {
+        padding: 16px;
+      }
+    }
+  }
+
+  &__card-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+
+    @media (max-width: 480px) {
+      gap: 12px;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
 
   &__title {
     display: flex;
     align-items: center;
     gap: 12px;
+    margin: 0 !important;
+    color: fade(#000, 85%);
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+    flex: 1;
+    min-width: 0;
   }
 
-  &__category {
+  &__actions {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: #fafafa;
-    padding: 24px;
-    margin-top: 16px;
-    border-radius: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
-  &__category-text {
+  &__action-btn {
+    padding: 0 4px;
+    height: auto;
+  }
+
+  &__stats {
     display: flex;
-    flex-direction: column;
-    min-width: 0;
-    flex: 1;
+    align-items: center;
+    gap: 6px;
+    color: @primary-color;
+    font-size: 13px;
+
+    .ant-typography {
+      color: inherit;
+    }
   }
 
-  &__category-label {
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  &__category-name {
-    font-size: 20px;
-    font-weight: 600;
-  }
-
-  &__category-description {
-    margin: 4px 0 0 !important;
-    font-size: 14px;
-    font-weight: 400;
+  &__description {
+    margin-bottom: 4px !important;
+    font-size: 15px;
+    font-style: italic;
   }
 
   &__icon-material {

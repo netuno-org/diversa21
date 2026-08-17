@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-import { Typography, Button, Input, Select, Row, Col, Space, Avatar } from 'antd';
-import { PlusOutlined, FolderOpenOutlined, TagsOutlined } from "@ant-design/icons";
+import { Typography, Button, Input, Select, Row, Col, Space, Avatar, Divider } from 'antd';
+import { PlusOutlined, FolderOpenOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../common/usePeople.js";
 
 import './index.less'
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 function ListHeaderFilters({
   title,
@@ -25,12 +25,10 @@ function ListHeaderFilters({
   extraActionButtons,
   extraFilters,
   categoryName,
-  topicName,
-  topicContent
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
-  const hasHeaderTitle = title || createButton || extraActionButtons;
+  const hasHeaderTitle = title || createButton || extraActionButtons || categoryName;
 
   // const loggedUser = usePeople();
 
@@ -102,53 +100,28 @@ function ListHeaderFilters({
               </Col>
             )}
           </Row>
-        </div>
-      )}
-      {categoryName && (
-        <div className="support-community__category">
-          <Avatar
-            size={50}
-            className="support-community__icon-material"
-            shape="square"
-          >
-            <FolderOpenOutlined />
-          </Avatar>
-          <div className="support-community__category-text">
-            <Text type="secondary" className="support-community__category-label">
-              Categoria selecionada:
-            </Text>
-            <Text type="secondary" className="support-community__category-name">
-              {categoryName}
-            </Text>
-          </div>
-        </div>
-      )}
-      {topicName && (
-        <div className="support-community__category">
-          <Avatar
-            size={50}
-            className="support-community__icon-material"
-            shape="square"
-          >
-            <TagsOutlined />
-          </Avatar>
-          <div className="support-community__category-text">
-            <Text type="secondary" className="support-community__category-label">
-              Tópico selecionado:
-            </Text>
-            <Text type="secondary" className="support-community__category-name">
-              {topicName}
-            </Text>
-            {topicContent && (
-              <Paragraph
-                type="secondary"
-                ellipsis={{ rows: 2, tooltip: true }}
-                className="support-community__category-description"
-              >
-                {topicContent}
-              </Paragraph>
-            )}
-          </div>
+          {categoryName && (
+            <>
+              <Divider />
+              <div className="list-header-filters__category">
+                <Avatar
+                  size={50}
+                  className="list-header-filters__icon-material"
+                  shape="square"
+                >
+                  <FolderOpenOutlined />
+                </Avatar>
+                <div className="list-header-filters__category-text">
+                  <Text type="primary" className="list-header-filters__category-label">
+                    Categoria selecionada:
+                  </Text>
+                  <Text type="primary" className="list-header-filters__category-name">
+                    {categoryName}
+                  </Text>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
       {!hideInputs && (

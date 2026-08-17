@@ -33,8 +33,6 @@ function SupportCommunityDisplay({
   mode
 }) {
   const [form] = Form.useForm();
-  const isReply = mode === 'reply';
-  const isTopic = mode === 'topic';
 
   useEffect(() => {
     if (!showModal) {
@@ -64,74 +62,68 @@ function SupportCommunityDisplay({
   }, [showModal, editingCategory, editingTopic, editingReply, form]);
 
   const getCountLabel = () => {
-    if (isReply) {
+    if (mode === 'reply') {
       return listItems.length !== 1 ? "respostas encontradas" : "resposta encontrada";
-    }
-    if (isTopic) {
+    } else if (mode === 'topic') {
       return listItems.length !== 1 ? "tópicos encontrados" : "tópico encontrado";
     }
     return listItems.length !== 1 ? "categorias encontradas" : "categoria encontrada";
   };
 
-  const getEmptyLabel = () => {
-    if (isReply) {
+  const getEmptyText = () => {
+    if (mode === 'reply') {
       return "Nenhuma resposta encontrada";
-    }
-    if (isTopic) {
+    } else if (mode === 'topic') {
       return "Nenhum Tópico encontrado";
     }
     return "Nenhuma categoria encontrada";
   };
 
   const getItemTitle = (item) => {
-    if (isReply) {
+    if (mode === 'reply') {
       return item.people?.name;
-    }
-    if (isTopic) {
+    } else if (mode === 'topic') {
       return item.title;
     }
     return item.name;
   };
 
   const getItemDescription = (item) => {
-    if (isReply || isTopic) {
+    if (mode === 'reply' || mode === 'topic') {
       return item.content;
     }
     return item.description;
   };
 
   const getDeleteTitle = () => {
-    if (isReply) {
+    if (mode === 'reply') {
       return "Tem a certeza que deseja apagar a resposta?";
-    }
-    if (isTopic) {
+    } else if (mode === 'topic') {
       return "Tem a certeza que deseja apagar o tópico?";
     }
     return "Tem a certeza que deseja apagar a categoria?";
   };
 
   const canManageItem = (item) => {
-    if (isReply) {
+    if (mode === 'reply') {
       return loggedUser.canManagePosts() || item.people?.uid === loggedUser.data?.uid;
     }
     return loggedUser.canManageForumCategories();
   };
 
   const getModalTitle = () => {
-    if (isReply) {
+    if (mode === 'reply') {
       return "Criar nova Resposta";
-    }
-    if (isTopic) {
+    } else if (mode === 'topic') {
       return "Criar novo Tópico";
     }
     return "Cria nova categoria";
   };
 
   const getSubmitLabel = () => {
-    if (isReply) {
+    if (mode === 'reply') {
       return editingReply ? "Editar" : "Responder";
-    }
-    if (isTopic) {
+    } else if (mode === 'topic') {
       return editingTopic ? "Editar" : "Criar";
     }
     return editingCategory ? "Editar" : "Criar";
@@ -159,7 +151,7 @@ function SupportCommunityDisplay({
             <Card
               key={item.uid}
               className="support-community__card"
-              hoverable={!isReply}
+              hoverable={mode !== 'reply'}
               onClick={() => handleCardClick?.(item.uid)}
             >
               <div className="support-community__card-body">
@@ -171,7 +163,7 @@ function SupportCommunityDisplay({
                         className="support-community__icon-material"
                         shape="square"
                       >
-                        {isReply ? <LuReply /> : isTopic ? <TagsOutlined /> : <FolderOpenOutlined />}
+                        {mode === 'reply' ? <LuReply /> : mode === 'topic' ? <TagsOutlined /> : <FolderOpenOutlined />}
                       </Avatar>
                       {getItemTitle(item)}
                     </Title>
@@ -213,24 +205,22 @@ function SupportCommunityDisplay({
                     )}
                   </div>
                   <div className="support-community__stats">
-                    {isReply ? (
+                    {mode === 'reply' ? (
                       <Text type="secondary">
                         <TimeAgo sentAt={item.moment} />
                       </Text>
                     ) : (
                       <>
-                        <IoMegaphoneOutline />
-                        {isTopic ? (
-                          <Text type="secondary">
+                        {mode === 'topic' ? (
+                          <Text>
                             <LuReply /> {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
-                            {item.people?.name ? ` · ${item.people.name}` : ""}
+                            {item.people?.name ? ` | ${item.people.name}` : ""}
                           </Text>
                         ) : (
-                          <Text type="secondary">
+                          <Text>
                             {item.topicsCount} tópico{item.topicsCount !== 1 ? "s" : ""}
-                            {" | "}
-                            <LuReply />
-                            {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
+                            { ' ' }
+                            encontrado{item.topicsCount !== 1 ? "s" : ""}
                           </Text>
                         )}
                       </>
@@ -238,7 +228,7 @@ function SupportCommunityDisplay({
                   </div>
                   <Paragraph
                     type="secondary"
-                    ellipsis={{ rows: isReply ? 3 : 1, tooltip: true }}
+                    ellipsis={{ rows: mode === 'reply' ? 3 : 1, tooltip: true }}
                     className="support-community__description"
                   >
                     {getItemDescription(item)}
@@ -251,7 +241,7 @@ function SupportCommunityDisplay({
       </div>
       {!loading && listItems.length === 0 && (
         <div className="support-community__empty">
-          <Empty description={getEmptyLabel()} />
+          <Empty description={getEmptyText()} />
         </div>
       )}
       <Modal
@@ -265,31 +255,31 @@ function SupportCommunityDisplay({
       >
         <div style={{ marginTop: "16px" }}>
           <Form form={form} layout="vertical" onFinish={onFinish}>
-            {!isReply && (
+            {mode !== 'reply' && (
               <Form.Item
-                name={isTopic ? 'title' : 'name'}
-                label={isTopic ? 'Nome do Tópico' : 'Nome da categoria'}
+                name={mode === 'topic' ? 'title' : 'name'}
+                label={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}
                 rules={[{ required: true, message: "O título é obrigatório!" }]}
               >
-                <Input placeholder={isTopic ? 'Nome do Tópico' : 'Nome da categoria'} />
+                <Input placeholder={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'} />
               </Form.Item>
             )}
             <Form.Item
-              name={isReply || isTopic ? 'content' : 'description'}
-              label={isReply ? "Resposta" : "Descrição"}
-              rules={isReply ? [
+              name={mode === 'reply' || mode === 'topic' ? 'content' : 'description'}
+              label={mode === 'reply' ? "Resposta" : "Descrição"}
+              rules={mode === 'reply' ? [
                 { required: true, message: "A resposta é obrigatória!" },
                 { max: 2000, message: "A resposta deve ter no máximo 2000 caracteres." },
               ] : [
                 { required: true, message: "A descrição é obrigatória!" },
-                { min: 50, message: "A descrição deve ter no mínimo 50 caracteres." },
+                { min: 30, message: "A descrição deve ter no mínimo 30 caracteres." },
                 { max: 150, message: "A descrição deve ter no máximo 150 caracteres." },
               ]}
             >
               <TextArea
-                placeholder={isReply ? 'Escreva a sua resposta' : isTopic ? 'Descrição do tópico' : 'Descrição da categoria'}
+                placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
                 rows={4}
-                maxLength={isReply || isTopic ? 2000 : 150}
+                maxLength={mode === 'reply' || mode === 'topic' ? 2000 : 150}
                 showCount
                 style={{ resize: "none" }}
               />

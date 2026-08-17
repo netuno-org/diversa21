@@ -9,12 +9,22 @@ const pageSize = _req.getInt('pageSize', 10);
 const offset = page > 0 ? (page - 1) * pageSize : 0;;
 
 const dbCategories = _db.query(`
-    SELECT count(*) over() as total_count,
-     uid, name, description
-      FROM forum_categoria
-    WHERE active = true
-     AND (?::text = '' OR name ILIKE ?::text)
-    ORDER BY name ASC
+    SELECT
+      count(*) over() as total_count,
+      c.uid,
+      c.name,
+      c.description,
+      COALESCE(t.topics_count, 0) AS "topics_count"
+    FROM forum_categoria c
+    LEFT JOIN (
+      SELECT forum_category_id, COUNT(*) AS topics_count
+      FROM forum_topico
+      WHERE active = true
+      GROUP BY forum_category_id
+    ) t ON t.forum_category_id = c.id
+    WHERE c.active = true
+      AND (?::text = '' OR c.name ILIKE ?::text)
+    ORDER BY c.name ASC
     LIMIT ?::int
     OFFSET ?::int
 `, name, `%${name}%`, pageSize, offset );
@@ -28,6 +38,7 @@ for (const dbCategory of dbCategories) {
       .set("uid", dbCategory.getUID("uid"))
       .set("name", dbCategory.getString("name"))
       .set("description", dbCategory.getString("description"))
+      .set("topicsCount", dbCategory.getInt("topics_count", 0))
   );
 }
 

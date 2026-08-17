@@ -11,7 +11,7 @@
     },
     "description": {
       "type": "string-not-empty",
-      "minLength": 50,
+      "minLength": 30,
       "maxLength": 150
     }
   },
