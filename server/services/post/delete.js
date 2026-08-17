@@ -17,7 +17,6 @@ if (!dbPost) {
   _exec.stop();
 }
 
-// if the post is not from the logged user and the logged user is not on the review group 
 if (dbPost.getInt("people_user_id") !== _user.id && !permissions.canManagePosts()) {
     _header.status(403);
     _out.json(

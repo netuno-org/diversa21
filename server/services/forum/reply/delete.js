@@ -17,7 +17,7 @@ if (!dbReply) {
   response.stopWithForumReplyNotFound();
 }
 
-if (dbReply.getInt("people_user_id") !== _user.id && !permissions.canManagePosts()) {
+if (dbReply.getInt("people_user_id") !== _user.id && !permissions.canManagePosts() && !permissions.canManageForumCategories()) {
   response.stopWithPermissionDenied();
 }
 

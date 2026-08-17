@@ -12,6 +12,8 @@ function TopicPage({ categoryUid }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
 
+  const canManageTopic = loggedUser.canManagePosts() || loggedUser.data.group.code === 'member'
+
   const [topicList, setTopicList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -194,7 +196,7 @@ function TopicPage({ categoryUid }) {
       <ListHeaderFilters
         title='Rede de apoio'
         searchPlaceholder="Buscar por Tópico"
-        createButton={loggedUser.canManagePosts() && {
+        createButton={canManageTopic && {
           icon: <PlusOutlined />,
           text: "Criar Tópico",
           onClick: openCreateModal,

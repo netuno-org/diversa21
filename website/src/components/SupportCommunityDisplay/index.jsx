@@ -103,9 +103,8 @@ function SupportCommunityDisplay({
     }
     return "Tem a certeza que deseja apagar a categoria?";
   };
-
   const canManageItem = (item) => {
-    if (mode === 'reply') {
+    if (mode === 'topic' || mode === 'reply') {
       return loggedUser.canManagePosts() || item.people?.uid === loggedUser.data?.uid;
     }
     return loggedUser.canManageForumCategories();
