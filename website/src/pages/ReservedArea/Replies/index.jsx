@@ -7,12 +7,13 @@ import usePeople from "../../../common/usePeople.js";
 import globalNotification from "../../../common/globalNotification.js";
 import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay";
 
-import { Button, Divider, Typography } from "antd";
+import TimeAgo from "../../../components/TimeAgo/index.jsx";
+
+import { Button, Divider, Typography, Avatar } from "antd";
 import {
   ArrowLeftOutlined,
   FolderOpenOutlined,
-  PlusOutlined,
-  TagsOutlined,
+  ClockCircleOutlined
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
@@ -32,8 +33,19 @@ function Replies({ topicUid }) {
   const [editingReply, setEditingReply] = useState(null);
   const [topic, setTopic] = useState(null);
   const [repliesCount, setRepliesCount] = useState(0);
+  const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
   const mode = 'reply'
+  useEffect(() => {
+    const people = topic?.people;
+    if (people?.avatar && people?.uid) {
+      setAvatarUrl(
+        _service.url(`/asset?uid=${people.uid}&type=avatar&entity=people&t=${Date.now()}`)
+      );
+      return;
+    }
+    setAvatarUrl("/images/profile-default.png");
+  }, [topic?.people]);
 
   useEffect(() => {
     if (!topicUid) {
@@ -205,51 +217,66 @@ function Replies({ topicUid }) {
           Voltar aos tópicos
         </Button>
         <div className="replies-header__topic">
-          <div className="replies-header__icon">
-            <TagsOutlined />
-          </div>
-          <div className="replies-header__topic-body">
-            <Title level={4} className="replies-header__title">
-              {topic?.title}
-            </Title>
-            <div className="replies-header__meta">
-              <LuReply />
-              <Text>
-                {repliesCount} resposta{repliesCount !== 1 ? "s" : ""}
-                {topic?.people?.name ? ` | ${topic.people.name}` : ""}
-              </Text>
+          {topic?.category?.name && (
+            <>
+              <div className="replies-header__category">
+                <div className="replies-header__icon replies-header__icon--category">
+                  <FolderOpenOutlined />
+                </div>
+                <div className="replies-header__category-text">
+                  <Text className="replies-header__category-label">
+                    Categoria selecionada:
+                  </Text>
+                  <Text className="replies-header__category-name">
+                    {topic.category.name}
+                  </Text>
+                </div>
+              </div>
+              <Divider />
+            </>
+          )}
+          <div className="replies-header__topic-info">
+            <Avatar
+              className="replies-header__avatar"
+              size={50}
+              src={avatarUrl}
+              shape="square"
+            />
+            <div className="replies-header__topic-body">
+              <Title level={4} className="replies-header__title">
+                {topic?.title}
+              </Title>
+              {topic?.content && (
+                <Paragraph
+                  ellipsis={{ rows: 2, tooltip: true }}
+                  className="replies-header__description"
+                >
+                  {topic.content}
+                </Paragraph>
+              )}
+              <div className="replies-header__meta">
+                <div>
+                  {topic?.people?.name ? ` Autor : ${topic.people.name}` : ""}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <VscCommentDiscussionQuote />
+                  <Text>
+                    {' '} {repliesCount} resposta{repliesCount !== 1 ? "s" : ""}
+                  </Text>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <ClockCircleOutlined />
+                  <Text type="secondary">
+                    <TimeAgo sentAt={topic?.moment} />
+                  </Text>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {topic?.content && (
-          <Paragraph
-            ellipsis={{ rows: 2, tooltip: true }}
-            className="replies-header__description"
-          >
-            {topic.content}
-          </Paragraph>
-        )}
-        {topic?.category?.name && (
-          <>
-            <Divider />
-            <div className="replies-header__category">
-              <div className="replies-header__icon replies-header__icon--category">
-                <FolderOpenOutlined />
-              </div>
-              <div className="replies-header__category-text">
-                <Text className="replies-header__category-label">
-                  Categoria selecionada:
-                </Text>
-                <Text className="replies-header__category-name">
-                  {topic.category.name}
-                </Text>
-              </div>
-            </div>
-          </>
-        )}
       </div>
       <div className="replies__actions">
-        <Button type="primary" icon={<VscCommentDiscussionQuote />}  onClick={openCreateModal}>
+        <Button type="primary" icon={<VscCommentDiscussionQuote />} onClick={openCreateModal}>
           Responder
         </Button>
       </div>

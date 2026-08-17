@@ -37,8 +37,15 @@
 
   &__topic {
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
+  }
+
+  &__topic-info {
+    display: flex;
+    align-items: start;
     gap: 16px;
+    width: 100%;
   }
 
   &__icon {
@@ -48,7 +55,7 @@
     flex-shrink: 0;
     width: 52px;
     height: 52px;
-    border-radius: 12px;
+    border-radius: 8px;
     background-color: @primary-color;
     color: #FFF;
     font-size: 24px;
@@ -60,7 +67,16 @@
     font-size: 20px;
   }
 
+  &__avatar {
+    flex-shrink: 0;
+    background: transparent !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+ }
+
   &__topic-body {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     flex: 1;
   }
@@ -75,10 +91,9 @@
   &__meta {
     display: flex;
     align-items: center;
-    gap: 6px;
     margin-top: 6px;
-    color: @primary-color;
-    font-size: 14px;
+    font-size: 16px;
+    gap: 20px;
 
     .ant-typography {
       color: inherit;
@@ -89,12 +104,11 @@
     margin: 10px 0 0px !important;
     color: fade(#000, 45%);
     font-size: 15px;
-    font-style: italic;
     line-height: 1.5;
   }
 
   .ant-divider {
-    margin: 16px 0;
+    margin: 24px 0;
   }
 
   &__category {
