@@ -48,8 +48,13 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
       title="Aceite dos Termos e Condições"
       open={visible}
       closable={false}
-      maskClosable={false}
-      maskStyle={{ backgroundColor: '#ffffff', opacity: 1 }}
+      styles={{
+        mask: {
+          backgroundColor: '#ffffff',
+          opacity: 1,
+          closable: false
+        }
+      }}
       footer={[
         <Button
           key="accept"
