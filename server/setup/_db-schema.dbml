@@ -157,7 +157,14 @@ Table service_category {
   id int [pk, increment]
   description varchar(250) [note: 'Descrição']
   name varchar(250) [not null, note: 'Nome']
-  Note: 'Categoria de Serviço'
+  Note: 'Categoria'
+}
+
+Table service_favorite {
+  id int [pk, increment]
+  person_id int [ref: > people.id, note: 'Pessoa']
+  service_id int [ref: > service.id, note: 'Serviço']
+  Note: 'Favorito'
 }
 
 Table state {

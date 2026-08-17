@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -17,6 +17,8 @@ function Services() {
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  
+  const [showFavorites, setShowFavorites] = useState(false);
   
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [savingCategory, setSavingCategory] = useState(false);
@@ -43,9 +45,10 @@ function Services() {
   const requestData = useMemo(
     () => ({
       ...(selectedCategory ? { categoryUid: selectedCategory.uid } : {}),
+      ...(showFavorites ? { favoritesOnly: true } : {}),
       _refresh: refreshTrigger 
     }),
-    [selectedCategory, refreshTrigger]
+    [selectedCategory, showFavorites, refreshTrigger]
   );
 
   const {
@@ -128,6 +131,25 @@ function Services() {
     setServiceDetails(null);
     searchParams.delete('id');
     setSearchParams(searchParams, { replace: true });
+  };
+
+  const handleToggleFavorite = (service, e) => {
+    if (e) e.stopPropagation();
+    const actionMethod = service.isFavorite ? 'DELETE' : 'POST';
+    _service({
+      url: 'service/favorite',
+      method: actionMethod,
+      data: { serviceUid: service.uid },
+      success: ({ json }) => {
+        if (json?.result) {
+          message.success(service.isFavorite ? 'Removido dos favoritos.' : 'Adicionado aos favoritos!');
+          setRefreshTrigger(prev => prev + 1);
+        }
+      },
+      fail: () => {
+        message.error('Ocorreu um erro ao atualizar os favoritos.');
+      }
+    });
   };
 
   const handleCreateCategory = async () => {
@@ -292,22 +314,38 @@ function Services() {
           fullWidthSearch={true}
           
           extraFilters={
-            <Select
-              value={selectedCategory?.uid}
-              allowClear
-              showSearch
-              loading={categoriesLoading}
-              placeholder="Filtrar por categoria"
-              onChange={handleCategoryChange}
-              options={categories.map((category) => ({
-                label: category.name,
-                value: category.uid,
-              }))}
-              filterOption={(input, option) =>
-                option.label.toLowerCase().includes(input.toLowerCase())
-              }
-              style={{ width: '100%' }}
-            />
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', width: '100%' }}>
+              <Select
+                value={selectedCategory?.uid}
+                allowClear
+                showSearch
+                loading={categoriesLoading}
+                placeholder="Filtrar por categoria"
+                onChange={handleCategoryChange}
+                options={categories.map((category) => ({
+                  label: category.name,
+                  value: category.uid,
+                }))}
+                filterOption={(input, option) =>
+                  option.label.toLowerCase().includes(input.toLowerCase())
+                }
+                style={{ flex: 1 }}
+              />
+              
+              <Button 
+                type={showFavorites ? "primary" : "default"}
+                danger={showFavorites}
+                icon={showFavorites ? <HeartFilled /> : <HeartOutlined />}
+                onClick={() => {
+                  setShowFavorites(!showFavorites);
+                  if (pagination.current !== 1) {
+                    handlePaginationChange(1, pagination.size);
+                  }
+                }}
+              >
+                Favoritos
+              </Button>
+            </div>
           }
         />
       </div>
@@ -316,6 +354,7 @@ function Services() {
         <Text type="secondary">
           {pagination.total} {pagination.total !== 1 ? 'serviços' : 'serviço'} encontrado{pagination.total !== 1 ? 's' : ''}
           {selectedCategory ? ` na categoria "${selectedCategory.name}"` : ''}
+          {showFavorites ? ` nos seus favoritos` : ''}
         </Text>
       </div>
 
@@ -358,11 +397,19 @@ function Services() {
                     </div>
                   )}
                 </div>
-                <div className="services-list__card-title">
-                  <Title level={4} className="services-list__title">
+                
+                <div className="services-list__card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Title level={4} className="services-list__title" style={{ marginBottom: 0 }}>
                     {service.name}
                   </Title>
+                  <Button 
+                    type="text" 
+                    icon={service.isFavorite ? <HeartFilled style={{ color: '#eb2f96', fontSize: '20px' }} /> : <HeartOutlined style={{ fontSize: '20px', color: '#999' }} />} 
+                    onClick={(e) => handleToggleFavorite(service, e)}
+                    style={{ marginTop: '-4px', marginRight: '-12px' }}
+                  />
                 </div>
+
                 <div className="services-list__card-location">
                   <EnvironmentOutlined />{' '}
                   {service.city?.name}, {service.state?.name} / {service.country?.name}
@@ -467,7 +514,7 @@ function Services() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`}
+                  {serviceDetails.website}
                 </a>
               </div>
             )}

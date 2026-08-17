@@ -3,7 +3,7 @@
     "service"
   ],
   "summary": "List services",
-  "description": "Retrieve paginated service listings filtered by name, category or location.",
+  "description": "Retrieve paginated service listings filtered by name, category, location, or favorites.",
   "properties": {
     "name": {
       "type": "string"
@@ -19,6 +19,9 @@
     },
     "countryUid": {
       "type": "uid"
+    },
+    "favoritesOnly": {
+      "type": "string"
     },
     "page": {
       "type": "string",

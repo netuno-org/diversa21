@@ -1,4 +1,4 @@
-import { _req, _db, _val } from "@netuno/server-types";
+import { _req, _db, _val, _user } from "@netuno/server-types";
 import response from "#core/lib/response.js";
 
 const name = _req.getString('name');
@@ -6,6 +6,7 @@ const categoryUid = _req.getUID('categoryUid');
 const cityUid = _req.getUID('cityUid');
 const stateUid = _req.getUID('stateUid');
 const countryUid = _req.getUID('countryUid');
+const favoritesOnly = _req.getBoolean('favoritesOnly');
 let page = _req.getInt('page', 1);
 
 const pageSize = 10;
@@ -13,6 +14,19 @@ let offset = 0;
 if (page > 0) {
   offset = (page - 1) * pageSize;
 }
+
+const userId = _user.id();
+let personId = 0;
+if (userId) {
+  const dbPerson = _db.queryFirst("SELECT id FROM people WHERE user_id = ?", userId);
+  if (dbPerson) {
+    personId = dbPerson.getInt("id");
+  }
+}
+
+const params = _val.list();
+
+params.add(personId);
 
 let sqlQuery = `
     SELECT
@@ -31,16 +45,20 @@ let sqlQuery = `
         state.uid AS "state_uid",
         state.name AS "state_name",
         country.uid AS "country_uid",
-        country.name AS "country_name"
+        country.name AS "country_name",
+        (CASE WHEN service_favorite.id IS NOT NULL THEN true ELSE false END) AS is_favorite
     FROM service
     INNER JOIN service_category ON service.category_id = service_category.id
     INNER JOIN city ON service.city_id = city.id
     INNER JOIN state ON city.state_id = state.id
     INNER JOIN country ON state.country_id = country.id
+    LEFT JOIN service_favorite ON service_favorite.service_id = service.id AND service_favorite.person_id = ?::int
     WHERE 1 = 1
 `;
 
-const params = _val.list();
+if (favoritesOnly) {
+  sqlQuery += ` AND service_favorite.id IS NOT NULL `;
+}
 
 if (name) {
   sqlQuery += ` AND service.name ILIKE ?::text `;
@@ -87,6 +105,7 @@ for (const dbService of dbServices) {
       .set('website', dbService.getString('website'))
       .set('instagram', dbService.getString('instagram'))
       .set('active', dbService.getBoolean('active'))
+      .set('isFavorite', dbService.getBoolean('is_favorite'))
       .set('category', _val.map()
         .set('uid', dbService.getUID('category_uid'))
         .set('name', dbService.getString('category_name'))
