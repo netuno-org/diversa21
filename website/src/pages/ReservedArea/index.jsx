@@ -29,6 +29,8 @@ import CategoryTopics from "./CategoryTopics/index.jsx"
 import Services from "./Services/index.jsx"
 import CategoryPage from "./CategoryPage"
 import ReplyPage from "../ReplyPage"
+import TermsPage from '../Terms';
+import PrivacyPage from '../Privacy';
 
 import "./index.less";
 
@@ -162,6 +164,12 @@ function ReservedArea() {
       }
       if (location.pathname === "/services") {
         return <Services />;
+      }
+      if (location.pathname === "/terms") {
+        return <TermsPage />;
+      }
+      if (location.pathname === "/privacy") {
+        return <PrivacyPage />;
       }
       return <NotFound />;
     };

@@ -77,7 +77,7 @@ export default function App() {
     setCollapsed(!collapsed);
   }
 
-  const isPublicStandalonePage = ['/login', '/recovery', '/terms', '/privacy'].includes(location.pathname) || location.pathname.startsWith('/login/');
+  const isPublicStandalonePage = ['/login', '/recovery'].includes(location.pathname) || location.pathname.startsWith('/login/');
   
   return (
     <ConfigProvider
@@ -133,8 +133,6 @@ export default function App() {
                 <Route path="/login/:provider" element={<LoginCallback/>} />
                 <Route path="/login" element={<LoginPage/>} />
                 <Route path="/recovery" element={<Recovery/>} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
                 {/** // PUBLIC **/}
                 
                 {/** RESERVED AREA **/}
@@ -159,6 +157,8 @@ export default function App() {
                 <Route path="/support-community" element={<ReservedArea />} />
                 <Route path="/c/:categoryUid" element={<ReservedArea />} />
                 <Route path="/c/:categoryUid/t/:topicUid" element={<ReservedArea />} />
+                <Route path="/terms" element={<ReservedArea />} />
+                <Route path="/privacy" element={<ReservedArea />} />
 
                 {/** // RESERVED AREA **/}
                 <Route path="*" element={<NotFound/>} />
