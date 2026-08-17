@@ -483,17 +483,6 @@ function Services() {
                 </a>
               </div>
             )}
-
-            <div style={{ marginTop: '16px', borderTop: '1px solid #f0f0f0', paddingTop: '16px' }}>
-              <div style={{ marginBottom: '8px', fontWeight: 600, fontSize: '13px', color: 'rgba(0, 0, 0, 0.45)' }}>
-                Link direto para partilha (clique para selecionar):
-              </div>
-              <Input
-                value={`${window.location.origin}${window.location.pathname}?id=${serviceDetails.uid}`}
-                readOnly
-                onClick={(e) => e.target.select()}
-              />
-            </div>
           </div>
         )}
       </Modal>
