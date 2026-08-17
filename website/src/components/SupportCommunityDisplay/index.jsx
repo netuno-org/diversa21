@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar } from 'antd'
 import {
+  ClockCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   FolderOpenOutlined,
@@ -9,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { IoMegaphoneOutline } from "react-icons/io5";
 import { LuReply } from "react-icons/lu";
+import { VscCommentDiscussionQuote } from "react-icons/vsc";
 
 import TimeAgo from "../TimeAgo";
 
@@ -16,6 +18,40 @@ import './index.less'
 
 const { Paragraph, Text, Title } = Typography;
 const { TextArea } = Input;
+
+function ReplyDescription({ content }) {
+  const [expanded, setExpanded] = useState(false);
+  const [isEllipsis, setIsEllipsis] = useState(false);
+
+  useEffect(() => {
+    setExpanded(false);
+    setIsEllipsis(false);
+  }, [content]);
+
+  return (
+    <>
+      <Paragraph
+        type="primary"
+        ellipsis={expanded ? false : { rows: 4, onEllipsis: setIsEllipsis }}
+        className="support-community__description"
+      >
+        {content}
+      </Paragraph>
+      {(isEllipsis || expanded) && (
+        <Button
+          style={{ padding: 0 }}
+          type="link"
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
+        >
+          {expanded ? "Ver menos" : "Ver mais"}
+        </Button>
+      )}
+    </>
+  );
+}
 
 function SupportCommunityDisplay({
   loading,
@@ -156,16 +192,43 @@ function SupportCommunityDisplay({
               <div className="support-community__card-body">
                 <div className="support-community__content">
                   <div className="support-community__title-row">
-                    <Title level={4} className="support-community__title">
-                      <Avatar
-                        size={35}
-                        className="support-community__icon-material"
-                        shape="square"
-                      >
-                        {mode === 'reply' ? <LuReply /> : mode === 'topic' ? <TagsOutlined /> : <FolderOpenOutlined />}
-                      </Avatar>
-                      {getItemTitle(item)}
-                    </Title>
+                    <Avatar
+                      size={35}
+                      className="support-community__icon-material"
+                      shape="square"
+                    >
+                      {mode === 'reply' ? <LuReply /> : mode === 'topic' ? <TagsOutlined /> : <FolderOpenOutlined />}
+                    </Avatar>
+                    <div className="support-community__heading">
+                      <Title level={4} className="support-community__title">
+                        {getItemTitle(item)}
+                      </Title>
+                      <div className="support-community__meta">
+                        {mode === 'topic' && item.people?.name && (
+                          <span>Autor : {item.people.name}</span>
+                        )}
+                        {mode === 'topic' && (
+                          <span className="support-community__meta-item">
+                            <VscCommentDiscussionQuote />
+                            {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
+                          </span>
+                        )}
+                        {mode === 'category' && (
+                          <span className="support-community__meta-item">
+                            <TagsOutlined />
+                            {item.topicsCount} tópico{item.topicsCount !== 1 ? "s" : ""}
+                            {' '}
+                            encontrado{item.topicsCount !== 1 ? "s" : ""}
+                          </span>
+                        )}
+                        {item.moment && (
+                          <span className="support-community__meta-item">
+                            <ClockCircleOutlined />
+                            <TimeAgo sentAt={item.moment} />
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     {canManageItem(item) && (
                       <div className="support-community__actions">
                         <Popconfirm
@@ -203,35 +266,18 @@ function SupportCommunityDisplay({
                       </div>
                     )}
                   </div>
-                  <div className="support-community__stats">
-                    {mode === 'reply' ? (
-                      <Text type="secondary">
-                        <TimeAgo sentAt={item.moment} />
-                      </Text>
-                    ) : (
-                      <>
-                        {mode === 'topic' ? (
-                          <Text>
-                            <LuReply /> {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
-                            {item.people?.name ? ` | ${item.people.name}` : ""}
-                          </Text>
-                        ) : (
-                          <Text>
-                            {item.topicsCount} tópico{item.topicsCount !== 1 ? "s" : ""}
-                            { ' ' }
-                            encontrado{item.topicsCount !== 1 ? "s" : ""}
-                          </Text>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  <Paragraph
-                    type="secondary"
-                    ellipsis={{ rows: mode === 'reply' ? 3 : 1, tooltip: true }}
-                    className="support-community__description"
-                  >
-                    {getItemDescription(item)}
-                  </Paragraph>
+                  {mode === 'reply' ? (
+                    <ReplyDescription content={getItemDescription(item)} />
+                  ) : (
+                    <Paragraph
+                      type="primary"
+                      style={{marginTop: 12}}
+                      ellipsis={{ rows: 3, tooltip: false }}
+                      className="support-community__description"
+                    >
+                      {getItemDescription(item)}
+                    </Paragraph>
+                  )}
                 </div>
               </div>
             </Card>
@@ -266,9 +312,9 @@ function SupportCommunityDisplay({
             <Form.Item
               name={mode === 'reply' || mode === 'topic' ? 'content' : 'description'}
               label={mode === 'reply' ? "Resposta" : "Descrição"}
-              rules={mode === 'reply' ? [
-                { required: true, message: "A resposta é obrigatória!" },
-                { max: 2000, message: "A resposta deve ter no máximo 2000 caracteres." },
+              rules={mode === 'reply' || mode === 'topic' ? [
+                { required: true, message: mode === 'reply' ? "A resposta é obrigatória!" : "A descrição é obrigatória!" },
+                { max: 2000, message: mode === 'reply' ? "A resposta deve ter no máximo 2000 caracteres." : "A descrição deve ter no máximo 2000 caracteres." },
               ] : [
                 { required: true, message: "A descrição é obrigatória!" },
                 { min: 30, message: "A descrição deve ter no mínimo 30 caracteres." },

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -32,10 +32,13 @@ function Replies({ topicUid }) {
   const [showModal, setShowModal] = useState(false);
   const [editingReply, setEditingReply] = useState(null);
   const [topic, setTopic] = useState(null);
+  const [expanded, setExpanded] = useState(false);
+  const [isEllipsis, setIsEllipsis] = useState(false);
   const [repliesCount, setRepliesCount] = useState(0);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
   const mode = 'reply'
+
   useEffect(() => {
     const people = topic?.people;
     if (people?.avatar && people?.uid) {
@@ -46,6 +49,11 @@ function Replies({ topicUid }) {
     }
     setAvatarUrl("/images/profile-default.png");
   }, [topic?.people]);
+
+  useEffect(() => {
+    setExpanded(false);
+    setIsEllipsis(false);
+  }, [topic?.content]);
 
   useEffect(() => {
     if (!topicUid) {
@@ -236,49 +244,64 @@ function Replies({ topicUid }) {
             </>
           )}
           <div className="replies-header__topic-info">
-            <Avatar
-              className="replies-header__avatar"
-              size={50}
-              src={avatarUrl}
-              shape="square"
-            />
+            <Link to={`/u/${topic?.people?.user}`}>
+              <Avatar
+                className="replies-header__avatar"
+                size={50}
+                src={avatarUrl}
+                shape="square"
+              />
+            </Link>
             <div className="replies-header__topic-body">
-              <Title level={4} className="replies-header__title">
-                {topic?.title}
-              </Title>
-              {topic?.content && (
-                <Paragraph
-                  ellipsis={{ rows: 2, tooltip: true }}
-                  className="replies-header__description"
-                >
-                  {topic.content}
-                </Paragraph>
-              )}
+              <Link
+                className="replies-header__title-link"
+                to={`/u/${topic?.people?.user}`}
+              >
+                <p className="replies-header__title">
+                  {topic?.title}
+                </p>
+              </Link>
               <div className="replies-header__meta">
-                <div>
-                  {topic?.people?.name ? ` Autor : ${topic.people.name}` : ""}
-                </div>
+                {topic?.people?.name && (
+                  <span>
+                    Autor :{" "}
+                    {topic.people.name}
+                  </span>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <VscCommentDiscussionQuote />
-                  <Text>
+                  <span>
                     {' '} {repliesCount} resposta{repliesCount !== 1 ? "s" : ""}
-                  </Text>
+                  </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <ClockCircleOutlined />
-                  <Text type="secondary">
-                    <TimeAgo sentAt={topic?.moment} />
-                  </Text>
-                </div>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <ClockCircleOutlined size={14} />
+                  <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
+                </span>
               </div>
             </div>
           </div>
+          {topic?.content && (
+            <>
+              <Paragraph
+                ellipsis={expanded ? false : { rows: 4, onEllipsis: setIsEllipsis }}
+                className="replies-header__description"
+              >
+                {topic.content}
+              </Paragraph>
+              {(isEllipsis || expanded) && (
+                <Button style={{ padding: 0 }} type="link" onClick={() => setExpanded(!expanded)}>
+                  {expanded ? "Ver menos" : "Ver mais"}
+                </Button>
+              )}
+            </>
+          )}
         </div>
-      </div>
-      <div className="replies__actions">
-        <Button type="primary" icon={<VscCommentDiscussionQuote />} onClick={openCreateModal}>
-          Responder
-        </Button>
+        <div className="replies__actions">
+          <Button type="primary" icon={<VscCommentDiscussionQuote />} onClick={openCreateModal}>
+            Responder
+          </Button>
+        </div>
       </div>
       <SupportCommunityDisplay
         loading={loading}
