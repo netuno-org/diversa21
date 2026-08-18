@@ -36,7 +36,7 @@ const dbReplies = _db.query(`
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
     WHERE r.topic_id = ?::int
       AND r.active = true
-    ORDER BY r.moment ASC
+    ORDER BY r.moment DESC
     LIMIT ?::int
     OFFSET ?::int
 `, dbTopic.getInt("id"), pageSize, offset);
