@@ -373,86 +373,90 @@ function Services() {
             onClick={() => handleOpenService(service)}
           >
             <div className="services-list__card-content">
-              <div className="services-list__card-main">
-                <div className="services-list__card-category-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '8px' }}>
-                  {service.category?.name ? (
-                    <Tag className="services-list__category-tag">{service.category.name}</Tag>
-                  ) : <div />}
+              <div className="services-list__card-header">
+                <Title level={4} className="services-list__title">
+                  {service.name}
+                </Title>
+                <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
+                  <Button 
+                    type="text" 
+                    size="small"
+                    icon={service.isFavorite ? <HeartFilled className="services-list__heart-filled" /> : <HeartOutlined className="services-list__heart-outlined" />} 
+                    onClick={(e) => handleToggleFavorite(service, e)}
+                    className="services-list__favorite-btn"
+                  />
                   {canCreateService && (
-                    <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '16px' }}>
+                    <>
+                      <Button type="text" size="small" className="services-list__action-btn" onClick={(e) => handleEditClick(service, e)}>
+                        <EditOutlined />
+                      </Button>
                       <Popconfirm
-                        title="Tem a certeza que quer remover este serviço?"
+                        title="Remover serviço?"
                         description="Esta ação é irreversível"
                         onConfirm={(e) => handleDeleteService(service.uid, e)}
                         okText="Sim"
                         cancelText="Não"
                       >
-                        <Button danger type="link" size="small" style={{ padding: 0 }}>
+                        <Button danger type="text" size="small" className="services-list__action-btn">
                           <DeleteOutlined />
                         </Button>
                       </Popconfirm>
-                      <Button type="link" size="small" style={{ padding: 0 }} onClick={(e) => handleEditClick(service, e)}>
-                        <EditOutlined />
-                      </Button>
-                    </div>
+                    </>
                   )}
                 </div>
-                
-                <div className="services-list__card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Title level={4} className="services-list__title" style={{ marginBottom: 0 }}>
-                    {service.name}
-                  </Title>
-                  <Button 
-                    type="text" 
-                    icon={service.isFavorite ? <HeartFilled style={{ color: '#eb2f96', fontSize: '20px' }} /> : <HeartOutlined style={{ fontSize: '20px', color: '#999' }} />} 
-                    onClick={(e) => handleToggleFavorite(service, e)}
-                    style={{ marginTop: '-4px', marginRight: '-12px' }}
-                  />
-                </div>
+              </div>
 
+              <div className="services-list__card-subheader">
+                {service.category?.name && (
+                  <Tag className="services-list__category-tag">{service.category.name}</Tag>
+                )}
                 <div className="services-list__card-location">
-                  <EnvironmentOutlined />{' '}
-                  {service.city?.name}, {service.state?.name} / {service.country?.name}
+                  <EnvironmentOutlined style={{ color: '#8b6aa2' }} />
+                  <Text type="secondary">
+                    {service.city?.name}, {service.state?.name}
+                  </Text>
                 </div>
-                {service.description && (
-                  <Paragraph className="services-list__description" ellipsis={{ rows: 3 }}>
-                    {service.description}
-                  </Paragraph>
-                )}
               </div>
-              <div className="services-list__card-meta">
-                {service.phone && (
-                  <div className="services-list__meta-item">
-                    <strong>Telefone:</strong> {service.phone}
-                  </div>
-                )}
-                {service.website && (
-                  <div className="services-list__meta-item">
-                    <LinkOutlined />{' '}
-                    <a
-                      href={service.website.startsWith('http') ? service.website : `https://${service.website}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {service.website.startsWith('http') ? service.website : `https://${service.website}`}
-                    </a>
-                  </div>
-                )}
-                {service.instagram && (
-                  <div className="services-list__meta-item">
-                    <InstagramOutlined />{' '}
-                    <a
-                      href={`https://instagram.com/${service.instagram.replace(/^@/, '')}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      @{service.instagram.replace(/^@/, '')}
-                    </a>
-                  </div>
-                )}
-              </div>
+              
+              {service.description && (
+                <Paragraph className="services-list__description" ellipsis={{ rows: 3 }}>
+                  {service.description}
+                </Paragraph>
+              )}
+            </div>
+
+            <div className="services-list__card-meta">
+              {service.phone && (
+                <div className="services-list__meta-item">
+                  <strong>Telefone:</strong> {service.phone}
+                </div>
+              )}
+              {service.website && (
+                <div className="services-list__meta-item">
+                  <LinkOutlined style={{ color: '#8b6aa2' }} />
+                  <a
+                    href={service.website.startsWith('http') ? service.website : `https://${service.website}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {service.website.replace(/^https?:\/\//, '')}
+                  </a>
+                </div>
+              )}
+              {service.instagram && (
+                <div className="services-list__meta-item">
+                  <InstagramOutlined style={{ color: '#8b6aa2' }} />
+                  <a
+                    href={`https://instagram.com/${service.instagram.replace(/^@/, '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    @{service.instagram.replace(/^@/, '')}
+                  </a>
+                </div>
+              )}
             </div>
           </Card>
         ))}
@@ -491,45 +495,57 @@ function Services() {
       >
         {serviceDetails && (
           <div className="services-list__details">
-            {serviceDetails.category?.name && (
-              <Tag className="services-list__detail-tag">{serviceDetails.category.name}</Tag>
-            )}
-            <div className="services-list__detail-line">
-              <EnvironmentOutlined />{' '}
-              {serviceDetails.city?.name}, {serviceDetails.state?.name} / {serviceDetails.country?.name}
+            
+            <div className="services-list__card-subheader">
+              {serviceDetails.category?.name && (
+                <Tag className="services-list__category-tag">{serviceDetails.category.name}</Tag>
+              )}
+              <div className="services-list__card-location">
+                <EnvironmentOutlined style={{ color: '#8b6aa2' }} />
+                <Text type="secondary">
+                  {serviceDetails.city?.name}, {serviceDetails.state?.name} / {serviceDetails.country?.name}
+                </Text>
+              </div>
             </div>
+
             {serviceDetails.description && (
-              <Paragraph>{serviceDetails.description}</Paragraph>
+              <Paragraph className="services-list__description">
+                {serviceDetails.description}
+              </Paragraph>
             )}
-            {serviceDetails.phone && (
-              <div className="services-list__detail-line">
-                <strong>Telefone:</strong> {serviceDetails.phone}
-              </div>
-            )}
-            {serviceDetails.website && (
-              <div className="services-list__detail-line">
-                <LinkOutlined />{' '}
-                <a
-                  href={serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {serviceDetails.website}
-                </a>
-              </div>
-            )}
-            {serviceDetails.instagram && (
-              <div className="services-list__detail-line">
-                <InstagramOutlined />{' '}
-                <a
-                  href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, '')}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  @{serviceDetails.instagram.replace(/^@/, '')}
-                </a>
-              </div>
-            )}
+
+            <div className="services-list__card-meta">
+              {serviceDetails.phone && (
+                <div className="services-list__meta-item">
+                  <strong>Telefone:</strong> {serviceDetails.phone}
+                </div>
+              )}
+              {serviceDetails.website && (
+                <div className="services-list__meta-item">
+                  <LinkOutlined style={{ color: '#8b6aa2' }} />{' '}
+                  <a
+                    href={serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {serviceDetails.website.replace(/^https?:\/\//, '')}
+                  </a>
+                </div>
+              )}
+              {serviceDetails.instagram && (
+                <div className="services-list__meta-item">
+                  <InstagramOutlined style={{ color: '#8b6aa2' }} />{' '}
+                  <a
+                    href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    @{serviceDetails.instagram.replace(/^@/, '')}
+                  </a>
+                </div>
+              )}
+            </div>
+
           </div>
         )}
       </Modal>
