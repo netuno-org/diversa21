@@ -11,29 +11,34 @@ import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay
 import {
   PlusOutlined,
 } from "@ant-design/icons";
+import { Pagination } from "antd";
 
 function CategoryTopics() {
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const loggedUser = usePeople();
   const navigate = useNavigate()
   const mode = 'category'
 
   useEffect(() => {
-    handleListCategories();
-  }, []);
+    handleListCategories(searchTerm, page);
+  }, [page]);
 
-  const handleListCategories = (name = '') => {
+  const handleListCategories = (name = searchTerm, currentPage = page) => {
     setLoading(true);
     _service({
       method: 'GET',
       url: "/forum/category/list",
-      data: { name },
+      data: { name, page: currentPage },
       success: ({ json }) => {
         if (json) {
           setCategoryList(json.data.items);
+          setTotalCount(json.data.pagination?.totalCount ?? 0);
         }
         setLoading(false);
       },
@@ -60,7 +65,8 @@ function CategoryTopics() {
             description: 'A categoria foi criada com sucesso.',
           });
           closeModal();
-          handleListCategories();
+          setPage(1);
+          handleListCategories(searchTerm, 1);
           return;
         }
         setLoading(false);
@@ -93,7 +99,7 @@ function CategoryTopics() {
             description: 'A categoria foi atualizada com sucesso.',
           });
           closeModal();
-          handleListCategories();
+          handleListCategories(searchTerm, page);
           return;
         }
         setLoading(false);
@@ -121,7 +127,7 @@ function CategoryTopics() {
             title: 'Categoria Removida',
             description: 'A categoria foi removida com sucesso.',
           });
-          handleListCategories();
+          handleListCategories(searchTerm, page);
           return;
         }
         setLoading(false);
@@ -144,7 +150,9 @@ function CategoryTopics() {
   };
 
   const handleSearchCategory = (value) => {
-    handleListCategories(value);
+    setSearchTerm(value);
+    setPage(1);
+    handleListCategories(value, 1);
   };
 
   const openCreateModal = () => {
@@ -186,7 +194,11 @@ function CategoryTopics() {
         }}
         hideLocation={true}
         onSearch={handleSearchCategory}
-        onSearchClear={() => handleListCategories("")}
+        onSearchClear={() => {
+          setSearchTerm("");
+          setPage(1);
+          handleListCategories("", 1);
+        }}
       />
       <SupportCommunityDisplay
         loading={loading}
@@ -201,6 +213,17 @@ function CategoryTopics() {
         handleDelete={handleDeleteCategory}
         mode={mode}
       />
+      {!loading && totalCount > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
+          <Pagination
+            current={page}
+            pageSize={10}
+            total={totalCount}
+            onChange={(p) => setPage(p)}
+            showSizeChanger={false}
+          />
+        </div>
+      )}
     </div>
   );
 }

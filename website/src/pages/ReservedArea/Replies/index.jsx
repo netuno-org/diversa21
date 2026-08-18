@@ -9,7 +9,7 @@ import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay
 
 import TimeAgo from "../../../components/TimeAgo/index.jsx";
 
-import { Button, Divider, Typography, Avatar } from "antd";
+import { Button, Divider, Typography, Avatar, Pagination } from "antd";
 import {
   ArrowLeftOutlined,
   FolderOpenOutlined,
@@ -35,6 +35,7 @@ function Replies({ topicUid }) {
   const [expanded, setExpanded] = useState(false);
   const [isEllipsis, setIsEllipsis] = useState(false);
   const [repliesCount, setRepliesCount] = useState(0);
+  const [page, setPage] = useState(1);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
   const mode = 'reply'
@@ -72,10 +73,10 @@ function Replies({ topicUid }) {
         console.log("Service Error", e);
       },
     });
-    handleListReplies();
-  }, [topicUid]);
+    handleListReplies(page);
+  }, [topicUid, page]);
 
-  const handleListReplies = () => {
+  const handleListReplies = (currentPage = page) => {
     if (!topicUid) {
       return
     };
@@ -83,7 +84,7 @@ function Replies({ topicUid }) {
     _service({
       method: "GET",
       url: "/forum/reply/list",
-      data: { topicUid },
+      data: { topicUid, page: currentPage },
       success: ({ json }) => {
         if (json) {
           setReplyList(json.data.items || [])
@@ -114,7 +115,8 @@ function Replies({ topicUid }) {
             description: "A resposta foi criada com sucesso.",
           });
           closeModal();
-          handleListReplies();
+          setPage(1);
+          handleListReplies(1);
           return;
         }
         setLoading(false);
@@ -146,7 +148,7 @@ function Replies({ topicUid }) {
             description: "A resposta foi atualizada com sucesso.",
           });
           closeModal();
-          handleListReplies();
+          handleListReplies(page);
           return;
         }
         setLoading(false);
@@ -174,7 +176,7 @@ function Replies({ topicUid }) {
             title: "Resposta Removida",
             description: "A resposta foi removida com sucesso.",
           });
-          handleListReplies();
+          handleListReplies(page);
           return;
         }
         setLoading(false);
@@ -271,7 +273,7 @@ function Replies({ topicUid }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <VscCommentDiscussionQuote />
                   <span>
-                    {' '} {repliesCount} resposta{repliesCount !== 1 ? "s" : ""}
+                    {' '} {(topic?.repliesCount || 0)} resposta{(topic?.repliesCount || 0) !== 1 ? "s" : ""}
                   </span>
                 </div>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -315,6 +317,17 @@ function Replies({ topicUid }) {
         handleDelete={handleDeleteReply}
         mode={mode}
       />
+      {!loading && repliesCount > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
+          <Pagination
+            current={page}
+            pageSize={10}
+            total={repliesCount}
+            onChange={(p) => setPage(p)}
+            showSizeChanger={false}
+          />
+        </div>
+      )}
     </div>
   );
 }

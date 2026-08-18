@@ -7,6 +7,7 @@ import globalNotification from "../../../common/globalNotification.js"
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
 import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay"
 import { PlusOutlined } from "@ant-design/icons";
+import { Pagination } from "antd";
 
 function TopicPage({ categoryUid }) {
   const loggedUser = usePeople();
@@ -19,6 +20,9 @@ function TopicPage({ categoryUid }) {
   const [showModal, setShowModal] = useState(false);
   const [editingTopic, setEditingTopic] = useState(null);
   const [categoryName, setCategoryName] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchTitle, setSearchTitle] = useState("");
  
   const mode = 'topic'
 
@@ -39,10 +43,10 @@ function TopicPage({ categoryUid }) {
         console.log("Service Error", e);
       },
     });
-    handleListTopics();
-  }, [categoryUid]);
+    handleListTopics(searchTitle, page);
+  }, [categoryUid, page]);
 
-  const handleListTopics = (title = '') => {
+  const handleListTopics = (title = searchTitle, currentPage = page) => {
     if (!categoryUid) {
       return
     };
@@ -50,10 +54,11 @@ function TopicPage({ categoryUid }) {
     _service({
       method: "GET",
       url: "/forum/topic/list",
-      data: { categoryUid, title },
+      data: { categoryUid, title, page: currentPage },
       success: ({ json }) => {
         if (json) {
           setTopicList(json.data.items || []);
+          setTotalCount(json.data.pagination?.totalCount ?? 0);
         }
         setLoading(false);
       },
@@ -81,7 +86,8 @@ function TopicPage({ categoryUid }) {
             description: "O tópico foi criado com sucesso.",
           });
           closeModal();
-          handleListTopics();
+          setPage(1);
+          handleListTopics(searchTitle, 1);
           return;
         }
         setLoading(false);
@@ -114,7 +120,7 @@ function TopicPage({ categoryUid }) {
             description: "O tópico foi atualizado com sucesso.",
           });
           closeModal();
-          handleListTopics();
+          handleListTopics(searchTitle, page);
           return;
         }
         setLoading(false);
@@ -142,7 +148,7 @@ function TopicPage({ categoryUid }) {
             title: "Tópico Removido",
             description: "O tópico foi removido com sucesso.",
           });
-          handleListTopics();
+          handleListTopics(searchTitle, page);
           return;
         }
         setLoading(false);
@@ -158,10 +164,10 @@ function TopicPage({ categoryUid }) {
     });
   };
 
-
-
   const handleSearchTopic = (value) => {
-    handleListTopics(value);
+    setSearchTitle(value);
+    setPage(1);
+    handleListTopics(value, 1);
   };
 
   const openCreateModal = () => {
@@ -203,7 +209,11 @@ function TopicPage({ categoryUid }) {
         }}
         hideLocation={true}
         onSearch={handleSearchTopic}
-        onSearchClear={() => handleListTopics("")}
+        onSearchClear={() => {
+          setSearchTitle("");
+          setPage(1);
+          handleListTopics("", 1);
+        }}
         categoryName={categoryName}
       />
       <SupportCommunityDisplay
@@ -219,6 +229,17 @@ function TopicPage({ categoryUid }) {
         handleDelete={handleDeleteTopic}
         mode={mode}
       />
+      {!loading && totalCount > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
+          <Pagination
+            current={page}
+            pageSize={10}
+            total={totalCount}
+            onChange={(p) => setPage(p)}
+            showSizeChanger={false}
+          />
+        </div>
+      )}
     </div>
   );
 }
