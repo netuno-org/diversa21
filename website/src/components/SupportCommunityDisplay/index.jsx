@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import _service from "@netuno/service-client";
 
 import TextExpander from "../TextExpander";
 import TimeAgo from "../TimeAgo";
@@ -34,6 +36,7 @@ function SupportCommunityDisplay({
   handleDelete,
   mode
 }) {
+  const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -149,6 +152,9 @@ function SupportCommunityDisplay({
       <div className="support-community__items">
         {!loading && listItems.map((item) => {
           const activityAt = mode === 'category' ? item.lastActivityAt : item.moment;
+          const avatarSrc = (mode === 'topic' || mode === 'reply') && item.people?.avatar && item.people?.uid
+            ? _service.url(`/asset?uid=${item.people.uid}&type=avatar&entity=people`)
+            : avatarUrl;
           return (
             <Card
               key={item.uid}
@@ -159,17 +165,28 @@ function SupportCommunityDisplay({
               <div className="support-community__card-body">
                 <div className="support-community__content">
                   <div className="support-community__title-row">
-                    <Avatar
-                      size={50}
-                      className="support-community__icon-material"
-                      shape="square"
-                    >
-                      {mode === 'reply' ? <LuReply /> : mode === 'topic' ? <TagsOutlined /> : <FolderOpenOutlined />}
-                    </Avatar>
+                    {mode === 'category' ?
+                      <div className="support-community__icon-material">
+                        <FolderOpenOutlined />
+                      </div> :
+                      <Avatar
+                        size={50}
+                        className="support-community__avatar"
+                        shape="square"
+                        src={avatarSrc}
+                      />
+                    }
                     <div className="support-community__heading">
-                      <p className="support-community__title">
-                        {getItemTitle(item)}
-                      </p>
+                      {mode === 'topic' ?
+                        <Paragraph
+                          ellipsis={{ rows: 2 }}
+                          className="support-community__title">
+                          {getItemTitle(item)}
+                        </Paragraph> :
+                        <p className="support-community__title">
+                          {getItemTitle(item)}
+                        </p>
+                      }
                       <div className="support-community__meta">
                         {mode === 'topic' && item.people?.name && (
                           <span>Autor : {item.people.name}</span>

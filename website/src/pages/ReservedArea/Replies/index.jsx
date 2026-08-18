@@ -228,12 +228,12 @@ function Replies({ topicUid }) {
                   <FolderOpenOutlined />
                 </div>
                 <div className="replies-header__category-text">
-                  <Text className="replies-header__category-label">
+                  <p className="replies-header__category-label">
                     Categoria selecionada:
-                  </Text>
-                  <Text className="replies-header__category-name">
+                  </p>
+                  <p className="replies-header__category-name">
                     {topic.category.name}
-                  </Text>
+                  </p>
                 </div>
               </div>
               <Divider />
