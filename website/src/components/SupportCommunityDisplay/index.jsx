@@ -200,7 +200,7 @@ function SupportCommunityDisplay({
                       {mode === 'reply' ? <LuReply /> : mode === 'topic' ? <TagsOutlined /> : <FolderOpenOutlined />}
                     </Avatar>
                     <div className="support-community__heading">
-                      <Title level={4} className="support-community__title">
+                      <Title ellipsis={1} level={4} className="support-community__title">
                         {getItemTitle(item)}
                       </Title>
                       <div className="support-community__meta">

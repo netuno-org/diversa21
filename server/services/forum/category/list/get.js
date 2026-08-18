@@ -6,7 +6,7 @@ const name = _req.getString("name");
 const page = _req.getInt('page', 1);
 const pageSize = _req.getInt('pageSize', 10);
 
-const offset = page > 0 ? (page - 1) * pageSize : 0;;
+const offset = page > 0 ? (page - 1) * pageSize : 0;
 
 const dbCategories = _db.query(`
     SELECT

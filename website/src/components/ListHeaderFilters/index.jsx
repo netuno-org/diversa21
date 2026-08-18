@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { Typography, Button, Input, Select, Row, Col, Space, Avatar, Divider } from 'antd';
-import { PlusOutlined, FolderOpenOutlined } from "@ant-design/icons";
+import { PlusOutlined, FolderOpenOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../common/usePeople.js";
@@ -30,7 +30,7 @@ function ListHeaderFilters({
   const [locationOptions, setLocationOptions] = useState([])
   const hasHeaderTitle = title || createButton || extraActionButtons || categoryName;
 
-  // const loggedUser = usePeople();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (searchValue !== undefined) {
@@ -77,6 +77,16 @@ function ListHeaderFilters({
     <div>
       {hasHeaderTitle && (
         <div className="list-header-filters__header">
+          {categoryName  &&
+            <Button
+              type="link"
+              className="replies-header__back"
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate(-1)}
+            >
+              Voltar as categorias
+            </Button>
+          }
           <Row align="middle" gutter={[16, 16]}>
             {title && (
               <Col xs={(createButton || extraActionButtons) ? 12 : 24} sm={(createButton || extraActionButtons) ? 12 : 24}>

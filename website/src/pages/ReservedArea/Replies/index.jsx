@@ -255,19 +255,17 @@ function Replies({ topicUid }) {
               />
             </Link>
             <div className="replies-header__topic-body">
-              <Link
-                className="replies-header__title-link"
-                to={`/u/${topic?.people?.user}`}
-              >
-                <p className="replies-header__title">
-                  {topic?.title}
-                </p>
-              </Link>
+              <p className="replies-header__title">
+                {topic?.title}
+              </p>
               <div className="replies-header__meta">
                 {topic?.people?.name && (
                   <span>
                     Autor :{" "}
-                    {topic.people.name}
+                    <Link className="replies-header__title-link"
+                      to={`/u/${topic?.people?.user}`}>
+                      {topic.people.name}
+                    </Link>
                   </span>
                 )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
