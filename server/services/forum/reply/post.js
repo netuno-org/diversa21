@@ -12,7 +12,7 @@ if (content.length > 2000) {
 }
 
 const dbTopic = _db.queryFirst(`
-    SELECT forum_topico.id, forum_topico.uid, people.uid as "people_uid"
+    SELECT forum_topico.id, forum_topico.uid, forum_topico.forum_category_id, forum_topico.replies, people.uid as "people_uid"
       FROM forum_topico
     INNER JOIN people
       ON forum_topico.people_id = people.id
@@ -58,6 +58,14 @@ _db.update(
   dbTopic.getInt("id"),
   _val.map()
     .set("last_activity_at", replyMoment)
+    .set("replies", dbTopic.getInt("replies", 0) + 1)
+);
+
+_db.update(
+  "forum_categoria",
+  dbTopic.getInt("forum_category_id"),
+  _val.map()
+    .set("moment", replyMoment)
 );
 
 const dbReply = _db.queryFirst(`

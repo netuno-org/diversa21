@@ -16,7 +16,7 @@ if (content.length > 2000) {
 }
 
 const dbCategory = _db.queryFirst(`
-    SELECT id
+    SELECT id, topics
     FROM forum_categoria
     WHERE uid = ?::uuid
       AND active = true
@@ -38,11 +38,20 @@ const topicId = _db.insert(
     .set("content", content)
     .set("moment", topicMoment)
     .set("last_activity_at", topicMoment)
+    .set("replies", 0)
 );
 
 if (!topicId) {
   response.stopWithForumTopicNotCreated();
 }
+
+_db.update(
+  "forum_categoria",
+  dbCategory.getInt("id"),
+  _val.map()
+    .set("topics", dbCategory.getInt("topics", 0) + 1)
+    .set("moment", topicMoment)
+);
 
 const dbTopic = _db.queryFirst(`
     SELECT

@@ -18,12 +18,7 @@ const dbTopic = _db.queryFirst(`
       p.name AS "people_name",
       nu.user AS "people_user",
       p.avatar AS "people_avatar",
-      (
-        SELECT COUNT(*)
-        FROM forum_resposta r
-        WHERE r.topic_id = t.id
-          AND r.active = true
-      ) AS "replies_count"
+      COALESCE(t.replies, 0) AS "replies_count"
     FROM forum_topico t
     INNER JOIN forum_categoria c ON t.forum_category_id = c.id
     INNER JOIN people p ON t.people_id = p.id

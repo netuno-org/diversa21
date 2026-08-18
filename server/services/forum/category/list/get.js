@@ -14,14 +14,8 @@ const dbCategories = _db.query(`
       c.uid,
       c.name,
       c.description,
-      COALESCE(t.topics_count, 0) AS "topics_count"
+      COALESCE(c.topics, 0) AS "topics_count"
     FROM forum_categoria c
-    LEFT JOIN (
-      SELECT forum_category_id, COUNT(*) AS topics_count
-      FROM forum_topico
-      WHERE active = true
-      GROUP BY forum_category_id
-    ) t ON t.forum_category_id = c.id
     WHERE c.active = true
       AND (?::text = '' OR c.name ILIKE ?::text)
     ORDER BY c.name ASC

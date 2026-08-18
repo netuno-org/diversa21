@@ -35,17 +35,11 @@ const dbTopics = _db.query(`
       p.name AS "people_name",
       nu.user AS "people_user",
       p.avatar AS "people_avatar",
-      COALESCE(r.replies_count, 0) AS "replies_count"
+      COALESCE(t.replies, 0) AS "replies_count"
     FROM forum_topico t
     INNER JOIN forum_categoria c ON t.forum_category_id = c.id
     INNER JOIN people p ON t.people_id = p.id
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
-    LEFT JOIN (
-      SELECT topic_id, COUNT(*) AS replies_count
-      FROM forum_resposta
-      WHERE active = true
-      GROUP BY topic_id
-    ) r ON r.topic_id = t.id
     WHERE t.forum_category_id = ?::int
       AND t.active = true
       AND (?::text = '' OR t.title ILIKE ?::text)
