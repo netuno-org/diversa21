@@ -14,14 +14,20 @@ const dbCategories = _db.query(`
       c.uid,
       c.name,
       c.description,
-      COALESCE(c.topics, 0) AS "topics_count"
+      COALESCE(c.topics, 0) AS "topics_count",
+      (
+        SELECT MAX(COALESCE(t.last_activity_at, t.moment))
+        FROM forum_topico t
+        WHERE t.forum_category_id = c.id
+          AND t.active = true
+      ) AS last_activity_at
     FROM forum_categoria c
     WHERE c.active = true
       AND (?::text = '' OR c.name ILIKE ?::text)
     ORDER BY c.name ASC
     LIMIT ?::int
     OFFSET ?::int
-`, name, `%${name}%`, pageSize, offset );
+`, name, `%${name}%`, pageSize, offset);
 
 const totalCount = dbCategories.length === 0 ? 0 : dbCategories[0].getInt("total_count")
 
@@ -33,6 +39,7 @@ for (const dbCategory of dbCategories) {
       .set("name", dbCategory.getString("name"))
       .set("description", dbCategory.getString("description"))
       .set("topicsCount", dbCategory.getInt("topics_count", 0))
+      .set("lastActivityAt", dbCategory.getString("last_activity_at"))
   );
 }
 

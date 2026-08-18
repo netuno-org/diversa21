@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import TextExpander from "../TextExpander";
 import TimeAgo from "../TimeAgo";
@@ -11,13 +11,12 @@ import {
   FolderOpenOutlined,
   TagsOutlined
 } from "@ant-design/icons";
-import { IoMegaphoneOutline } from "react-icons/io5";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
 
 import './index.less'
 
-const { Paragraph, Text, Title } = Typography;
+const { Paragraph, Text } = Typography;
 const { TextArea } = Input;
 
 function SupportCommunityDisplay({
@@ -149,6 +148,7 @@ function SupportCommunityDisplay({
       )}
       <div className="support-community__items">
         {!loading && listItems.map((item) => {
+          const activityAt = mode === 'category' ? item.lastActivityAt : item.moment;
           return (
             <Card
               key={item.uid}
@@ -160,16 +160,16 @@ function SupportCommunityDisplay({
                 <div className="support-community__content">
                   <div className="support-community__title-row">
                     <Avatar
-                      size={35}
+                      size={50}
                       className="support-community__icon-material"
                       shape="square"
                     >
                       {mode === 'reply' ? <LuReply /> : mode === 'topic' ? <TagsOutlined /> : <FolderOpenOutlined />}
                     </Avatar>
                     <div className="support-community__heading">
-                      <Title ellipsis={1} level={4} className="support-community__title">
+                      <p className="support-community__title">
                         {getItemTitle(item)}
-                      </Title>
+                      </p>
                       <div className="support-community__meta">
                         {mode === 'topic' && item.people?.name && (
                           <span>Autor : {item.people.name}</span>
@@ -185,13 +185,16 @@ function SupportCommunityDisplay({
                             <TagsOutlined />
                             {item.topicsCount} tópico{item.topicsCount !== 1 ? "s" : ""}
                             {' '}
-                            encontrado{item.topicsCount !== 1 ? "s" : ""}
+                            criado{item.topicsCount !== 1 ? "s" : ""}
                           </span>
                         )}
-                        {item.moment && (
+                        {activityAt && (
                           <span className="support-community__meta-item">
+                            {mode === 'category' && (
+                              <span style={{ marginRight: 5 }}>Última interação:</span>
+                            )}
                             <ClockCircleOutlined />
-                            <TimeAgo sentAt={item.moment} />
+                            <TimeAgo sentAt={activityAt} />
                           </span>
                         )}
                       </div>
