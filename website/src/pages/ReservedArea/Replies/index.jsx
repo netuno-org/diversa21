@@ -8,6 +8,7 @@ import globalNotification from "../../../common/globalNotification.js";
 import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay";
 
 import TimeAgo from "../../../components/TimeAgo/index.jsx";
+import TextExpander from "../../../components/TextExpander/index.jsx";
 
 import { Button, Divider, Typography, Avatar, Pagination } from "antd";
 import {
@@ -32,8 +33,6 @@ function Replies({ topicUid }) {
   const [showModal, setShowModal] = useState(false);
   const [editingReply, setEditingReply] = useState(null);
   const [topic, setTopic] = useState(null);
-  const [expanded, setExpanded] = useState(false);
-  const [isEllipsis, setIsEllipsis] = useState(false);
   const [repliesCount, setRepliesCount] = useState(0);
   const [page, setPage] = useState(1);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
@@ -50,11 +49,6 @@ function Replies({ topicUid }) {
     }
     setAvatarUrl("/images/profile-default.png");
   }, [topic?.people]);
-
-  useEffect(() => {
-    setExpanded(false);
-    setIsEllipsis(false);
-  }, [topic?.content]);
 
   useEffect(() => {
     if (!topicUid) {
@@ -284,16 +278,10 @@ function Replies({ topicUid }) {
           {topic?.content && (
             <>
               <Paragraph
-                ellipsis={expanded ? false : { rows: 4, onEllipsis: setIsEllipsis }}
                 className="replies-header__description"
               >
-                {topic.content}
+                <TextExpander text={topic.content} />
               </Paragraph>
-              {(isEllipsis || expanded) && (
-                <Button style={{ padding: 0 }} type="link" onClick={() => setExpanded(!expanded)}>
-                  {expanded ? "Ver menos" : "Ver mais"}
-                </Button>
-              )}
             </>
           )}
         </div>

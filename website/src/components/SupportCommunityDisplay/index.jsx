@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+import TextExpander from "../TextExpander";
+import TimeAgo from "../TimeAgo";
+
 import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar } from 'antd'
 import {
   ClockCircleOutlined,
@@ -12,46 +15,10 @@ import { IoMegaphoneOutline } from "react-icons/io5";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
 
-import TimeAgo from "../TimeAgo";
-
 import './index.less'
 
 const { Paragraph, Text, Title } = Typography;
 const { TextArea } = Input;
-
-function ReplyDescription({ content }) {
-  const [expanded, setExpanded] = useState(false);
-  const [isEllipsis, setIsEllipsis] = useState(false);
-
-  useEffect(() => {
-    setExpanded(false);
-    setIsEllipsis(false);
-  }, [content]);
-
-  return (
-    <>
-      <Paragraph
-        type="primary"
-        ellipsis={expanded ? false : { rows: 4, onEllipsis: setIsEllipsis }}
-        className="support-community__description"
-      >
-        {content}
-      </Paragraph>
-      {(isEllipsis || expanded) && (
-        <Button
-          style={{ padding: 0 }}
-          type="link"
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpanded(!expanded);
-          }}
-        >
-          {expanded ? "Ver menos" : "Ver mais"}
-        </Button>
-      )}
-    </>
-  );
-}
 
 function SupportCommunityDisplay({
   loading,
@@ -267,12 +234,12 @@ function SupportCommunityDisplay({
                     )}
                   </div>
                   {mode === 'reply' ? (
-                    <ReplyDescription content={getItemDescription(item)} />
+                    <div className="support-community__description">
+                      <TextExpander text={item.content} />
+                    </div>
                   ) : (
                     <Paragraph
-                      type="primary"
-                      style={{marginTop: 12}}
-                      ellipsis={{ rows: 3, tooltip: false }}
+                      ellipsis={{ rows: 4 }}
                       className="support-community__description"
                     >
                       {getItemDescription(item)}
