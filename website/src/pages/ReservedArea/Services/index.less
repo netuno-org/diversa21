@@ -26,6 +26,23 @@
     }
   }
 
+  &__filters-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__filters-main {
+    display: flex;
+    flex: 1;
+    gap: 8px;
+  }
+
+  &__filters-select {
+    flex: 1;
+  }
+
   &__card {
     cursor: pointer;
     transition: all 0.2s ease;
@@ -124,6 +141,14 @@
     gap: 6px;
     font-size: 13px;
     margin: 0;
+
+    .anticon {
+      color: #8b6aa2;
+    }
+  }
+
+  &__date-text {
+    font-size: 12px;
   }
 
   &__description {
@@ -150,6 +175,10 @@
     color: #555;
     max-width: 100%;
     overflow: hidden;
+
+    .anticon {
+      color: #8b6aa2;
+    }
 
     a {
       color: #8b6aa2;
@@ -187,7 +216,7 @@
     gap: 16px;
 
     .services-list__card-subheader {
-      margin-bottom: 8px;
+      margin-bottom: 24px;
     }
 
     .services-list__card-meta {
@@ -196,6 +225,10 @@
 
     .services-list__description {
       margin-bottom: 0 !important;
+    }
+
+    .services-list__date-text {
+      font-size: 13px;
     }
   }
 }

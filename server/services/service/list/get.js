@@ -38,6 +38,7 @@ let sqlQuery = `
         service.website,
         service.instagram,
         service.active,
+        service.created_at AS created_at,
         service_category.uid AS "category_uid",
         service_category.name AS "category_name",
         city.uid AS "city_uid",
@@ -105,6 +106,7 @@ for (const dbService of dbServices) {
       .set('website', dbService.getString('website'))
       .set('instagram', dbService.getString('instagram'))
       .set('active', dbService.getBoolean('active'))
+      .set('createdAt', dbService.getString('created_at'))
       .set('isFavorite', dbService.getBoolean('is_favorite'))
       .set('category', _val.map()
         .set('uid', dbService.getUID('category_uid'))

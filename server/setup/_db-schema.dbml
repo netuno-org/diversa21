@@ -146,6 +146,7 @@ Table service {
   id int [pk, increment]
   category_id int [not null, ref: > service_category.id, note: 'Categoria']
   city_id int [not null, ref: > city.id, note: 'Cidade']
+  created_at timestamp [note: 'Data de Criação']
   description varchar(250) [note: 'Descrição']
   instagram varchar(250) [note: 'Instagram']
   name varchar(250) [not null, note: 'Nome']

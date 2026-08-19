@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -112,6 +112,12 @@ function Services() {
         setCategoriesLoading(false);
       },
     });
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-PT', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   const handleCategoryChange = (categoryUid) => {
@@ -336,9 +342,9 @@ function Services() {
           fullWidthSearch={true}
           
           extraFilters={
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', width: '100%' }}>
+            <div className="services-list__filters-wrapper">
               
-              <div style={{ display: 'flex', flex: 1, gap: '8px' }}>
+              <div className="services-list__filters-main">
                 <Select
                   value={selectedCategory?.uid}
                   allowClear
@@ -353,7 +359,7 @@ function Services() {
                   filterOption={(input, option) =>
                     option.label.toLowerCase().includes(input.toLowerCase())
                   }
-                  style={{ flex: 1 }}
+                  className="services-list__filters-select"
                 />
                 {selectedCategory && loggedUser.canManageServiceCategories() && (
                   <Popconfirm
@@ -447,11 +453,19 @@ function Services() {
                   <Tag className="services-list__category-tag">{service.category.name}</Tag>
                 )}
                 <div className="services-list__card-location">
-                  <EnvironmentOutlined style={{ color: '#8b6aa2' }} />
+                  <EnvironmentOutlined />
                   <Text type="secondary">
                     {service.city?.name}, {service.state?.name}
                   </Text>
                 </div>
+                {service.createdAt && (
+                  <div className="services-list__card-location">
+                    <CalendarOutlined />
+                    <Text type="secondary" className="services-list__date-text">
+                      Adicionado a {formatDate(service.createdAt)}
+                    </Text>
+                  </div>
+                )}
               </div>
               
               {service.description && (
@@ -469,7 +483,7 @@ function Services() {
               )}
               {service.website && (
                 <div className="services-list__meta-item">
-                  <LinkOutlined style={{ color: '#8b6aa2' }} />
+                  <LinkOutlined />
                   <a
                     href={service.website.startsWith('http') ? service.website : `https://${service.website}`}
                     target="_blank"
@@ -482,7 +496,7 @@ function Services() {
               )}
               {service.instagram && (
                 <div className="services-list__meta-item">
-                  <InstagramOutlined style={{ color: '#8b6aa2' }} />
+                  <InstagramOutlined />
                   <a
                     href={`https://instagram.com/${service.instagram.replace(/^@/, '')}`}
                     target="_blank"
@@ -537,11 +551,20 @@ function Services() {
                 <Tag className="services-list__category-tag">{serviceDetails.category.name}</Tag>
               )}
               <div className="services-list__card-location">
-                <EnvironmentOutlined style={{ color: '#8b6aa2' }} />
+                <EnvironmentOutlined />
                 <Text type="secondary">
                   {serviceDetails.city?.name}, {serviceDetails.state?.name} / {serviceDetails.country?.name}
                 </Text>
               </div>
+
+              {serviceDetails.createdAt && (
+                <div className="services-list__card-location">
+                  <CalendarOutlined />
+                  <Text type="secondary" className="services-list__date-text">
+                    Adicionado a {formatDate(serviceDetails.createdAt)}
+                  </Text>
+                </div>
+              )}
             </div>
 
             {serviceDetails.description && (
@@ -558,7 +581,7 @@ function Services() {
               )}
               {serviceDetails.website && (
                 <div className="services-list__meta-item">
-                  <LinkOutlined style={{ color: '#8b6aa2' }} />{' '}
+                  <LinkOutlined />{' '}
                   <a
                     href={serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`}
                     target="_blank"
@@ -570,7 +593,7 @@ function Services() {
               )}
               {serviceDetails.instagram && (
                 <div className="services-list__meta-item">
-                  <InstagramOutlined style={{ color: '#8b6aa2' }} />{' '}
+                  <InstagramOutlined />{' '}
                   <a
                     href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, '')}`}
                     target="_blank"

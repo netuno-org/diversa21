@@ -44,6 +44,7 @@ const serviceId = _db.insert(
     .set('phone', phone)
     .set('website', website)
     .set('instagram', instagram)
+    .set('created_at', new Date().toISOString().replace('T', ' ').substring(0, 19))
 );
 
 if (!serviceId) {
