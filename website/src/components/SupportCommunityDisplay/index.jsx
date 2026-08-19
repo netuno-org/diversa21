@@ -7,7 +7,6 @@ import TimeAgo from "../TimeAgo";
 
 import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar, Popover, Grid } from 'antd'
 import {
-  ClockCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   FolderOpenOutlined,
@@ -187,7 +186,7 @@ function SupportCommunityDisplay({
           <Spin size="large" />
         </div>
       )}
-      {!loading && (
+      {!loading && listItems.length > 0 && (
         <div className="support-community__count">
           <Text type="secondary">
             {listItems.length} {getCountLabel()}
@@ -250,27 +249,37 @@ function SupportCommunityDisplay({
                         {mode === 'topic' && item.people?.name && (
                           <span>Autor : {item.people.name}</span>
                         )}
-                        {mode === 'topic' && (
+                        {mode === 'topic' && item.moment && (
+                          <span className="support-community__meta-item">
+                            <TimeAgo sentAt={item.moment} />
+                          </span>
+                        )}
+                        {mode === 'topic' && item.repliesCount > 0 && (
                           <span className="support-community__meta-item">
                             <VscCommentDiscussionQuote />
                             {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
                           </span>
                         )}
-                        {mode === 'category' && (
+                        {mode === 'topic' && item.repliesCount > 0 && item.lastActivityAt && (
                           <span className="support-community__meta-item">
-                            <TagsOutlined />
-                            {item.topicsCount} tópico{item.topicsCount !== 1 ? "s" : ""}
-                            {' '}
-                            criado{item.topicsCount !== 1 ? "s" : ""}
+                            <span>Última interação:</span>
+                            <TimeAgo sentAt={item.lastActivityAt} />
                           </span>
                         )}
-                        {activityAt && (
+                        {mode !== 'topic' && activityAt && (
                           <span className="support-community__meta-item">
                             {mode === 'category' && (
                               <span style={{ marginRight: 5 }}>Última interação:</span>
                             )}
-                            <ClockCircleOutlined />
                             <TimeAgo sentAt={activityAt} />
+                          </span>
+                        )}
+                        {mode === 'category' && (
+                          <span className="support-community__meta-item">
+                            <TagsOutlined />
+                            {item.topicsCount} tópico{item.topicsCount > 1 ? "s" : ""}
+                            {' '}
+                            criado{item.topicsCount > 1 ? "s" : ""}
                           </span>
                         )}
                       </div>

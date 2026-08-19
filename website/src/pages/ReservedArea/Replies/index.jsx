@@ -13,7 +13,6 @@ import { Button, Divider, Typography, Avatar, Pagination } from "antd";
 import {
   ArrowLeftOutlined,
   FolderOpenOutlined,
-  ClockCircleOutlined
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
@@ -261,16 +260,23 @@ function Replies({ topicUid }) {
                     </Link>
                   </span>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <VscCommentDiscussionQuote />
-                  <span>
-                    {' '} {(topic?.repliesCount || 0)} resposta{(topic?.repliesCount || 0) !== 1 ? "s" : ""}
-                  </span>
-                </div>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <ClockCircleOutlined size={14} />
                   <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
                 </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  {topic?.repliesCount > 0 &&
+                    <span>
+                      <VscCommentDiscussionQuote /> {' '}
+                      {topic?.repliesCount} resposta{topic?.repliesCount !== 1 ? "s" : ""}
+                    </span>
+                  }
+                </div>
+                {topic?.repliesCount > 0 && topic?.lastActivityAt && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    Última interação:
+                    <TimeAgo sentAt={topic.lastActivityAt} className="replies-header__time-ago" />
+                  </span>
+                )}
               </div>
             </div>
           </div>
