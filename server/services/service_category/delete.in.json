@@ -1,0 +1,12 @@
+{
+  "tags": [
+    "service_category"
+  ],
+  "summary": "Delete a service category",
+  "properties": {
+    "uid": {
+      "type": "uid",
+      "required": true
+    }
+  }
+}

@@ -185,6 +185,28 @@ function Services() {
     });
   };
 
+  const handleDeleteCategory = (categoryUid) => {
+    _service({
+      url: 'service_category',
+      method: 'DELETE',
+      data: { uid: categoryUid },
+      success: ({ json }) => {
+        if (json?.result) {
+          message.success('Categoria apagada com sucesso!');
+          setSelectedCategory(null);
+          fetchCategories();
+          setRefreshTrigger(prev => prev + 1);
+        } else {
+          message.error(json?.error || 'Erro ao apagar categoria.');
+        }
+      },
+      fail: (err) => {
+        const json = err?.json;
+        message.error(json?.error || 'Erro de comunicação ao apagar a categoria.');
+      }
+    });
+  };
+
   const handleCitySearch = (value) => {
     if (!value) {
       setCityOptions([]);
@@ -315,22 +337,36 @@ function Services() {
           
           extraFilters={
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center', width: '100%' }}>
-              <Select
-                value={selectedCategory?.uid}
-                allowClear
-                showSearch
-                loading={categoriesLoading}
-                placeholder="Filtrar por categoria"
-                onChange={handleCategoryChange}
-                options={categories.map((category) => ({
-                  label: category.name,
-                  value: category.uid,
-                }))}
-                filterOption={(input, option) =>
-                  option.label.toLowerCase().includes(input.toLowerCase())
-                }
-                style={{ flex: 1 }}
-              />
+              
+              <div style={{ display: 'flex', flex: 1, gap: '8px' }}>
+                <Select
+                  value={selectedCategory?.uid}
+                  allowClear
+                  showSearch
+                  loading={categoriesLoading}
+                  placeholder="Filtrar por categoria"
+                  onChange={handleCategoryChange}
+                  options={categories.map((category) => ({
+                    label: category.name,
+                    value: category.uid,
+                  }))}
+                  filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                  }
+                  style={{ flex: 1 }}
+                />
+                {selectedCategory && loggedUser.canManageServiceCategories() && (
+                  <Popconfirm
+                    title="Apagar categoria?"
+                    description="Apenas categorias sem serviços podem ser apagadas."
+                    onConfirm={() => handleDeleteCategory(selectedCategory.uid)}
+                    okText="Sim"
+                    cancelText="Não"
+                  >
+                    <Button danger icon={<DeleteOutlined />} title="Apagar categoria selecionada" />
+                  </Popconfirm>
+                )}
+              </div>
               
               <Button 
                 type={showFavorites ? "primary" : "default"}
