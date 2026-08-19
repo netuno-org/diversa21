@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import _service from "@netuno/service-client";
 
@@ -169,24 +170,38 @@ function SupportCommunityDisplay({
                       <div className="support-community__icon-material">
                         <FolderOpenOutlined />
                       </div> :
-                      <Avatar
+                      <Link to={`/u/${item?.people?.user}`}>
+                        <Avatar
                         size={50}
                         className="support-community__avatar"
                         shape="square"
                         src={avatarSrc}
                       />
+                      </Link>
                     }
                     <div className="support-community__heading">
-                      {mode === 'topic' ?
+                      {mode === 'topic' ? (
                         <Paragraph
                           ellipsis={{ rows: 2 }}
-                          className="support-community__title">
+                          className="support-community__title"
+                        >
                           {getItemTitle(item)}
-                        </Paragraph> :
+                        </Paragraph>
+                      ) : mode === 'reply' ? (
+                        <Link
+                          className="support-community__title-link"
+                          to={`/u/${item.people?.user}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <p className="support-community__title">
+                            {getItemTitle(item)}
+                          </p>
+                        </Link>
+                      ) : (
                         <p className="support-community__title">
                           {getItemTitle(item)}
                         </p>
-                      }
+                      )}
                       <div className="support-community__meta">
                         {mode === 'topic' && item.people?.name && (
                           <span>Autor : {item.people.name}</span>
