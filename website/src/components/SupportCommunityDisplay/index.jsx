@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 import _service from "@netuno/service-client";
 
-import TextExpander from "../TextExpander";
 import TimeAgo from "../TimeAgo";
 
 import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar, Popover, Grid } from 'antd'
@@ -217,11 +216,11 @@ function SupportCommunityDisplay({
                       </div> :
                       <Link to={`/u/${item?.people?.user}`}>
                         <Avatar
-                        size={50}
-                        className="support-community__avatar"
-                        shape="square"
-                        src={avatarSrc}
-                      />
+                          size={50}
+                          className="support-community__avatar"
+                          shape="square"
+                          src={avatarSrc}
+                        />
                       </Link>
                     }
                     <div className="support-community__heading">
@@ -315,7 +314,7 @@ function SupportCommunityDisplay({
                   </div>
                   {mode === 'reply' ? (
                     <div className="support-community__description">
-                      <TextExpander text={item.content} />
+                      {item.content}
                     </div>
                   ) : (
                     <Paragraph

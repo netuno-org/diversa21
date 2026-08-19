@@ -8,7 +8,6 @@ import globalNotification from "../../../common/globalNotification.js";
 import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay";
 
 import TimeAgo from "../../../components/TimeAgo/index.jsx";
-import TextExpander from "../../../components/TextExpander/index.jsx";
 
 import { Button, Divider, Typography, Avatar, Pagination } from "antd";
 import {
@@ -280,7 +279,7 @@ function Replies({ topicUid }) {
               <Paragraph
                 className="replies-header__description"
               >
-                <TextExpander text={topic.content} />
+                text={topic.content}
               </Paragraph>
             </>
           )}
