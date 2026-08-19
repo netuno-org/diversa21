@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import _service from "@netuno/service-client";
@@ -6,16 +6,19 @@ import _service from "@netuno/service-client";
 import TextExpander from "../TextExpander";
 import TimeAgo from "../TimeAgo";
 
-import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar } from 'antd'
+import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar, Popover, Grid } from 'antd'
 import {
   ClockCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   FolderOpenOutlined,
-  TagsOutlined
+  TagsOutlined,
+  SmileOutlined
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
+import EmojiPicker from "emoji-picker-react";
+import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 
 import './index.less'
 
@@ -39,9 +42,15 @@ function SupportCommunityDisplay({
 }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [form] = Form.useForm();
+  const [descriptionValue, setDescriptionValue] = useState("");
+  const textAreaRef = useRef(null);
+
+  const screens = Grid.useBreakpoint();
+  const isMobile = screens.lg === false;
 
   useEffect(() => {
     if (!showModal) {
+      setDescriptionValue("");
       return;
     }
     if (editingCategory) {
@@ -49,6 +58,7 @@ function SupportCommunityDisplay({
         name: editingCategory.name,
         description: editingCategory.description,
       });
+      setDescriptionValue(editingCategory.description || "");
       return;
     }
     if (editingTopic) {
@@ -56,16 +66,51 @@ function SupportCommunityDisplay({
         title: editingTopic.title,
         content: editingTopic.content,
       });
+      setDescriptionValue(editingTopic.content || "");
       return;
     }
     if (editingReply) {
       form.setFieldsValue({
         content: editingReply.content,
       });
+      setDescriptionValue(editingReply.content || "");
       return;
     }
+    setDescriptionValue("");
     form.resetFields();
   }, [showModal, editingCategory, editingTopic, editingReply, form]);
+
+  const handleEmojiClick = (emojiData) => {
+    const text = descriptionValue;
+    const emoji = emojiData.emoji;
+
+    let selectionStart = text.length;
+    let selectionEnd = text.length;
+
+    const textarea = textAreaRef.current?.resizableTextArea?.textArea;
+    if (textarea) {
+      selectionStart = textarea.selectionStart;
+      selectionEnd = textarea.selectionEnd;
+    }
+
+    const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
+    const limit = mode === 'reply' || mode === 'topic' ? 2000 : 150;
+
+    if (updatedText.length > limit) {
+      return;
+    }
+
+    setDescriptionValue(updatedText);
+    const fieldName = mode === 'reply' || mode === 'topic' ? 'content' : 'description';
+    form.setFieldsValue({ [fieldName]: updatedText });
+
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(selectionStart + emoji.length, selectionStart + emoji.length);
+      }
+    }, 50);
+  };
 
   const getCountLabel = () => {
     if (mode === 'reply') {
@@ -323,13 +368,49 @@ function SupportCommunityDisplay({
                 { max: 150, message: "A descrição deve ter no máximo 150 caracteres." },
               ]}
             >
-              <TextArea
-                placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
-                rows={4}
-                maxLength={mode === 'reply' || mode === 'topic' ? 2000 : 150}
-                showCount
-                style={{ resize: "none" }}
-              />
+              <div style={{ position: 'relative' }}>
+                <TextArea
+                  ref={textAreaRef}
+                  value={descriptionValue}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setDescriptionValue(val);
+                    const fieldName = mode === 'reply' || mode === 'topic' ? 'content' : 'description';
+                    form.setFieldsValue({ [fieldName]: val });
+                  }}
+                  placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
+                  rows={5}
+                  maxLength={mode === 'reply' || mode === 'topic' ? 2000 : 150}
+                  showCount
+                  style={{ resize: "none", paddingBottom: '36px' }}
+                />
+                {!isMobile && (
+                  <div style={{ position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 }}>
+                    <Popover
+                      content={
+                        <EmojiPicker
+                          onEmojiClick={handleEmojiClick}
+                          skinTonesDisabled={false}
+                          previewConfig={{ showPreview: false }}
+                          emojiData={ptEmojis}
+                          searchPlaceholder="Pesquisar..."
+                          height="320px"
+                          width="280px"
+                        />
+                      }
+                      trigger="click"
+                      placement="topRight"
+                    >
+                      <Button
+                        type="text"
+                        shape="circle"
+                        icon={<SmileOutlined />}
+                        style={{ fontSize: 18, color: '#8c8c8c' }}
+                      />
+                    </Popover>
+                  </div>
+                )}
+              </div>
             </Form.Item>
             <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
               <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">

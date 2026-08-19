@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined } from "@ant-design/icons";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid } from "antd";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined, SmileOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
+import EmojiPicker from "emoji-picker-react";
+import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 
 import "./index.less";
 
@@ -31,6 +33,11 @@ function Services() {
   const [serviceForm] = Form.useForm();
   const [editingService, setEditingService] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
+  const [descriptionValue, setDescriptionValue] = useState("");
+  const textAreaRef = useRef(null);
+
+  const screens = Grid.useBreakpoint();
+  const isMobile = screens.lg === false;
   
   const [serviceDetails, setServiceDetails] = useState(null);
   
@@ -41,6 +48,36 @@ function Services() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const canCreateService = ['super-admin', 'management'].includes(loggedUser?.data?.group?.code);
+
+  const handleEmojiClick = (emojiData) => {
+    const text = descriptionValue;
+    const emoji = emojiData.emoji;
+
+    let selectionStart = text.length;
+    let selectionEnd = text.length;
+
+    const textarea = textAreaRef.current?.resizableTextArea?.textArea;
+    if (textarea) {
+      selectionStart = textarea.selectionStart;
+      selectionEnd = textarea.selectionEnd;
+    }
+
+    const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
+    
+    if (updatedText.length > 2000) {
+      return;
+    }
+
+    setDescriptionValue(updatedText);
+    serviceForm.setFieldsValue({ description: updatedText });
+
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(selectionStart + emoji.length, selectionStart + emoji.length);
+      }
+    }, 50);
+  };
 
   const requestData = useMemo(
     () => ({
@@ -250,6 +287,7 @@ function Services() {
           if (json?.result) {
             setServiceModalVisible(false);
             setEditingService(null);
+            setDescriptionValue("");
             serviceForm.resetFields();
             message.success(isEdit ? 'Serviço editado com sucesso!' : 'Serviço publicado com sucesso!');
             
@@ -275,6 +313,7 @@ function Services() {
     if (e) e.stopPropagation();
     setEditingService(service);
     setCityOptions([{ label: `${service.city?.name}, ${service.state?.name} / ${service.country?.name}`, value: service.city?.uid }]);
+    setDescriptionValue(service.description || "");
     setServiceModalVisible(true);
     
     setTimeout(() => {
@@ -318,7 +357,10 @@ function Services() {
           createButton={canCreateService ? {
             icon: <PlusOutlined />,
             text: "Novo Serviço",
-            onClick: () => setServiceModalVisible(true),
+            onClick: () => {
+              setDescriptionValue("");
+              setServiceModalVisible(true);
+            },
           } : null}
           
           extraActionButtons={
@@ -681,10 +723,51 @@ function Services() {
             name="description"
             rules={[
               { required: true, message: 'A descrição é obrigatória' },
-              { max: 250, message: 'A descrição não pode ter mais de 250 caracteres' }
+              { max: 2000, message: 'A descrição não pode ter mais de 2000 caracteres' }
             ]}
           >
-            <Input.TextArea maxLength={250} showCount rows={4} placeholder="Descreva os serviços prestados..." />
+            <div style={{ position: 'relative' }}>
+              <Input.TextArea
+                ref={textAreaRef}
+                value={descriptionValue}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setDescriptionValue(val);
+                  serviceForm.setFieldsValue({ description: val });
+                }}
+                maxLength={2000}
+                showCount
+                rows={5}
+                placeholder="Descreva os serviços prestados..."
+                style={{ paddingBottom: '36px' }}
+              />
+              {!isMobile && (
+                <div style={{ position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 }}>
+                  <Popover
+                    content={
+                      <EmojiPicker
+                        onEmojiClick={handleEmojiClick}
+                        skinTonesDisabled={false}
+                        previewConfig={{ showPreview: false }}
+                        emojiData={ptEmojis}
+                        searchPlaceholder="Pesquisar..."
+                        height="320px"
+                        width="280px"
+                      />
+                    }
+                    trigger="click"
+                    placement="topRight"
+                  >
+                    <Button
+                      type="text"
+                      shape="circle"
+                      icon={<SmileOutlined />}
+                      style={{ fontSize: 18, color: '#8c8c8c' }}
+                    />
+                  </Popover>
+                </div>
+              )}
+            </div>
           </Form.Item>
 
           <Row gutter={16}>
