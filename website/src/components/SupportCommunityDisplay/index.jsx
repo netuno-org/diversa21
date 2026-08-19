@@ -351,9 +351,22 @@ function SupportCommunityDisplay({
               <Form.Item
                 name={mode === 'topic' ? 'title' : 'name'}
                 label={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}
-                rules={[{ required: true, message: "O título é obrigatório!" }]}
+                rules={[
+                  { required: true, message: "O título é obrigatório!" },
+                  {
+                    max: mode === 'category' ? 50 : 250,
+                    message: mode === 'topic'
+                      ? "O título deve ter no máximo 250 caracteres."
+                      : "O nome deve ter no máximo 50 caracteres.",
+                  },
+                ]}
               >
-                <Input placeholder={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'} />
+                <Input
+                  className="support-community__title-input"
+                  placeholder={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}
+                  maxLength={mode === 'category' ? 50 : 250}
+                  showCount
+                />
               </Form.Item>
             )}
             <Form.Item
@@ -361,7 +374,7 @@ function SupportCommunityDisplay({
               label={mode === 'reply' ? "Resposta" : "Descrição"}
               rules={mode === 'reply' || mode === 'topic' ? [
                 { required: true, message: mode === 'reply' ? "A resposta é obrigatória!" : "A descrição é obrigatória!" },
-                { max: 2000, message: mode === 'reply' ? "A resposta deve ter no máximo 2000 caracteres." : "A descrição deve ter no máximo 2000 caracteres." },
+                { max: 5000, message: mode === 'reply' ? "A resposta deve ter no máximo 2000 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
               ] : [
                 { required: true, message: "A descrição é obrigatória!" },
                 { min: 30, message: "A descrição deve ter no mínimo 30 caracteres." },
@@ -380,7 +393,7 @@ function SupportCommunityDisplay({
                   }}
                   placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
                   rows={5}
-                  maxLength={mode === 'reply' || mode === 'topic' ? 2000 : 150}
+                  maxLength={mode === 'topic' ? 5000 : mode === 'reply' ? 2500 : 500}
                   showCount
                   style={{ resize: "none", paddingBottom: '36px' }}
                 />
