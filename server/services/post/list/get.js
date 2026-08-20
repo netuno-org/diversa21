@@ -49,7 +49,7 @@ if (peopleUid) {
 
 sqlQuery += `
     AND (post.parent_id IS NULL OR post.parent_id = ?::int)
-    ORDER BY post.moment DESC
+    ORDER BY ${parent != '' ? 'post.likes DESC, post.moment DESC' : 'post.moment DESC'}
     LIMIT 10
     OFFSET ?::int
 `;
