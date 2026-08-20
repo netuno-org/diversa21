@@ -267,20 +267,20 @@ function SupportCommunityDisplay({
                             <TimeAgo sentAt={item.lastActivityAt} />
                           </span>
                         )}
-                        {mode !== 'topic' && activityAt && (
-                          <span className="support-community__meta-item">
-                            {mode === 'category' && (
-                              <span>Última interação:</span>
-                            )}
-                            <TimeAgo sentAt={activityAt} />
-                          </span>
-                        )}
                         {mode === 'category' && (
                           <span className="support-community__meta-item">
                             <TagsOutlined />
                             {item.topicsCount} tópico{item.topicsCount > 1 ? "s" : ""}
                             {' '}
                             criado{item.topicsCount > 1 ? "s" : ""}
+                          </span>
+                        )}
+                        {mode !== 'topic' && activityAt && (
+                          <span className="support-community__meta-item">
+                            {mode === 'category' && (
+                              <span>Última interação:</span>
+                            )}
+                            <TimeAgo sentAt={activityAt} />
                           </span>
                         )}
                       </div>

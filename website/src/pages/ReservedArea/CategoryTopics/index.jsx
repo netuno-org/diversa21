@@ -150,9 +150,10 @@ function CategoryTopics() {
   };
 
   const handleSearchCategory = (value) => {
-    setSearchTerm(value);
+    const term = (value || "").trim();
+    setSearchTerm(term);
     setPage(1);
-    handleListCategories(value, 1);
+    handleListCategories(term, 1);
   };
 
   const openCreateModal = () => {
@@ -185,7 +186,7 @@ function CategoryTopics() {
   
     handleCreateCategory(formattedValues);
   };
-
+  
   const handleCardClick = (uid) => {
     navigate(`/c/${uid}`)
   }

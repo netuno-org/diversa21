@@ -165,9 +165,10 @@ function TopicPage({ categoryUid }) {
   };
 
   const handleSearchTopic = (value) => {
-    setSearchTitle(value);
+    const term = (value || "").trim();
+    setSearchTitle(term);
     setPage(1);
-    handleListTopics(value, 1);
+    handleListTopics(term, 1);
   };
 
   const openCreateModal = () => {
