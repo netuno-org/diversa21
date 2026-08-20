@@ -7,7 +7,7 @@ import notifications, { notificationTypes } from "#core/lib/notifications.js";
 const topicUid = _req.getUID("topicUid");
 const content = _req.getString("content");
 
-if (content.length > 2000) {
+if (content.length > 2500) {
   response.stopWithTextTooLarge();
 }
 

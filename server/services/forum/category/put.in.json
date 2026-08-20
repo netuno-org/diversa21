@@ -10,12 +10,13 @@
       "type": "uid"
     },
     "name": {
-      "type": "string-not-empty"
+      "type": "string-not-empty",
+      "maxLength": 50
     },
     "description": {
       "type": "string-not-empty",
-      "minLength": 50,
-      "maxLength": 150
+      "minLength": 30,
+      "maxLength": 500
     }
   },
   "required": [

@@ -6,7 +6,7 @@ import response from "#core/lib/response.js";
 const uid = _req.getUID("uid");
 const content = _req.getString("content");
 
-if (content.length > 2000) {
+if (content.length > 2500) {
   response.stopWithTextTooLarge();
 }
 

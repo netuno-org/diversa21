@@ -225,7 +225,7 @@ _form.syncField(
 		.set("group_id", 0)
 		.set("height", 0)
 		.set("mandatory", true)
-		.set("max", 200)
+		.set("max", 250)
 		.set("min", 5)
 		.set("name", "title")
 		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")

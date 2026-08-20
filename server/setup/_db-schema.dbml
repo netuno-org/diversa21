@@ -20,7 +20,7 @@ Table forum_topico {
   moment timestamp [note: 'momento']
   people_id int [not null, ref: > people.id, note: 'pessoa_id']
   replies int [note: 'Respostas']
-  title varchar(200) [not null, note: 'título']
+  title varchar(250) [not null, note: 'título']
   Note: 'Fórum'
 }
 
@@ -179,9 +179,9 @@ Table state {
 
 Table forum_categoria {
   id int [pk, increment]
-  description varchar(150) [not null, note: 'Descrição']
+  description varchar(500) [not null, note: 'Descrição']
   moment timestamp [note: 'Momento']
-  name varchar(250) [not null, unique, note: 'nome']
+  name varchar(50) [not null, unique, note: 'nome']
   topics int [note: 'Topicos']
   Note: 'Categoria'
 }

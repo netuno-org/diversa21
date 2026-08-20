@@ -10,7 +10,8 @@
       "type": "uid"
     },
     "content": {
-      "type": "string-not-empty"
+      "type": "string-not-empty",
+      "maxLength": 2500
     }
   },
   "required": [

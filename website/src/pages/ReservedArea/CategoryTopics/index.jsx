@@ -114,7 +114,7 @@ function CategoryTopics() {
       }
     });
   };
-  
+
   const handleDeleteCategory = (uid) => {
     setLoading(true);
     _service({
@@ -171,11 +171,19 @@ function CategoryTopics() {
   };
 
   const onFinish = (values) => {
+    const formattedValues = {
+      ...values,
+      description: values.description
+        ?.replace(/\n{3,}/g, "\n\n")
+        .trim()
+    };
+  
     if (editingCategory) {
-      handleUpdateCategory(values);
+      handleUpdateCategory(formattedValues);
       return;
     }
-    handleCreateCategory(values);
+  
+    handleCreateCategory(formattedValues);
   };
 
   const handleCardClick = (uid) => {

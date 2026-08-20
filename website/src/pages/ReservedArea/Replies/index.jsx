@@ -260,7 +260,7 @@ function Replies({ topicUid }) {
                     </Link>
                   </span>
                 )}
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ display: 'flex', alignItems: 'center' }}>
                   <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
                 </span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -285,7 +285,7 @@ function Replies({ topicUid }) {
               <Paragraph
                 className="replies-header__description"
               >
-                text={topic.content}
+                {topic.content}
               </Paragraph>
             </>
           )}

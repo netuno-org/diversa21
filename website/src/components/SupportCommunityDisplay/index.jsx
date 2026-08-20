@@ -46,6 +46,9 @@ function SupportCommunityDisplay({
   const screens = Grid.useBreakpoint();
   const isMobile = screens.lg === false;
 
+  const titleMaxLength = mode === 'category' ? 50 : 250;
+  const descriptionMaxLength = mode === 'topic' ? 5000 : mode === 'reply' ? 2500 : 500;
+
   useEffect(() => {
     if (!showModal) {
       setDescriptionValue("");
@@ -92,9 +95,7 @@ function SupportCommunityDisplay({
     }
 
     const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
-    const limit = mode === 'reply' || mode === 'topic' ? 2000 : 150;
-
-    if (updatedText.length > limit) {
+    if (updatedText.length > descriptionMaxLength) {
       return;
     }
 
@@ -269,7 +270,7 @@ function SupportCommunityDisplay({
                         {mode !== 'topic' && activityAt && (
                           <span className="support-community__meta-item">
                             {mode === 'category' && (
-                              <span style={{ marginRight: 5 }}>Última interação:</span>
+                              <span>Última interação:</span>
                             )}
                             <TimeAgo sentAt={activityAt} />
                           </span>
@@ -327,7 +328,7 @@ function SupportCommunityDisplay({
                     </div>
                   ) : (
                     <Paragraph
-                      ellipsis={{ rows: 4 }}
+                      ellipsis={{ rows: 5 }}
                       className="support-community__description"
                     >
                       {getItemDescription(item)}
@@ -362,7 +363,7 @@ function SupportCommunityDisplay({
                 rules={[
                   { required: true, message: "O título é obrigatório!" },
                   {
-                    max: mode === 'category' ? 50 : 250,
+                    max: titleMaxLength,
                     message: mode === 'topic'
                       ? "O título deve ter no máximo 250 caracteres."
                       : "O nome deve ter no máximo 50 caracteres.",
@@ -372,7 +373,7 @@ function SupportCommunityDisplay({
                 <Input
                   className="support-community__title-input"
                   placeholder={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}
-                  maxLength={mode === 'category' ? 50 : 250}
+                  maxLength={titleMaxLength}
                   showCount
                 />
               </Form.Item>
@@ -382,11 +383,11 @@ function SupportCommunityDisplay({
               label={mode === 'reply' ? "Resposta" : "Descrição"}
               rules={mode === 'reply' || mode === 'topic' ? [
                 { required: true, message: mode === 'reply' ? "A resposta é obrigatória!" : "A descrição é obrigatória!" },
-                { max: 5000, message: mode === 'reply' ? "A resposta deve ter no máximo 2000 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
+                { max: descriptionMaxLength, message: mode === 'reply' ? "A resposta deve ter no máximo 2500 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
               ] : [
                 { required: true, message: "A descrição é obrigatória!" },
                 { min: 30, message: "A descrição deve ter no mínimo 30 caracteres." },
-                { max: 150, message: "A descrição deve ter no máximo 150 caracteres." },
+                { max: descriptionMaxLength, message: "A descrição deve ter no máximo 500 caracteres." },
               ]}
             >
               <div style={{ position: 'relative' }}>
@@ -401,7 +402,7 @@ function SupportCommunityDisplay({
                   }}
                   placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
                   rows={5}
-                  maxLength={mode === 'topic' ? 5000 : mode === 'reply' ? 2500 : 500}
+                  maxLength={descriptionMaxLength}
                   showCount
                   style={{ resize: "none", paddingBottom: '36px' }}
                 />

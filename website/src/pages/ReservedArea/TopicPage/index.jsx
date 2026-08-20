@@ -186,11 +186,17 @@ function TopicPage({ categoryUid }) {
   };
 
   const onFinish = (values) => {
+    const formattedValues = {
+      ...values,
+      content: values.content
+        ?.replace(/\n{3,}/g, "\n\n")
+        .trim()
+    };
     if (editingTopic) {
-      handleUpdateTopic(values);
+      handleUpdateTopic(formattedValues);
       return;
     }
-    handleCreateTopic(values);
+    handleCreateTopic(formattedValues);
   };
 
   const handleCardClick = (uid) => {

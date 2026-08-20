@@ -7,11 +7,11 @@ const uid = _req.getUID("uid");
 const title = _req.getString("title");
 const content = _req.getString("content");
 
-if (title.length > 200) {
+if (title.length > 250) {
   response.stopWithBadRequest("title-too-large");
 }
 
-if (content.length > 2000) {
+if (content.length > 5000) {
   response.stopWithTextTooLarge();
 }
 
