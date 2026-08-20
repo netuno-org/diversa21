@@ -17,11 +17,11 @@ const dbCategories = _db.query(`
       COALESCE(c.topics, 0) AS "topics_count",
       (
         SELECT MAX(COALESCE(t.last_activity_at, t.moment))
-        FROM forum_topico t
+        FROM forum_topic t
         WHERE t.forum_category_id = c.id
           AND t.active = true
       ) AS last_activity_at
-    FROM forum_categoria c
+    FROM forum_category c
     WHERE c.active = true
       AND (?::text = '' OR c.name ILIKE ?::text)
     ORDER BY c.name ASC

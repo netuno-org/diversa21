@@ -11,7 +11,7 @@ if (!permissions.canManageForumCategories()) {
 
 const dbCategory = _db.queryFirst(`
     SELECT id
-    FROM forum_categoria
+    FROM forum_category
     WHERE uid = ?::uuid
 `, uid);
 
@@ -22,7 +22,7 @@ if (!dbCategory) {
 const dbHasTopics = _db.queryFirst(`
   SELECT EXISTS (
     SELECT 1
-    FROM forum_topico
+    FROM forum_topic
     WHERE forum_category_id = ?::int
   ) AS has_topics
 `, dbCategory.getInt("id"));
@@ -30,5 +30,5 @@ const dbHasTopics = _db.queryFirst(`
 if (dbHasTopics.getBoolean("has_topics")) {
   response.stopWithBadRequest("forum-category-has-topics");
 }
-_db.delete("forum_categoria", dbCategory.getInt("id"));
+_db.delete("forum_category", dbCategory.getInt("id"));
 response.successWithoutData();

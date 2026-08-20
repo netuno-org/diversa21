@@ -12,7 +12,7 @@ if (content.length > 2500) {
 
 const dbReply = _db.queryFirst(`
     SELECT r.id, p.people_user_id
-    FROM forum_resposta r
+    FROM forum_reply r
     INNER JOIN people p ON r.people_id = p.id
     WHERE r.uid = ?::uuid
       AND r.active = true
@@ -27,7 +27,7 @@ if (dbReply.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
 }
 
 _db.update(
-  "forum_resposta",
+  "forum_reply",
   dbReply.getInt("id"),
   _val.map()
     .set("content", content)

@@ -13,7 +13,7 @@ if (!permissions.canManageForumCategories()) {
 
 const dbCategory = _db.queryFirst(`
     SELECT id
-    FROM forum_categoria
+    FROM forum_category
     WHERE uid = ?::uuid
 `, uid);
 
@@ -22,7 +22,7 @@ if (!dbCategory) {
 }
 
 _db.update(
-  "forum_categoria",
+  "forum_category",
   dbCategory.getInt("id"),
   _val.map()
     .set("name", name)

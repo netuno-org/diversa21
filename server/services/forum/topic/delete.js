@@ -7,7 +7,7 @@ const uid = _req.getUID("uid");
 
 const dbTopic = _db.queryFirst(`
     SELECT t.id, t.forum_category_id, p.people_user_id
-    FROM forum_topico t
+    FROM forum_topic t
     INNER JOIN people p ON t.people_id = p.id
     WHERE t.uid = ?::uuid
       AND t.active = true
@@ -22,29 +22,29 @@ if (dbTopic.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
 }
 
 _db.execute(`
-    DELETE FROM forum_resposta
+    DELETE FROM forum_reply
     WHERE topic_id = ?::int
 `, dbTopic.getInt("id"));
 
-_db.delete("forum_topico", dbTopic.getInt("id"));
+_db.delete("forum_topic", dbTopic.getInt("id"));
 
 const categoryId = dbTopic.getInt("forum_category_id");
 const dbCategory = _db.queryFirst(`
     SELECT id, topics
-    FROM forum_categoria
+    FROM forum_category
     WHERE id = ?::int
 `, categoryId);
 
 if (dbCategory) {
   const dbLastActivity = _db.queryFirst(`
       SELECT MAX(COALESCE(last_activity_at, moment)) AS last_moment
-      FROM forum_topico
+      FROM forum_topic
       WHERE forum_category_id = ?::int
         AND active = true
   `, categoryId);
 
   _db.update(
-    "forum_categoria",
+    "forum_category",
     categoryId,
     _val.map()
       .set("topics", Math.max(0, dbCategory.getInt("topics", 0) - 1))

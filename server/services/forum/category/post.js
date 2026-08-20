@@ -11,7 +11,7 @@ if (!permissions.canManageForumCategories()) {
 }
 
 const categoryId = _db.insert(
-  "forum_categoria",
+  "forum_category",
   _val.map()
     .set("name", name)
     .set("description", description)
@@ -23,7 +23,7 @@ if (!categoryId) {
 
 const dbCategory = _db.queryFirst(`
     SELECT uid, name, description
-    FROM forum_categoria
+    FROM forum_category
     WHERE id = ?::int
 `, categoryId);
 

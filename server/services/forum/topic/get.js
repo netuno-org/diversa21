@@ -19,8 +19,8 @@ const dbTopic = _db.queryFirst(`
       nu.user AS "people_user",
       p.avatar AS "people_avatar",
       COALESCE(t.replies, 0) AS "replies_count"
-    FROM forum_topico t
-    INNER JOIN forum_categoria c ON t.forum_category_id = c.id
+    FROM forum_topic t
+    INNER JOIN forum_category c ON t.forum_category_id = c.id
     INNER JOIN people p ON t.people_id = p.id
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
     WHERE t.uid = ?::uuid

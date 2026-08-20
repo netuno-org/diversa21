@@ -12,12 +12,12 @@ if (content.length > 2500) {
 }
 
 const dbTopic = _db.queryFirst(`
-    SELECT forum_topico.id, forum_topico.uid, forum_topico.forum_category_id, forum_topico.replies, people.uid as "people_uid"
-      FROM forum_topico
+    SELECT forum_topic.id, forum_topic.uid, forum_topic.forum_category_id, forum_topic.replies, people.uid as "people_uid"
+      FROM forum_topic
     INNER JOIN people
-      ON forum_topico.people_id = people.id
-    WHERE forum_topico.uid = ?::uuid
-    AND forum_topico.active = true
+      ON forum_topic.people_id = people.id
+    WHERE forum_topic.uid = ?::uuid
+    AND forum_topic.active = true
 `, topicUid);
 
 if (!dbTopic) {
@@ -41,7 +41,7 @@ if (!dbTopicOwner) {
 
 
 const replyId = _db.insert(
-  "forum_resposta",
+  "forum_reply",
   _val.map()
     .set("topic_id", dbTopic.getInt("id"))
     .set("people_id", loggedUser.getInt("id"))
@@ -54,7 +54,7 @@ if (!replyId) {
 }
 
 _db.update(
-  "forum_topico",
+  "forum_topic",
   dbTopic.getInt("id"),
   _val.map()
     .set("last_activity_at", replyMoment)
@@ -62,7 +62,7 @@ _db.update(
 );
 
 _db.update(
-  "forum_categoria",
+  "forum_category",
   dbTopic.getInt("forum_category_id"),
   _val.map()
     .set("moment", replyMoment)
@@ -78,8 +78,8 @@ const dbReply = _db.queryFirst(`
       p.name AS "people_name",
       nu.user AS "people_user",
       p.avatar AS "people_avatar"
-    FROM forum_resposta r
-    INNER JOIN forum_topico t ON r.topic_id = t.id
+    FROM forum_reply r
+    INNER JOIN forum_topic t ON r.topic_id = t.id
     INNER JOIN people p ON r.people_id = p.id
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
     WHERE r.id = ?::int

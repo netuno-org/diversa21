@@ -6,7 +6,7 @@ const uid = _req.getUID("uid");
 
 const dbCategory = _db.queryFirst(`
     SELECT uid, name, description
-    FROM forum_categoria
+    FROM forum_category
     WHERE uid = ?::uuid
       AND active = true
 `, uid);

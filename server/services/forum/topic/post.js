@@ -17,7 +17,7 @@ if (content.length > 5000) {
 
 const dbCategory = _db.queryFirst(`
     SELECT id, topics
-    FROM forum_categoria
+    FROM forum_category
     WHERE uid = ?::uuid
       AND active = true
 `, categoryUid);
@@ -30,7 +30,7 @@ const loggedUser = people.getLogged();
 const topicMoment = _db.timestamp();
 
 const topicId = _db.insert(
-  "forum_topico",
+  "forum_topic",
   _val.map()
     .set("forum_category_id", dbCategory.getInt("id"))
     .set("people_id", loggedUser.getInt("id"))
@@ -46,7 +46,7 @@ if (!topicId) {
 }
 
 _db.update(
-  "forum_categoria",
+  "forum_category",
   dbCategory.getInt("id"),
   _val.map()
     .set("topics", dbCategory.getInt("topics", 0) + 1)
@@ -66,8 +66,8 @@ const dbTopic = _db.queryFirst(`
       p.name AS "people_name",
       nu.user AS "people_user",
       p.avatar AS "people_avatar"
-    FROM forum_topico t
-    INNER JOIN forum_categoria c ON t.forum_category_id = c.id
+    FROM forum_topic t
+    INNER JOIN forum_category c ON t.forum_category_id = c.id
     INNER JOIN people p ON t.people_id = p.id
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
     WHERE t.id = ?::int

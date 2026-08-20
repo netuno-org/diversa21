@@ -17,7 +17,7 @@ if (content.length > 5000) {
 
 const dbTopic = _db.queryFirst(`
     SELECT t.id, p.people_user_id
-    FROM forum_topico t
+    FROM forum_topic t
     INNER JOIN people p ON t.people_id = p.id
     WHERE t.uid = ?::uuid
       AND t.active = true
@@ -32,7 +32,7 @@ if (dbTopic.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
 }
 
 _db.update(
-  "forum_topico",
+  "forum_topic",
   dbTopic.getInt("id"),
   _val.map()
     .set("title", title)

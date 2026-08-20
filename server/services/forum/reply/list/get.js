@@ -10,7 +10,7 @@ const offset = page > 0 ? (page - 1) * pageSize : 0;
 
 const dbTopic = _db.queryFirst(`
     SELECT id, uid
-    FROM forum_topico
+    FROM forum_topic
     WHERE uid = ?::uuid
       AND active = true
 `, topicUid);
@@ -30,8 +30,8 @@ const dbReplies = _db.query(`
       p.name AS "people_name",
       nu.user AS "people_user",
       p.avatar AS "people_avatar"
-    FROM forum_resposta r
-    INNER JOIN forum_topico t ON r.topic_id = t.id
+    FROM forum_reply r
+    INNER JOIN forum_topic t ON r.topic_id = t.id
     INNER JOIN people p ON r.people_id = p.id
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
     WHERE r.topic_id = ?::int
