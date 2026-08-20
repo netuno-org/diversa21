@@ -25,6 +25,7 @@ const dbReplies = _db.query(`
       r.uid,
       r.content,
       r.moment,
+      r.likes,
       t.uid AS "topic_uid",
       p.uid AS "people_uid",
       p.name AS "people_name",
@@ -36,7 +37,7 @@ const dbReplies = _db.query(`
     INNER JOIN netuno_user nu ON p.people_user_id = nu.id
     WHERE r.topic_id = ?::int
       AND r.active = true
-    ORDER BY r.moment DESC
+    ORDER BY r.likes DESC, r.moment DESC
     LIMIT ?::int
     OFFSET ?::int
 `, dbTopic.getInt("id"), pageSize, offset);
@@ -48,6 +49,7 @@ for (const dbReply of dbReplies) {
       .set("uid", dbReply.getUID("uid"))
       .set("content", dbReply.getString("content"))
       .set("moment", dbReply.getString("moment"))
+      .set("likes", dbReply.getInt("likes", 0))
       .set("topicUid", dbReply.getUID("topic_uid"))
       .set(
         "people",
