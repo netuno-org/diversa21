@@ -66,6 +66,7 @@ _db.update(
   dbTopic.getInt("forum_category_id"),
   _val.map()
     .set("moment", replyMoment)
+    .set("last_activity_at", replyMoment)
 );
 
 const dbReply = _db.queryFirst(`

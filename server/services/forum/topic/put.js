@@ -16,7 +16,7 @@ if (content.length > 5000) {
 }
 
 const dbTopic = _db.queryFirst(`
-    SELECT t.id, p.people_user_id
+    SELECT t.id, t.forum_category_id, p.people_user_id
     FROM forum_topic t
     INNER JOIN people p ON t.people_id = p.id
     WHERE t.uid = ?::uuid
@@ -31,12 +31,22 @@ if (dbTopic.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
   response.stopWithPermissionDenied();
 }
 
+const updateMoment = _db.timestamp();
+
 _db.update(
   "forum_topic",
   dbTopic.getInt("id"),
   _val.map()
     .set("title", title)
     .set("content", content)
+    .set("last_activity_at", updateMoment)
+);
+
+_db.update(
+  "forum_category",
+  dbTopic.getInt("forum_category_id"),
+  _val.map()
+    .set("last_activity_at", updateMoment)
 );
 
 response.successWithoutData();

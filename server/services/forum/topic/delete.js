@@ -49,6 +49,7 @@ if (dbCategory) {
     _val.map()
       .set("topics", Math.max(0, dbCategory.getInt("topics", 0) - 1))
       .set("moment", dbLastActivity ? dbLastActivity.getString("last_moment") : null)
+      .set("last_activity_at", dbLastActivity ? dbLastActivity.getString("last_moment") : null)
   );
 }
 

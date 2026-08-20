@@ -70,6 +70,7 @@ if (dbCategoryActivity) {
     categoryId,
     _val.map()
       .set("moment", dbCategoryActivity.getString("category_moment"))
+      .set("last_activity_at", dbCategoryActivity.getString("category_moment"))
   );
 }
 

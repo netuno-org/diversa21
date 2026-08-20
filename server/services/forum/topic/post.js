@@ -51,6 +51,7 @@ _db.update(
   _val.map()
     .set("topics", dbCategory.getInt("topics", 0) + 1)
     .set("moment", topicMoment)
+    .set("last_activity_at", topicMoment)
 );
 
 const dbTopic = _db.queryFirst(`
