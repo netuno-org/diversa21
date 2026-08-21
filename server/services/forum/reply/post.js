@@ -99,7 +99,7 @@ if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicO
     "respondeu seu tópico.",
     loggedUserId,
     topicOwnerId,
-    `{ "topicUid": "${dbReply.getUID("topic_uid")}", "replyUid": "${dbReply.getUID("uid")}", "categoryUid": "${dbTopic.getUID("category_uid")}" }`,
+    `{ "topicUid": "${dbReply.getUID("topic_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`,
     notificationTypeId
   );
 
@@ -136,7 +136,6 @@ if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicO
           .set("extra", _val.map()
             .set("topicUid", dbReply.getUID("topic_uid"))
             .set("replyUid", dbReply.getUID("uid"))
-            .set("categoryUid", dbTopic.getUID("category_uid"))
           )
           .set("type", notificationTypes.FORUM_REPLY)
         )

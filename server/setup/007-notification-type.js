@@ -65,6 +65,11 @@ const types = [
     uid: "5c91a7ad-7b02-4f3c-b9cf-2fc08f8442f2",
     name: "Resposta em seu tópico",
     code: "forum-reply"
+  },
+  {
+    uid: "a8d4e1b6-3c7f-4a92-9e5d-6b0c8f2a4e17",
+    name: "Curtiu sua reposta num tópico",
+    code: "forum-reply-like"
   }
 ];
 
