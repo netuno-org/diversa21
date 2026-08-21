@@ -33,6 +33,7 @@ function Replies({ topicUid }) {
   const [topic, setTopic] = useState(null);
   const [repliesCount, setRepliesCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [loadingLike, setLoadingLike] = useState(null)
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
   const mode = 'reply'
@@ -184,6 +185,49 @@ function Replies({ topicUid }) {
     });
   };
 
+  const handleLikeReply = (reply) => {
+    if (loadingLike) {
+      return;
+    }
+    const isLiked = !!reply.liked;
+
+    setLoadingLike(reply.uid)
+
+    _service({
+      url: "/forum/reply/like",
+      method: isLiked ? "DELETE" : "POST",
+      data: { uid: reply.uid },
+      success: ({ json }) => {
+        if (json?.data) {
+          const { liked, likes } = json.data;
+          setReplyList((items) =>
+            items.map((item) => {
+              if (item.uid !== reply.uid) {
+                return item;
+              }
+              return {
+                ...item,
+                liked,
+                likes,
+              };
+            })
+          );
+        }
+        setLoadingLike(null);
+      },
+      fail: (error) => {
+        globalNotification.error({
+          title: "Error",
+          description: isLiked
+            ? "Não foi possível remover o like."
+            : "Não foi possível dar o like.",
+        });
+        console.log("Service Error", error);
+        setLoadingLike(null);
+      },
+    });
+  };
+
   const openCreateModal = () => {
     setEditingReply(null);
     setShowModal(true);
@@ -306,6 +350,8 @@ function Replies({ topicUid }) {
         loggedUser={loggedUser}
         openEditModal={openEditModal}
         handleDelete={handleDeleteReply}
+        handleLike={handleLikeReply}
+        loadingLike={loadingLike}
         mode={mode}
       />
       {!loading && repliesCount > 0 && (

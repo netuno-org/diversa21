@@ -153,12 +153,18 @@ function TopicPage({ categoryUid }) {
         }
         setLoading(false);
       },
-      fail: (e) => {
-        globalNotification.error({
-          title: "Error",
-          description: "Não foi possível remover o tópico.",
-        });
-        console.log("Service Error", e);
+      fail: ({ json }) => {
+        if (json?.error === "forum-topic-has-replies") {
+          globalNotification.error({
+            title: "Error",
+            description: "Não é possível apagar o tópico, pois existe pelo menos uma resposta criada.",
+          });
+        } else {
+          globalNotification.error({
+            title: "Error",
+            description: "Não foi possível remover o tópico.",
+          });
+        }
         setLoading(false);
       },
     });

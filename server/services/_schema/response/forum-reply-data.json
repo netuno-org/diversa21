@@ -10,6 +10,12 @@
     "moment": {
       "type": "string-not-empty"
     },
+    "likes": {
+      "type": "integer"
+    },
+    "liked": {
+      "type": "boolean"
+    },
     "topicUid": {
       "type": "uid"
     },
@@ -41,6 +47,8 @@
     "uid",
     "content",
     "moment",
+    "likes",
+    "liked",
     "topicUid",
     "people"
   ]

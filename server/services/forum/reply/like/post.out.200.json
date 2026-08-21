@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "liked": {
+          "type": "boolean"
+        },
+        "likes": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "liked",
+        "likes"
+      ]
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

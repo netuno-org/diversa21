@@ -47,6 +47,7 @@ const replyId = _db.insert(
     .set("people_id", loggedUser.getInt("id"))
     .set("content", content)
     .set("moment", replyMoment)
+    .set("likes", 0)
 );
 
 if (!replyId) {
@@ -145,6 +146,8 @@ response.successWithData(
     .set("uid", dbReply.getUID("uid"))
     .set("content", dbReply.getString("content"))
     .set("moment", dbReply.getString("moment"))
+    .set("likes", 0)
+    .set("liked", false)
     .set("topicUid", dbReply.getUID("topic_uid"))
     .set("authorUid", dbTopic.getUID("people_uid"))
     .set(

@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "forum-reply"
+  ],
+  "summary": "Like forum reply",
+  "description": "Add a like to a forum reply.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

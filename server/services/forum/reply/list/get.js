@@ -1,5 +1,6 @@
 import { _req, _db, _val } from "@netuno/server-types";
 
+import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
 const topicUid = _req.getUID("topicUid");
@@ -19,6 +20,9 @@ if (!dbTopic) {
   response.stopWithForumTopicNotFound();
 }
 
+const loggedUser = people.getLogged();
+const loggedUserId = loggedUser ? loggedUser.getInt("id") : 0;
+
 const dbReplies = _db.query(`
     SELECT
       count(*) over() as total_count,
@@ -30,7 +34,14 @@ const dbReplies = _db.query(`
       p.uid AS "people_uid",
       p.name AS "people_name",
       nu.user AS "people_user",
-      p.avatar AS "people_avatar"
+      p.avatar AS "people_avatar",
+      (
+        SELECT id
+        FROM forum_reply_like
+        WHERE people_id = ?::int
+          AND forum_reply_id = r.id
+        LIMIT 1
+      ) AS "reply_like_id"
     FROM forum_reply r
     INNER JOIN forum_topic t ON r.topic_id = t.id
     INNER JOIN people p ON r.people_id = p.id
@@ -40,7 +51,7 @@ const dbReplies = _db.query(`
     ORDER BY r.likes DESC, r.moment DESC
     LIMIT ?::int
     OFFSET ?::int
-`, dbTopic.getInt("id"), pageSize, offset);
+`, loggedUserId, dbTopic.getInt("id"), pageSize, offset);
 
 const replies = _val.list();
 for (const dbReply of dbReplies) {
@@ -50,6 +61,7 @@ for (const dbReply of dbReplies) {
       .set("content", dbReply.getString("content"))
       .set("moment", dbReply.getString("moment"))
       .set("likes", dbReply.getInt("likes", 0))
+      .set("liked", dbReply.getInt("reply_like_id", 0) > 0)
       .set("topicUid", dbReply.getUID("topic_uid"))
       .set(
         "people",

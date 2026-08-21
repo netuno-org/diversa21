@@ -11,7 +11,9 @@ import {
   EditOutlined,
   FolderOpenOutlined,
   TagsOutlined,
-  SmileOutlined
+  SmileOutlined,
+  LikeOutlined,
+  LikeFilled
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
@@ -36,6 +38,8 @@ function SupportCommunityDisplay({
   handleCardClick,
   openEditModal,
   handleDelete,
+  handleLike,
+  loadingLike,
   mode
 }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
@@ -323,9 +327,22 @@ function SupportCommunityDisplay({
                     )}
                   </div>
                   {mode === 'reply' ? (
-                    <div className="support-community__description">
-                      {item.content}
-                    </div>
+                    <>
+                      <div className="support-community__description">
+                        {item.content}
+                      </div>
+                      <Button
+                        style={{alignSelf: 'start'}}
+                        type="link"
+                        className="support-community__like-btn"
+                        onClick={(e) => {handleLike(item)}}
+                        loading={loadingLike === item.uid}
+                        disabled={loadingLike === item.uid}
+                      >
+                        {item.liked ? <LikeFilled /> : <LikeOutlined />}
+                        {item.likes || 0}
+                      </Button>
+                    </>
                   ) : (
                     <Paragraph
                       ellipsis={{ rows: 5 }}

@@ -1,4 +1,4 @@
-import { _req, _db, _user } from "@netuno/server-types";
+import { _req, _db, _val, _user } from "@netuno/server-types";
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -21,10 +21,17 @@ if (dbTopic.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
   response.stopWithPermissionDenied();
 }
 
-_db.execute(`
-    DELETE FROM forum_reply
+const dbHasReplies = _db.queryFirst(`
+  SELECT EXISTS (
+    SELECT 1
+    FROM forum_reply
     WHERE topic_id = ?::int
+  ) AS has_replies
 `, dbTopic.getInt("id"));
+
+if (dbHasReplies.getBoolean("has_replies")) {
+  response.stopWithBadRequest("forum-topic-has-replies");
+}
 
 _db.delete("forum_topic", dbTopic.getInt("id"));
 

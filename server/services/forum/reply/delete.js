@@ -22,6 +22,11 @@ if (dbReply.getInt("people_user_id") !== _user.id && !permissions.canManagePosts
   response.stopWithPermissionDenied();
 }
 
+_db.execute(`
+    DELETE FROM forum_reply_like
+    WHERE forum_reply_id = ?::int
+`, dbReply.getInt("id"));
+
 _db.delete("forum_reply", dbReply.getInt("id"));
 
 _db.update(
