@@ -33,6 +33,7 @@ function Notifications() {
       case 'my-post-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
       case 'institution-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
       case 'friend-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
+      case 'forum-reply': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
       case 'my-post-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
       case 'institution-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
       case 'friend-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
@@ -55,6 +56,7 @@ function Notifications() {
       case 'my-post-comment':
       case 'institution-comment':
       case 'friend-comment':
+      case 'forum-reply':
         icon = <CommentOutlined style={{ fontSize: 10 }} />;
         color = '#1890ff';
         break;

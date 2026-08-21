@@ -12,10 +12,12 @@ if (content.length > 2500) {
 }
 
 const dbTopic = _db.queryFirst(`
-    SELECT forum_topic.id, forum_topic.uid, forum_topic.forum_category_id, forum_topic.replies, people.uid as "people_uid"
+    SELECT forum_topic.id, forum_topic.uid, forum_topic.forum_category_id, forum_topic.replies, people.uid as "people_uid", forum_category.uid as "category_uid"
       FROM forum_topic
     INNER JOIN people
       ON forum_topic.people_id = people.id
+    INNER JOIN forum_category
+      ON forum_topic.forum_category_id = forum_category.id
     WHERE forum_topic.uid = ?::uuid
     AND forum_topic.active = true
 `, topicUid);
@@ -97,7 +99,7 @@ if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicO
     "respondeu seu tópico.",
     loggedUserId,
     topicOwnerId,
-    `{ "topicUid": "${dbReply.getUID("topic_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`,
+    `{ "topicUid": "${dbReply.getUID("topic_uid")}", "replyUid": "${dbReply.getUID("uid")}", "categoryUid": "${dbTopic.getUID("category_uid")}" }`,
     notificationTypeId
   );
 
@@ -134,6 +136,7 @@ if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicO
           .set("extra", _val.map()
             .set("topicUid", dbReply.getUID("topic_uid"))
             .set("replyUid", dbReply.getUID("uid"))
+            .set("categoryUid", dbTopic.getUID("category_uid"))
           )
           .set("type", notificationTypes.FORUM_REPLY)
         )

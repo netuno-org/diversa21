@@ -198,6 +198,12 @@ function useNotifications() {
     if (n.type && ["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
       n.postId = n.extra.postUid;
     }
+
+    if (n.type === 'forum-reply' && n.extra) {
+      n.topicUid = n.extra.topicUid;
+      n.categoryUid = n.extra.categoryUid;
+      n.replyUid = n.extra.replyUid;
+    }
   };
 
   const markAllAsRead = (type) => {
@@ -298,6 +304,36 @@ function useNotifications() {
         fail: (e) => {
           console.error("Falha ao abrir post:", e);
           navigate('/posts');
+        }
+      });
+
+    } else if (item.type === 'forum-reply') {
+      const topicUid = item.topicUid || item.extra?.topicUid;
+      const categoryUid = item.categoryUid || item.extra?.categoryUid;
+
+      if (!topicUid) {
+        return navigate('/support-community');
+      }
+
+      if (categoryUid) {
+        return navigate(`/c/${categoryUid}/t/${topicUid}`);
+      }
+
+      _service({
+        url: 'forum/topic',
+        method: 'GET',
+        data: { uid: topicUid },
+        success: (response) => {
+          const fetchedCategoryUid = response.json.data?.category?.uid;
+          if (fetchedCategoryUid) {
+            navigate(`/c/${fetchedCategoryUid}/t/${topicUid}`);
+            return;
+          }
+          navigate('/support-community');
+        },
+        fail: (e) => {
+          console.error("Falha ao abrir tópico:", e);
+          navigate('/support-community');
         }
       });
 
