@@ -307,31 +307,15 @@ function Replies({ topicUid }) {
                 <span style={{ display: 'flex', alignItems: 'center' }}>
                   <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  {topic?.repliesCount > 0 &&
-                    <span>
-                      <VscCommentDiscussionQuote /> {' '}
-                      {topic?.repliesCount} resposta{topic?.repliesCount !== 1 ? "s" : ""}
-                    </span>
-                  }
-                </div>
-                {topic?.repliesCount > 0 && topic?.lastActivityAt && (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    Última interação:
-                    <TimeAgo sentAt={topic.lastActivityAt} className="replies-header__time-ago" />
-                  </span>
-                )}
               </div>
             </div>
           </div>
           {topic?.content && (
-            <>
-              <Paragraph
-                className="replies-header__description"
-              >
-                {topic.content}
-              </Paragraph>
-            </>
+            <Paragraph
+              className="replies-header__description"
+            >
+              {topic.content}
+            </Paragraph>
           )}
         </div>
         <div className="replies__actions">
@@ -340,6 +324,19 @@ function Replies({ topicUid }) {
           </Button>
         </div>
       </div>
+      {topic?.repliesCount > 0 && (
+        <div className="replies__stats">
+          <span className="replies__stats-item">
+            {topic.repliesCount} resposta{topic.repliesCount !== 1 ? "s" : ""} encontrada{topic.repliesCount !== 1 ? "s" : ""}
+          </span>
+          {topic.lastActivityAt && (
+            <span className="replies__stats-item">
+              Última:
+              <TimeAgo sentAt={topic.lastActivityAt} className="replies-header__time-ago" />
+            </span>
+          )}
+        </div>
+      )}
       <SupportCommunityDisplay
         loading={loading}
         showModal={showModal}

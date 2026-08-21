@@ -191,7 +191,7 @@ function SupportCommunityDisplay({
           <Spin size="large" />
         </div>
       )}
-      {!loading && listItems.length > 0 && (
+      {!loading && listItems.length > 0 && mode !== 'reply' && (
         <div className="support-community__count">
           <Text type="secondary">
             {listItems.length} {getCountLabel()}
@@ -250,44 +250,24 @@ function SupportCommunityDisplay({
                           {getItemTitle(item)}
                         </p>
                       )}
-                      <div className="support-community__meta">
-                        {mode === 'topic' && item.people?.name && (
-                          <span>Autor : {item.people.name}</span>
-                        )}
-                        {mode === 'topic' && item.moment && (
+                      {mode === 'topic' ? (
+                        <div className="support-community__meta">
+                          {item.people?.name && (
+                            <span>Autor: {item.people.name}</span>
+                          )}
+                          {item.moment && (
+                            <span className="support-community__meta-item">
+                              <TimeAgo sentAt={item.moment} />
+                            </span>
+                          )}
+                        </div>
+                      ) : mode === 'reply' && activityAt ? (
+                        <div className="support-community__meta">
                           <span className="support-community__meta-item">
-                            <TimeAgo sentAt={item.moment} />
-                          </span>
-                        )}
-                        {mode === 'topic' && item.repliesCount > 0 && (
-                          <span className="support-community__meta-item">
-                            <VscCommentDiscussionQuote />
-                            {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
-                          </span>
-                        )}
-                        {mode === 'topic' && item.repliesCount > 0 && item.lastActivityAt && (
-                          <span className="support-community__meta-item">
-                            <span>Última interação:</span>
-                            <TimeAgo sentAt={item.lastActivityAt} />
-                          </span>
-                        )}
-                        {mode === 'category' && (
-                          <span className="support-community__meta-item">
-                            <TagsOutlined />
-                            {item.topicsCount} tópico{item.topicsCount > 1 ? "s" : ""}
-                            {' '}
-                            criado{item.topicsCount > 1 ? "s" : ""}
-                          </span>
-                        )}
-                        {mode !== 'topic' && activityAt && (
-                          <span className="support-community__meta-item">
-                            {mode === 'category' && (
-                              <span>Última interação:</span>
-                            )}
                             <TimeAgo sentAt={activityAt} />
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      ) : null}
                     </div>
                     {canManageItem(item) && (
                       <div className="support-community__actions">
@@ -344,12 +324,44 @@ function SupportCommunityDisplay({
                       </Button>
                     </>
                   ) : (
-                    <Paragraph
-                      ellipsis={{ rows: 5 }}
-                      className="support-community__description"
-                    >
-                      {getItemDescription(item)}
-                    </Paragraph>
+                    <>
+                      <Paragraph
+                        ellipsis={{ rows: 5 }}
+                        className="support-community__description"
+                      >
+                        {getItemDescription(item)}
+                      </Paragraph>
+                      {mode === 'topic' && item.repliesCount > 0 && (
+                        <div className="support-community__meta support-community__meta--secondary">
+                          <span className="support-community__meta-item">
+                            <VscCommentDiscussionQuote />
+                            {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
+                          </span>
+                          {item.lastActivityAt && (
+                            <span className="support-community__meta-item">
+                              <span>Última:</span>
+                              <TimeAgo sentAt={item.lastActivityAt} />
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {mode === 'category' && (
+                        <div className="support-community__meta support-community__meta--secondary">
+                          <span className="support-community__meta-item">
+                            <TagsOutlined />
+                            {item.topicsCount} tópico{item.topicsCount > 1 ? "s" : ""}
+                            {' '}
+                            criado{item.topicsCount > 1 ? "s" : ""}
+                          </span>
+                          {activityAt && (
+                            <span className="support-community__meta-item">
+                              <span>Última:</span>
+                              <TimeAgo sentAt={activityAt} />
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
