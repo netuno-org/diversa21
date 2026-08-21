@@ -51,11 +51,11 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
   
   const modalTitle = readingContent === 'terms' ? "Termos e Condições"
                    : readingContent === 'privacy' ? "Política de Privacidade"
-                   : "Aceite dos Termos e Condições";
+                   : "Consentimento";
 
   const modalFooter = isReading ? [
     <Button key="back" onClick={() => setReadingContent(null)}>
-      Voltar aos Aceites
+      Voltar
     </Button>
   ] : [
     <Button
@@ -66,7 +66,7 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
       onClick={handleAccept}
       className="legal-acceptance-modal__accept-button"
     >
-      Aceitar e Continuar
+      Aceitar
     </Button>
   ];
 
