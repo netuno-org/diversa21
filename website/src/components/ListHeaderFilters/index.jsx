@@ -26,6 +26,7 @@ function ListHeaderFilters({
   extraFilters,
   categoryName,
   categoryDescription,
+  description,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
@@ -111,6 +112,11 @@ function ListHeaderFilters({
               </Col>
             )}
           </Row>
+          {description && (
+            <Paragraph className="list-header-filters__description">
+              {description}
+            </Paragraph>
+          )}
           {categoryName && (
             <>
               <Divider />

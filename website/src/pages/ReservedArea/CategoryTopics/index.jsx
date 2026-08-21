@@ -195,6 +195,7 @@ function CategoryTopics() {
     <div className="support-community">
       <ListHeaderFilters
         title="Rede de apoio"
+        description="Um espaço para tirar dúvidas e partilhar experiências. Explore as categorias e participe na conversa."
         searchPlaceholder="Buscar por categoria"
         createButton={loggedUser.canManageForumCategories() && {
           icon: <PlusOutlined />,
