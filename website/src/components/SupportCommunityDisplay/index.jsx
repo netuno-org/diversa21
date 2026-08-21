@@ -326,7 +326,7 @@ function SupportCommunityDisplay({
                   ) : (
                     <>
                       <Paragraph
-                        ellipsis={{ rows: 5 }}
+                        ellipsis={{ rows: 3 }}
                         className="support-community__description"
                       >
                         {getItemDescription(item)}

@@ -8,7 +8,7 @@ import usePeople from "../../common/usePeople.js";
 
 import './index.less'
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 function ListHeaderFilters({
   title,
@@ -25,6 +25,7 @@ function ListHeaderFilters({
   extraActionButtons,
   extraFilters,
   categoryName,
+  categoryDescription,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationOptions, setLocationOptions] = useState([])
@@ -130,6 +131,11 @@ function ListHeaderFilters({
                   </Text>
                 </div>
               </div>
+              {categoryDescription && (
+                <Paragraph className="list-header-filters__category-description">
+                  {categoryDescription}
+                </Paragraph>
+              )}
             </>
           )}
         </div>

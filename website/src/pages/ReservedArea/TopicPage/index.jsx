@@ -20,6 +20,7 @@ function TopicPage({ categoryUid }) {
   const [showModal, setShowModal] = useState(false);
   const [editingTopic, setEditingTopic] = useState(null);
   const [categoryName, setCategoryName] = useState("");
+  const [categoryDescription, setCategoryDescription] = useState("");
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchTitle, setSearchTitle] = useState("");
@@ -37,6 +38,7 @@ function TopicPage({ categoryUid }) {
       success: ({ json }) => {
         if (json) {
           setCategoryName(json.data.name);
+          setCategoryDescription(json.data.description || "");
         }
       },
       fail: (e) => {
@@ -228,6 +230,7 @@ function TopicPage({ categoryUid }) {
           handleListTopics("", 1);
         }}
         categoryName={categoryName}
+        categoryDescription={categoryDescription}
       />
       <SupportCommunityDisplay
         loading={loading}
