@@ -504,7 +504,7 @@ function Services() {
                   <div className="services-list__card-location">
                     <CalendarOutlined />
                     <Text type="secondary" className="services-list__date-text">
-                      Adicionado a {formatDate(service.createdAt)}
+                    {formatDate(service.createdAt)}
                     </Text>
                   </div>
                 )}
@@ -603,7 +603,7 @@ function Services() {
                 <div className="services-list__card-location">
                   <CalendarOutlined />
                   <Text type="secondary" className="services-list__date-text">
-                    Adicionado a {formatDate(serviceDetails.createdAt)}
+                  {formatDate(serviceDetails.createdAt)}
                   </Text>
                 </div>
               )}
