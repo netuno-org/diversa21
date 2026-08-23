@@ -13,9 +13,11 @@ const dbReply = _db.queryFirst(`
       r.likes,
       r.people_id,
       t.uid AS "topic_uid",
+      c.uid AS "category_uid",
       p.uid AS "people_uid"
     FROM forum_reply r
     INNER JOIN forum_topic t ON r.topic_id = t.id
+    INNER JOIN forum_category c ON t.forum_category_id = c.id
     INNER JOIN people p ON r.people_id = p.id
     WHERE r.uid = ?::uuid
       AND r.active = true
@@ -99,7 +101,7 @@ if (loggedUserId !== replyOwnerId) {
         notificationMessages.FORUM_REPLY_LIKE,
         loggedUserId,
         replyOwnerId,
-        `{ "topicUid": "${dbReply.getUID("topic_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`,
+        `{ "topicUid": "${dbReply.getUID("topic_uid")}", "categoryUid": "${dbReply.getUID("category_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`,
         notificationTypeId
       );
 
@@ -141,6 +143,7 @@ if (loggedUserId !== replyOwnerId) {
               .set("read_at", null)
               .set("extra", _val.map()
                 .set("topicUid", dbReply.getUID("topic_uid"))
+                .set("categoryUid", dbReply.getUID("category_uid"))
                 .set("replyUid", dbReply.getUID("uid"))
               )
               .set("type", notificationTypes.FORUM_REPLY_LIKE)

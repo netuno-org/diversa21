@@ -37,6 +37,7 @@ function Notifications() {
       case 'my-post-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
       case 'institution-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
       case 'friend-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
+      case 'forum-reply-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
       case 'friend-request': return <Avatar icon={<UserAddOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
       case 'friend-request-accepted': return <Avatar icon={<TeamOutlined />} style={{ backgroundColor: '#52c41a' }} />;
       case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
@@ -63,6 +64,7 @@ function Notifications() {
       case 'my-post-like':
       case 'institution-like':
       case 'friend-like':
+      case 'forum-reply-like':
         icon = <HeartOutlined style={{ fontSize: 10 }} />;
         color = '#eb2f96';
         break;

@@ -33,7 +33,7 @@ function NotificationSettings() {
     {
       key: 'likes',
       title: 'Curtidas',
-      codes: ['institution-like', 'friend-like', 'my-post-like'],
+      codes: ['institution-like', 'friend-like', 'my-post-like', 'forum-reply-like'],
     },
     {
       key: 'messages',
@@ -50,6 +50,7 @@ function NotificationSettings() {
     'friend-like': 'Curtida de amigo',
     'my-post-like': 'Curtida em seu post',
     'forum-reply': 'Resposta em seu tópico',
+    'forum-reply-like': 'Curtida em sua resposta de tópico',
   };
 
   const descMap = {
@@ -65,6 +66,7 @@ function NotificationSettings() {
     'my-post-like': 'Recebe quando alguém curte uma das suas postagens.',
     'message': 'Recebe quando alguém envia uma mensagem privada para você.',
     'forum-reply': 'Recebe quando alguém responde um tópico criado por você.',
+    'forum-reply-like': 'Recebe quando alguém curte uma resposta sua em um tópico.',
   };
 
   const groupedSections = sections.map((section) => ({

@@ -195,14 +195,14 @@ function useNotifications() {
       n.desc = n.content;
     }
 
-    if (n.type && ["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
-      n.postId = n.extra.postUid;
-    }
-
-    if (n.type === 'forum-reply' && n.extra) {
+    if (n.type && ["forum-reply", "forum-reply-like"].includes(n.type) && n.extra) {
       n.topicUid = n.extra.topicUid;
       n.categoryUid = n.extra.categoryUid;
       n.replyUid = n.extra.replyUid;
+    }
+
+    if (n.type && ["post", "comment", "like"].some(k => n.type.includes(k)) && n.extra) {
+      n.postId = n.extra.postUid;
     }
   };
 
@@ -284,30 +284,7 @@ function useNotifications() {
 
     markAsRead(item.id);
 
-    if (item.type && ["post", "comment", "like"].some(k => item.type.includes(k))) {
-      if (!item.postId) {
-        return navigate('/posts');
-      }
-
-      _service({
-        url: 'post',
-        method: 'GET',
-        data: { uid: item.postId },
-        success: (response) => {
-          const post = response.json.data;
-          if (post.parent) {
-            navigate(`/p/${post.parent}?c=${item.postId}`);
-          } else {
-            navigate(`/p/${item.postId}`);
-          }
-        },
-        fail: (e) => {
-          console.error("Falha ao abrir post:", e);
-          navigate('/posts');
-        }
-      });
-
-    } else if (item.type === 'forum-reply') {
+    if (item.type === 'forum-reply' || item.type === 'forum-reply-like') {
       const topicUid = item.topicUid || item.extra?.topicUid;
       const categoryUid = item.categoryUid || item.extra?.categoryUid;
 
@@ -334,6 +311,29 @@ function useNotifications() {
         fail: (e) => {
           console.error("Falha ao abrir tópico:", e);
           navigate('/support-community');
+        }
+      });
+
+    } else if (item.type && ["post", "comment", "like"].some(k => item.type.includes(k))) {
+      if (!item.postId) {
+        return navigate('/posts');
+      }
+
+      _service({
+        url: 'post',
+        method: 'GET',
+        data: { uid: item.postId },
+        success: (response) => {
+          const post = response.json.data;
+          if (post.parent) {
+            navigate(`/p/${post.parent}?c=${item.postId}`);
+          } else {
+            navigate(`/p/${item.postId}`);
+          }
+        },
+        fail: (e) => {
+          console.error("Falha ao abrir post:", e);
+          navigate('/posts');
         }
       });
 
