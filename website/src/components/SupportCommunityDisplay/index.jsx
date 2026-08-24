@@ -333,7 +333,7 @@ function SupportCommunityDisplay({
                       </Paragraph>
                       {mode === 'topic' && item.repliesCount > 0 && (
                         <div className="support-community__meta support-community__meta--secondary">
-                          <span className="support-community__meta-item">
+                          <span className="support-community__meta-item support-community__meta-item--count">
                             <VscCommentDiscussionQuote />
                             {item.repliesCount} Resposta{item.repliesCount !== 1 ? "s" : ""}
                           </span>
@@ -347,7 +347,7 @@ function SupportCommunityDisplay({
                       )}
                       {mode === 'category' && (
                         <div className="support-community__meta support-community__meta--secondary">
-                          <span className="support-community__meta-item">
+                          <span className="support-community__meta-item support-community__meta-item--count">
                             <TagsOutlined />
                             {item.topicsCount} Tópico{item.topicsCount > 1 ? "s" : ""}
                             {' '}

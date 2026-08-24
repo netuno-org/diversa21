@@ -297,7 +297,7 @@ function Replies({ topicUid }) {
               <div className="replies-header__meta">
                 {topic?.people?.name && (
                   <span>
-                    Autor :{" "}
+                    Autor:{" "}
                     <Link className="replies-header__title-link"
                       to={`/u/${topic?.people?.user}`}>
                       {topic.people.name}
@@ -327,11 +327,11 @@ function Replies({ topicUid }) {
       {topic?.repliesCount > 0 && (
         <div className="replies__stats">
           <span className="replies__stats-item">
-            {topic.repliesCount} resposta{topic.repliesCount !== 1 ? "s" : ""} encontrada{topic.repliesCount !== 1 ? "s" : ""}
+            {topic.repliesCount} Resposta{topic.repliesCount !== 1 ? "s" : ""} Encontrada{topic.repliesCount !== 1 ? "s" : ""}
           </span>
           {topic.lastActivityAt && (
             <span className="replies__stats-item">
-              Última:
+              · Última:
               <TimeAgo sentAt={topic.lastActivityAt} className="replies-header__time-ago" />
             </span>
           )}

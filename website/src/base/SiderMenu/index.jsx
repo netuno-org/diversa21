@@ -3,8 +3,10 @@ import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageO
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine, RiArticleLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
-import { FaRegHandshake } from "react-icons/fa6";
 import { LuUserCheck } from "react-icons/lu";
+import { LuHeartHandshake } from "react-icons/lu";
+import { FaStethoscope } from "react-icons/fa6";
+
 
 import { Menu, Layout, Drawer, Button, Grid } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -25,10 +27,16 @@ const menuItems = [
     link: "/posts"
   },
   {
-    key: "profile-view",
-    label: "Meu perfil",
-    icon: <CgProfile />,
-    link: "/profile/view"
+    key: "Support-community",
+    label: "Rede de apoio",
+    icon: <LuHeartHandshake />,
+    link: "/support-community"
+  },
+  {
+    key: "services",
+    label: "Serviços",
+    icon: <FaStethoscope/>,
+    link: "/services"
   },
   {
     key: "institutions",
@@ -37,22 +45,28 @@ const menuItems = [
     link: "/institutions"
   },
   {
+    key: "locations",
+    label: "Localizações",
+    icon: <EnvironmentOutlined />,
+    link: "/locations"
+  },
+  {
+    key: "profile-view",
+    label: "Meu perfil",
+    icon: <CgProfile />,
+    link: "/profile/view"
+  },
+  {
     key: "people",
     label: "Pessoas",
     icon: <RxPeople />,
     link: "/people"
   },
   {
-    key: "services",
-    label: "Prestação de Serviços",
-    icon: <FaRegHandshake />,
-    link: "/services"
-  },
-  {
-    key: "locations",
-    label: "Localizações",
-    icon: <EnvironmentOutlined />,
-    link: "/locations"
+    key: "friends",
+    label: "Amigos",
+    icon: <LuUserCheck />,
+    link: "/friends"
   },
   {
     key: "messages",
@@ -65,18 +79,6 @@ const menuItems = [
     label: "Notificações",
     icon: <BellOutlined />,
     link: "/notifications"
-  },
-  {
-    key: "friends",
-    label: "Amigos",
-    icon: <LuUserCheck />,
-    link: "/friends"
-  },
-  {
-    key: "Support-community",
-    label: "Rede de apoio",
-    icon: <FaRegHandshake />,
-    link: "/support-community"
   },
 ];
 
