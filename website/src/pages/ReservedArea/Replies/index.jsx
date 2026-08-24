@@ -290,30 +290,28 @@ function Replies({ topicUid }) {
                 shape="square"
               />
             </Link>
-            <div className="replies-header__topic-body">
-              <p className="replies-header__title">
-                {topic?.title}
-              </p>
-              <div className="replies-header__meta">
-                {topic?.people?.name && (
-                  <span>
-                    Autor:{" "}
-                    <Link className="replies-header__title-link"
-                      to={`/u/${topic?.people?.user}`}>
-                      {topic.people.name}
-                    </Link>
-                  </span>
-                )}
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
+            <div className="replies-header__meta">
+              {topic?.people?.name && (
+                <span className="replies-header__author-info">
+                  Autor:{" "}
+                  <Link
+                    className="replies-header__title-link"
+                    to={`/u/${topic?.people?.user}`}
+                  >
+                    {topic.people.name}
+                  </Link>
                 </span>
-              </div>
+              )}
+              <span className="replies-header__meta-item">
+                <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
+              </span>
             </div>
           </div>
+          <p className="replies-header__title">
+            {topic?.title}
+          </p>
           {topic?.content && (
-            <Paragraph
-              className="replies-header__description"
-            >
+            <Paragraph className="replies-header__description">
               {topic.content}
             </Paragraph>
           )}
@@ -331,7 +329,7 @@ function Replies({ topicUid }) {
           </span>
           {topic.lastActivityAt && (
             <span className="replies__stats-item">
-              · Última:
+              &nbsp;· Última:
               <TimeAgo sentAt={topic.lastActivityAt} className="replies-header__time-ago" />
             </span>
           )}

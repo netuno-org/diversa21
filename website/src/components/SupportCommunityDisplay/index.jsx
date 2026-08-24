@@ -228,46 +228,35 @@ function SupportCommunityDisplay({
                       </Link>
                     }
                     <div className="support-community__heading">
-                      {mode === 'topic' ? (
-                        <Paragraph
-                          ellipsis={{ rows: 2 }}
-                          className="support-community__title"
-                        >
-                          {getItemTitle(item)}
-                        </Paragraph>
-                      ) : mode === 'reply' ? (
-                        <Link
-                          className="support-community__title-link"
-                          to={`/u/${item.people?.user}`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <p className="support-community__title">
-                            {getItemTitle(item)}
-                          </p>
-                        </Link>
-                      ) : (
+                      {mode === 'category' && (
                         <p className="support-community__title">
                           {getItemTitle(item)}
                         </p>
                       )}
-                      {mode === 'topic' ? (
+                      {(mode === 'topic' || mode === 'reply') && (
                         <div className="support-community__meta">
                           {item.people?.name && (
-                            <span>Autor: {item.people.name}</span>
+                            <span>
+                              {mode === 'reply' ? (
+                                <Link
+                                  className="support-community__title-link"
+                                  to={`/u/${item.people?.user}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {item.people.name}
+                                </Link>
+                              ) : (
+                                item.people.name
+                              )}
+                            </span>
                           )}
-                          {item.moment && (
+                          {(mode === 'topic' ? item.moment : activityAt) && (
                             <span className="support-community__meta-item">
-                              <TimeAgo sentAt={item.moment} />
+                              <TimeAgo sentAt={mode === 'topic' ? item.moment : activityAt} />
                             </span>
                           )}
                         </div>
-                      ) : mode === 'reply' && activityAt ? (
-                        <div className="support-community__meta">
-                          <span className="support-community__meta-item">
-                            <TimeAgo sentAt={activityAt} />
-                          </span>
-                        </div>
-                      ) : null}
+                      )}
                     </div>
                     {canManageItem(item) && (
                       <div className="support-community__actions">
@@ -306,16 +295,24 @@ function SupportCommunityDisplay({
                       </div>
                     )}
                   </div>
+                  {mode === 'topic' &&
+                    <Paragraph
+                      ellipsis={{ rows: 2 }}
+                      className="support-community__title"
+                    >
+                      {getItemTitle(item)}
+                    </Paragraph>
+                  }
                   {mode === 'reply' ? (
                     <>
                       <div className="support-community__description">
                         {item.content}
                       </div>
                       <Button
-                        style={{alignSelf: 'start'}}
+                        style={{ alignSelf: 'start' }}
                         type="link"
                         className="support-community__like-btn"
-                        onClick={(e) => {handleLike(item)}}
+                        onClick={(e) => { handleLike(item) }}
                         loading={loadingLike === item.uid}
                         disabled={loadingLike === item.uid}
                       >
@@ -339,7 +336,7 @@ function SupportCommunityDisplay({
                           </span>
                           {item.lastActivityAt && (
                             <span className="support-community__meta-item">
-                              <span>Última:</span>
+                              <span>&nbsp; Última:</span>
                               <TimeAgo sentAt={item.lastActivityAt} />
                             </span>
                           )}
@@ -350,12 +347,11 @@ function SupportCommunityDisplay({
                           <span className="support-community__meta-item support-community__meta-item--count">
                             <TagsOutlined />
                             {item.topicsCount} Tópico{item.topicsCount > 1 ? "s" : ""}
-                            {' '}
-                            Criado{item.topicsCount > 1 ? "s" : ""}
+                            &nbsp;Criado{item.topicsCount > 1 ? "s" : ""}
                           </span>
                           {activityAt && (
                             <span className="support-community__meta-item">
-                              <span>Última:</span>
+                              <span>&nbsp; Última:</span>
                               <TimeAgo sentAt={activityAt} />
                             </span>
                           )}
