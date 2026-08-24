@@ -157,6 +157,7 @@ function SupportCommunityDisplay({
     }
     return "Tem a certeza que deseja apagar a categoria?";
   };
+
   const canManageItem = (item) => {
     if (mode === 'topic' || mode === 'reply') {
       return loggedUser.canManagePosts() || item.people?.uid === loggedUser.data?.uid;
@@ -191,6 +192,8 @@ function SupportCommunityDisplay({
           <Spin size="large" />
         </div>
       )}
+
+      {/** Result count (hidden on the replies list) **/}
       {!loading && listItems.length > 0 && mode !== 'reply' && (
         <div className="support-community__count">
           <Text type="secondary">
@@ -198,6 +201,8 @@ function SupportCommunityDisplay({
           </Text>
         </div>
       )}
+
+      {/** Item cards list **/}
       <div className="support-community__items">
         {!loading && listItems.map((item) => {
           const activityAt = mode === 'category' ? item.lastActivityAt : item.moment;
@@ -213,7 +218,10 @@ function SupportCommunityDisplay({
             >
               <div className="support-community__card-body">
                 <div className="support-community__content">
+                  {/** card header **/}
                   <div className="support-community__title-row">
+
+                    {/** Category folder icon or author avatar **/}
                     {mode === 'category' ?
                       <div className="support-community__icon-material">
                         <FolderOpenOutlined />
@@ -227,6 +235,8 @@ function SupportCommunityDisplay({
                         />
                       </Link>
                     }
+
+                    {/** Category title, or author name + timestamp **/}
                     <div className="support-community__heading">
                       {mode === 'category' && (
                         <p className="support-community__title">
@@ -258,6 +268,8 @@ function SupportCommunityDisplay({
                         </div>
                       )}
                     </div>
+
+                    {/** Delete and edit actions **/}
                     {canManageItem(item) && (
                       <div className="support-community__actions">
                         <Popconfirm
@@ -295,6 +307,8 @@ function SupportCommunityDisplay({
                       </div>
                     )}
                   </div>
+
+                  {/** topic title **/}
                   {mode === 'topic' &&
                     <Paragraph
                       ellipsis={{ rows: 2 }}
@@ -303,6 +317,8 @@ function SupportCommunityDisplay({
                       {getItemTitle(item)}
                     </Paragraph>
                   }
+
+                  {/** reply content and like **/}
                   {mode === 'reply' ? (
                     <>
                       <div className="support-community__description">
@@ -322,12 +338,16 @@ function SupportCommunityDisplay({
                     </>
                   ) : (
                     <>
+
+                      {/** category / topic description **/}
                       <Paragraph
                         ellipsis={{ rows: 3 }}
                         className="support-community__description"
                       >
                         {getItemDescription(item)}
                       </Paragraph>
+
+                      {/** topic replies count and last activity **/}
                       {mode === 'topic' && item.repliesCount > 0 && (
                         <div className="support-community__meta support-community__meta--secondary">
                           <span className="support-community__meta-item support-community__meta-item--count">
@@ -342,6 +362,8 @@ function SupportCommunityDisplay({
                           )}
                         </div>
                       )}
+
+                      {/** category topics count and last activity **/}
                       {mode === 'category' && (
                         <div className="support-community__meta support-community__meta--secondary">
                           <span className="support-community__meta-item support-community__meta-item--count">
@@ -359,17 +381,22 @@ function SupportCommunityDisplay({
                       )}
                     </>
                   )}
+
                 </div>
               </div>
             </Card>
           );
         })}
       </div>
+
+      {/** Empty state when there are no items **/}
       {!loading && listItems.length === 0 && (
         <div className="support-community__empty">
           <Empty description={getEmptyText()} />
         </div>
       )}
+
+      {/** Create / edit modal **/}
       <Modal
         open={showModal}
         onCancel={onCancel}
@@ -381,6 +408,8 @@ function SupportCommunityDisplay({
       >
         <div style={{ marginTop: "16px" }}>
           <Form form={form} layout="vertical" onFinish={onFinish}>
+
+            {/** title / name field **/}
             {mode !== 'reply' && (
               <Form.Item
                 name={mode === 'topic' ? 'title' : 'name'}
@@ -403,6 +432,8 @@ function SupportCommunityDisplay({
                 />
               </Form.Item>
             )}
+
+            {/** description / content field **/}
             <Form.Item
               name={mode === 'reply' || mode === 'topic' ? 'content' : 'description'}
               label={mode === 'reply' ? "Resposta" : "Descrição"}
@@ -431,6 +462,8 @@ function SupportCommunityDisplay({
                   showCount
                   style={{ resize: "none", paddingBottom: '36px' }}
                 />
+
+                {/** Emoji picker (desktop only) **/}
                 {!isMobile && (
                   <div style={{ position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 }}>
                     <Popover
@@ -459,6 +492,8 @@ function SupportCommunityDisplay({
                 )}
               </div>
             </Form.Item>
+
+            {/** Submit button **/}
             <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
               <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
                 {getSubmitLabel()}
