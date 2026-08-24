@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 5px;
     margin-top: 16px;
     padding-left: 24px;
     font-size: 14px;
@@ -118,6 +118,12 @@
     font-size: 14px;
     gap: 12px;
     color: #8c8c8c;
+
+    @media (max-width: 470px) {
+        flex-direction: column;
+        align-items: start;
+        gap: 5px;
+    }
 
     .ant-typography {
       color: inherit;

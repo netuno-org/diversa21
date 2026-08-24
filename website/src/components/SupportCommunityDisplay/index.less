@@ -56,7 +56,7 @@
 
   &__title-row {
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 12px;
     width: 100%;
   }
@@ -102,6 +102,12 @@
     gap: 12px;
     font-size: 14px;
     color: #8c8c8c;
+
+    @media (max-width: 476px) {
+      flex-direction: column;
+      align-items: start;
+      gap: 5px
+    }
 
     &--secondary {
       margin-top: 8px;

@@ -91,13 +91,13 @@ function ListHeaderFilters({
           }
           <Row align="middle" gutter={[16, 16]}>
             {title && (
-              <Col xs={(createButton || extraActionButtons) ? 12 : 24} sm={(createButton || extraActionButtons) ? 12 : 24}>
+              <Col xs={24} sm={(createButton || extraActionButtons) ? 12 : 24}>
                 <Title>{title}</Title>
               </Col>
             )}
             {(createButton || extraActionButtons) && (
-              <Col xs={12} sm={12}>
-                <Space wrap style={{ justifyContent: 'flex-end', width: '100%' }}>
+              <Col xs={24} sm={12}>
+                <Space className="list-header-filters__actions" wrap>
                   {extraActionButtons}
                   {createButton && (
                     <Button
