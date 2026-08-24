@@ -1,51 +1,51 @@
 import _auth from "@netuno/auth-client";
-import { Layout, Typography, Space, Divider } from "antd";
+import { Layout, Typography, Divider } from "antd";
 import { GithubOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 
 import './index.less';
 
 const { Footer } = Layout;
-const { Text, Link: AntLink } = Typography; 
+const { Text, Link: AntLink } = Typography;
 
 function FooterBase() {
   const currentYear = new Date().getFullYear();
   const location = useLocation();
-  
+
   const isLoginPage = location.pathname === '/login';
 
   return (
     <Footer className="footer-base">
-      <Space separator={<Divider orientation="vertical" className="footer-base__divider" />}>
-
+      <div className="footer-base__container">
         <Text className="footer-base__text">
           © diversa21.org {currentYear}
         </Text>
 
         {!isLoginPage && (
           <>
+            <Divider orientation="vertical" className="footer-base__divider" />
             <Link to="/terms" className="footer-base__link">
               Termos e Condições
             </Link>
 
+            <Divider orientation="vertical" className="footer-base__divider" />
             <Link to="/privacy" className="footer-base__link">
               Privacidade
             </Link>
           </>
         )}
 
+        <Divider orientation="vertical" className="footer-base__divider" />
+
         <AntLink
           href="https://github.com/netuno-org/diversa21"
           target="_blank"
-          className="footer-base__link"
+          className="footer-base__link footer-base__github"
         >
-          <Space size={6}>
-            <GithubOutlined />
-            <span>Open Source</span>
-          </Space>
+          <GithubOutlined />
+          <span>Open Source</span>
         </AntLink>
-
-      </Space>
+      </div>
     </Footer>
   );
 }
