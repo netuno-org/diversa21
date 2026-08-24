@@ -117,20 +117,20 @@ function SupportCommunityDisplay({
 
   const getCountLabel = () => {
     if (mode === 'reply') {
-      return listItems.length !== 1 ? "respostas encontradas" : "resposta encontrada";
+      return listItems.length !== 1 ? "Respostas Rncontradas" : "Resposta Encontrada";
     } else if (mode === 'topic') {
-      return listItems.length !== 1 ? "tópicos encontrados" : "tópico encontrado";
+      return listItems.length !== 1 ? "Tópicos Encontrados" : "Tópico Encontrado";
     }
-    return listItems.length !== 1 ? "categorias encontradas" : "categoria encontrada";
+    return listItems.length !== 1 ? "Categorias Encontradas" : "Categoria Encontrada";
   };
 
   const getEmptyText = () => {
     if (mode === 'reply') {
-      return "Nenhuma resposta encontrada";
+      return "Nenhuma Resposta Encontrada";
     } else if (mode === 'topic') {
-      return "Nenhum Tópico encontrado";
+      return "Nenhum Tópico Encontrado";
     }
-    return "Nenhuma categoria encontrada";
+    return "Nenhuma Categoria Encontrada";
   };
 
   const getItemTitle = (item) => {
@@ -166,11 +166,11 @@ function SupportCommunityDisplay({
 
   const getModalTitle = () => {
     if (mode === 'reply') {
-      return "Criar nova Resposta";
+      return "Criar Nova Resposta";
     } else if (mode === 'topic') {
-      return "Criar novo Tópico";
+      return "Criar Novo Tópico";
     }
-    return "Cria nova categoria";
+    return "Criar Nova Categoria";
   };
 
   const getSubmitLabel = () => {
@@ -335,7 +335,7 @@ function SupportCommunityDisplay({
                         <div className="support-community__meta support-community__meta--secondary">
                           <span className="support-community__meta-item">
                             <VscCommentDiscussionQuote />
-                            {item.repliesCount} resposta{item.repliesCount !== 1 ? "s" : ""}
+                            {item.repliesCount} Resposta{item.repliesCount !== 1 ? "s" : ""}
                           </span>
                           {item.lastActivityAt && (
                             <span className="support-community__meta-item">
@@ -349,9 +349,9 @@ function SupportCommunityDisplay({
                         <div className="support-community__meta support-community__meta--secondary">
                           <span className="support-community__meta-item">
                             <TagsOutlined />
-                            {item.topicsCount} tópico{item.topicsCount > 1 ? "s" : ""}
+                            {item.topicsCount} Tópico{item.topicsCount > 1 ? "s" : ""}
                             {' '}
-                            criado{item.topicsCount > 1 ? "s" : ""}
+                            Criado{item.topicsCount > 1 ? "s" : ""}
                           </span>
                           {activityAt && (
                             <span className="support-community__meta-item">
@@ -388,9 +388,9 @@ function SupportCommunityDisplay({
             {mode !== 'reply' && (
               <Form.Item
                 name={mode === 'topic' ? 'title' : 'name'}
-                label={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}
+                label={mode === 'topic' ? 'Nome do Tópico' : 'Nome da Categoria'}
                 rules={[
-                  { required: true, message: "O título é obrigatório!" },
+                  { required: true, message: "O título é Obrigatório!" },
                   {
                     max: titleMaxLength,
                     message: mode === 'topic'
@@ -401,7 +401,7 @@ function SupportCommunityDisplay({
               >
                 <Input
                   className="support-community__title-input"
-                  placeholder={mode === 'topic' ? 'Nome do Tópico' : 'Nome da categoria'}
+                  placeholder={mode === 'topic' ? 'Nome do Tópico...' : 'Nome da Categoria...'}
                   maxLength={titleMaxLength}
                   showCount
                 />
@@ -411,7 +411,7 @@ function SupportCommunityDisplay({
               name={mode === 'reply' || mode === 'topic' ? 'content' : 'description'}
               label={mode === 'reply' ? "Resposta" : "Descrição"}
               rules={mode === 'reply' || mode === 'topic' ? [
-                { required: true, message: mode === 'reply' ? "A resposta é obrigatória!" : "A descrição é obrigatória!" },
+                { required: true, message: mode === 'reply' ? "A resposta é Obrigatória!" : "A descrição é Obrigatória!" },
                 { max: descriptionMaxLength, message: mode === 'reply' ? "A resposta deve ter no máximo 2500 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
               ] : [
                 { required: true, message: "A descrição é obrigatória!" },
@@ -429,7 +429,7 @@ function SupportCommunityDisplay({
                     const fieldName = mode === 'reply' || mode === 'topic' ? 'content' : 'description';
                     form.setFieldsValue({ [fieldName]: val });
                   }}
-                  placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do tópico' : 'Descrição da categoria'}
+                  placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do Tópico...' : 'Descrição da Categoria...'}
                   rows={5}
                   maxLength={descriptionMaxLength}
                   showCount

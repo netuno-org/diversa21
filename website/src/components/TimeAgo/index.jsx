@@ -16,7 +16,7 @@ const formatRelativeTime = (moment)=> {
 
   const minutes = dayjs().diff(moment, "minute");
   if (minutes < 1) {
-    return "Há alguns segundos";
+    return "Há Alguns Segundos";
   }
   if (minutes < 60) {
     return `Há ${minutes} min`;

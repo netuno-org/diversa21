@@ -194,12 +194,12 @@ function CategoryTopics() {
   return (
     <div className="support-community">
       <ListHeaderFilters
-        title="Rede de apoio"
+        title="Rede de Apoio"
         description="Um espaço para tirar dúvidas e partilhar experiências. Explore as categorias e participe na conversa."
-        searchPlaceholder="Buscar por categoria"
+        searchPlaceholder="Buscar por categoria..."
         createButton={loggedUser.canManageForumCategories() && {
           icon: <PlusOutlined />,
-          text: "Criar categoria",
+          text: "Criar Categoria",
           onClick: openCreateModal,
         }}
         hideLocation={true}

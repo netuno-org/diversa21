@@ -18,7 +18,7 @@ function ListHeaderFilters({
   onLocationClear /* () => { ... } */,
   onSearchClear,
   hideInputs,
-  searchPlaceholder = "Buscar por nome",
+  searchPlaceholder = "Buscar por nome ...",
   hideLocation,
   searchValue,
   fullWidthSearch,
@@ -86,7 +86,7 @@ function ListHeaderFilters({
               icon={<ArrowLeftOutlined />}
               onClick={() => navigate(-1)}
             >
-              Voltar as categorias
+              Voltar as Categorias
             </Button>
           }
           <Row align="middle" gutter={[16, 16]}>

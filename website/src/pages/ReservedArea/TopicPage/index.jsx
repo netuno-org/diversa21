@@ -215,9 +215,9 @@ function TopicPage({ categoryUid }) {
   return (
     <div>
       <ListHeaderFilters
-        title='Rede de apoio'
+        title='Rede de Apoio'
         description="Um espaço para tirar dúvidas e partilhar experiências. Explore as categorias e participe na conversa."
-        searchPlaceholder="Buscar por Tópico"
+        searchPlaceholder="Buscar por Tópico..."
         createButton={canManageTopic && {
           icon: <PlusOutlined />,
           text: "Criar Tópico",
