@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "people"
+  ],
+  "summary": "Upload Photo",
+  "description": "Upload a new photo to the logged user's gallery.",
+  "type": "object",
+  "properties": {
+    "photo": {
+      "type": "file"
+    }
+  },
+  "required": [
+    "photo"
+  ]
+}

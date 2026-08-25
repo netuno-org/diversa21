@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "people"
+  ],
+  "summary": "Delete Photo",
+  "description": "Delete a specific photo from the logged user's gallery.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

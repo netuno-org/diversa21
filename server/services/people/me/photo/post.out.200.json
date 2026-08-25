@@ -1,0 +1,19 @@
+{
+  "result": {
+    "type": "boolean"
+  },
+  "data": {
+    "type": "object",
+    "properties": {
+      "uid": {
+        "type": "uid"
+      },
+      "photo": {
+        "type": "string"
+      },
+      "moment": {
+        "type": "string"
+      }
+    }
+  }
+}

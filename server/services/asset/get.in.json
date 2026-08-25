@@ -13,7 +13,8 @@
       "description": "Type of asset.",
       "enum": [
         "avatar",
-        "cover_image"
+        "cover_image",
+        "photo"
       ]
     },
     "entity": {
@@ -21,7 +22,8 @@
       "description": "Entity name.",
       "enum": [
         "people",
-        "institution"
+        "institution",
+        "people_photo"
       ]
     }
   },

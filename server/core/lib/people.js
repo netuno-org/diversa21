@@ -99,6 +99,9 @@ export default {
     }
     return order;
   },
+  maxGalleryPhotos: () => {
+    return 2;
+  },
   wsSendService: (dbPeople, message) => {
     const dbSessions = _db.form("people_ws_session")
       .where(_db.where("people_id").equal(dbPeople.getInt("id")))
