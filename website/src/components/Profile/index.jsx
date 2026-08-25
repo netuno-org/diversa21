@@ -22,6 +22,7 @@ import { LuUserCheck } from "react-icons/lu";
 
 import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
+import { MdOutlineInsertPhoto } from "react-icons/md";
 
 import ActivityList from "../Activity/List";
 import FriendList from "../Friend/List";
@@ -43,6 +44,71 @@ function Profile({ user }) {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 576);
 
   const { run, isProcessing } = useFriendActions();
+
+  const [galleryPhotos, setGalleryPhotos] = useState([]);
+  const [maxPhotos, setMaxPhotos] = useState(0);
+  const [galleryLoading, setGalleryLoading] = useState(false);
+
+  const fetchGalleryPhotos = () => {
+    if (!user?.uid) return;
+    setGalleryLoading(true);
+    _service({
+      method: "GET",
+      url: `/people/photo?uid=${user.uid}`,
+      success: ({ json }) => {
+        if (json?.result) {
+          setGalleryPhotos(json.data?.items || []);
+          setMaxPhotos(json.data?.maxGalleryPhotos || 0);
+        }
+        setGalleryLoading(false);
+      },
+      fail: (err) => {
+        console.error("Erro ao carregar fotos da galeria:", err);
+        setGalleryLoading(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetchGalleryPhotos();
+  }, [user]);
+
+  const handleAddPhoto = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    _service({
+      method: "POST",
+      url: "/people/me/photo",
+      data: formData,
+      success: ({ json }) => {
+        if (json?.result) {
+          fetchGalleryPhotos();
+        }
+      },
+      fail: (err) => {
+        console.error("Erro ao adicionar foto:", err);
+      }
+    });
+  };
+
+  const handleRemovePhoto = (photoUid) => {
+    _service({
+      method: "DELETE",
+      url: `/people/me/photo?uid=${photoUid}`,
+      success: ({ json }) => {
+        if (json?.result) {
+          fetchGalleryPhotos();
+        }
+      },
+      fail: (err) => {
+        console.error("Erro ao remover foto:", err);
+      }
+    });
+  };
 
   const isOwnProfile = user?.username === loggedUser?.data?.username;
   const canEditProfile = isOwnProfile || loggedUser?.canManageUser(user);
@@ -280,6 +346,72 @@ function Profile({ user }) {
       ),
     });
   }
+
+  tabItems.push({
+    key: 'gallery',
+    label: (
+      <Space>
+        <MdOutlineInsertPhoto style={{ fontSize: 18 }} />
+        <span>Galeria</span>
+      </Space>
+    ),
+    children: (
+      <div className="profile__tabs-content" style={{ padding: '16px' }}>
+        {isOwnProfile && (
+          <div style={{ marginBottom: '20px' }}>
+            <input
+              type="file"
+              accept="image/*"
+              id="gallery-photo-upload"
+              style={{ display: 'none' }}
+              onChange={handleAddPhoto}
+              disabled={galleryPhotos.length >= maxPhotos}
+            />
+            <Button
+              type="primary"
+              onClick={() => document.getElementById('gallery-photo-upload').click()}
+              disabled={galleryPhotos.length >= maxPhotos}
+            >
+              Adicionar Foto
+            </Button>
+            {galleryPhotos.length >= maxPhotos && (
+              <div style={{ marginTop: '8px', color: '#ff4d4f', fontSize: '14px' }}>
+                Não pode colocar mais fotos, o máximo é {maxPhotos}.
+              </div>
+            )}
+          </div>
+        )}
+        
+        {galleryLoading ? (
+          <Spin />
+        ) : (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+            {galleryPhotos.map((p) => (
+              <div key={p.uid} style={{ position: 'relative', width: '150px', height: '150px', border: '1px solid #d9d9d9', borderRadius: '8px', overflow: 'hidden' }}>
+                <img
+                  src={_service.url(`/asset?uid=${p.uid}&type=photo&entity=people_photo&photo=${p.photo}`)}
+                  alt="Foto de Galeria"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                {isOwnProfile && (
+                  <Button
+                    type="primary"
+                    danger
+                    size="small"
+                    style={{ position: 'absolute', top: '4px', right: '4px' }}
+                    onClick={() => handleRemovePhoto(p.uid)}
+                  >
+                    Remover
+                  </Button>
+                )}
+              </div>
+            ))}
+            {galleryPhotos.length === 0 && <Text type="secondary">Nenhuma foto na galeria.</Text>}
+          </div>
+        )}
+      </div>
+    )
+  });
 
   return (
     <section className="profile">
