@@ -66,6 +66,7 @@ _form.syncField(
 	"debd546f-770a-4a1b-bba1-e1fcfb9acb96",
 	_val.map()
 		.set("colspan", 0)
+		.set("description", "")
 		.set("firebase", "")
 		.set("group_id", 0)
 		.set("height", 0)
