@@ -14,6 +14,7 @@ Table country {
 
 Table forum_topic {
   id int [pk, increment]
+  anonymous boolean [note: 'Anônimo']
   content text [not null, note: 'Conteúdo']
   forum_category_id int [not null, ref: > forum_category.id, note: 'Categoria']
   last_activity_at timestamp [note: 'Útilma Atividade Em']
@@ -198,6 +199,7 @@ Table forum_category {
 
 Table forum_reply {
   id int [pk, increment]
+  anonymous boolean [note: 'Anônimo']
   content text [not null, note: 'Conteúdo']
   likes int [note: 'Likes']
   moment timestamp [note: 'Momento']
