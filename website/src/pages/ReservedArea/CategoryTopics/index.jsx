@@ -21,6 +21,7 @@ function CategoryTopics() {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+
   const loggedUser = usePeople();
   const navigate = useNavigate()
   const mode = 'category'

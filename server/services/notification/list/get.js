@@ -56,12 +56,6 @@ for (const dbNotification of dbNotifications) {
     .set("uid", dbNotification.getUID("uid"))
     .set("type", dbNotification.getString("type"))
     .set("title", dbNotification.getString("title"))
-    .set("originator", _val.map()
-      .set("uid", dbNotification.getString("originator_uid"))
-      .set("name", dbNotification.getString("originator_name"))
-      .set("username", dbNotification.getString("originator_username"))
-      .set("avatar", dbNotification.getString("originator_avatar"))
-    )
     .set("recipient", _val.map()
       .set("uid", dbNotification.getString("recipient_uid"))
       .set("username", dbNotification.getString("recipient_username"))
@@ -69,7 +63,18 @@ for (const dbNotification of dbNotifications) {
     .set("extra", extra)
     .set("content", dbNotification.getString("content"))
     .set("read_at", dbNotification.getString("read_at"))
-    .set("sent_at", dbNotification.getString("sent_at"))
+    .set("sent_at", dbNotification.getString("sent_at"));
+
+  if (!(extra && extra.anonymous === true)) {
+    notification.set(
+      "originator",
+      _val.map()
+        .set("uid", dbNotification.getString("originator_uid"))
+        .set("name", dbNotification.getString("originator_name"))
+        .set("username", dbNotification.getString("originator_username"))
+        .set("avatar", dbNotification.getString("originator_avatar"))
+    );
+  }
 
   list.add(notification);
 }

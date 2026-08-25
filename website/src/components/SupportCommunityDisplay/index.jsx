@@ -5,11 +5,12 @@ import _service from "@netuno/service-client";
 
 import TimeAgo from "../TimeAgo";
 
-import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar, Popover, Grid } from 'antd'
+import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar, Popover, Grid, Switch } from 'antd'
 import {
   DeleteOutlined,
   EditOutlined,
   FolderOpenOutlined,
+  UserOutlined,
   TagsOutlined,
   SmileOutlined,
   LikeOutlined,
@@ -40,11 +41,16 @@ function SupportCommunityDisplay({
   handleDelete,
   handleLike,
   loadingLike,
+  enabledSwicth,
+  anonymous,
+  onAnonymousChange,
   mode
 }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-  const [form] = Form.useForm();
   const [descriptionValue, setDescriptionValue] = useState("");
+
+  const [form] = Form.useForm();
+
   const textAreaRef = useRef(null);
 
   const screens = Grid.useBreakpoint();
@@ -160,7 +166,9 @@ function SupportCommunityDisplay({
 
   const canManageItem = (item) => {
     if (mode === 'topic' || mode === 'reply') {
-      return loggedUser.canManagePosts() || item.people?.uid === loggedUser.data?.uid;
+      return loggedUser.canManagePosts()
+        || item.isOwner === true
+        || item.people?.uid === loggedUser.data?.uid;
     }
     return loggedUser.canManageForumCategories();
   };
@@ -182,7 +190,7 @@ function SupportCommunityDisplay({
     }
     return editingCategory ? "Editar" : "Criar";
   };
-
+  
   return (
     <div className="support-community"
       onClick={(e) => e.stopPropagation()}
@@ -222,11 +230,19 @@ function SupportCommunityDisplay({
                   <div className="support-community__title-row">
 
                     {/** Category folder icon or author avatar **/}
-                    {mode === 'category' ?
+                    {mode === 'category' ? (
                       <div className="support-community__icon-material">
                         <FolderOpenOutlined />
-                      </div> :
-                      <Link to={`/u/${item?.people?.user}`}>
+                      </div>
+                    ) : item.anonymous === true ? (
+                      <div className="support-community__icon-material">
+                        <UserOutlined />
+                      </div>
+                    ) : (
+                      <Link
+                        to={`/u/${item?.people?.user}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Avatar
                           size={50}
                           className="support-community__avatar"
@@ -234,7 +250,7 @@ function SupportCommunityDisplay({
                           src={avatarSrc}
                         />
                       </Link>
-                    }
+                    )}
 
                     {/** Category title, or author name + timestamp **/}
                     <div className="support-community__heading">
@@ -245,7 +261,9 @@ function SupportCommunityDisplay({
                       )}
                       {(mode === 'topic' || mode === 'reply') && (
                         <div className="support-community__meta">
-                          {item.people?.name && (
+                          {item.anonymous === true ? (
+                            <span>Anônimo</span>
+                          ) : item.people?.name && (
                             <span>
                               {mode === 'reply' ? (
                                 <Link
@@ -493,11 +511,29 @@ function SupportCommunityDisplay({
               </div>
             </Form.Item>
 
-            {/** Submit button **/}
-            <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
-              <Button style={{ marginTop: 16 }} type="primary" htmlType="submit">
-                {getSubmitLabel()}
-              </Button>
+            {/** Submit and anonymous button **/}
+            <Form.Item style={{ marginBottom: 0, marginTop: '30px', textAlign: "right" }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: (mode === 'category' || editingTopic || editingReply) ? 'flex-end' : 'space-between',
+              }}>
+                {(mode === 'reply' || mode === 'topic') && !editingTopic && !editingReply &&
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                    <Switch
+                      style={{ width: '65px' }}
+                      checked={anonymous}
+                      onChange={onAnonymousChange}
+                      checkedChildren="On"
+                      unCheckedChildren="Off"
+                    />
+                    <div style={{ marginTop: '8px' }}>Gostaria de publicar de forma anônima?</div>
+                    <div>Seus dados serão preservados ao selecionar essa opção.</div>
+                  </div>
+                }
+                <Button type="primary" htmlType="submit">
+                  {getSubmitLabel()}
+                </Button>
+              </div>
             </Form.Item>
           </Form>
         </div>

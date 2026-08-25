@@ -6,6 +6,7 @@ import response from "#core/lib/response.js";
 const categoryUid = _req.getUID("categoryUid");
 const title = _req.getString("title");
 const content = _req.getString("content");
+const isAnonymous = _req.getBoolean("isAnonymous");
 
 if (title.length > 250) {
   response.stopWithBadRequest("title-too-large");
@@ -38,6 +39,7 @@ const topicId = _db.insert(
     .set("content", content)
     .set("moment", topicMoment)
     .set("last_activity_at", topicMoment)
+    .set("anonymous", isAnonymous)
     .set("replies", 0)
 );
 
@@ -61,6 +63,7 @@ const dbTopic = _db.queryFirst(`
       t.content,
       t.moment,
       t.last_activity_at,
+      t.anonymous,
       c.uid AS "category_uid",
       c.name AS "category_name",
       p.uid AS "people_uid",
@@ -74,26 +77,30 @@ const dbTopic = _db.queryFirst(`
     WHERE t.id = ?::int
 `, topicId);
 
-response.successWithData(
-  _val.map()
-    .set("uid", dbTopic.getUID("uid"))
-    .set("title", dbTopic.getString("title"))
-    .set("content", dbTopic.getString("content"))
-    .set("moment", dbTopic.getString("moment"))
-    .set("lastActivityAt", dbTopic.getString("last_activity_at"))
-    .set("repliesCount", 0)
-    .set(
-      "category",
-      _val.map()
-        .set("uid", dbTopic.getUID("category_uid"))
-        .set("name", dbTopic.getString("category_name"))
-    )
-    .set(
-      "people",
-      _val.map()
-        .set("uid", dbTopic.getUID("people_uid"))
-        .set("name", dbTopic.getString("people_name"))
-        .set("user", dbTopic.getString("people_user"))
-        .set("avatar", dbTopic.getString("people_avatar") !== "")
-    )
-);
+const topic = _val.map()
+  .set("uid", dbTopic.getUID("uid"))
+  .set("title", dbTopic.getString("title"))
+  .set("content", dbTopic.getString("content"))
+  .set("moment", dbTopic.getString("moment"))
+  .set("lastActivityAt", dbTopic.getString("last_activity_at"))
+  .set("anonymous", dbTopic.getBoolean("anonymous"))
+  .set("repliesCount", 0)
+  .set(
+    "category",
+    _val.map()
+      .set("uid", dbTopic.getUID("category_uid"))
+      .set("name", dbTopic.getString("category_name"))
+  );
+
+if (!dbTopic.getBoolean("anonymous")) {
+  topic.set(
+    "people",
+    _val.map()
+      .set("uid", dbTopic.getUID("people_uid"))
+      .set("name", dbTopic.getString("people_name"))
+      .set("user", dbTopic.getString("people_user"))
+      .set("avatar", dbTopic.getString("people_avatar") !== "")
+  );
+}
+
+response.successWithData(topic);

@@ -26,6 +26,7 @@ export const notificationMessages = {
   FRIEND_COMMENT: "comentou um post.",
   FRIEND_LIKE: "gostou de um post.",
   FORUM_REPLY: "respondeu seu tópico.",
+  FORUM_REPLY_ANONYMOUS: "respondeu o seu tópico.",
   FORUM_REPLY_LIKE: "Curtiu sua reposta num tópico",
   INSTITUTION_POST: "publicou um post na instituição",
   INSTITUTION_COMMENT: "comentou um post na instituição",

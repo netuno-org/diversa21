@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -13,6 +13,7 @@ import { Button, Divider, Typography, Avatar, Pagination } from "antd";
 import {
   ArrowLeftOutlined,
   FolderOpenOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
@@ -34,6 +35,7 @@ function Replies({ topicUid }) {
   const [repliesCount, setRepliesCount] = useState(0);
   const [page, setPage] = useState(1);
   const [loadingLike, setLoadingLike] = useState(null)
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
   const mode = 'reply'
@@ -100,6 +102,7 @@ function Replies({ topicUid }) {
       data: {
         topicUid,
         content: values.content,
+        isAnonymous,
       },
       success: ({ json }) => {
         if (json) {
@@ -241,6 +244,11 @@ function Replies({ topicUid }) {
   const closeModal = () => {
     setShowModal(false);
     setEditingReply(null);
+    setIsAnonymous(false);
+  };
+
+  const handleAnonymousChange = (checked) => {
+    setIsAnonymous(checked);
   };
 
   const onFinish = (values) => {
@@ -282,26 +290,34 @@ function Replies({ topicUid }) {
             </>
           )}
           <div className="replies-header__topic-info">
-            <Link to={`/u/${topic?.people?.user}`}>
-              <Avatar
-                className="replies-header__avatar"
-                size={50}
-                src={avatarUrl}
-                shape="square"
-              />
-            </Link>
+            {topic?.anonymous === true ? (
+              <div className="replies-header__icon replies-header__icon--anonymous">
+                <UserOutlined />
+              </div>
+            ) : (
+              <Link to={`/u/${topic?.people?.user}`}>
+                <Avatar
+                  className="replies-header__avatar"
+                  size={50}
+                  src={avatarUrl}
+                  shape="square"
+                />
+              </Link>
+            )}
             <div className="replies-header__meta">
-              {topic?.people?.name && (
-                <span className="replies-header__author-info">
-                  Autor:{" "}
+              <span className="replies-header__author-info">
+                Autor:{" "}
+                {topic?.anonymous === true ? (
+                  "Anônimo"
+                ) : (
                   <Link
                     className="replies-header__title-link"
                     to={`/u/${topic?.people?.user}`}
                   >
-                    {topic.people.name}
+                    {topic?.people?.name}
                   </Link>
-                </span>
-              )}
+                )}
+              </span>
               <span className="replies-header__meta-item">
                 <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
               </span>
@@ -347,6 +363,8 @@ function Replies({ topicUid }) {
         handleDelete={handleDeleteReply}
         handleLike={handleLikeReply}
         loadingLike={loadingLike}
+        anonymous={isAnonymous}
+        onAnonymousChange={handleAnonymousChange}
         mode={mode}
       />
       {!loading && repliesCount > 0 && (

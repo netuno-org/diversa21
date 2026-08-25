@@ -19,6 +19,12 @@
     "repliesCount": {
       "type": "integer"
     },
+    "anonymous": {
+      "type": "boolean"
+    },
+    "isOwner": {
+      "type": "boolean"
+    },
     "category": {
       "type": "object",
       "properties": {
@@ -65,7 +71,7 @@
     "moment",
     "lastActivityAt",
     "repliesCount",
-    "category",
-    "people"
+    "anonymous",
+    "category"
   ]
 }

@@ -24,7 +24,8 @@ function TopicPage({ categoryUid }) {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchTitle, setSearchTitle] = useState("");
- 
+  const [isAnonymous, setIsAnonymous] = useState(false);
+
   const mode = 'topic'
 
   useEffect(() => {
@@ -34,7 +35,7 @@ function TopicPage({ categoryUid }) {
     _service({
       method: "GET",
       url: "/forum/category",
-      data: {uid: categoryUid},
+      data: { uid: categoryUid },
       success: ({ json }) => {
         if (json) {
           setCategoryName(json.data.name);
@@ -70,7 +71,7 @@ function TopicPage({ categoryUid }) {
       },
     });
   };
- 
+
   const handleCreateTopic = (values) => {
     setLoading(true);
     _service({
@@ -80,6 +81,7 @@ function TopicPage({ categoryUid }) {
         categoryUid,
         title: values.title,
         content: values.content,
+        isAnonymous,
       },
       success: ({ json }) => {
         if (json) {
@@ -104,7 +106,7 @@ function TopicPage({ categoryUid }) {
       },
     });
   };
-
+  
   const handleUpdateTopic = (values) => {
     setLoading(true);
     _service({
@@ -192,6 +194,11 @@ function TopicPage({ categoryUid }) {
   const closeModal = () => {
     setShowModal(false);
     setEditingTopic(null);
+    setIsAnonymous(false);
+  };
+
+  const handleAnonymousChange = (checked) => {
+    setIsAnonymous(checked);
   };
 
   const onFinish = (values) => {
@@ -244,6 +251,8 @@ function TopicPage({ categoryUid }) {
         handleCardClick={handleCardClick}
         openEditModal={openEditModal}
         handleDelete={handleDeleteTopic}
+        anonymous={isAnonymous}
+        onAnonymousChange={handleAnonymousChange}
         mode={mode}
       />
       {!loading && totalCount > 0 && (

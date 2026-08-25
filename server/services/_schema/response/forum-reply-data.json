@@ -19,6 +19,12 @@
     "topicUid": {
       "type": "uid"
     },
+    "anonymous": {
+      "type": "boolean"
+    },
+    "isOwner": {
+      "type": "boolean"
+    },
     "people": {
       "type": "object",
       "properties": {
@@ -50,6 +56,6 @@
     "likes",
     "liked",
     "topicUid",
-    "people"
+    "anonymous"
   ]
 }

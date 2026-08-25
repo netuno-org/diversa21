@@ -12,6 +12,9 @@
     "content": {
       "type": "string-not-empty",
       "maxLength": 2500
+    },
+    "isAnonymous": {
+      "type": "boolean"
     }
   },
   "required": [

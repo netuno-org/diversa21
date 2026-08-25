@@ -95,13 +95,20 @@ if (loggedUserId !== replyOwnerId) {
     if (!notifications.isNotificationBlocked(replyOwnerId, notificationTypeId)) {
       const loggedUserData = people.getData(loggedUserUid);
       const loggedUsername = loggedUserData ? loggedUserData.getString("username") : "";
+      const notificationTitle = "@" + loggedUsername;
+      const notificationContent = notificationMessages.FORUM_REPLY_LIKE;
+      const notificationContext = _val.map()
+        .set("topicUid", dbReply.getUID("topic_uid"))
+        .set("categoryUid", dbReply.getUID("category_uid"))
+        .set("replyUid", dbReply.getUID("uid"));
+      const notificationJson = `{ "topicUid": "${dbReply.getUID("topic_uid")}", "categoryUid": "${dbReply.getUID("category_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`;
 
       notifications.sendNotification(
-        "@" + loggedUsername,
-        notificationMessages.FORUM_REPLY_LIKE,
+        notificationTitle,
+        notificationContent,
         loggedUserId,
         replyOwnerId,
-        `{ "topicUid": "${dbReply.getUID("topic_uid")}", "categoryUid": "${dbReply.getUID("category_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`,
+        notificationJson,
         notificationTypeId
       );
 
@@ -130,8 +137,8 @@ if (loggedUserId !== replyOwnerId) {
             .set("data", _val.map().set("with", loggedUserUid))
             .set("content", _val.map()
               .set("uid", dbCreated.getString("uid"))
-              .set("title", "@" + loggedUsername)
-              .set("content", notificationMessages.FORUM_REPLY_LIKE)
+              .set("title", notificationTitle)
+              .set("content", notificationContent)
               .set("originator", _val.map()
                 .set("uid", loggedUserUid)
                 .set("username", loggedUsername)
@@ -141,11 +148,7 @@ if (loggedUserId !== replyOwnerId) {
               )
               .set("sent_at", dbCreated.getString("sent_at"))
               .set("read_at", null)
-              .set("extra", _val.map()
-                .set("topicUid", dbReply.getUID("topic_uid"))
-                .set("categoryUid", dbReply.getUID("category_uid"))
-                .set("replyUid", dbReply.getUID("uid"))
-              )
+              .set("extra", notificationContext)
               .set("type", notificationTypes.FORUM_REPLY_LIKE)
             )
         );

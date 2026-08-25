@@ -2,17 +2,23 @@ import { _req, _db, _val } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
-import notifications, { notificationTypes } from "#core/lib/notifications.js";
+import notifications, { notificationTypes, notificationMessages } from "#core/lib/notifications.js";
 
 const topicUid = _req.getUID("topicUid");
 const content = _req.getString("content");
+const isAnonymous = _req.getBoolean("isAnonymous");
 
 if (content.length > 2500) {
   response.stopWithTextTooLarge();
 }
 
 const dbTopic = _db.queryFirst(`
-    SELECT forum_topic.id, forum_topic.uid, forum_topic.forum_category_id, forum_topic.replies, people.uid as "people_uid", forum_category.uid as "category_uid"
+    SELECT forum_topic.id, 
+    forum_topic.uid, 
+    forum_topic.forum_category_id, 
+    forum_topic.replies, 
+    people.uid as "people_uid", 
+    forum_category.uid as "category_uid"
       FROM forum_topic
     INNER JOIN people
       ON forum_topic.people_id = people.id
@@ -49,6 +55,7 @@ const replyId = _db.insert(
     .set("people_id", loggedUser.getInt("id"))
     .set("content", content)
     .set("moment", replyMoment)
+    .set("anonymous", isAnonymous)
     .set("likes", 0)
 );
 
@@ -77,6 +84,7 @@ const dbReply = _db.queryFirst(`
       r.uid,
       r.content,
       r.moment,
+      r.anonymous,
       t.uid AS "topic_uid",
       p.uid AS "people_uid",
       p.name AS "people_name",
@@ -92,14 +100,35 @@ const dbReply = _db.queryFirst(`
 const notificationTypeId = notifications.getNotificationTypeId(notificationTypes.FORUM_REPLY);
 const loggedUserId = loggedUser.getInt("id");
 const topicOwnerId = dbTopicOwner.getInt("id");
+const replyIsAnonymous = dbReply.getBoolean("anonymous");
 
 if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicOwnerId, notificationTypeId)) {
+  const notificationTitle = replyIsAnonymous
+    ? "Alguém"
+    : "@" + dbReply.getString("people_user");
+  const notificationContent = replyIsAnonymous
+    ? notificationMessages.FORUM_REPLY_ANONYMOUS
+    : notificationMessages.FORUM_REPLY;
+
+  const notificationContext = _val.map()
+    .set("topicUid", dbReply.getUID("topic_uid"))
+    .set("replyUid", dbReply.getUID("uid"));
+
+  if (replyIsAnonymous) {
+    notificationContext.set("anonymous", true);
+  }
+  const notificationJson = `
+  { "topicUid": "${dbReply.getUID("topic_uid")}", 
+   "replyUid": "${dbReply.getUID("uid")}"
+   ${replyIsAnonymous ? ', "anonymous": true' : ""} }
+  `;
+
   notifications.sendNotification(
-    "@" + dbReply.getString("people_user"),
-    "respondeu seu tópico.",
+    notificationTitle,
+    notificationContent,
     loggedUserId,
     topicOwnerId,
-    `{ "topicUid": "${dbReply.getUID("topic_uid")}", "replyUid": "${dbReply.getUID("uid")}" }`,
+    notificationJson,
     notificationTypeId
   );
 
@@ -114,50 +143,60 @@ if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicO
   `, loggedUserId, topicOwnerId, notificationTypeId);
 
   if (dbCreated) {
+    const wsContent = _val.map()
+      .set("uid", dbCreated.getString("uid"))
+      .set("title", notificationTitle)
+      .set("content", notificationContent)
+      .set("recipient", _val.map()
+        .set("uid", dbTopic.getUID("people_uid"))
+      )
+      .set("sent_at", dbCreated.getString("sent_at"))
+      .set("read_at", null)
+      .set("extra", notificationContext)
+      .set("type", notificationTypes.FORUM_REPLY);
+
+    if (!replyIsAnonymous) {
+      wsContent.set(
+        "originator",
+        _val.map()
+          .set("uid", dbReply.getUID("people_uid"))
+          .set("username", dbReply.getString("people_user"))
+      );
+    }
+
     people.wsSendAsService(
       dbTopicOwner,
       _val.map()
         .set("method", "POST")
         .set("service", "notification/new")
-        .set("data", _val.map().set("with", dbReply.getUID("people_uid")))
-        .set("content", _val.map()
-          .set("uid", dbCreated.getString("uid"))
-          .set("title", "@" + dbReply.getString("people_user"))
-          .set("content", "respondeu seu tópico.")
-          .set("originator", _val.map()
-            .set("uid", dbReply.getUID("people_uid"))
-            .set("username", dbReply.getString("people_user"))
-          )
-          .set("recipient", _val.map()
-            .set("uid", dbTopic.getUID("people_uid"))
-          )
-          .set("sent_at", dbCreated.getString("sent_at"))
-          .set("read_at", null)
-          .set("extra", _val.map()
-            .set("topicUid", dbReply.getUID("topic_uid"))
-            .set("replyUid", dbReply.getUID("uid"))
-          )
-          .set("type", notificationTypes.FORUM_REPLY)
+        .set("data", replyIsAnonymous
+          ? _val.map()
+          : _val.map().set("with", dbReply.getUID("people_uid"))
         )
+        .set("content", wsContent)
     );
   }
 }
 
-response.successWithData(
-  _val.map()
-    .set("uid", dbReply.getUID("uid"))
-    .set("content", dbReply.getString("content"))
-    .set("moment", dbReply.getString("moment"))
-    .set("likes", 0)
-    .set("liked", false)
-    .set("topicUid", dbReply.getUID("topic_uid"))
-    .set("authorUid", dbTopic.getUID("people_uid"))
-    .set(
-      "people",
-      _val.map()
-        .set("uid", dbReply.getUID("people_uid"))
-        .set("name", dbReply.getString("people_name"))
-        .set("user", dbReply.getString("people_user"))
-        .set("avatar", dbReply.getString("people_avatar") !== "")
-    )
-);
+const reply = _val.map()
+  .set("uid", dbReply.getUID("uid"))
+  .set("content", dbReply.getString("content"))
+  .set("moment", dbReply.getString("moment"))
+  .set("likes", 0)
+  .set("liked", false)
+  .set("topicUid", dbReply.getUID("topic_uid"))
+  .set("authorUid", dbTopic.getUID("people_uid"))
+  .set("anonymous", dbReply.getBoolean("anonymous"));
+
+if (!dbReply.getBoolean("anonymous")) {
+  reply.set(
+    "people",
+    _val.map()
+      .set("uid", dbReply.getUID("people_uid"))
+      .set("name", dbReply.getString("people_name"))
+      .set("user", dbReply.getString("people_user"))
+      .set("avatar", dbReply.getString("people_avatar") !== "")
+  );
+}
+
+response.successWithData(reply);

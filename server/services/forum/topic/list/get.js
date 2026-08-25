@@ -1,5 +1,6 @@
 import { _req, _db, _val } from "@netuno/server-types";
 
+import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
 const categoryUid = _req.getUID("categoryUid");
@@ -20,6 +21,9 @@ if (!dbCategory) {
   response.stopWithForumCategoryNotFound();
 }
 
+const loggedUser = people.getLogged();
+const loggedUserId = loggedUser ? (loggedUser.getInt("id")) : 0;
+
 const dbTopics = _db.query(`
     SELECT
       count(*) over() as total_count,
@@ -28,9 +32,11 @@ const dbTopics = _db.query(`
       t.title,
       t.content,
       t.moment,
+      t.anonymous,
       t.last_activity_at,
       c.uid AS "category_uid",
       c.name AS "category_name",
+      p.id AS "people_id",
       p.uid AS "people_uid",
       p.name AS "people_name",
       nu.user AS "people_user",
@@ -49,30 +55,34 @@ const dbTopics = _db.query(`
 `, dbCategory.getInt("id"), title, `%${title}%`, pageSize, offset);
 
 const topics = _val.list();
+
 for (const dbTopic of dbTopics) {
-  topics.add(
-    _val.map()
-      .set("uid", dbTopic.getUID("uid"))
-      .set("title", dbTopic.getString("title"))
-      .set("content", dbTopic.getString("content"))
-      .set("moment", dbTopic.getString("moment"))
-      .set("lastActivityAt", dbTopic.getString("last_activity_at"))
-      .set("repliesCount", dbTopic.getInt("replies_count", 0))
-      .set(
-        "category",
-        _val.map()
-          .set("uid", dbTopic.getUID("category_uid"))
-          .set("name", dbTopic.getString("category_name"))
-      )
-      .set(
-        "people",
-        _val.map()
-          .set("uid", dbTopic.getUID("people_uid"))
-          .set("name", dbTopic.getString("people_name"))
-          .set("user", dbTopic.getString("people_user"))
-          .set("avatar", dbTopic.getString("people_avatar") !== "")
-      )
-  );
+  const topic = _val.map()
+    .set("uid", dbTopic.getUID("uid"))
+    .set("title", dbTopic.getString("title"))
+    .set("content", dbTopic.getString("content"))
+    .set("moment", dbTopic.getString("moment"))
+    .set("lastActivityAt", dbTopic.getString("last_activity_at"))
+    .set("anonymous", dbTopic.getBoolean("anonymous"))
+    .set("isOwner", loggedUserId > 0 && (dbTopic.getInt("people_id")) === loggedUserId)
+    .set("repliesCount", dbTopic.getInt("replies_count", 0))
+    .set(
+      "category",
+      _val.map()
+        .set("uid", dbTopic.getUID("category_uid"))
+        .set("name", dbTopic.getString("category_name"))
+    );
+  if (!dbTopic.getBoolean("anonymous")) {
+    topic.set(
+      "people",
+      _val.map()
+        .set("uid", dbTopic.getUID("people_uid"))
+        .set("name", dbTopic.getString("people_name"))
+        .set("user", dbTopic.getString("people_user"))
+        .set("avatar", dbTopic.getString("people_avatar") !== "")
+    );
+  }
+  topics.add(topic);
 }
 
 const totalCount = dbTopics.length === 0 ? 0 : dbTopics[0].getInt("total_count");

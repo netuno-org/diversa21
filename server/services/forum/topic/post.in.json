@@ -16,6 +16,9 @@
     "content": {
       "type": "string-not-empty",
       "maxLength": 5000
+    },
+    "isAnonymous": {
+      "type": "boolean"
     }
   },
   "required": [

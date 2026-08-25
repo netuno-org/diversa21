@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm, Pagination } from 'antd';
-import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined, UserOutlined } from '@ant-design/icons';
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import _service from '@netuno/service-client';
 import useFriendActions from '../../../common/useFriendActions.js';
@@ -85,6 +85,13 @@ function Notifications() {
   };
 
   const getNotificationAvatar = (item) => {
+    if (item.extra?.anonymous) {
+      return (
+        <div className="notifications-page__item-avatar-anonymous">
+          <UserOutlined />
+        </div>
+      );
+    }
     if (item.originator?.uid) {
       return (
         <Avatar
@@ -101,7 +108,7 @@ function Notifications() {
   };
 
   const getNotificationTitle = (item) => {
-    if (item.originator?.name) {
+    if (!item.extra?.anonymous && item.originator?.name) {
       return item.originator.name;
     }
     return item.title;

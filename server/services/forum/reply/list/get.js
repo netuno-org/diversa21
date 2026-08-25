@@ -21,7 +21,7 @@ if (!dbTopic) {
 }
 
 const loggedUser = people.getLogged();
-const loggedUserId = loggedUser ? loggedUser.getInt("id") : 0;
+const loggedUserId = loggedUser ? (loggedUser.getInt("id")) : 0;
 
 const dbReplies = _db.query(`
     SELECT
@@ -30,7 +30,9 @@ const dbReplies = _db.query(`
       r.content,
       r.moment,
       r.likes,
+      r.anonymous,
       t.uid AS "topic_uid",
+      p.id AS "people_id",
       p.uid AS "people_uid",
       p.name AS "people_name",
       nu.user AS "people_user",
@@ -54,24 +56,30 @@ const dbReplies = _db.query(`
 `, loggedUserId, dbTopic.getInt("id"), pageSize, offset);
 
 const replies = _val.list();
+
 for (const dbReply of dbReplies) {
-  replies.add(
-    _val.map()
-      .set("uid", dbReply.getUID("uid"))
-      .set("content", dbReply.getString("content"))
-      .set("moment", dbReply.getString("moment"))
-      .set("likes", dbReply.getInt("likes", 0))
-      .set("liked", dbReply.getInt("reply_like_id", 0) > 0)
-      .set("topicUid", dbReply.getUID("topic_uid"))
-      .set(
-        "people",
-        _val.map()
-          .set("uid", dbReply.getUID("people_uid"))
-          .set("name", dbReply.getString("people_name"))
-          .set("user", dbReply.getString("people_user"))
-          .set("avatar", dbReply.getString("people_avatar") !== "")
-      )
-  );
+  const reply = _val.map()
+    .set("uid", dbReply.getUID("uid"))
+    .set("content", dbReply.getString("content"))
+    .set("moment", dbReply.getString("moment"))
+    .set("likes", dbReply.getInt("likes", 0))
+    .set("liked", dbReply.getInt("reply_like_id", 0) > 0)
+    .set("topicUid", dbReply.getUID("topic_uid"))
+    .set("anonymous", dbReply.getBoolean("anonymous"))
+    .set("isOwner", loggedUserId > 0 && (dbReply.getInt("people_id")) === loggedUserId);
+
+  if (!dbReply.getBoolean("anonymous")) {
+    reply.set(
+      "people",
+      _val.map()
+        .set("uid", dbReply.getUID("people_uid"))
+        .set("name", dbReply.getString("people_name"))
+        .set("user", dbReply.getString("people_user"))
+        .set("avatar", dbReply.getString("people_avatar") !== "")
+    )
+  }
+
+  replies.add(reply);
 }
 
 const totalCount = dbReplies.length === 0 ? 0 : dbReplies[0].getInt("total_count");
