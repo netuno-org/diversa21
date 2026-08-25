@@ -518,7 +518,7 @@ function SupportCommunityDisplay({
                 justifyContent: (mode === 'category' || editingTopic || editingReply) ? 'flex-end' : 'space-between',
               }}>
                 {(mode === 'reply' || mode === 'topic') && !editingTopic && !editingReply &&
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', textAlign: 'start' }}>
                     <Switch
                       style={{ width: '65px' }}
                       checked={anonymous}
