@@ -175,11 +175,11 @@ function SupportCommunityDisplay({
 
   const getModalTitle = () => {
     if (mode === 'reply') {
-      return "Criar Nova Resposta";
+      return "Nova Resposta";
     } else if (mode === 'topic') {
-      return "Criar Novo Tópico";
+      return "Novo Tópico";
     }
-    return "Criar Nova Categoria";
+    return "Nova Categoria";
   };
 
   const getSubmitLabel = () => {
@@ -431,7 +431,7 @@ function SupportCommunityDisplay({
             {mode !== 'reply' && (
               <Form.Item
                 name={mode === 'topic' ? 'title' : 'name'}
-                label={mode === 'topic' ? 'Nome do Tópico' : 'Nome da Categoria'}
+                label={mode === 'topic' ? 'Título' : 'Nome'}
                 rules={[
                   { required: true, message: "O título é Obrigatório!" },
                   {
@@ -444,7 +444,7 @@ function SupportCommunityDisplay({
               >
                 <Input
                   className="support-community__title-input"
-                  placeholder={mode === 'topic' ? 'Nome do Tópico...' : 'Nome da Categoria...'}
+                  placeholder={mode === 'topic' ? 'Tópico...' : 'Categoria...'}
                   maxLength={titleMaxLength}
                   showCount
                 />
@@ -474,7 +474,7 @@ function SupportCommunityDisplay({
                     const fieldName = mode === 'reply' || mode === 'topic' ? 'content' : 'description';
                     form.setFieldsValue({ [fieldName]: val });
                   }}
-                  placeholder={mode === 'reply' ? 'Escreva a sua resposta' : mode === 'topic' ? 'Descrição do Tópico...' : 'Descrição da Categoria...'}
+                  placeholder={'Escreva o conteúdo...'}
                   rows={5}
                   maxLength={descriptionMaxLength}
                   showCount
