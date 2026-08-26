@@ -74,10 +74,7 @@
 
   &__card-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
 
   &__title {
@@ -193,6 +190,24 @@
       }
     }
   }
+  
+  &__card-footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+    margin-top: 16px;
+  }
+
+  &__card-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    .anticon {
+      color: #8b6aa2;
+    }
+  }
 
   &__footer {
     display: flex;
@@ -216,7 +231,7 @@
     gap: 16px;
 
     .services-list__card-subheader {
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
 
     .services-list__card-meta {

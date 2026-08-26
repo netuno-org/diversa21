@@ -461,33 +461,6 @@ function Services() {
                 <Title level={4} className="services-list__title">
                   {service.name}
                 </Title>
-                <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
-                  <Button 
-                    type="text" 
-                    size="small"
-                    icon={service.isFavorite ? <HeartFilled className="services-list__heart-filled" /> : <HeartOutlined className="services-list__heart-outlined" />} 
-                    onClick={(e) => handleToggleFavorite(service, e)}
-                    className="services-list__favorite-btn"
-                  />
-                  {canCreateService && (
-                    <>
-                      <Button type="text" size="small" className="services-list__action-btn" onClick={(e) => handleEditClick(service, e)}>
-                        <EditOutlined />
-                      </Button>
-                      <Popconfirm
-                        title="Remover serviço?"
-                        description="Esta ação é irreversível"
-                        onConfirm={(e) => handleDeleteService(service.uid, e)}
-                        okText="Sim"
-                        cancelText="Não"
-                      >
-                        <Button danger type="text" size="small" className="services-list__action-btn">
-                          <DeleteOutlined />
-                        </Button>
-                      </Popconfirm>
-                    </>
-                  )}
-                </div>
               </div>
 
               <div className="services-list__card-subheader">
@@ -500,14 +473,6 @@ function Services() {
                     {service.city?.name}, {service.state?.name}
                   </Text>
                 </div>
-                {service.createdAt && (
-                  <div className="services-list__card-location">
-                    <CalendarOutlined />
-                    <Text type="secondary" className="services-list__date-text">
-                    {formatDate(service.createdAt)}
-                    </Text>
-                  </div>
-                )}
               </div>
               
               {service.description && (
@@ -556,6 +521,47 @@ function Services() {
                 </div>
               )}
             </div>
+            <div className="services-list__card-footer-actions">
+              <div className="services-list__card-date">
+                {service.createdAt && (
+                  <>
+                    <CalendarOutlined />
+                    <Text type="secondary" className="services-list__date-text">
+                    {formatDate(service.createdAt)}
+                    </Text>
+                  </>
+                )}
+              </div>
+              
+              <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
+                <Button 
+                  type="text" 
+                  size="small"
+                  icon={service.isFavorite ? <HeartFilled className="services-list__heart-filled" /> : <HeartOutlined className="services-list__heart-outlined" />} 
+                  onClick={(e) => handleToggleFavorite(service, e)}
+                  className="services-list__favorite-btn"
+                />
+                {canCreateService && (
+                  <>
+                    <Button type="text" size="small" className="services-list__action-btn" onClick={(e) => handleEditClick(service, e)}>
+                      <EditOutlined />
+                    </Button>
+                    <Popconfirm
+                      title="Remover serviço?"
+                      description="Esta ação é irreversível"
+                      onConfirm={(e) => handleDeleteService(service.uid, e)}
+                      okText="Sim"
+                      cancelText="Não"
+                    >
+                      <Button danger type="text" size="small" className="services-list__action-btn">
+                        <DeleteOutlined />
+                      </Button>
+                    </Popconfirm>
+                  </>
+                )}
+              </div>
+            </div>
+            
           </Card>
         ))}
       </div>
@@ -604,15 +610,6 @@ function Services() {
                   {serviceDetails.city?.name}, {serviceDetails.state?.name} / {serviceDetails.country?.name}
                 </Text>
               </div>
-
-              {serviceDetails.createdAt && (
-                <div className="services-list__card-location">
-                  <CalendarOutlined />
-                  <Text type="secondary" className="services-list__date-text">
-                  {formatDate(serviceDetails.createdAt)}
-                  </Text>
-                </div>
-              )}
             </div>
 
             {serviceDetails.description && (
@@ -655,6 +652,17 @@ function Services() {
                 </div>
               )}
             </div>
+
+            {serviceDetails.createdAt && (
+              <div className="services-list__card-footer-actions">
+                <div className="services-list__card-date">
+                  <CalendarOutlined />
+                  <Text type="secondary" className="services-list__date-text">
+                  {formatDate(serviceDetails.createdAt)}
+                  </Text>
+                </div>
+              </div>
+            )}
 
           </div>
         )}
