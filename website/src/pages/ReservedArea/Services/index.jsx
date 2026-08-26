@@ -756,7 +756,7 @@ function Services() {
                 showCount
                 rows={5}
                 placeholder="Descreva os serviços prestados..."
-                style={{ paddingBottom: '36px' }}
+                style={{ paddingBottom: '36px', resize: 'none' }}
               />
               {!isMobile && (
                 <div style={{ position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 }}>
