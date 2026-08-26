@@ -8,7 +8,10 @@
     "name": { "type": "string-not-empty" },
     "category": { "type": "string-not-empty" },
     "city": { "type": "string-not-empty" },
-    "description": { "type": "string-not-empty" },
+    "description": { 
+      "type": "string-not-empty",
+      "maxLength": 500
+    },
     "phone": { "type": "string" },
     "website": { "type": "string" },
     "instagram": { "type": "string" }

@@ -64,7 +64,7 @@ function Services() {
 
     const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
     
-    if (updatedText.length > 2000) {
+    if (updatedText.length > 500) {
       return;
     }
 
@@ -723,7 +723,7 @@ function Services() {
             name="description"
             rules={[
               { required: true, message: 'A descrição é obrigatória' },
-              { max: 2000, message: 'A descrição não pode ter mais de 2000 caracteres' }
+              { max: 500, message: 'A descrição não pode ter mais de 500 caracteres' }
             ]}
           >
             <div style={{ position: 'relative' }}>
@@ -735,7 +735,7 @@ function Services() {
                   setDescriptionValue(val);
                   serviceForm.setFieldsValue({ description: val });
                 }}
-                maxLength={2000}
+                maxLength={500}
                 showCount
                 rows={5}
                 placeholder="Descreva os serviços prestados..."

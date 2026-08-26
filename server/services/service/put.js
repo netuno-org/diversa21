@@ -1,4 +1,4 @@
-import { _req, _db, _val } from "@netuno/server-types";
+import { _req, _db, _val, _out } from "@netuno/server-types";
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
@@ -14,6 +14,15 @@ const description = _req.getString('description');
 const phone = _req.getString('phone');
 const website = _req.getString('website');
 const instagram = _req.getString('instagram');
+
+if (!name || !name.trim()) {
+  response.stopWithBadRequest('service-name-required');
+}
+
+if (description && description.length > 500) {
+  _out.json(_val.map().set("result", false).set("error", "A descrição não pode ter mais de 500 caracteres."));
+  _req.stop();
+}
 
 const dbService = _db.queryFirst(`
     SELECT id FROM service WHERE uid = ?::uuid
