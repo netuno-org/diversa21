@@ -68,7 +68,7 @@ function Services() {
       return;
     }
 
-    setDescriptionValue(updatedText);git status
+    setDescriptionValue(updatedText);
     serviceForm.setFieldsValue({ description: updatedText });
 
     setTimeout(() => {
