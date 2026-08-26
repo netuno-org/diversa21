@@ -60,7 +60,6 @@
     "uid",
     "type",
     "title",
-    "originator",
     "recipient",
     "content",
     "sent_at",
