@@ -28,19 +28,15 @@ if (!photoFile) {
 }
 
 const img = _image.init(photoFile);
-const originalWidth = img.width();
-const originalHeight = img.height();
-
-const targetWidth = 800;
-const targetHeight = Math.round((originalHeight * targetWidth) / originalWidth);
+const fileName = `${new Date().getTime()}.jpg`;
 
 const photoId = _db.insert(
   "people_photo",
   _val.map()
     .set("people_id", loggedPeopleId)
     .set("photo", img
-      .resize(targetWidth, targetHeight)
-      .file(photoFile.name(), "jpeg")
+      .resize(800, 800)
+      .file(fileName, "jpeg")
     )
     .set("moment", _db.timestamp())
 );
