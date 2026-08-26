@@ -743,7 +743,7 @@ function Services() {
               { max: 500, message: 'A descrição não pode ter mais de 500 caracteres' }
             ]}
           >
-            <div style={{ position: 'relative' }}>
+            <div className="services-list__description-wrapper">
               <Input.TextArea
                 ref={textAreaRef}
                 value={descriptionValue}
@@ -756,10 +756,10 @@ function Services() {
                 showCount
                 rows={5}
                 placeholder="Descreva os serviços prestados..."
-                style={{ paddingBottom: '36px', resize: 'none' }}
+                className="services-list__description-input"
               />
               {!isMobile && (
-                <div style={{ position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 }}>
+                <div className="services-list__emoji-wrapper">
                   <Popover
                     content={
                       <EmojiPicker
@@ -779,7 +779,7 @@ function Services() {
                       type="text"
                       shape="circle"
                       icon={<SmileOutlined />}
-                      style={{ fontSize: 18, color: '#8c8c8c' }}
+                      className="services-list__emoji-btn"
                     />
                   </Popover>
                 </div>
