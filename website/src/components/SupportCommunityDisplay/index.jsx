@@ -23,7 +23,7 @@ import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 
 import './index.less'
 
-const { Paragraph, Text } = Typography;
+const { Paragraph, Text, Title } = Typography;
 const { TextArea } = Input;
 
 function SupportCommunityDisplay({
@@ -518,22 +518,22 @@ function SupportCommunityDisplay({
                 justifyContent: (mode === 'category' || editingTopic || editingReply) ? 'flex-end' : 'space-between',
               }}>
                 {(mode === 'reply' || mode === 'topic') && !editingTopic && !editingReply &&
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', textAlign: 'start' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', textAlign: 'start', gap: '5px' }}>
+                    <div style={{  marginTop: '-20px', fontWeight: '600', fontSize: '16px' }}>Deseja ocultar seus dados na publicação?</div>
                     <Switch
-                      style={{ width: '65px' }}
+                      style={{ width: '110px' }}
                       checked={anonymous}
                       onChange={onAnonymousChange}
-                      checkedChildren="On"
-                      unCheckedChildren="Off"
+                      checkedChildren="Ativado"
+                      unCheckedChildren="Desativado"
                     />
-                    <div style={{ marginTop: '8px' }}>Gostaria de publicar de forma anônima?</div>
-                    <div>Seus dados serão preservados ao selecionar essa opção.</div>
+                    <div>Ao ativar essa opção, Sua identificação será ocultada.</div>
                   </div>
                 }
-                <Button type="primary" htmlType="submit">
+              </div>
+              <Button style={{ marginTop: '80px' }} type="primary" htmlType="submit">
                   {getSubmitLabel()}
                 </Button>
-              </div>
             </Form.Item>
           </Form>
         </div>

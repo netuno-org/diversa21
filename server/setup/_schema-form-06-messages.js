@@ -194,7 +194,7 @@ _form.syncField(
 		.set("group_id", 0)
 		.set("height", 0)
 		.set("mandatory", false)
-		.set("max", 1)
+		.set("max", 20)
 		.set("min", 0)
 		.set("name", "reaction")
 		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
@@ -202,6 +202,37 @@ _form.syncField(
 		.set("tdheight", 0)
 		.set("tdwidth", 0)
 		.set("title", "Rea\u00E7\u00E3o")
+		.set("type", "text")
+		.set("uid", "5174d1e4-c6fa-4f76-994f-8084f16c7539")
+		.set("unique", false)
+		.set("user_id", 0)
+		.set("whenedit", true)
+		.set("whenexport", true)
+		.set("whenfilter", true)
+		.set("whennew", true)
+		.set("whenresult", true)
+		.set("whenview", true)
+		.set("width", 0)
+		.set("x", 1)
+		.set("y", 15)
+);
+_form.syncField(
+	"3fc1633d-d218-4546-b5b7-f0abfcc86bc3",
+	_val.map()
+		.set("colspan", 0)
+		.set("description", "")
+		.set("firebase", "")
+		.set("group_id", 0)
+		.set("height", 0)
+		.set("mandatory", false)
+		.set("max", 3)
+		.set("min", 0)
+		.set("name", "reactions")
+		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
+		.set("rowspan", 0)
+		.set("tdheight", 0)
+		.set("tdwidth", 0)
+		.set("title", "Rea\u00E7\u00F5es")
 		.set("type", "text")
 		.set("uid", "5174d1e4-c6fa-4f76-994f-8084f16c7539")
 		.set("unique", false)
@@ -245,7 +276,7 @@ _form.syncField(
 		.set("whenview", true)
 		.set("width", 0)
 		.set("x", 2)
-		.set("y", 4)
+		.set("y", 5)
 );
 _form.syncField(
 	"3fc1633d-d218-4546-b5b7-f0abfcc86bc3",
@@ -276,7 +307,7 @@ _form.syncField(
 		.set("whenview", true)
 		.set("width", 0)
 		.set("x", 1)
-		.set("y", 9)
+		.set("y", 10)
 );
 _form.syncField(
 	"3fc1633d-d218-4546-b5b7-f0abfcc86bc3",
@@ -307,5 +338,5 @@ _form.syncField(
 		.set("whenview", true)
 		.set("width", 0)
 		.set("x", 1)
-		.set("y", 3)
+		.set("y", 4)
 );
