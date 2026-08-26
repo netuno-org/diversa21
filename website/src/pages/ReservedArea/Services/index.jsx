@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined, SmileOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined, SmileOutlined, PhoneOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -68,7 +68,7 @@ function Services() {
       return;
     }
 
-    setDescriptionValue(updatedText);
+    setDescriptionValue(updatedText);git status
     serviceForm.setFieldsValue({ description: updatedText });
 
     setTimeout(() => {
@@ -520,7 +520,13 @@ function Services() {
             <div className="services-list__card-meta">
               {service.phone && (
                 <div className="services-list__meta-item">
-                  <strong>Telefone:</strong> {service.phone}
+                  <PhoneOutlined />
+                  <a
+                    href={`tel:${service.phone}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {service.phone}
+                  </a>
                 </div>
               )}
               {service.website && (
@@ -618,7 +624,10 @@ function Services() {
             <div className="services-list__card-meta">
               {serviceDetails.phone && (
                 <div className="services-list__meta-item">
-                  <strong>Telefone:</strong> {serviceDetails.phone}
+                  <PhoneOutlined />{' '}
+                  <a href={`tel:${serviceDetails.phone}`}>
+                    {serviceDetails.phone}
+                  </a>
                 </div>
               )}
               {serviceDetails.website && (
