@@ -352,7 +352,7 @@ function Services() {
     <div className="services-list">
       <div className="services-list__header">
         <ListHeaderFilters
-          title="Prestação de Serviços"
+          title="Serviços"
           
           createButton={canCreateService ? {
             icon: <PlusOutlined />,
@@ -364,15 +364,31 @@ function Services() {
           } : null}
           
           extraActionButtons={
-            loggedUser.canManageServiceCategories() ? (
+            <>
               <Button 
-                type="primary"
-                icon={<PlusOutlined />} 
-                onClick={() => setCategoryModalVisible(true)}
+                type={showFavorites ? "primary" : "default"}
+                danger={showFavorites}
+                icon={showFavorites ? <HeartFilled /> : <HeartOutlined />}
+                onClick={() => {
+                  setShowFavorites(!showFavorites);
+                  if (pagination.current !== 1) {
+                    handlePaginationChange(1, pagination.size);
+                  }
+                }}
               >
-                Nova categoria
+                Favoritos
               </Button>
-            ) : null
+              
+              {loggedUser.canManageServiceCategories() ? (
+                <Button 
+                  type="primary"
+                  icon={<PlusOutlined />} 
+                  onClick={() => setCategoryModalVisible(true)}
+                >
+                  Nova categoria
+                </Button>
+              ) : null}
+            </>
           }
           
           onSearch={handleSearch}
@@ -385,7 +401,6 @@ function Services() {
           
           extraFilters={
             <div className="services-list__filters-wrapper">
-              
               <div className="services-list__filters-main">
                 <Select
                   value={selectedCategory?.uid}
@@ -415,20 +430,6 @@ function Services() {
                   </Popconfirm>
                 )}
               </div>
-              
-              <Button 
-                type={showFavorites ? "primary" : "default"}
-                danger={showFavorites}
-                icon={showFavorites ? <HeartFilled /> : <HeartOutlined />}
-                onClick={() => {
-                  setShowFavorites(!showFavorites);
-                  if (pagination.current !== 1) {
-                    handlePaginationChange(1, pagination.size);
-                  }
-                }}
-              >
-                Favoritos
-              </Button>
             </div>
           }
         />
