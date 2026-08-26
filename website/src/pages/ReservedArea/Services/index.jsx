@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined, SmileOutlined, PhoneOutlined } from "@ant-design/icons";
+import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space } from "antd";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -16,9 +16,16 @@ const { Paragraph, Text, Title } = Typography;
 function Services() {
   const { message } = App.useApp();
   const loggedUser = usePeople();
+  
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  
+  const [catSearchValue, setCatSearchValue] = useState("");
+  const [catDropdownOpen, setCatDropdownOpen] = useState(false);
+  const [editingCategoryUid, setEditingCategoryUid] = useState(null);
+  const [editCategoryDraft, setEditCategoryDraft] = useState({ name: "", description: "" });
+  const skipCatCloseRef = useRef(false);
   
   const [showFavorites, setShowFavorites] = useState(false);
   
@@ -195,6 +202,68 @@ function Services() {
     });
   };
 
+  const handleCatDropdownMouseDown = () => { skipCatCloseRef.current = true; };
+  const handleCatDropdownMouseUp = () => { setTimeout(() => { skipCatCloseRef.current = false; }, 0); };
+
+  const startEditCategory = (category) => {
+    setEditingCategoryUid(category.uid);
+    setEditCategoryDraft({ name: category.name, description: category.description || "" });
+  };
+
+  const cancelEditCategory = () => {
+    setEditingCategoryUid(null);
+    setEditCategoryDraft({ name: "", description: "" });
+  };
+
+  const saveEditCategory = (uid) => {
+    if (!editCategoryDraft.name.trim()) {
+      message.warning("O nome da categoria é obrigatório.");
+      return;
+    }
+    _service({
+      url: "service_category",
+      method: "PUT",
+      data: { uid, ...editCategoryDraft },
+      success: ({ json }) => {
+        if (json?.result) {
+          message.success("Categoria atualizada com sucesso!");
+          setCategories((prev) => prev.map((c) => (c.uid === uid ? { ...c, ...editCategoryDraft } : c)));
+          if (selectedCategory?.uid === uid) {
+            setSelectedCategory({ ...selectedCategory, ...editCategoryDraft });
+          }
+          cancelEditCategory();
+        } else {
+          message.error(json?.error || "Erro ao atualizar categoria.");
+        }
+      },
+      fail: () => message.error("Erro ao atualizar categoria.")
+    });
+  };
+
+  const handleDeleteCategory = (categoryUid) => {
+    _service({
+      url: 'service_category',
+      method: 'DELETE',
+      data: { uid: categoryUid },
+      success: ({ json }) => {
+        if (json?.result) {
+          message.success('Categoria apagada com sucesso!');
+          setCategories((prev) => prev.filter((c) => c.uid !== categoryUid));
+          if (selectedCategory?.uid === categoryUid) {
+            setSelectedCategory(null);
+            setRefreshTrigger(prev => prev + 1);
+          }
+        } else {
+          message.error(json?.error || 'Erro ao apagar categoria.');
+        }
+      },
+      fail: (err) => {
+        const json = err?.json;
+        message.error(json?.error || 'Erro de comunicação ao apagar a categoria.');
+      }
+    });
+  };
+
   const handleCreateCategory = async () => {
     if (!categoryName.trim()) {
       setCategoryError('Nome da categoria é obrigatório');
@@ -225,28 +294,6 @@ function Services() {
         setCategoryError(json?.error || json?.message || 'Erro ao criar categoria');
         setSavingCategory(false);
       },
-    });
-  };
-
-  const handleDeleteCategory = (categoryUid) => {
-    _service({
-      url: 'service_category',
-      method: 'DELETE',
-      data: { uid: categoryUid },
-      success: ({ json }) => {
-        if (json?.result) {
-          message.success('Categoria apagada com sucesso!');
-          setSelectedCategory(null);
-          fetchCategories();
-          setRefreshTrigger(prev => prev + 1);
-        } else {
-          message.error(json?.error || 'Erro ao apagar categoria.');
-        }
-      },
-      fail: (err) => {
-        const json = err?.json;
-        message.error(json?.error || 'Erro de comunicação ao apagar a categoria.');
-      }
     });
   };
 
@@ -348,6 +395,10 @@ function Services() {
     });
   };
 
+  const filteredCategories = categories.filter((c) =>
+    !catSearchValue || c.name.toLowerCase().includes(catSearchValue.toLowerCase())
+  );
+
   return (
     <div className="services-list">
       <div className="services-list__header">
@@ -404,31 +455,85 @@ function Services() {
               <div className="services-list__filters-main">
                 <Select
                   value={selectedCategory?.uid}
+                  open={catDropdownOpen}
+                  onOpenChange={(newOpen) => {
+                    if (!newOpen && skipCatCloseRef.current) return;
+                    setCatDropdownOpen(newOpen);
+                  }}
                   allowClear
                   showSearch
+                  searchValue={catSearchValue}
+                  onSearch={setCatSearchValue}
+                  filterOption={false}
                   loading={categoriesLoading}
                   placeholder="Filtrar por categoria"
-                  onChange={handleCategoryChange}
-                  options={categories.map((category) => ({
-                    label: category.name,
-                    value: category.uid,
-                  }))}
-                  filterOption={(input, option) =>
-                    option.label.toLowerCase().includes(input.toLowerCase())
-                  }
                   className="services-list__filters-select"
+                  options={
+                    filteredCategories.length > 0
+                      ? filteredCategories.map((c) => ({ value: c.uid, label: c.name }))
+                      : [{ value: "__empty__", label: "empty", disabled: true }]
+                  }
+                  onChange={(uid) => {
+                    handleCategoryChange(uid);
+                    setCatSearchValue("");
+                    setCatDropdownOpen(false);
+                  }}
+                  dropdownRender={() => (
+                    <div onMouseDown={handleCatDropdownMouseDown} onMouseUp={handleCatDropdownMouseUp}>
+                      <div className="services-list__category-dropdown-list">
+                        {filteredCategories.length === 0 && (
+                          <div className="services-list__category-dropdown-empty">
+                            Nenhuma categoria encontrada
+                          </div>
+                        )}
+                        {filteredCategories.map((cat) =>
+                          editingCategoryUid === cat.uid ? (
+                            <div className="services-list__category-dropdown-row editing" key={cat.uid}>
+                              <Input
+                                size="small"
+                                value={editCategoryDraft.name}
+                                onChange={(e) => setEditCategoryDraft({ ...editCategoryDraft, name: e.target.value })}
+                                placeholder="Nome da categoria"
+                                style={{ flex: 1 }}
+                              />
+                              <Space size={4}>
+                                <Button size="small" type="text" icon={<CheckOutlined />} onClick={() => saveEditCategory(cat.uid)} />
+                                <Button size="small" type="text" icon={<CloseOutlined />} onClick={cancelEditCategory} />
+                              </Space>
+                            </div>
+                          ) : (
+                            <div
+                              className={`services-list__category-dropdown-row ${selectedCategory?.uid === cat.uid ? "selected" : ""}`}
+                              key={cat.uid}
+                              onClick={() => {
+                                handleCategoryChange(cat.uid);
+                                setCatSearchValue("");
+                                setCatDropdownOpen(false);
+                              }}
+                            >
+                              <span className="services-list__category-dropdown-label">{cat.name}</span>
+                              {loggedUser.canManageServiceCategories() && (
+                                <Space size={4} className="services-list__category-dropdown-actions" onClick={(e) => e.stopPropagation()}>
+                                  <Button size="small" type="text" icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); startEditCategory(cat); }} />
+                                  <Popconfirm
+                                    title="Apagar categoria?"
+                                    description="Apenas categorias sem serviços podem ser apagadas."
+                                    onConfirm={(e) => { e.stopPropagation(); handleDeleteCategory(cat.uid); }}
+                                    onCancel={(e) => e.stopPropagation()}
+                                    okText="Sim"
+                                    cancelText="Não"
+                                  >
+                                    <Button size="small" type="text" danger icon={<DeleteOutlined />} onClick={(e) => e.stopPropagation()} />
+                                  </Popconfirm>
+                                </Space>
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
                 />
-                {selectedCategory && loggedUser.canManageServiceCategories() && (
-                  <Popconfirm
-                    title="Apagar categoria?"
-                    description="Apenas categorias sem serviços podem ser apagadas."
-                    onConfirm={() => handleDeleteCategory(selectedCategory.uid)}
-                    okText="Sim"
-                    cancelText="Não"
-                  >
-                    <Button danger icon={<DeleteOutlined />} title="Apagar categoria selecionada" />
-                  </Popconfirm>
-                )}
               </div>
             </div>
           }
