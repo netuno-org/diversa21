@@ -478,7 +478,7 @@ function Services() {
                     setCatSearchValue("");
                     setCatDropdownOpen(false);
                   }}
-                  dropdownRender={() => (
+                  popupRender={() => (
                     <div onMouseDown={handleCatDropdownMouseDown} onMouseUp={handleCatDropdownMouseUp}>
                       <div className="services-list__category-dropdown-list">
                         {filteredCategories.length === 0 && (
