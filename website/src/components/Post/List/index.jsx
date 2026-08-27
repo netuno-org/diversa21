@@ -8,7 +8,7 @@ import Post from "..";
 function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, onItemRemoved }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
           fetchedItems = fetchedItems.filter(p => String(p.uid) === String(isolatedCommentUid));
         }
 
-        if (page === 0) {
+        if (page === 1) {
           setPosts(fetchedItems);
         } else {
           setPosts(prev => [...prev, ...fetchedItems]);
@@ -98,7 +98,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
     setPosts(prev => prev.map((post) => post.uid === uid ? { ...post, content } : post));
   }
 
-  if ((!parent && loadingPosts) && page === 0) {
+  if ((!parent && loadingPosts) && page === 1) {
     return (
       <Row style={{ marginTop: 20 }} justify="center"><Col><Spin size="large" /></Col></Row>
     );
@@ -129,7 +129,7 @@ function PostList({ author, parent, isolatedUid, isolatedCommentUid, onLoaded, o
         <Button type="link" onClick={onLoadMorePosts}>Mostrar mais</Button>
       )}
 
-      {loadingPosts && page > 0 && (
+      {loadingPosts && page > 1 && (
         <Row justify="center" style={{ marginTop: 20 }}><Col><Spin size="large" /></Col></Row>
       )}
     </div>

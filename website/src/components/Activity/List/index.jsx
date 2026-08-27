@@ -7,7 +7,7 @@ import Post from "../../Post";
 function ActivityList({ url = "activity/list", author, parent, institution, onLoaded, onItemRemoved }, ref) {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
@@ -44,7 +44,12 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
         if (onLoaded) onLoaded();
 
         setLoadingPosts(false);
-        setPosts(prev => [...prev, ...response.json.data.items]);
+        const fetchedItems = response.json.data.items;
+        if (page === 1) {
+          setPosts(fetchedItems);
+        } else {
+          setPosts(prev => [...prev, ...fetchedItems]);
+        }
         setTotalCount(response.json.data.pagination.totalCount);
       },
       fail: (e) => {
@@ -76,7 +81,7 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
     setPosts(prev => prev.map((post) => post.uid === uid ? { ...post, content } : post));
   };
 
-  if ((!parent && loadingPosts) && page === 0) {
+  if ((!parent && loadingPosts) && page === 1) {
     return (
       <Row style={{ marginTop: 20 }} justify="center">
         <Col>
@@ -115,7 +120,7 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
         </Button>
       )}
 
-      {loadingPosts && page > 0 && (
+      {loadingPosts && page > 1 && (
         <Row justify="center" style={{ marginTop: 20 }}>
           <Col>
             <Spin size="large" />
