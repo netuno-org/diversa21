@@ -1,11 +1,12 @@
 {
   "type": "object",
   "properties": {
-    "result": {
-      "type": "boolean"
-    },
+    "result": { "type": "boolean" },
     "data": {
-      "type": "integer"
+      "type": "object",
+      "properties": {
+        "count": { "type": "integer" }
+      }
     }
   }
 }
