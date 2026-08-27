@@ -415,31 +415,19 @@ function Services() {
           } : null}
           
           extraActionButtons={
-            <>
-              <Button 
-                type={showFavorites ? "primary" : "default"}
-                danger={showFavorites}
-                icon={showFavorites ? <HeartFilled /> : <HeartOutlined />}
-                onClick={() => {
-                  setShowFavorites(!showFavorites);
-                  if (pagination.current !== 1) {
-                    handlePaginationChange(1, pagination.size);
-                  }
-                }}
-              >
-                Favoritos
-              </Button>
-              
-              {loggedUser.canManageServiceCategories() ? (
-                <Button 
-                  type="primary"
-                  icon={<PlusOutlined />} 
-                  onClick={() => setCategoryModalVisible(true)}
-                >
-                  Nova categoria
-                </Button>
-              ) : null}
-            </>
+            <Button 
+              type={showFavorites ? "primary" : "default"}
+              danger={showFavorites}
+              icon={showFavorites ? <HeartFilled /> : <HeartOutlined />}
+              onClick={() => {
+                setShowFavorites(!showFavorites);
+                if (pagination.current !== 1) {
+                  handlePaginationChange(1, pagination.size);
+                }
+              }}
+            >
+              Favoritos
+            </Button>
           }
           
           onSearch={handleSearch}
@@ -478,7 +466,7 @@ function Services() {
                     setCatSearchValue("");
                     setCatDropdownOpen(false);
                   }}
-                  popupRender={() => (
+                  dropdownRender={() => (
                     <div onMouseDown={handleCatDropdownMouseDown} onMouseUp={handleCatDropdownMouseUp}>
                       <div className="services-list__category-dropdown-list">
                         {filteredCategories.length === 0 && (
@@ -534,6 +522,16 @@ function Services() {
                     </div>
                   )}
                 />
+                {loggedUser.canManageServiceCategories() && (
+                  <Button 
+                    type="primary" 
+                    shape="circle" 
+                    icon={<PlusOutlined />} 
+                    title="Nova categoria"
+                    onClick={() => setCategoryModalVisible(true)} 
+                  />
+                )}
+
               </div>
             </div>
           }
