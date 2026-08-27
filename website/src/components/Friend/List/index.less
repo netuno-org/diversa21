@@ -1,3 +1,5 @@
+@import '../../../styles/variables.less';
+
 .friend-list {
   display: flex;
   flex-direction: column;
@@ -27,7 +29,12 @@
     &.ant-card {
       .ant-card-body {
         padding: 16px 24px;
+
+        @media(max-width: @xs) {
+          padding: 16px;
+        }
       }
+
     }
   }
 
