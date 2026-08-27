@@ -519,7 +519,7 @@ function SupportCommunityDisplay({
               }}>
                 {(mode === 'reply' || mode === 'topic') && !editingTopic && !editingReply &&
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', textAlign: 'start', gap: '5px' }}>
-                    <div style={{  marginTop: '-20px', fontWeight: '600', fontSize: '16px' }}>Deseja ocultar seus dados na publicação?</div>
+                    <div className="support-community__switch-title">Deseja ocultar seus dados na publicação?</div>
                     <Switch
                       style={{ width: '110px' }}
                       checked={anonymous}

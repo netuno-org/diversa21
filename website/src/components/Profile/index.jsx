@@ -1,15 +1,10 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Divider, Space, Spin, Popover, Tabs, Tag, Popconfirm } from 'antd';
+import { Card, Typography, Avatar, Divider, Space, Spin, Popover, Tabs, Tag } from 'antd';
 import {
-  EditOutlined,
   EnvironmentOutlined,
   CalendarOutlined,
   SafetyOutlined,
-  ClockCircleOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  MessageOutlined,
   FileTextOutlined,
   CommentOutlined,
   LikeOutlined,
@@ -17,163 +12,72 @@ import {
 } from '@ant-design/icons';
 import { RiCommunityLine, RiFileEditLine } from "react-icons/ri";
 import { BsFillHouseGearFill } from "react-icons/bs";
-import { FaUserPlus } from "react-icons/fa";
-import { LuUserCheck } from "react-icons/lu";
-
+import { MdOutlineInsertPhoto } from "react-icons/md";
 import dayjs from 'dayjs';
 import _service from '@netuno/service-client';
-import { MdOutlineInsertPhoto } from "react-icons/md";
 
 import ActivityList from "../Activity/List";
 import FriendList from "../Friend/List";
+import GalleryTab from "./GalleryTab";
+import ProfileHeaderActions from "./ProfileHeaderActions";
+import GalleryCarousel from './GalleryCarousel';
+
 import usePeople from "../../common/usePeople.js";
 import useFriendActions from "../../common/useFriendActions.js";
 
 import './index.less';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 function Profile({ user }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState('posts');
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [coverUrl, setCoverUrl] = useState();
   const [friendStatus, setFriendStatus] = useState(null);
   const [canRequestFriend, setCanRequestFriend] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 576);
+  const [screenSize, setScreenSize] = useState({
+    isMobile: window.innerWidth <= 768,
+    isSmallScreen: window.innerWidth <= 576,
+  });
 
   const { run, isProcessing } = useFriendActions();
 
-  const [galleryPhotos, setGalleryPhotos] = useState([]);
-  const [maxPhotos, setMaxPhotos] = useState(0);
-  const [galleryLoading, setGalleryLoading] = useState(false);
-
-  const fetchGalleryPhotos = () => {
-    if (!user?.uid) return;
-    setGalleryLoading(true);
-    _service({
-      method: "GET",
-      url: `/people/photo?uid=${user.uid}`,
-      success: ({ json }) => {
-        if (json?.result) {
-          setGalleryPhotos(json.data?.items || []);
-          setMaxPhotos(json.data?.maxGalleryPhotos || 0);
-        }
-        setGalleryLoading(false);
-      },
-      fail: (err) => {
-        console.error("Erro ao carregar fotos da galeria:", err);
-        setGalleryLoading(false);
-      }
-    });
-  };
-
-  useEffect(() => {
-    fetchGalleryPhotos();
-  }, [user]);
-
-  const handleAddPhoto = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("photo", file);
-
-    _service({
-      method: "POST",
-      url: "/people/me/photo",
-      data: formData,
-      success: ({ json }) => {
-        if (json?.result) {
-          fetchGalleryPhotos();
-        }
-      },
-      fail: (err) => {
-        console.error("Erro ao adicionar foto:", err);
-      }
-    });
-  };
-
-  const handleRemovePhoto = (photoUid) => {
-    _service({
-      method: "DELETE",
-      url: `/people/me/photo?uid=${photoUid}`,
-      success: ({ json }) => {
-        if (json?.result) {
-          fetchGalleryPhotos();
-        }
-      },
-      fail: (err) => {
-        console.error("Erro ao remover foto:", err);
-      }
-    });
-  };
-
   const isOwnProfile = user?.username === loggedUser?.data?.username;
-  const canEditProfile = isOwnProfile || loggedUser?.canManageUser(user);
+  const canEditProfile = isOwnProfile || loggedUser?.canManageUser?.(user);
   const isLoggedSuperAdmin = loggedUser?.data?.group?.code === "super-admin";
-
-  const friendshipStatus = {
-    none: { label: "Adicionar amigo", action: "request" },
-    pending: { label: "Cancelar pedido", action: "cancel", title: "Deseja cancelar o pedido de amizade?" },
-    received: { label: "Aceitar", action: "accept", title: "Deseja aceitar o pedido de amizade?" },
-    friends: { label: "Amigos", action: "remove", title: "Deseja desfazer a amizade?" },
-  };
-  const currentFriendship = friendshipStatus[friendStatus];
-  const canShowFriendButton = !isOwnProfile && currentFriendship && (canRequestFriend || friendStatus !== "none");
-  const canShowMessageButton = !isOwnProfile && friendStatus === "friends";
-  const shouldUseEditIconOnly = isLoggedSuperAdmin
-    && !isOwnProfile
-    && canEditProfile
-    && canShowFriendButton
-    && canShowMessageButton
-    && !isSmallScreen;
-
   const isLoading = user?.uid ? isProcessing(user.uid) : false;
-
-  let buttonIcon = undefined;
-  if (isOwnProfile) {
-    buttonIcon = <EditOutlined />;
-  } else if (friendStatus === null) {
-    buttonIcon = undefined;
-  } else if (friendStatus === "none") {
-    buttonIcon = <FaUserPlus size={19} />;
-  } else if (friendStatus === "pending") {
-    buttonIcon = <ClockCircleOutlined />;
-  } else if (friendStatus === "received") {
-    buttonIcon = <CheckOutlined />;
-  } else {
-    buttonIcon = <LuUserCheck size={19} />;
-  }
-
-  useEffect(() => {
-    if (user) {
-      user.avatar && setAvatarUrl(_service.url(`/asset?uid=${user.uid}&type=avatar&entity=people&${new Date().getTime()}`));
-      user.cover_image && setCoverUrl(_service.url(`/asset?uid=${user.uid}&type=cover_image&entity=people&${new Date().getTime()}`));
-    }
-  }, [user]);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-      setIsSmallScreen(window.innerWidth <= 576);
+      setScreenSize({
+        isMobile: window.innerWidth <= 768,
+        isSmallScreen: window.innerWidth <= 576,
+      });
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
-    if (!user?.uid) {
-      return;
+    if (user) {
+      const timestamp = new Date().getTime();
+      if (user.avatar) {
+        setAvatarUrl(_service.url(`/asset?uid=${user.uid}&type=avatar&entity=people&${timestamp}`));
+      }
+      if (user.cover_image) {
+        setCoverUrl(_service.url(`/asset?uid=${user.uid}&type=cover_image&entity=people&${timestamp}`));
+      }
     }
+  }, [user]);
 
-    if (isOwnProfile) {
+  useEffect(() => {
+    if (!user?.uid || isOwnProfile) {
       setCanRequestFriend(false);
       return;
     }
-
-    setCanRequestFriend(false);
 
     _service({
       method: "GET",
@@ -184,7 +88,7 @@ function Profile({ user }) {
         setFriendStatus(json.status);
       },
       fail: (error) => {
-        console.error(error);
+        console.error("Erro ao obter status de amizade:", error);
         setCanRequestFriend(false);
         setFriendStatus("none");
       },
@@ -192,40 +96,26 @@ function Profile({ user }) {
   }, [user, isOwnProfile]);
 
   const handleEdit = () => {
-    if (isOwnProfile) {
-      navigate(`/profile/edit`);
-    } else {
-      navigate(`/e/${user.username}`);
-    }
+    navigate(isOwnProfile ? `/profile/edit` : `/e/${user.username}`);
   };
 
   const doFriendAction = (action, nextStatus) => {
-    if (!user?.uid) {
-      return;
-    }
+    if (!user?.uid) return;
     run(action, user.uid, {
       onSuccess: () => setFriendStatus(nextStatus),
     });
   };
 
-  const handleFriendAction = () => {
-    if (!currentFriendship?.action) {
-      return;
-    }
-    switch (currentFriendship.action) {
-      case "request":
-        doFriendAction("send", "pending");
-        break;
-      case "cancel":
-        doFriendAction("cancel", "none");
-        break;
-      case "accept":
-        doFriendAction("accept", "friends");
-        break;
-      case "remove":
-        doFriendAction("remove", "none");
-        break;
-      default:
+  const handleFriendAction = (action) => {
+    const nextStatusMap = {
+      request: { act: "send", next: "pending" },
+      cancel: { act: "cancel", next: "none" },
+      accept: { act: "accept", next: "friends" },
+      remove: { act: "remove", next: "none" },
+    };
+    const target = nextStatusMap[action];
+    if (target) {
+      doFriendAction(target.act, target.next);
     }
   };
 
@@ -233,21 +123,118 @@ function Profile({ user }) {
     doFriendAction("reject", "none");
   };
 
-  const handleOpenMessages = (u) => {
-    if (!u?.uid) {
-      return;
-    }
+  const handleOpenMessages = (targetUser) => {
+    if (!targetUser?.uid) return;
     navigate('/messages', {
       state: {
         autoOpenFriend: {
-          uid: u.uid,
-          name: u.name,
-          username: u.username,
-          avatar: u.avatar,
+          uid: targetUser.uid,
+          name: targetUser.name,
+          username: targetUser.username,
+          avatar: targetUser.avatar,
         },
       },
     });
   };
+
+  const renderGroupInfo = () => {
+    if (!user?.group || user.group.code === "member") return null;
+
+    const groupConfig = {
+      "super-admin": { Icon: SafetyOutlined, color: "#D0990F" },
+      "management": { Icon: BsFillHouseGearFill, color: "#4E5FA0" },
+      "review": { Icon: RiFileEditLine, color: "#50A063" },
+    };
+
+    const currentConfig = groupConfig[user.group.code] || { Icon: RiFileEditLine, color: "#D0990F" };
+    const { Icon, color } = currentConfig;
+
+    return (
+      <div className="profile__group-badge" style={{ color }}>
+        <Icon size={16} />
+        <span>{user.group.name}</span>
+      </div>
+    );
+  };
+
+  const tabItems = useMemo(() => {
+    if (!user?.uid) return [];
+
+    const tabs = [
+      {
+        key: 'posts',
+        label: (
+          <Space>
+            <FileTextOutlined style={{ fontSize: 18 }} />
+            <span>Publicações</span>
+          </Space>
+        ),
+        children: (
+          <div className="profile__tabs-content">
+            <ActivityList url="activity/post/list" author={user.uid} />
+          </div>
+        ),
+      },
+      {
+        key: 'comments',
+        label: (
+          <Space>
+            <CommentOutlined style={{ fontSize: 18 }} />
+            <span>Comentários</span>
+          </Space>
+        ),
+        children: (
+          <div className="profile__tabs-content">
+            <ActivityList url="activity/comment/list" author={user.uid} />
+          </div>
+        ),
+      },
+      {
+        key: 'likes',
+        label: (
+          <Space>
+            <LikeOutlined style={{ fontSize: 18 }} />
+            <span>Curtidas</span>
+          </Space>
+        ),
+        children: (
+          <div className="profile__tabs-content">
+            <ActivityList url="activity/like/list" author={user.uid} />
+          </div>
+        ),
+      },
+    ];
+
+    if (loggedUser?.data?.group?.code) {
+      tabs.push({
+        key: 'friends',
+        label: (
+          <Space>
+            <TeamOutlined style={{ fontSize: 18 }} />
+            <span>Amigos</span>
+          </Space>
+        ),
+        children: (
+          <div className="profile__tabs-content">
+            <FriendList userUid={user.uid} />
+          </div>
+        ),
+      });
+    }
+
+    tabs.push({
+      key: 'gallery',
+      label: (
+        <Space>
+          <MdOutlineInsertPhoto style={{ fontSize: 18 }} />
+          <span>Galeria</span>
+        </Space>
+      ),
+      children: <GalleryTab userUid={user.uid} isOwnProfile={isOwnProfile} />,
+    });
+
+    return tabs;
+  }, [user?.uid, loggedUser?.data?.group?.code, isOwnProfile]);
 
   if (!user) {
     return (
@@ -259,159 +246,20 @@ function Profile({ user }) {
     );
   }
 
-  const renderGroupInfo = () => {
-    if (user.group.code === "member") {
-      return null;
-    }
+  const institutionNode = user.institution && (
+    <Link to={`/institutions/${user.institution.slug}`} className="profile__detail-item profile__detail-link">
+      <RiCommunityLine />
+      <span>{user.institution.name}</span>
+    </Link>
+  );
 
-    let Icon = RiFileEditLine;
-    let color = "#d0990f";
+  const formattedAge = user.birthDate && dayjs(user.birthDate).isValid()
+    ? `${dayjs().diff(dayjs(user.birthDate), 'year')} anos`
+    : null;
 
-    if (user.group.code === "super-admin") {
-      Icon = SafetyOutlined;
-      color = "#D0990F";
-    } else if (user.group.code === "management") {
-      Icon = BsFillHouseGearFill;
-      color = "#4e5fa0";
-    } else if (user.group.code === "review") {
-      color = "#50a063";
-    }
-
-    return (
-      <div className="profile__group-badge" style={{ color }}>
-        <Icon size={16} />
-        <span>{user.group.name}</span>
-      </div>
-    );
-  };
-
-  const tabItems = [
-    {
-      key: 'posts',
-      label: (
-        <Space>
-          <FileTextOutlined style={{ fontSize: 18 }} />
-          <span>Publicações</span>
-        </Space>
-      ),
-      children: (
-        <div className="profile__tabs-content">
-          <ActivityList url="activity/post/list" author={user.uid} />
-        </div>
-      ),
-    },
-    {
-      key: 'comments',
-      label: (
-        <Space>
-          <CommentOutlined style={{ fontSize: 18 }} />
-          <span>Comentários</span>
-        </Space>
-      ),
-      children: (
-        <div className="profile__tabs-content">
-          <ActivityList url="activity/comment/list" author={user.uid} />
-        </div>
-      ),
-    },
-    {
-      key: 'likes',
-      label: (
-        <Space>
-          <LikeOutlined style={{ fontSize: 18 }} />
-          <span>Curtidas</span>
-        </Space>
-      ),
-      children: (
-        <div className="profile__tabs-content">
-          <ActivityList url="activity/like/list" author={user.uid} />
-        </div>
-      ),
-    },
-  ];
-
-  if (loggedUser?.data?.group?.code) {
-    tabItems.push({
-      key: 'friends',
-      label: (
-        <Space>
-          <TeamOutlined style={{ fontSize: 18 }} />
-          <span>Amigos</span>
-        </Space>
-      ),
-      children: (
-        <div className="profile__tabs-content">
-          <FriendList userUid={user.uid} />
-        </div>
-      ),
-    });
-  }
-
-  tabItems.push({
-    key: 'gallery',
-    label: (
-      <Space>
-        <MdOutlineInsertPhoto style={{ fontSize: 18 }} />
-        <span>Galeria</span>
-      </Space>
-    ),
-    children: (
-      <div className="profile__tabs-content" style={{ padding: '16px' }}>
-        {isOwnProfile && (
-          <div style={{ marginBottom: '20px' }}>
-            <input
-              type="file"
-              accept="image/*"
-              id="gallery-photo-upload"
-              style={{ display: 'none' }}
-              onChange={handleAddPhoto}
-              disabled={galleryPhotos.length >= maxPhotos}
-            />
-            <Button
-              type="primary"
-              onClick={() => document.getElementById('gallery-photo-upload').click()}
-              disabled={galleryPhotos.length >= maxPhotos}
-            >
-              Adicionar Foto
-            </Button>
-            {galleryPhotos.length >= maxPhotos && (
-              <div style={{ marginTop: '8px', color: '#ff4d4f', fontSize: '14px' }}>
-                Não pode colocar mais fotos, o máximo é {maxPhotos}.
-              </div>
-            )}
-          </div>
-        )}
-        
-        {galleryLoading ? (
-          <Spin />
-        ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-            {galleryPhotos.map((p) => (
-              <div key={p.uid} style={{ position: 'relative', width: '150px', height: '150px', border: '1px solid #d9d9d9', borderRadius: '8px', overflow: 'hidden' }}>
-                <img
-                  src={_service.url(`/asset?uid=${p.uid}&type=photo&entity=people_photo&photo=${p.photo}`)}
-                  alt="Foto de Galeria"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                {isOwnProfile && (
-                  <Button
-                    type="primary"
-                    danger
-                    size="small"
-                    style={{ position: 'absolute', top: '4px', right: '4px' }}
-                    onClick={() => handleRemovePhoto(p.uid)}
-                  >
-                    Remover
-                  </Button>
-                )}
-              </div>
-            ))}
-            {galleryPhotos.length === 0 && <Text type="secondary">Nenhuma foto na galeria.</Text>}
-          </div>
-        )}
-      </div>
-    )
-  });
+  const defaultDescription = user.institution
+    ? 'Esta instituição ainda não adicionou uma descrição.'
+    : 'Este utilizador ainda não adicionou uma descrição.';
 
   return (
     <section className="profile">
@@ -422,95 +270,30 @@ function Profile({ user }) {
           <div className="profile__cover-placeholder" />
         )}
       </div>
+
       <Card className="profile__card">
         <div className="profile__header">
           <div className="profile__avatar">
             <Avatar src={avatarUrl} size={120} shape="square" />
           </div>
-          <div className="profile__actions">
-            <div className="profile__action-buttons">
-              {canEditProfile && (
-                <Button
-                  type="primary"
-                  className={`profile__edit-btn ${shouldUseEditIconOnly ? "profile__edit-btn--icon-only" : ""}`}
-                  icon={<EditOutlined />}
-                  onClick={handleEdit}
-                  title={shouldUseEditIconOnly ? `Editar perfil de ${user.name}` : undefined}
-                >
-                  {!shouldUseEditIconOnly && "Editar Perfil"}
-                </Button>
-              )}
-              {canShowFriendButton && (
-                friendStatus === "none" ? (
-                  <Button
-                    type="primary"
-                    className="profile__edit-btn"
-                    icon={buttonIcon}
-                    onClick={handleFriendAction}
-                    loading={isProcessing(user.uid, "send")}
-                  >
-                    {currentFriendship.label}
-                  </Button>
-                ) : (
-                  <Popconfirm
-                    title={currentFriendship.title}
-                    onConfirm={handleFriendAction}
-                    okText="Sim"
-                    cancelText="Não"
-                  >
-                    <Button
-                      type="primary"
-                      className={`profile__edit-btn ${friendStatus === "friends" || friendStatus === "pending" ? "profile__secondary-btn" : ""}`}
-                      icon={buttonIcon}
-                      disabled={isLoading}
-                      loading={isProcessing(user.uid, currentFriendship?.action)}
-                    >
-                      {currentFriendship.label}
-                    </Button>
-                  </Popconfirm>
-                )
-              )}
-              {friendStatus === "received" && (
-                <Popconfirm
-                  title="Deseja recusar o pedido de amizade?"
-                  onConfirm={handleRejectFriendRequest}
-                  okText="Sim"
-                  cancelText="Não"
-                >
-                  <Button
-                    type="primary"
-                    className="profile__secondary-btn"
-                    icon={<CloseOutlined />}
-                    disabled={isLoading}
-                    loading={isProcessing(user.uid, "reject")}
-                  >
-                    Recusar
-                  </Button>
-                </Popconfirm>
-              )}
-              {!isOwnProfile && friendStatus === 'friends' && (
-                <Button
-                  type="primary"
-                  className="profile__edit-btn"
-                  disabled={isLoading}
-                  onClick={() => handleOpenMessages(user)}
-                  icon={<MessageOutlined />}
-                >
-                  Mensagem
-                </Button>
-              )}
-            </div>
-            {friendStatus === "received" && (
-              <div className="profile__friend-request-text">
-                Deseja aceitar o pedido de amizade de
-                <span className="profile__friend-request-text__name">
-                  {" " + user.name}
-                </span>
-                ?
-              </div>
-            )}
-          </div>
+
+          <ProfileHeaderActions
+            user={user}
+            isOwnProfile={isOwnProfile}
+            canEditProfile={canEditProfile}
+            isLoggedSuperAdmin={isLoggedSuperAdmin}
+            friendStatus={friendStatus}
+            canRequestFriend={canRequestFriend}
+            isSmallScreen={screenSize.isSmallScreen}
+            isLoading={isLoading}
+            isProcessing={isProcessing}
+            onEdit={handleEdit}
+            onFriendAction={handleFriendAction}
+            onRejectFriendRequest={handleRejectFriendRequest}
+            onOpenMessages={handleOpenMessages}
+          />
         </div>
+
         <div className="profile__info">
           <Title level={2} className="profile__name">
             {user.name}
@@ -521,11 +304,12 @@ function Profile({ user }) {
             </Text>
             {renderGroupInfo()}
             {user.active === false && (
-              <Tag variant="filled" color="error" className="profile__status-tag" style={{ borderRadius: '32px' }}>
+              <Tag variant="filled" color="error" className="profile__status-tag">
                 Conta Inativa
               </Tag>
             )}
           </div>
+
           <Space size="large" className="profile__details" wrap>
             {(user.city?.name || user.country?.name) && (
               <div className="profile__detail-item">
@@ -536,38 +320,30 @@ function Profile({ user }) {
               </div>
             )}
 
-            {user.birthDate && (
+            {formattedAge && (
               <div className="profile__detail-item">
                 <CalendarOutlined />
-                <Text type="secondary">{dayjs().diff(dayjs(user.birthDate), 'year')} anos</Text>
+                <Text type="secondary">{formattedAge}</Text>
               </div>
             )}
 
             {user.institution && (
-              isMobile ? (
-                <Link to={`/institutions/${user.institution.slug}`} className="profile__detail-item profile__detail-link">
-                  <RiCommunityLine />
-                  <span>{user.institution.name}</span>
-                </Link>
+              screenSize.isMobile ? (
+                institutionNode
               ) : (
-                <Popover
-                  content={<div className="profile__popover">Visitar página da instituição</div>}
-                  placement="bottom"
-                  trigger="hover"
-                >
-                  <Link to={`/institutions/${user.institution.slug}`} className="profile__detail-item profile__detail-link">
-                    <RiCommunityLine />
-                    <span>{user.institution.name}</span>
-                  </Link>
+                <Popover content="Visitar página da instituição" placement="bottom" trigger="hover">
+                  {institutionNode}
                 </Popover>
               )
             )}
           </Space>
         </div>
+
         <Divider />
+
         <div className="profile__about">
           <Title level={4}>Sobre</Title>
-          {(user.description || 'Esta instituição ainda não adicionou uma descrição.')
+          {(user.description || defaultDescription)
             .split('\n')
             .map((line, index, array) => (
               <Fragment key={index}>
@@ -576,9 +352,22 @@ function Profile({ user }) {
               </Fragment>
             ))}
         </div>
+
+        <Divider />
+        <GalleryCarousel
+          userUid={user.uid}
+          isOwnProfile={isOwnProfile}
+          onViewMore={() => setActiveTab('gallery')}
+        />
       </Card>
+
       <div className="profile__tabs">
-        <Tabs defaultActiveKey="posts" items={tabItems} size="large" />
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={tabItems}
+          size="large"
+        />
       </div>
     </section>
   );

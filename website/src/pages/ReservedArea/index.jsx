@@ -30,6 +30,7 @@ import Services from "./Services/index.jsx"
 import CategoryPage from "./CategoryPage"
 import ReplyPage from "../ReplyPage"
 import TermsPage from '../Terms';
+import Reports from '../Reports'
 import PrivacyPage from '../Privacy';
 
 import "./index.less";
@@ -167,6 +168,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/terms") {
         return <TermsPage />;
+      }
+      if (location.pathname === "/reports") {
+        return <Reports />;
       }
       if (location.pathname === "/privacy") {
         return <PrivacyPage />;

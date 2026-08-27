@@ -187,7 +187,7 @@ function Editor({
             ref={textAreaRef}
             className="editor-form__text-area"
             rows={5}
-            placeholder={`Escreva ${parent ? "o seu comentário" : "a sua postagem"}`}
+            placeholder={`Escreva ${parent ? "o seu comentário..." : "a sua postagem..."}`}
             value={contentValue}
             onChange={(e) => {
               const val = e.target.value;

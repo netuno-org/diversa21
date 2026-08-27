@@ -1,0 +1,101 @@
+@import '../../../styles/variables.less';
+
+.gallery-upload-modal {
+  .ant-modal-body {
+    padding: 24px;
+    overflow: hidden;
+  }
+
+  &__body {
+    outline: none;
+    min-height: 200px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 36px 20px;
+    border: 1.5px dashed darken(#8a6aa2, 5%);
+    border-radius: 8px;
+    background: rgba(138, 106, 162, 0.04);
+  }
+
+  &__hint {
+    font-size: 13px;
+    margin: 0;
+  }
+
+  &__editor-container {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 0;
+  }
+
+  &__canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__canvas {
+    cursor: move;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &__controls {
+    width: 100%;
+  }
+
+  &__settings {
+    width: 100%;
+  }
+
+  &__divider {
+    margin: 12px 0 !important;
+    color: @primary-color !important;
+    font-size: 13px;
+  }
+
+  &__slider-row {
+    margin-bottom: 6px;
+  }
+
+  &__icon {
+    color: @primary-color;
+    font-size: 16px;
+  }
+
+  &__color-section {
+    margin-top: 10px;
+  }
+
+  &__color-picker {
+    border: none;
+    padding: 0;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    border-radius: 6px;
+    background: transparent;
+  }
+
+  &__error {
+    display: block;
+    margin-top: 12px;
+    text-align: center;
+  }
+}

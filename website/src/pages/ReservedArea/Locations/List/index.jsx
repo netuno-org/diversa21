@@ -108,9 +108,9 @@ function LocationList() {
 
       <div className="locations-list__results">
         <Text type='secondary'>
-          {activeTab === 'country' && (currentData.length === 1 ? '1 país' : `${currentData.length} países`)}
-          {activeTab === 'state' && (currentData.length === 1 ? '1 estado' : `${currentData.length} estados`)}
-          {activeTab === 'city' && (currentData.length === 1 ? '1 cidade' : `${currentData.length} cidades`)}
+          {activeTab === 'country' && (currentData.length === 1 ? '1 País' : `${currentData.length} Países`)}
+          {activeTab === 'state' && (currentData.length === 1 ? '1 Estado' : `${currentData.length} Estados`)}
+          {activeTab === 'city' && (currentData.length === 1 ? '1 Cidade' : `${currentData.length} Cidades`)}
         </Text>
       </div>
 

@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { Dropdown, Button, Popconfirm } from "antd";
+import { Dropdown, Button, Popconfirm, Modal, Form, Input, Radio } from "antd";
 import { EllipsisOutlined, FlagOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 import "./index.less";
 
+const { TextArea } = Input;
+
 function ContentActions({ canViewDeletePostButton, editMode, onDeletePost, onEdit }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportType, setReportType] = useState("reasons");
+  const [otherReason, setOtherReason] = useState(false)
+
+  const [form] = Form.useForm();
 
   const items = [
     ...(canViewDeletePostButton
@@ -46,51 +53,130 @@ function ContentActions({ canViewDeletePostButton, editMode, onDeletePost, onEdi
     }
 
     if (key === "report") {
-      console.log("Abrir denúncia");
+      setReportOpen(true);
     }
   };
 
+  const closeModal = () => {
+    setReportOpen(false);
+    form.resetFields();
+  };
+
+  const handleSubmit = () => {
+    closeModal();
+  };
+
   return (
-    <Popconfirm
-      title="Tem a certeza que quer remover a postagem?"
-      description="Esta ação é irreversível"
-      open={showDeleteConfirm}
-      onClick={(e) => e.stopPropagation()}
-      onConfirm={(e) => {
-        e?.stopPropagation?.();
-        onDeletePost?.();
-        setShowDeleteConfirm(false);
-      }}
-      onCancel={(e) => {
-        e?.stopPropagation?.();
-        setShowDeleteConfirm(false)
-      }}
-      okText="Sim"
-      cancelText="Não"
-    >
-      <Dropdown
-        menu={{
-          items,
-          onClick: handleMenuClick,
+    <div className="container-report">
+      <Popconfirm
+        title="Tem a certeza que quer remover a postagem?"
+        description="Esta ação é irreversível"
+        open={showDeleteConfirm}
+        onClick={(e) => e.stopPropagation()}
+        onConfirm={(e) => {
+          e?.stopPropagation?.();
+          onDeletePost?.();
+          setShowDeleteConfirm(false);
         }}
-        trigger={["click"]}
-        placement="bottomRight"
-        dropdownRender={(menu) => (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            {menu}
-          </div>
-        )}
+        onCancel={(e) => {
+          e?.stopPropagation?.();
+          setShowDeleteConfirm(false);
+        }}
+        okText="Sim"
+        cancelText="Não"
       >
-        <Button
-          type="text"
-          icon={<EllipsisOutlined />}
+        <Dropdown
+          menu={{
+            items,
+            onClick: handleMenuClick,
+          }}
+          trigger={["click"]}
+          placement="bottomRight"
+          dropdownRender={(menu) => (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              {menu}
+            </div>
+          )}
+        >
+          <Button
+            style={{height: '20px'}}
+            color="primary"
+            variant="outlined"
+            icon={<EllipsisOutlined />}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Dropdown>
+      </Popconfirm>
+      <Modal
+        open={reportOpen}
+        onCancel={closeModal}
+        footer={null}
+        title="Denunciar"
+        destroyOnHidden
+        centered
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div >
+          <Radio.Group
+            className="container-report__options"
+            options={[
+              {
+                label: "Assédio ou ameaça",
+                value: "harassment",
+              },
+              {
+                label: "Discriminação ou preconceito",
+                value: "discrimination",
+              },
+              {
+                label: "Conteúdo ofensivo ou inadequado",
+                value: "offensive",
+              },
+              {
+                label: "Outro motivo",
+                value: "other",
+              },
+            ]}
+            onChange={(e) => {
+              if (e.target.value === "other") {
+                setOtherReason(true);
+              } else {
+                setOtherReason(false)
+              }
+            }}
+          />
+        </div>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
           onClick={(e) => e.stopPropagation()}
-        />
-      </Dropdown>
-    </Popconfirm>
+        >
+          {otherReason === true &&
+            <Form.Item
+              name="description"
+              rules={[{ required: false }]}
+            >
+              <TextArea
+                placeholder="Descreva o motivo da denúncia..."
+                rows={5}
+                maxLength={500}
+                showCount
+                style={{ resize: "none", marginTop: '20px' }}
+              />
+            </Form.Item>
+          }
+          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+            <Button type="primary" htmlType="submit">
+              Enviar
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
   );
 }
 

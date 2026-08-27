@@ -1,5 +1,14 @@
 @import '../../styles/variables.less';
 
+.container-report {
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+}
+
 .content-actions-item--edit {
   color: @primary-color !important;
 
@@ -10,6 +19,7 @@
 
 .content-actions-item--delete {
   color: @primary-color !important;
+
   .anticon {
     color: @primary-color !important;
   }

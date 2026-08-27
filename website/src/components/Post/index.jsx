@@ -223,7 +223,7 @@ function Post({
                   color="purple"
                   onClick={() => navigate(`/p/${parentUid}`)}
                 >
-                  Ver resposta
+                  Ver Resposta
                 </Tag>
               )}
               {rootUid && rootUid !== parentUid && rootUid !== uid && (
@@ -231,7 +231,7 @@ function Post({
                   className="btn-parent-nav"
                   onClick={() => { navigate(`/p/${rootUid}`) }}
                 >
-                  Ver post original
+                  Ver Post Original
                 </Tag>
               )}
             </div>
@@ -247,90 +247,90 @@ function Post({
         </div>
       </div>
       {editMode ? (
-          <Editor
-            uid={uid}
-            type="editPost"
-            content={content}
-            onCancel={() => setEditMode(false)}
-            onSubmitted={(values) => {
-              onEditPost(uid, values.content);
-              setEditMode(false);
-              if (refPostList.current) {
-                refPostList.current.newPost(values);
-              }
-            }}
-          />
-        ) : (
-          <div className="post-text-container">{displayContent}</div>
-        )}
-        {!editMode && (
-          <div className="post-actions-wrapper">
-            <div className="post-actions-buttons">
-              <Button type="link" onClick={onLike} className="btn-like" loading={loadingLike} disabled={loadingLike}>
-                {isLiked ? <LikeFilled /> : <LikeOutlined />}
-                &nbsp;{likesCounter}
+        <Editor
+          uid={uid}
+          type="editPost"
+          content={content}
+          onCancel={() => setEditMode(false)}
+          onSubmitted={(values) => {
+            onEditPost(uid, values.content);
+            setEditMode(false);
+            if (refPostList.current) {
+              refPostList.current.newPost(values);
+            }
+          }}
+        />
+      ) : (
+        <div className="post-text-container">{displayContent}</div>
+      )}
+      {!editMode && (
+        <div className="post-actions-wrapper">
+          <div className="post-actions-buttons">
+            <Button type="link" onClick={onLike} className="btn-like" loading={loadingLike} disabled={loadingLike}>
+              {isLiked ? <LikeFilled /> : <LikeOutlined />}
+              &nbsp;{likesCounter}
+            </Button>
+            {countComments > 0 && (
+              <Button
+                type="link"
+                className="btn-load-comments"
+                onClick={() => {
+                  setShowComments(!showComments);
+                  if (!showComments) {
+                    setLoadingComments(true);
+                  }
+                }}
+                loading={loadingComments}
+              >
+                {showComments ? (
+                  "Esconder comentários"
+                ) : (
+                  <Space size="small">
+                    Ver Comentários
+                    <Tag color="#8A6AA2" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
+                      {countComments}
+                    </Tag>
+                  </Space>
+                )}
               </Button>
-              {countComments > 0 && (
-                <Button
-                  type="link"
-                  className="btn-load-comments"
-                  onClick={() => {
-                    setShowComments(!showComments);
-                    if (!showComments) {
-                      setLoadingComments(true);
-                    }
-                  }}
-                  loading={loadingComments}
-                >
-                  {showComments ? (
-                    "Esconder comentários"
-                  ) : (
-                    <Space size="small">
-                      Ver comentários
-                      <Tag color="#8A6AA2" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
-                        {countComments}
-                      </Tag>
-                    </Space>
-                  )}
-                </Button>
-              )}
-              {!showEditor && (
-                <Button className="btn-reply" onClick={() => setShowEditor(true)}>
-                  <VscCommentDiscussionQuote /> Comentar
-                </Button>
-              )}
-            </div>
-            <Modal
-              open={showEditor}
-              onCancel={() => setShowEditor(false)}
-              footer={null}
-              title="Responder à publicação"
-              destroyOnHidden
-              centered
-            >
-              <div style={{ marginTop: '16px' }}>
-                <Editor
-                  type="comment"
-                  onCancel={() => setShowEditor(false)}
-                  onSubmitted={(values) => {
-                    onCreated(values);
-                    setShowEditor(false);
-                  }}
-                  parent={uid}
-                />
-              </div>
-            </Modal>
-            {showComments && (
-              <PostList
-                ref={refPostList}
-                parent={uid}
-                isolatedCommentUid={isolatedCommentUid}
-                onLoaded={onCommentsLoaded}
-                onItemRemoved={onCommentRemoved}
-              />
+            )}
+            {!showEditor && (
+              <Button className="btn-reply" onClick={() => setShowEditor(true)}>
+                <VscCommentDiscussionQuote /> Comentar
+              </Button>
             )}
           </div>
-        )}
+          <Modal
+            open={showEditor}
+            onCancel={() => setShowEditor(false)}
+            footer={null}
+            title="Responder à publicação"
+            destroyOnHidden
+            centered
+          >
+            <div style={{ marginTop: '16px' }}>
+              <Editor
+                type="comment"
+                onCancel={() => setShowEditor(false)}
+                onSubmitted={(values) => {
+                  onCreated(values);
+                  setShowEditor(false);
+                }}
+                parent={uid}
+              />
+            </div>
+          </Modal>
+          {showComments && (
+            <PostList
+              ref={refPostList}
+              parent={uid}
+              isolatedCommentUid={isolatedCommentUid}
+              onLoaded={onCommentsLoaded}
+              onItemRemoved={onCommentRemoved}
+            />
+          )}
+        </div>
+      )}
     </Card>
   );
 }

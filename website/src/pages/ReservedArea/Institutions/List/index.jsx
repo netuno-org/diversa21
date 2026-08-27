@@ -64,7 +64,7 @@ function ListInstitution() {
 
       <div className="institutions-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'instituições' : 'instituição'} encontrada{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? 'Instituições' : 'Instituição'} Encontrada{pagination.total !== 1 ? 's' : ''}
         </Text>
       </div>
 

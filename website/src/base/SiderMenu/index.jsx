@@ -1,12 +1,11 @@
 import _auth from "@netuno/auth-client";
-import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined, CloseOutlined } from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined, CloseOutlined, FlagOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine, RiArticleLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
 import { LuUserCheck } from "react-icons/lu";
 import { LuHeartHandshake } from "react-icons/lu";
 import { FaStethoscope } from "react-icons/fa6";
-
 
 import { Menu, Layout, Drawer, Button, Grid } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -80,9 +79,15 @@ const menuItems = [
     icon: <BellOutlined />,
     link: "/notifications"
   },
+  {
+    key: "reports",
+    label: "Denúncias",
+    icon: <FlagOutlined  />,
+    link: "/reports"
+  },
 ];
 
-const RESTRICTED_KEYS = ['locations'];
+const RESTRICTED_KEYS = ['locations', 'reports'];
 
 function SiderMenu() {
   const [selectedMenuKeys, setSelectedMenuKeys] = useState(["posts"]);

@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "string-not-empty"
+    },
+    "name": {
+      "type": "string-not-empty",
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    }
+  }
+}

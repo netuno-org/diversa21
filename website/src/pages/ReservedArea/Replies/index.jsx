@@ -268,7 +268,7 @@ function Replies({ topicUid }) {
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(-1)}
         >
-          Voltar aos tópicos
+          Voltar
         </Button>
         <div className="replies-header__topic">
           {topic?.category?.name && (

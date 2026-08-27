@@ -74,7 +74,7 @@ function People() {
       )}
       <div className="people-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'perfis' : 'perfil'} encontrado{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? 'Perfis' : 'Perfil'} Encontrado{pagination.total !== 1 ? 's' : ''}
         </Text>
       </div>
       <div className="people-list__items">
