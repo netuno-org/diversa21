@@ -417,18 +417,17 @@ function Services() {
           
           extraActionButtons={
             <Button 
-              type={showFavorites ? "primary" : "default"}
-              danger={showFavorites}
-              icon={showFavorites ? <BookFilled /> : <BookOutlined />}
-              onClick={() => {
-                setShowFavorites(!showFavorites);
-                if (pagination.current !== 1) {
-                  handlePaginationChange(1, pagination.size);
-                }
-              }}
-            >
-              Favoritos
-            </Button>
+                type={showFavorites ? "primary" : "default"}
+                icon={showFavorites ? <BookFilled /> : <BookOutlined />}
+                onClick={() => {
+                  setShowFavorites(!showFavorites);
+                  if (pagination.current !== 1) {
+                    handlePaginationChange(1, pagination.size);
+                  }
+                }}
+              >
+                Favoritos
+              </Button>
           }
           
           onSearch={handleSearch}
