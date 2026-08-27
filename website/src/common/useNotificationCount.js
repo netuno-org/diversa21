@@ -39,7 +39,7 @@ export default function useNotificationCount() {
       method: "GET",
       service: "notification/unread-count",
       success: (data) => {
-        setCount(data.content?.count || 0);
+        setCount(data.content?.data?.count || 0);
       }
     });
 
