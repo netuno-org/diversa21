@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, HeartOutlined, HeartFilled, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, BookOutlined, BookFilled, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -419,7 +419,7 @@ function Services() {
             <Button 
               type={showFavorites ? "primary" : "default"}
               danger={showFavorites}
-              icon={showFavorites ? <HeartFilled /> : <HeartOutlined />}
+              icon={showFavorites ? <BookFilled /> : <BookOutlined />}
               onClick={() => {
                 setShowFavorites(!showFavorites);
                 if (pagination.current !== 1) {
@@ -642,7 +642,7 @@ function Services() {
                 <Button 
                   type="text" 
                   size="small"
-                  icon={service.isFavorite ? <HeartFilled className="services-list__heart-filled" /> : <HeartOutlined className="services-list__heart-outlined" />} 
+                  icon={service.isFavorite ? <BookFilled className="services-list__bookmark-filled" /> : <BookOutlined className="services-list__bookmark-outlined" />} 
                   onClick={(e) => handleToggleFavorite(service, e)}
                   className="services-list__favorite-btn"
                 />
