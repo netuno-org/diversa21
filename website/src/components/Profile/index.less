@@ -36,7 +36,7 @@
   &__cover-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #8A6AA2 0%, #B8A3D4 100%);
+    background: linear-gradient(135deg, #8a6aa2 0%, #b8a3d4 100%);
   }
 
   &__card {
@@ -69,6 +69,7 @@
     align-items: flex-end;
     gap: 7px;
     margin-top: 16px;
+
     @media (max-width: @sm) {
       width: 100%;
       align-items: stretch;
@@ -84,14 +85,13 @@
 
     @media (max-width: @lg) {
       flex-wrap: wrap;
-      width: 100%;
       align-items: stretch;
     }
   }
 
   &__footer-title,
   p {
-    margin-top: 0px;
+    margin-top: 0;
   }
 
   &__avatar {
@@ -116,20 +116,20 @@
   }
 
   &__edit-btn {
-    margin: 0 !important;
+    margin: 0;
     width: auto;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
 
     .anticon {
-      margin: 0 !important;
+      margin: 0;
       display: inline-flex;
       align-items: center;
     }
 
-    > span {
+    >span {
       line-height: 1;
       display: inline-flex;
       align-items: center;
@@ -142,29 +142,29 @@
 
   &__edit-btn--icon-only {
     min-width: 44px;
-    padding: 0 12px !important;
+    padding: 0 12px;
     gap: 0;
   }
 
   &__secondary-btn {
-    margin: 0 !important;
+    margin: 0;
     width: auto;
     color: @primary-color;
     border-color: @primary-color;
     background-color: transparent;
-    padding: 0 16px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
 
     .anticon {
-      margin: 0 !important;
+      margin: 0;
       display: inline-flex;
       align-items: center;
     }
 
-    > span {
+    >span {
       line-height: 1;
       display: inline-flex;
       align-items: center;
@@ -194,7 +194,7 @@
   }
 
   &__name {
-    margin: 0 !important;
+    margin: 0;
     word-break: break-word;
   }
 
@@ -214,7 +214,7 @@
   }
 
   &__status-tag {
-    border-radius: 12px;
+    border-radius: 32px;
     font-weight: 500;
     padding: 0 10px;
     margin: 0;
@@ -244,23 +244,22 @@
     .anticon,
     svg {
       font-size: 16px;
-      color: #8A6AA2;
+      color: #8a6aa2;
     }
   }
 
   &__detail-link {
-    color: #8A6AA2;
+    color: #8a6aa2;
     font-weight: 500;
     transition: all 0.2s;
 
     &:hover {
-      color: #6D4F8A;
+      color: #6d4f8a;
     }
   }
 
-  &__about-text {
-    margin-bottom: 8px;
-    font-size: 15px;
+  &__about {
+    margin-top: 8px;
   }
 
   &__tabs {
@@ -277,7 +276,7 @@
       }
 
       .ant-tabs-nav-operations {
-        display: none !important;
+        display: none;
       }
 
       .ant-tabs-nav-list::after {
@@ -294,5 +293,177 @@
 
   &__tabs-content {
     padding-bottom: 40px;
+  }
+
+  &__gallery {
+    padding: 8px 24px 40px;
+
+    @media (max-width: @md) {
+      padding: 8px 16px 32px;
+    }
+  }
+
+  &__gallery-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+
+  &__gallery-counter {
+    font-size: 13px;
+
+    &--full {
+      color: @primary-color;
+      font-weight: 600;
+    }
+  }
+
+  &__gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+
+    @media (max-width: @sm) {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+  }
+
+  &__gallery-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f0f0f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
+
+      img {
+        transform: scale(1.05);
+      }
+
+      .profile__gallery-remove {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+  }
+
+  &__gallery-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+
+    &:hover {
+      background: #e04848;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+
+    @media (max-width: @sm) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  &__gallery-add {
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    border: 1.5px dashed darken(#8a6aa2, 5%);
+    background: rgba(138, 106, 162, 0.04);
+    color: #8a6aa2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(138, 106, 162, 0.08);
+      border-color: #8a6aa2;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+  }
+
+  &__gallery-add-icon {
+    font-size: 26px;
+  }
+
+  &__gallery-skeleton {
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 37%, #f0f0f0 63%);
+    background-size: 400% 100%;
+    animation: profile-gallery-shimmer 1.4s ease infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      background: #f0f0f0;
+    }
+  }
+
+  &__gallery-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 48px 0;
+    color: rgba(0, 0, 0, 0.45);
+
+    &--inline {
+      grid-column: 1 / -1;
+      padding: 32px 0;
+    }
+  }
+
+  &__gallery-empty-icon {
+    font-size: 32px;
+    opacity: 0.5;
+  }
+}
+
+@keyframes profile-gallery-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
   }
 }

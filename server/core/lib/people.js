@@ -100,7 +100,7 @@ export default {
     return order;
   },
   maxGalleryPhotos: () => {
-    return 2;
+    return 16;
   },
   wsSendService: (dbPeople, message) => {
     const dbSessions = _db.form("people_ws_session")
