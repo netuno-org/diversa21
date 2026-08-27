@@ -232,6 +232,7 @@ function Services() {
             setSelectedCategory({ ...selectedCategory, ...editCategoryDraft });
           }
           cancelEditCategory();
+          setRefreshTrigger(prev => prev + 1);
         } else {
           message.error(json?.error || "Erro ao atualizar categoria.");
         }
