@@ -194,7 +194,7 @@ if (cover_image) {
     "cover_image", 
     _image
       .init(cover_image)
-      .resize(720, 240)
+      .resize(1200, 400)
       .file(cover_image.name(), "jpeg")
   );
 } else if (removeCoverImage) {
