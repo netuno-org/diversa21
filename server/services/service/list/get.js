@@ -87,7 +87,7 @@ if (countryUid) {
 }
 
 sqlQuery += `
-    ORDER BY service.name ASC
+    ORDER BY service.created_at DESC
     LIMIT ?::int
     OFFSET ?::int
 `;

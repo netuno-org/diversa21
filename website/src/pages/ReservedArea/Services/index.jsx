@@ -553,7 +553,13 @@ function Services() {
       )}
 
       <div className="services-list__items">
-        {!loading && services.map((service) => (
+        {!loading && [...services]
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateB - dateA;
+          })
+          .map((service) => (
           <Card
             key={service.uid}
             className="services-list__card"
