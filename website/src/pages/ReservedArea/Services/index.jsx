@@ -405,7 +405,7 @@ function Services() {
       <div className="services-list__header">
         <ListHeaderFilters
           title="Serviços"
-          
+          description={"Explore as categorias e descubra serviços de saúde e bem-estar perto de você."}
           createButton={canCreateService ? {
             icon: <PlusOutlined />,
             text: "Novo Serviço",

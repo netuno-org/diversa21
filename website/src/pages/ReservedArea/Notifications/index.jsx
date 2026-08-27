@@ -121,7 +121,10 @@ function Notifications() {
   return (
     <section className="notifications-page">
       <div className="notifications-page__header">
-        <ListHeaderFilters title="Notificações" hideInputs={true} />
+        <ListHeaderFilters 
+        title="Notificações" 
+        description={"Acompanhe as novidades e interações relacionadas à sua conta."}
+        hideInputs={true} />
       </div>
 
       <div className="notifications-page__toolbar">

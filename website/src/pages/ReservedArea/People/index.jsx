@@ -56,6 +56,7 @@ function People() {
       <div className="people-list__header">
         <ListHeaderFilters
           title="Pessoas"
+          description={"Encontre e acompanhe os perfis da comunidade. Use a busca e a localização para filtrar."}
           createButton={(loggedUser.canCreateAnyUser() || loggedUser.canCreateMember(loggedUser.data?.institution)) && {
             icon: <UserAddOutlined />,
             text: "Criar usuário",
