@@ -14,6 +14,7 @@ import PostList from "./List";
 import "./index.less";
 import usePeople from "../../common/usePeople.js";
 import globalNotification from "../../common/globalNotification.js";
+import ContentActions from "../ContentActions/index.jsx";
 
 function Post({
   uid,
@@ -71,7 +72,7 @@ function Post({
     if (isAlreadyIsolated || editMode) {
       return;
     }
-    if (e.target.closest('.ant-modal-root') 
+    if (e.target.closest('.ant-modal-root')
       || e.target.closest('.post-actions-wrapper')
       || e.target.closest('.user-info-actions')
       || e.target.closest('a')) {
@@ -93,7 +94,7 @@ function Post({
   const onCommentsLoaded = () => setLoadingComments(false);
 
   const onDeletePost = (e) => {
-    e.stopPropagation();
+    e?.stopPropagation?.();
     _service({
       url: "/post",
       method: "DELETE",
@@ -237,113 +238,99 @@ function Post({
           </div>
         </div>
         <div className="user-info-actions">
-          {canViewDeletePostButton && (
-            <>
-              <Popconfirm
-                title="Tem a certeza que quer remover a postagem?"
-                description="Esta ação é irreversível"
-                onConfirm={onDeletePost}
-                okText="Sim"
-                cancelText="Não"
-              >
-                <Button danger type="link" className="delete-post-button">
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>
-              {!editMode && (
-                <Button type="link" onClick={() => setEditMode(true)} className="edit-post-button">
-                  <EditOutlined />
-                </Button>
-              )}
-            </>
-          )}
+          <ContentActions
+            canViewDeletePostButton={canViewDeletePostButton}
+            editMode={editMode}
+            onDeletePost={onDeletePost}
+            onEdit={() => setEditMode(true)}
+          />
         </div>
       </div>
       {editMode ? (
-        <Editor
-          uid={uid}
-          type="editPost"
-          content={content}
-          onCancel={() => setEditMode(false)}
-          onSubmitted={(values) => {
-            onEditPost(uid, values.content);
-            setEditMode(false);
-            if (refPostList.current) {
-              refPostList.current.newPost(values);
-            }
-          }}
-        />
-      ) : (
-        <div className="post-text-container">{displayContent}</div>
-      )}
-      {!editMode && (
-        <div className="post-actions-wrapper">
-          <div className="post-actions-buttons">
-            <Button type="link" onClick={onLike} className="btn-like" loading={loadingLike} disabled={loadingLike}>
-              {isLiked ? <LikeFilled /> : <LikeOutlined />}
-              &nbsp;{likesCounter}
-            </Button>
-            {countComments > 0 && (
-              <Button
-                type="link"
-                className="btn-load-comments"
-                onClick={() => {
-                  setShowComments(!showComments);
-                  if (!showComments) {
-                    setLoadingComments(true);
-                  }
-                }}
-                loading={loadingComments}
-              >
-                {showComments ? (
-                  "Esconder comentários"
-                ) : (
-                  <Space size="small">
-                    Ver comentários
-                    <Tag color="#8A6AA2" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
-                      {countComments}
-                    </Tag>
-                  </Space>
-                )}
+          <Editor
+            uid={uid}
+            type="editPost"
+            content={content}
+            onCancel={() => setEditMode(false)}
+            onSubmitted={(values) => {
+              onEditPost(uid, values.content);
+              setEditMode(false);
+              if (refPostList.current) {
+                refPostList.current.newPost(values);
+              }
+            }}
+          />
+        ) : (
+          <div className="post-text-container">{displayContent}</div>
+        )}
+        {!editMode && (
+          <div className="post-actions-wrapper">
+            <div className="post-actions-buttons">
+              <Button type="link" onClick={onLike} className="btn-like" loading={loadingLike} disabled={loadingLike}>
+                {isLiked ? <LikeFilled /> : <LikeOutlined />}
+                &nbsp;{likesCounter}
               </Button>
-            )}
-            {!showEditor && (
-              <Button className="btn-reply" onClick={() => setShowEditor(true)}>
-                <VscCommentDiscussionQuote /> Comentar
-              </Button>
+              {countComments > 0 && (
+                <Button
+                  type="link"
+                  className="btn-load-comments"
+                  onClick={() => {
+                    setShowComments(!showComments);
+                    if (!showComments) {
+                      setLoadingComments(true);
+                    }
+                  }}
+                  loading={loadingComments}
+                >
+                  {showComments ? (
+                    "Esconder comentários"
+                  ) : (
+                    <Space size="small">
+                      Ver comentários
+                      <Tag color="#8A6AA2" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
+                        {countComments}
+                      </Tag>
+                    </Space>
+                  )}
+                </Button>
+              )}
+              {!showEditor && (
+                <Button className="btn-reply" onClick={() => setShowEditor(true)}>
+                  <VscCommentDiscussionQuote /> Comentar
+                </Button>
+              )}
+            </div>
+            <Modal
+              open={showEditor}
+              onCancel={() => setShowEditor(false)}
+              footer={null}
+              title="Responder à publicação"
+              destroyOnHidden
+              centered
+            >
+              <div style={{ marginTop: '16px' }}>
+                <Editor
+                  type="comment"
+                  onCancel={() => setShowEditor(false)}
+                  onSubmitted={(values) => {
+                    onCreated(values);
+                    setShowEditor(false);
+                  }}
+                  parent={uid}
+                />
+              </div>
+            </Modal>
+            {showComments && (
+              <PostList
+                ref={refPostList}
+                parent={uid}
+                isolatedCommentUid={isolatedCommentUid}
+                onLoaded={onCommentsLoaded}
+                onItemRemoved={onCommentRemoved}
+              />
             )}
           </div>
-          <Modal
-            open={showEditor}
-            onCancel={() => setShowEditor(false)}
-            footer={null}
-            title="Responder à publicação"
-            destroyOnHidden
-            centered
-          >
-            <div style={{ marginTop: '16px' }}>
-              <Editor
-                type="comment"
-                onCancel={() => setShowEditor(false)}
-                onSubmitted={(values) => {
-                  onCreated(values);
-                  setShowEditor(false);
-                }}
-                parent={uid}
-              />
-            </div>
-          </Modal>
-          {showComments && (
-            <PostList
-              ref={refPostList}
-              parent={uid}
-              isolatedCommentUid={isolatedCommentUid}
-              onLoaded={onCommentsLoaded}
-              onItemRemoved={onCommentRemoved}
-            />
-          )}
-        </div>
-      )}
+        )}
     </Card>
   );
 }
