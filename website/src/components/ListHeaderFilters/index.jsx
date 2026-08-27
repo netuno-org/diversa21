@@ -130,7 +130,7 @@ function ListHeaderFilters({
                 </Avatar>
                 <div className="list-header-filters__category-text">
                   <Text type="primary" className="list-header-filters__category-label">
-                    Categoria selecionada:
+                    Categoria Selecionada:
                   </Text>
                   <Text type="primary" className="list-header-filters__category-name">
                     {categoryName}

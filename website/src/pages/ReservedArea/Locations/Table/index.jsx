@@ -94,13 +94,13 @@ function LocationTable({
 
   const totalText = (total) => {
     if (activeTab === 'country') {
-      return total === 1 ? '1 país' : `${total} países`;
+      return total === 1 ? '1 País' : `${total} Países`;
     }
     if (activeTab === 'state') {
-      return total === 1 ? '1 estado' : `${total} estados`;
+      return total === 1 ? '1 Estado' : `${total} Estados`;
     }
     if (activeTab === 'city') {
-      return total === 1 ? '1 cidade' : `${total} cidades`;
+      return total === 1 ? '1 Cidade' : `${total} Cidades`;
     }
     return `Total: ${total}`;
   };

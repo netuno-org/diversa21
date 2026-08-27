@@ -222,7 +222,7 @@ function Post({
                   color="purple"
                   onClick={() => navigate(`/p/${parentUid}`)}
                 >
-                  Ver resposta
+                  Ver Resposta
                 </Tag>
               )}
               {rootUid && rootUid !== parentUid && rootUid !== uid && (
@@ -230,7 +230,7 @@ function Post({
                   className="btn-parent-nav"
                   onClick={() => { navigate(`/p/${rootUid}`) }}
                 >
-                  Ver post original
+                  Ver Post Original
                 </Tag>
               )}
             </div>
@@ -299,7 +299,7 @@ function Post({
                   "Esconder comentários"
                 ) : (
                   <Space size="small">
-                    Ver comentários
+                    Ver Comentários
                     <Tag color="#8A6AA2" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
                       {countComments}
                     </Tag>

@@ -49,8 +49,8 @@ function FriendRequests() {
   }
 
   const countLabel = pagination.total === 1
-    ? '1 solicitação encontrada'
-    : `${pagination.total} solicitações encontradas`;
+    ? '1 Solicitação Encontrada'
+    : `${pagination.total} Solicitações Encontradas`;
 
   return (
     <div className="friend-list">

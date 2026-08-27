@@ -434,7 +434,7 @@ function Services() {
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
-          searchPlaceholder="Buscar por nome do serviço"
+          searchPlaceholder="Nome do serviço..."
           
           fullWidthSearch={true}
           
@@ -454,7 +454,7 @@ function Services() {
                   onSearch={setCatSearchValue}
                   filterOption={false}
                   loading={categoriesLoading}
-                  placeholder="Filtrar por categoria"
+                  placeholder="Categoria..."
                   className="services-list__filters-select"
                   options={
                     filteredCategories.length > 0
@@ -540,9 +540,9 @@ function Services() {
 
       <div className="services-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'serviços' : 'serviço'} encontrado{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? 'Serviços' : 'Serviço'} Encontrado{pagination.total !== 1 ? 's' : ''}
           {selectedCategory ? ` na categoria "${selectedCategory.name}"` : ''}
-          {showFavorites ? ` nos seus favoritos` : ''}
+          {showFavorites ? ` nos Favoritos` : ''}
         </Text>
       </div>
 

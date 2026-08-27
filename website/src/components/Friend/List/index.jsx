@@ -56,7 +56,7 @@ function FriendList({ userUid, title }) {
       </div>
       <div className="friend-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'amigos' : 'amigo'} encontrado{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? 'Amigos' : 'Amigo'} Encontrado{pagination.total !== 1 ? 's' : ''}
         </Text>
       </div>
       <div className="friend-list__items">
