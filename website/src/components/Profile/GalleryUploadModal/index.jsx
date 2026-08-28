@@ -19,7 +19,6 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
   const [imageFile, setImageFile] = useState(null);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
-  const [position, setPosition] = useState(undefined);
   const [color, setColor] = useState('#ffffff');
   const [error, setError] = useState(null);
 
@@ -28,9 +27,6 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
   useEffect(() => {
     if (!open) {
       setImageFile(null);
-      setScale(1.0);
-      setRotate(0);
-      setPosition(undefined);
       setColor('#ffffff');
       setError(null);
     }
@@ -48,9 +44,6 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
     }
     setError(null);
     setImageFile(selected);
-    setScale(1.0);
-    setRotate(0);
-    setPosition(undefined);
   };
 
   const { getRootProps, getInputProps, open: openPicker } = useDropzone({
@@ -135,8 +128,6 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
                   backgroundColor={color}
                   scale={scale}
                   rotate={rotate}
-                  position={position}
-                  onPositionChange={(pos) => setPosition(pos)}
                   className="gallery-upload-modal__canvas"
                 />
               </Col>
@@ -161,15 +152,16 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
                       <Col><ZoomOutOutlined className="gallery-upload-modal__icon" /></Col>
                       <Col flex="auto">
                         <Slider
-                          min={0.5}
+                          min={1}
                           max={2.5}
                           step={0.01}
                           value={scale}
                           onChange={setScale}
-                          tooltip={{ formatter: (v) => `${Math.round(v * 100)}%` }}
+                          tooltip={{ open: false }}
                         />
                       </Col>
                       <Col><ZoomInOutlined className="gallery-upload-modal__icon" /></Col>
+                        ({Math.round(scale * 100)}%)
                     </Row>
 
                     <Row align="middle" gutter={12} className="gallery-upload-modal__slider-row">
@@ -181,9 +173,10 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
                           step={1}
                           value={rotate}
                           onChange={setRotate}
-                          tooltip={{ formatter: (v) => `${v}°` }}
-                        />
+                          tooltip={{ open: false }}
+                          />
                       </Col>
+                      ({rotate}°)
                     </Row>
 
                     <div className="gallery-upload-modal__color-section">
