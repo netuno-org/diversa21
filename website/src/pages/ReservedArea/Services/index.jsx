@@ -472,7 +472,7 @@ function Services() {
                       <div className="services-list__category-dropdown-list">
                         {filteredCategories.length === 0 && (
                           <div className="services-list__category-dropdown-empty">
-                            Nenhuma categoria encontrada
+                            Nenhuma categoria encontrada.
                           </div>
                         )}
                         {filteredCategories.map((cat) =>
