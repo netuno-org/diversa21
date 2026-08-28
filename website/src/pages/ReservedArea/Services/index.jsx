@@ -71,7 +71,7 @@ function Services() {
 
     const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
     
-    if (updatedText.length > 500) {
+    if (updatedText.length > 250) {
       return;
     }
 
@@ -850,7 +850,7 @@ function Services() {
             name="description"
             rules={[
               { required: true, message: 'A descrição é obrigatória' },
-              { max: 500, message: 'A descrição não pode ter mais de 500 caracteres' }
+              { max: 250, message: 'A descrição não pode ter mais de 250 caracteres' }
             ]}
           >
             <div className="services-list__description-wrapper">
@@ -862,7 +862,8 @@ function Services() {
                   setDescriptionValue(val);
                   serviceForm.setFieldsValue({ description: val });
                 }}
-                maxLength={500}
+                style={{resize: 'none'}}
+                maxLength={250}
                 showCount
                 rows={5}
                 placeholder="Descreva os serviços prestados..."
@@ -953,7 +954,10 @@ function Services() {
               value={categoryDescription}
               onChange={(e) => setCategoryDescription(e.target.value)}
               rows={3}
+              maxLength={250}
+              showCount
               placeholder="Breve descrição da categoria"
+              style={{resize: 'none'}}
             />
           </Form.Item>
         </Form>

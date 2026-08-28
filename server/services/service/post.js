@@ -18,8 +18,8 @@ if (!name || !name.trim()) {
   response.stopWithBadRequest('service-name-required');
 }
 
-if (description && description.length > 500) {
-  _out.json(_val.map().set("result", false).set("error", "A descrição não pode ter mais de 500 caracteres."));
+if (description && description.length > 250) {
+  _out.json(_val.map().set("result", false).set("error", "A descrição não pode ter mais de 250 caracteres."));
   _req.stop();
 }
 

@@ -10,7 +10,7 @@
     },
     "description": {
       "type": "string",
-      "maxLength": 500
+      "maxLength": 250
     }
   }
 }
