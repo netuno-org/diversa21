@@ -16,6 +16,11 @@ if (!dbService) {
   response.stopWithBadRequest('service-not-found');
 }
 
+_db.execute(`
+    DELETE FROM service_favorite
+    WHERE service_id = ?::int
+`, dbService.getInt('id'));
+
 _db.delete("service", dbService.getInt('id'));
 
 response.successWithoutData();
