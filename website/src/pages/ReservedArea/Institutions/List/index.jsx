@@ -44,6 +44,7 @@ function ListInstitution() {
       <div className="institutions-list__header">
         <ListHeaderFilters
           title="Instituições"
+          description={'Conheça as organizações da rede. Explore os perfis e os membros de cada instituição.'}
           createButton={loggedUser.canCreateInstitutions() && {
             icon: <UserAddOutlined />,
             text: "Criar Instituição",
