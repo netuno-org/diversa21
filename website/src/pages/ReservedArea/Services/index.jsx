@@ -431,7 +431,7 @@ function Services() {
               </Button>
           }
           
-          onSearch={handleSearch}
+          onSearch={(value) => handleSearch(value ? value.trim() : '')}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
