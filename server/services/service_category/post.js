@@ -1,4 +1,4 @@
-import { _req, _db, _val } from "@netuno/server-types";
+import { _req, _db, _val, _out } from "@netuno/server-types";
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
@@ -11,6 +11,11 @@ const description = _req.getString('description');
 
 if (!name || !name.trim()) {
   response.stopWithBadRequest('service-category-name-required');
+}
+
+if (description && description.length > 250) {
+  _out.json(_val.map().set("result", false).set("error", "A descrição não pode ter mais de 250 caracteres."));
+  _req.stop();
 }
 
 const categoryId = _db.insert(

@@ -11,7 +11,7 @@
     "city": { "type": "string-not-empty" },
     "description": { 
       "type": "string-not-empty",
-      "maxLength": 500
+      "maxLength": 250
     },
     "phone": { "type": "string" },
     "website": { "type": "string" },

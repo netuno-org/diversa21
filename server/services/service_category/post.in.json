@@ -9,7 +9,8 @@
       "type": "string-not-empty"
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "maxLength": 250
     }
   },
   "required": [
