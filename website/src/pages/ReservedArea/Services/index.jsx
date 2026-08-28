@@ -435,7 +435,7 @@ function Services() {
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
-          searchPlaceholder="Nome do serviço..."
+          searchPlaceholder="Buscar por nome..."
           
           fullWidthSearch={true}
           
@@ -455,7 +455,7 @@ function Services() {
                   onSearch={setCatSearchValue}
                   filterOption={false}
                   loading={categoriesLoading}
-                  placeholder="Categoria..."
+                  placeholder="Buscar por categoria..."
                   className="services-list__filters-select"
                   options={
                     filteredCategories.length > 0
