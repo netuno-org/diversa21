@@ -435,7 +435,6 @@ function Services() {
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
-          searchPlaceholder="Buscar por nome..."
           
           fullWidthSearch={true}
           
