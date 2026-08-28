@@ -17,7 +17,6 @@ function Avatar({ currentImage, onRemove }, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
-  const [position, setPosition] = useState(undefined);
   const [color, setColor] = useState('#ffffff');
   const [removed, setRemoved] = useState(false);
 
@@ -50,7 +49,6 @@ function Avatar({ currentImage, onRemove }, ref) {
       setImage(file);
       setScale(1.0);
       setRotate(0);
-      setPosition(undefined);
       setRemoved(false);
     }
   });
@@ -59,7 +57,6 @@ function Avatar({ currentImage, onRemove }, ref) {
     setImage(currentImage);
     setScale(1.0);
     setRotate(0);
-    setPosition(undefined);
   };
 
   return (
@@ -120,8 +117,6 @@ function Avatar({ currentImage, onRemove }, ref) {
                 backgroundColor={color}
                 scale={scale}
                 rotate={rotate}
-                position={position}
-                onPositionChange={(pos) => setPosition(pos)}
                 className="avatar-editor__canvas"
               />
             </Col>
@@ -146,12 +141,13 @@ function Avatar({ currentImage, onRemove }, ref) {
                     <Col><ZoomOutOutlined className="avatar-editor__icon" /></Col>
                     <Col flex="auto">
                       <Slider
-                        min={0.5} max={2.5} step={0.01}
+                        min={1} max={2.5} step={0.01}
                         value={scale} onChange={setScale}
-                        tooltip={{ formatter: (v) => `${Math.round(v * 100)}%` }}
+                        tooltip={{ open: false }}
                       />
                     </Col>
                     <Col><ZoomInOutlined className="avatar-editor__icon" /></Col>
+                    ({Math.round(scale * 100)}%)
                   </Row>
 
                   <Row align="middle" gutter={16} className="avatar-editor__slider-row avatar-editor__slider-row--spaced">
@@ -160,11 +156,11 @@ function Avatar({ currentImage, onRemove }, ref) {
                       <Slider
                         min={-180} max={180} step={1}
                         value={rotate} onChange={setRotate}
-                        tooltip={{ formatter: (v) => `${v}°` }}
+                        tooltip={{ open: false }}
                       />
                     </Col>
+                  ({rotate}°)
                   </Row>
-
                   <Space size="large" align="center" className="avatar-editor__actions">
                     <Space>
                       <FormatPainterOutlined className="avatar-editor__icon" />

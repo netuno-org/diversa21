@@ -124,8 +124,6 @@ function CoverImage({ currentImage, onRemove }, ref) {
                 backgroundColor={color}
                 scale={scale}
                 rotate={rotate}
-                position={position}
-                onPositionChange={(pos) => setPosition(pos)}
                 className="cover-editor__canvas"
                 style={{ width: '100%', height: 'auto', maxWidth: '740px' }}
               />
@@ -151,11 +149,12 @@ function CoverImage({ currentImage, onRemove }, ref) {
                     <Col><ZoomOutOutlined className="cover-editor__icon" /></Col>
                     <Col flex="auto">
                       <Slider
-                        min={0.5} max={2.5} step={0.01}
+                        min={1} max={2.5} step={0.01}
                         value={scale} onChange={setScale}
-                        tooltip={{ formatter: (v) => `${Math.round(v * 100)}%` }}
-                      />
+                        tooltip={{ open: false }}
+                        />
                     </Col>
+                        ({Math.round(scale * 100)}%)
                     <Col><ZoomInOutlined className="cover-editor__icon" /></Col>
                   </Row>
 
@@ -165,11 +164,11 @@ function CoverImage({ currentImage, onRemove }, ref) {
                       <Slider
                         min={-180} max={180} step={1}
                         value={rotate} onChange={setRotate}
-                        tooltip={{ formatter: (v) => `${v}°` }}
+                        tooltip={{ open: false }}
                       />
                     </Col>
+                  ({rotate}°)
                   </Row>
-
                   <Space size="large" align="center" className="cover-editor__actions">
                     <Space>
                       <FormatPainterOutlined className="cover-editor__icon" />
