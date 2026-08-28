@@ -367,6 +367,7 @@ function Profile({ user }) {
           onChange={setActiveTab}
           items={tabItems}
           size="large"
+          tabBarGutter={screenSize.isMobile ? 16 : 32}
         />
       </div>
     </section>
