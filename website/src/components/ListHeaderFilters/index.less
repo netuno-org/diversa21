@@ -1,20 +1,24 @@
 @import '../../styles/variables.less';
 
 .list-header-filters {
-  &__header, &__inputs {
+
+  &__header,
+  &__inputs {
     background-color: #fafafa;
     padding: 24px;
     border-radius: 8px;
   }
 
   &__header {
-    > div.ant-row {
-      > div.ant-col {
-        > h1 {
+    >div.ant-row {
+      >div.ant-col {
+        >h1 {
           margin: 0;
         }
+
         &:nth-child(2n) {
           text-align: right;
+
           @media only screen and (max-width: @xs) {
             text-align: end;
           }
@@ -34,7 +38,7 @@
         align-items: center;
       }
 
-      > span {
+      >span {
         line-height: 1;
         display: inline-flex;
         align-items: center;
@@ -71,18 +75,22 @@
     margin: 8px 0 0 !important;
     font-size: 15px;
     color: fade(#000, 65%);
+
+    @media (max-width: @sm) {
+      text-align: center;
+    }
   }
 
   &__inputs {
     margin-top: 20px;
 
     @media (max-width: 480px) {
-      > .ant-row {
+      >.ant-row {
         margin-left: 0 !important;
         margin-right: 0 !important;
       }
 
-      > .ant-row > .ant-col {
+      >.ant-row>.ant-col {
         padding-left: 0 !important;
         padding-right: 0 !important;
       }
