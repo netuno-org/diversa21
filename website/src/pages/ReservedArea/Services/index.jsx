@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, BookOutlined, BookFilled, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
@@ -418,7 +419,7 @@ function Services() {
           extraActionButtons={
             <Button 
                 type={showFavorites ? "primary" : "default"}
-                icon={showFavorites ? <BookFilled /> : <BookOutlined />}
+                icon={showFavorites ? <FaBookmark /> : <FaRegBookmark />}
                 onClick={() => {
                   setShowFavorites(!showFavorites);
                   if (pagination.current !== 1) {
@@ -430,11 +431,10 @@ function Services() {
               </Button>
           }
           
-          onSearch={handleSearch}
+          onSearch={(value) => handleSearch(value ? value.trim() : '')}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
-          searchPlaceholder="Nome do serviço..."
           
           fullWidthSearch={true}
           
@@ -454,7 +454,7 @@ function Services() {
                   onSearch={setCatSearchValue}
                   filterOption={false}
                   loading={categoriesLoading}
-                  placeholder="Categoria..."
+                  placeholder="Buscar por categoria..."
                   className="services-list__filters-select"
                   options={
                     filteredCategories.length > 0
@@ -471,7 +471,7 @@ function Services() {
                       <div className="services-list__category-dropdown-list">
                         {filteredCategories.length === 0 && (
                           <div className="services-list__category-dropdown-empty">
-                            Nenhuma categoria encontrada
+                            Nenhuma categoria encontrada.
                           </div>
                         )}
                         {filteredCategories.map((cat) =>
@@ -554,11 +554,6 @@ function Services() {
 
       <div className="services-list__items">
         {!loading && [...services]
-          .sort((a, b) => {
-            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-            return dateB - dateA;
-          })
           .map((service) => (
           <Card
             key={service.uid}
@@ -647,7 +642,7 @@ function Services() {
                 <Button 
                   type="text" 
                   size="small"
-                  icon={service.isFavorite ? <BookFilled className="services-list__bookmark-filled" /> : <BookOutlined className="services-list__bookmark-outlined" />} 
+                  icon={service.isFavorite ? <FaBookmark className="services-list__bookmark-filled" /> : <FaRegBookmark className="services-list__bookmark-outlined" />} 
                   onClick={(e) => handleToggleFavorite(service, e)}
                   className="services-list__favorite-btn"
                 />

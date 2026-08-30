@@ -18,7 +18,7 @@ function ListHeaderFilters({
   onLocationClear /* () => { ... } */,
   onSearchClear,
   hideInputs,
-  searchPlaceholder = "Buscar por nome ...",
+  searchPlaceholder = "Buscar por nome...",
   hideLocation,
   searchValue,
   fullWidthSearch,
@@ -164,7 +164,7 @@ function ListHeaderFilters({
                 <Select
                   style={{ width: '100%' }}
                   notFoundContent={null}
-                  placeholder="Cidade, estado ou país"
+                  placeholder="Cidade, estado ou país..."
                   options={locationOptions}
                   showSearch={{
                     filterOption: false,

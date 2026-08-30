@@ -62,7 +62,7 @@ function GalleryCarousel({ userUid, isOwnProfile, title = "Fotos", onViewMore })
 
   return (
     <div className="profile-carousel">
-      <div className="profile-carousel__header">
+      <div>
         <div className="profile-carousel__title-wrapper">
           <Title level={5} className="profile-carousel__title">
             {title}
@@ -73,7 +73,8 @@ function GalleryCarousel({ userUid, isOwnProfile, title = "Fotos", onViewMore })
             </Text>
           )}
         </div>
-
+      </div>
+      <div className="profile-carousel__header">
         <div className="profile-carousel__controls">
           {isOwnProfile && (
             <Button

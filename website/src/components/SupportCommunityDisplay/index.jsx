@@ -132,11 +132,11 @@ function SupportCommunityDisplay({
 
   const getEmptyText = () => {
     if (mode === 'reply') {
-      return "Nenhuma Resposta Encontrada";
+      return "Nenhuma resposta encontrada.";
     } else if (mode === 'topic') {
-      return "Nenhum Tópico Encontrado";
+      return "Nenhum tópico encontrado.";
     }
-    return "Nenhuma Categoria Encontrada";
+    return "Nenhuma categoria encontrada.";
   };
 
   const getItemTitle = (item) => {

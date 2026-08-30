@@ -267,16 +267,54 @@
       padding: 0 0 0 24px;
       margin-bottom: 24px;
 
-      @media (max-width: @md) {
-        padding: 0 0 0 16px;
+      @media (max-width: 872px) {
+        padding: 0 16px;
       }
 
       .ant-tabs-tab {
         font-size: 16px;
+        position: relative;
+
+        @media (max-width: @md) {
+          font-size: 15px;
+        }
+
+        &.ant-tabs-tab-active::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 2px;
+          background: @primary-color;
+        }
+      }
+
+      .ant-tabs-ink-bar {
+        display: none;
       }
 
       .ant-tabs-nav-operations {
         display: none;
+      }
+
+      .ant-tabs-nav-wrap {
+        overflow: visible;
+
+        &::before,
+        &::after {
+          display: none;
+        }
+      }
+
+      .ant-tabs-nav-list {
+        flex-wrap: wrap;
+        transform: none !important;
+
+        @media (max-width: 872px) {
+          width: 100%;
+          justify-content: center;
+        }
       }
 
       .ant-tabs-nav-list::after {
@@ -284,13 +322,12 @@
         width: 24px;
         flex-shrink: 0;
 
-        @media (max-width: @md) {
-          width: 16px;
+        @media (max-width: 872px) {
+          display: none;
         }
       }
     }
   }
-
   &__tabs-content {
     padding-bottom: 40px;
   }

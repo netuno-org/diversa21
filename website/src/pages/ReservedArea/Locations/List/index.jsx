@@ -90,7 +90,7 @@ function LocationList() {
     <div className="locations-list">
       <div className="locations-list__search">
         <ListHeaderFilters
-          title="Localidades"
+          title="Localizações"
           description={"Gerencie países, estados e cidades usados na plataforma."}
           createButton={loggedUser.canManageLocations() && {
             icon: <BiSolidLocationPlus />,
