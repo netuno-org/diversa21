@@ -7,7 +7,6 @@ import { LuUserCheck } from "react-icons/lu";
 import { LuHeartHandshake } from "react-icons/lu";
 import { FaStethoscope } from "react-icons/fa6";
 
-
 import { Menu, Layout, Drawer, Button, Grid } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
@@ -45,10 +44,7 @@ const menuItems = [
     link: "/institutions"
   },
   {
-    key: "locations",
-    label: "Localizações",
-    icon: <EnvironmentOutlined />,
-    link: "/locations"
+    type: 'divider'
   },
   {
     key: "profile-view",
@@ -69,6 +65,9 @@ const menuItems = [
     link: "/friends"
   },
   {
+    type: 'divider'
+  },
+  {
     key: "messages",
     label: "Mensagens",
     icon: <MessageOutlined />,
@@ -79,6 +78,15 @@ const menuItems = [
     label: "Notificações",
     icon: <BellOutlined />,
     link: "/notifications"
+  },
+  {
+    type: 'divider'
+  },
+  {
+    key: "locations",
+    label: "Localizações",
+    icon: <EnvironmentOutlined />,
+    link: "/locations"
   },
 ];
 
