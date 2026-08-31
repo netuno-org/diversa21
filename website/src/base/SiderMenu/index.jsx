@@ -1,10 +1,9 @@
 import _auth from "@netuno/auth-client";
-import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, MessageOutlined, CloseOutlined } from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, CloseOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine, RiArticleLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
-import { LuUserCheck } from "react-icons/lu";
-import { LuHeartHandshake } from "react-icons/lu";
+import { LuUserCheck, LuHeartHandshake, LuMessageCircleMore } from "react-icons/lu";
 import { FaStethoscope } from "react-icons/fa6";
 
 import { Menu, Layout, Drawer, Button, Grid } from "antd";
@@ -70,7 +69,7 @@ const menuItems = [
   {
     key: "messages",
     label: "Mensagens",
-    icon: <MessageOutlined />,
+    icon: <LuMessageCircleMore />,
     link: "/messages"
   },
   {
