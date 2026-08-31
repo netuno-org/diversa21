@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space } from "antd";
+import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space, Tooltip } from "antd";
 import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
@@ -570,7 +570,9 @@ function Services() {
 
               <div className="services-list__card-subheader">
                 {service.category?.name && (
-                  <Tag className="services-list__category-tag">{service.category.name}</Tag>
+                  <Tooltip title={categories.find(c => c.uid === service.category.uid)?.description}>
+                    <Tag className="services-list__category-tag">{service.category.name}</Tag>
+                  </Tooltip>
                 )}
                 <div className="services-list__card-location">
                   <EnvironmentOutlined />
@@ -707,7 +709,9 @@ function Services() {
             
             <div className="services-list__card-subheader">
               {serviceDetails.category?.name && (
-                <Tag className="services-list__category-tag">{serviceDetails.category.name}</Tag>
+                <Tooltip title={categories.find(c => c.uid === serviceDetails.category.uid)?.description}>
+                  <Tag className="services-list__category-tag">{serviceDetails.category.name}</Tag>
+                </Tooltip>
               )}
               <div className="services-list__card-location">
                 <EnvironmentOutlined />
