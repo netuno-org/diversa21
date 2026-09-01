@@ -8,6 +8,21 @@
     height: 100%;
     text-align: center;
     cursor: pointer;
+
+    svg {
+      font-size: 20px;
+      stroke-width: 2px;
+      color: @primary-color !important;
+      stroke: @primary-color !important;
+      transition: all 0.3s ease;
+      display: inline-block;
+      vertical-align: -0.125em; 
+    }
+
+    &:hover svg {
+      color: darken(@primary-color, 10%) !important;
+      stroke: darken(@primary-color, 10%) !important;
+    }
   }
 
   &__content {
