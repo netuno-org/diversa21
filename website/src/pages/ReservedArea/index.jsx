@@ -30,7 +30,7 @@ import Services from "./Services/index.jsx"
 import CategoryPage from "./CategoryPage"
 import ReplyPage from "../ReplyPage"
 import TermsPage from '../Terms';
-import Reports from '../Reports'
+import Reports from './Reports'
 import PrivacyPage from '../Privacy';
 
 import "./index.less";

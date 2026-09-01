@@ -4,14 +4,16 @@ import {
   ClockCircleOutlined,
   EyeOutlined,
   CheckOutlined,
-  WarningOutlined
+  CloseCircleOutlined,
+  WarningOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { LuReply } from "react-icons/lu";
+import { LuReply, LuShieldAlert } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
 import { RiArticleLine } from "react-icons/ri";
 import classNames from "classnames";
 
-import ListHeaderFilters from "../../components/ListHeaderFilters";
+import ListHeaderFilters from "../../../components/ListHeaderFilters";
 
 import "./index.less";
 
@@ -22,6 +24,7 @@ const STATUS_CARDS = [
   { key: "pending", label: "Pendentes" },
   { key: "in_analysis", label: "Em análise" },
   { key: "resolved", label: "Resolvidas" },
+  { key: "rejected", label: "Recusadas" },
 ];
 
 const TYPE_CONFIG = {
@@ -34,14 +37,22 @@ const STATUS_CONFIG = {
   pending: {
     label: "Pendente",
     icon: <ClockCircleOutlined />,
+    color: "#D0990F",
   },
   in_analysis: {
     label: "Em análise",
     icon: <EyeOutlined />,
+    color: "#4E5FA0",
   },
   resolved: {
     label: "Resolvido",
     icon: <CheckOutlined />,
+    color: "#50A063",
+  },
+  rejected: {
+    label: "Recusado",
+    icon: <CloseCircleOutlined />,
+    color: "error",
   },
 };
 
@@ -59,24 +70,50 @@ const MOCK_REPORTS = [
     reason: "harassment",
     contentType: "text",
     content: "Você é um completo inútil e não sabe do que está falando. Se aparecer no outro tópico eu vou cuidar de você pessoalmente...",
+    author: { name: "Ana Beatriz Costa", username: "ana.costa" },
+    reported: { name: "Ricardo Pires", username: "ricardo.pires" },
   },
   {
-    
     type: "reply",
     status: "in_analysis",
     reason: "offensive",
     contentType: "text",
     content: "Isso não deveria estar publicado aqui.",
+    author: { name: "João Ferreira", username: "joao.ferreira" },
+    reported: { name: "Luísa Martins", username: "luisa.martins" },
   },
   {
-    
     type: "post",
     status: "resolved",
     reason: "other",
     reasonNote: "Spam repetitivo",
     content: "Venda de material pela plataforma...",
+    author: { name: "Mariana Alves", username: "mariana.alves" },
+    reported: { name: "Carlos Menezes", username: "carlos.mz" },
+  },
+  {
+    type: "topic",
+    status: "rejected",
+    reason: "discrimination",
+    contentType: "text",
+    content: "Não concordo com a opinião desta pessoa e acho que o conteúdo deveria ser removido.",
+    author: { name: "Pedro Nunes", username: "pedro.nunes" },
+    reported: { name: "Sofia Rocha", username: "sofia.rocha" },
   },
 ];
+
+function PartyCard({ icon, label, name, username }) {
+  return (
+    <div className="reports__party">
+      <div className="reports__party-info">
+        <Text className="reports__party-label">{label}</Text>
+        <Text strong className="reports__party-name">
+          {name}
+        </Text>
+      </div>
+    </div>
+  );
+}
 
 function getReasonLabel(report) {
   if (report.reason === "other" && report.reasonNote) {
@@ -93,6 +130,7 @@ function Reports() {
     pending: MOCK_REPORTS.filter((report) => report.status === "pending").length,
     in_analysis: MOCK_REPORTS.filter((report) => report.status === "in_analysis").length,
     resolved: MOCK_REPORTS.filter((report) => report.status === "resolved").length,
+    rejected: MOCK_REPORTS.filter((report) => report.status === "rejected").length,
   };
 
   const reports = statusFilter === "all"
@@ -113,7 +151,7 @@ function Reports() {
 
       <Row gutter={[16, 16]} className="reports__stats">
         {STATUS_CARDS.map((status) => (
-          <Col xs={12} md={6} key={status.key}>
+          <Col xs={12} sm={8} xl={4} key={status.key}>
             <Card
               className={classNames("reports__stat-card", {
                 "reports__stat-card--active": statusFilter === status.key,
@@ -142,7 +180,7 @@ function Reports() {
             const status = STATUS_CONFIG[report.status];
 
             return (
-              <Card className="reports__card">
+              <Card className="reports__card" key={`${report.type}-${report.status}-${report.author.username}`}>
                 <div className="reports__card-header">
                   <div className="reports__card-identity">
                     <div className="reports__card-icon">
@@ -150,15 +188,19 @@ function Reports() {
                     </div>
                     <div className="reports__card-heading">
                       <Text strong className="reports__card-title">
-                        {type.label} 
+                        {type.label}
                       </Text>
                       Recido: Há 23h
                     </div>
                   </div>
-                  <div className="reports__status-tag">
-                    <div>{status.icon}</div>
-                    <div>{status.label}</div>
-                  </div>
+                  <Tag
+                    icon={status.icon}
+                    color={status.color}
+                    variant="filled"
+                    className="reports__status-tag"
+                  >
+                    {status.label}
+                  </Tag>
                 </div>
 
                 <Tag
@@ -171,9 +213,9 @@ function Reports() {
                 </Tag>
 
                 <div className="reports__preview">
-                    <Paragraph ellipsis={{ rows: 3 }}>
-                      “{report.content}”
-                    </Paragraph>
+                  <Paragraph ellipsis={{ rows: 3 }}>
+                    “{report.content}”
+                  </Paragraph>
                 </div>
               </Card>
             );

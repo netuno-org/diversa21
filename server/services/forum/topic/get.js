@@ -1,8 +1,12 @@
 import { _req, _db, _val } from "@netuno/server-types";
 
+import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
 const topicUid = _req.getUID("uid");
+
+const loggedUser = people.getLogged();
+const loggedUserId = loggedUser ? (loggedUser.getInt("id")) : 0;
 
 const dbTopic = _db.queryFirst(`
     SELECT
@@ -15,6 +19,7 @@ const dbTopic = _db.queryFirst(`
       t.last_activity_at,
       c.uid AS "category_uid",
       c.name AS "category_name",
+      p.id AS "people_id",
       p.uid AS "people_uid",
       p.name AS "people_name",
       nu.user AS "people_user",
@@ -40,6 +45,7 @@ const topic = _val.map()
   .set("lastActivityAt", dbTopic.getString("last_activity_at"))
   .set("repliesCount", dbTopic.getInt("replies_count", 0))
   .set("anonymous", dbTopic.getBoolean("anonymous"))
+  .set("isOwner", loggedUserId > 0 && (dbTopic.getInt("people_id")) === loggedUserId)
   .set(
     "category",
     _val.map()

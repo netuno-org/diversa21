@@ -20,6 +20,7 @@ import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
 import EmojiPicker from "emoji-picker-react";
 import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
+import ContentActions from "../ContentActions";
 
 import './index.less'
 
@@ -56,8 +57,9 @@ function SupportCommunityDisplay({
   const screens = Grid.useBreakpoint();
   const isMobile = screens.lg === false;
 
-  const titleMaxLength = mode === 'category' ? 50 : 250;
-  const descriptionMaxLength = mode === 'topic' ? 5000 : mode === 'reply' ? 2500 : 500;
+  const formMode = editingTopic ? 'topic' : editingReply ? 'reply' : mode;
+  const titleMaxLength = formMode === 'category' ? 50 : 250;
+  const descriptionMaxLength = formMode === 'topic' ? 5000 : formMode === 'reply' ? 2500 : 500;
 
   useEffect(() => {
     if (!showModal) {
@@ -110,7 +112,7 @@ function SupportCommunityDisplay({
     }
 
     setDescriptionValue(updatedText);
-    const fieldName = mode === 'reply' || mode === 'topic' ? 'content' : 'description';
+    const fieldName = formMode === 'reply' || formMode === 'topic' ? 'content' : 'description';
     form.setFieldsValue({ [fieldName]: updatedText });
 
     setTimeout(() => {
@@ -174,18 +176,18 @@ function SupportCommunityDisplay({
   };
 
   const getModalTitle = () => {
-    if (mode === 'reply') {
-      return "Nova Resposta";
-    } else if (mode === 'topic') {
-      return "Novo Tópico";
+    if (formMode === 'reply') {
+      return editingReply ? "Editar Resposta" : "Nova Resposta";
+    } else if (formMode === 'topic') {
+      return editingTopic ? "Editar Tópico" : "Novo Tópico";
     }
-    return "Nova Categoria";
+    return editingCategory ? "Editar Categoria" : "Nova Categoria";
   };
 
   const getSubmitLabel = () => {
-    if (mode === 'reply') {
+    if (formMode === 'reply') {
       return editingReply ? "Editar" : "Responder";
-    } else if (mode === 'topic') {
+    } else if (formMode === 'topic') {
       return editingTopic ? "Editar" : "Criar";
     }
     return editingCategory ? "Editar" : "Criar";
@@ -287,8 +289,19 @@ function SupportCommunityDisplay({
                       )}
                     </div>
 
-                    {/** Delete and edit actions **/}
-                    {canManageItem(item) && (
+                    {/** Reply menu, or topic/category edit and delete **/}
+                    {mode === 'reply' ? (
+                      <div
+                        className="support-community__actions"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ContentActions
+                          canViewDeletePostButton={canManageItem(item)}
+                          onDeletePost={() => handleDelete(item.uid)}
+                          onEdit={() => openEditModal(item)}
+                        />
+                      </div>
+                    ) : canManageItem(item) && (
                       <div className="support-community__actions">
                         <Popconfirm
                           title={getDeleteTitle()}
@@ -428,15 +441,15 @@ function SupportCommunityDisplay({
           <Form form={form} layout="vertical" onFinish={onFinish}>
 
             {/** title / name field **/}
-            {mode !== 'reply' && (
+            {formMode !== 'reply' && (
               <Form.Item
-                name={mode === 'topic' ? 'title' : 'name'}
-                label={mode === 'topic' ? 'Título' : 'Nome'}
+                name={formMode === 'topic' ? 'title' : 'name'}
+                label={formMode === 'topic' ? 'Título' : 'Nome'}
                 rules={[
                   { required: true, message: "O título é Obrigatório!" },
                   {
                     max: titleMaxLength,
-                    message: mode === 'topic'
+                    message: formMode === 'topic'
                       ? "O título deve ter no máximo 250 caracteres."
                       : "O nome deve ter no máximo 50 caracteres.",
                   },
@@ -444,7 +457,7 @@ function SupportCommunityDisplay({
               >
                 <Input
                   className="support-community__title-input"
-                  placeholder={mode === 'topic' ? 'Tópico...' : 'Categoria...'}
+                  placeholder={formMode === 'topic' ? 'Tópico...' : 'Categoria...'}
                   maxLength={titleMaxLength}
                   showCount
                 />
@@ -453,11 +466,11 @@ function SupportCommunityDisplay({
 
             {/** description / content field **/}
             <Form.Item
-              name={mode === 'reply' || mode === 'topic' ? 'content' : 'description'}
-              label={mode === 'reply' ? "Resposta" : "Descrição"}
-              rules={mode === 'reply' || mode === 'topic' ? [
-                { required: true, message: mode === 'reply' ? "A resposta é Obrigatória!" : "A descrição é Obrigatória!" },
-                { max: descriptionMaxLength, message: mode === 'reply' ? "A resposta deve ter no máximo 2500 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
+              name={formMode === 'reply' || formMode === 'topic' ? 'content' : 'description'}
+              label={formMode === 'reply' ? "Resposta" : "Descrição"}
+              rules={formMode === 'reply' || formMode === 'topic' ? [
+                { required: true, message: formMode === 'reply' ? "A resposta é Obrigatória!" : "A descrição é Obrigatória!" },
+                { max: descriptionMaxLength, message: formMode === 'reply' ? "A resposta deve ter no máximo 2500 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
               ] : [
                 { required: true, message: "A descrição é obrigatória!" },
                 { min: 30, message: "A descrição deve ter no mínimo 30 caracteres." },
@@ -471,7 +484,7 @@ function SupportCommunityDisplay({
                   onChange={(e) => {
                     const val = e.target.value;
                     setDescriptionValue(val);
-                    const fieldName = mode === 'reply' || mode === 'topic' ? 'content' : 'description';
+                    const fieldName = formMode === 'reply' || formMode === 'topic' ? 'content' : 'description';
                     form.setFieldsValue({ [fieldName]: val });
                   }}
                   placeholder={'Escreva o conteúdo...'}

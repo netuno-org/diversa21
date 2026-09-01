@@ -6,6 +6,7 @@ import usePeople from "../../../common/usePeople.js";
 
 import globalNotification from "../../../common/globalNotification.js";
 import SupportCommunityDisplay from "../../../components/SupportCommunityDisplay";
+import ContentActions from "../../../components/ContentActions";
 
 import TimeAgo from "../../../components/TimeAgo/index.jsx";
 
@@ -31,6 +32,7 @@ function Replies({ topicUid }) {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingReply, setEditingReply] = useState(null);
+  const [editingTopic, setEditingTopic] = useState(null);
   const [topic, setTopic] = useState(null);
   const [repliesCount, setRepliesCount] = useState(0);
   const [page, setPage] = useState(1);
@@ -55,6 +57,14 @@ function Replies({ topicUid }) {
     if (!topicUid) {
       return
     };
+    fetchTopic();
+    handleListReplies(page);
+  }, [topicUid, page]);
+
+  const fetchTopic = () => {
+    if (!topicUid) {
+      return;
+    }
     _service({
       method: "GET",
       url: "/forum/topic",
@@ -68,8 +78,7 @@ function Replies({ topicUid }) {
         console.log("Service Error", e);
       },
     });
-    handleListReplies(page);
-  }, [topicUid, page]);
+  };
 
   const handleListReplies = (currentPage = page) => {
     if (!topicUid) {
@@ -160,6 +169,74 @@ function Replies({ topicUid }) {
     });
   };
 
+  const handleUpdateTopic = (values) => {
+    setLoading(true);
+    _service({
+      method: "PUT",
+      url: "/forum/topic",
+      data: {
+        uid: editingTopic.uid,
+        title: values.title,
+        content: values.content,
+      },
+      success: ({ json }) => {
+        if (json) {
+          globalNotification.success({
+            title: "Tópico Atualizado",
+            description: "O tópico foi atualizado com sucesso.",
+          });
+          closeModal();
+          fetchTopic();
+          setLoading(false);
+          return;
+        }
+        setLoading(false);
+      },
+      fail: (e) => {
+        globalNotification.error({
+          title: "Error",
+          description: "Não foi possível atualizar o tópico.",
+        });
+        console.log("Service Error", e);
+        setLoading(false);
+      },
+    });
+  };
+
+  const handleDeleteTopic = (uid) => {
+    setLoading(true);
+    _service({
+      method: "DELETE",
+      url: "/forum/topic",
+      data: { uid },
+      success: ({ json }) => {
+        if (json) {
+          globalNotification.success({
+            title: "Tópico Removido",
+            description: "O tópico foi removido com sucesso.",
+          });
+          navigate(`/c/${categoryUid}`);
+          return;
+        }
+        setLoading(false);
+      },
+      fail: ({ json }) => {
+        if (json?.error === "forum-topic-has-replies") {
+          globalNotification.error({
+            title: "Error",
+            description: "Não é possível apagar o tópico, pois existe pelo menos uma resposta criada.",
+          });
+        } else {
+          globalNotification.error({
+            title: "Error",
+            description: "Não foi possível remover o tópico.",
+          });
+        }
+        setLoading(false);
+      },
+    });
+  };
+
   const handleDeleteReply = (uid) => {
     setLoading(true);
     _service({
@@ -233,17 +310,26 @@ function Replies({ topicUid }) {
 
   const openCreateModal = () => {
     setEditingReply(null);
+    setEditingTopic(null);
     setShowModal(true);
   };
 
   const openEditModal = (reply) => {
+    setEditingTopic(null);
     setEditingReply(reply);
+    setShowModal(true);
+  };
+
+  const openEditTopic = () => {
+    setEditingReply(null);
+    setEditingTopic(topic);
     setShowModal(true);
   };
 
   const closeModal = () => {
     setShowModal(false);
     setEditingReply(null);
+    setEditingTopic(null);
     setIsAnonymous(false);
   };
 
@@ -252,12 +338,25 @@ function Replies({ topicUid }) {
   };
 
   const onFinish = (values) => {
+    if (editingTopic) {
+      handleUpdateTopic({
+        ...values,
+        content: values.content
+          ?.replace(/\n{3,}/g, "\n\n")
+          .trim(),
+      });
+      return;
+    }
     if (editingReply) {
       handleUpdateReply(values);
       return;
     }
     handleCreateReply(values);
   };
+
+  const canManageTopic = loggedUser.canManagePosts()
+    || topic?.isOwner === true
+    || topic?.people?.uid === loggedUser.data?.uid;
 
   return (
     <div className="replies">
@@ -305,23 +404,34 @@ function Replies({ topicUid }) {
               </Link>
             )}
             <div className="replies-header__meta">
-              <span className="replies-header__author-info">
-                Autor:{" "}
-                {topic?.anonymous === true ? (
-                  "Anônimo"
-                ) : (
-                  <Link
-                    className="replies-header__title-link"
-                    to={`/u/${topic?.people?.user}`}
-                  >
-                    {topic?.people?.name}
-                  </Link>
-                )}
-              </span>
-              <span className="replies-header__meta-item">
-                <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
-              </span>
+              <div>
+                <span className="replies-header__author-info">
+                  Autor:{" "}
+                  {topic?.anonymous === true ? (
+                    "Anônimo"
+                  ) : (
+                    <Link
+                      className="replies-header__title-link"
+                      to={`/u/${topic?.people?.user}`}
+                    >
+                      {topic?.people?.name}
+                    </Link>
+                  )}
+                </span>
+                <span className="replies-header__meta-item">
+                  <TimeAgo sentAt={topic?.moment} className="replies-header__time-ago" />
+                </span>
+              </div>
             </div>
+            {topic && (
+              <div className="replies-header__actions">
+                <ContentActions
+                  canViewDeletePostButton={canManageTopic}
+                  onDeletePost={() => handleDeleteTopic(topic.uid)}
+                  onEdit={openEditTopic}
+                />
+              </div>
+            )}
           </div>
           <p className="replies-header__title">
             {topic?.title}
@@ -356,6 +466,7 @@ function Replies({ topicUid }) {
         showModal={showModal}
         onCancel={closeModal}
         editingReply={editingReply}
+        editingTopic={editingTopic}
         onFinish={onFinish}
         listItems={replyList}
         loggedUser={loggedUser}
