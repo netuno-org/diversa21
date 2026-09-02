@@ -5,10 +5,8 @@ import _service from "@netuno/service-client";
 
 import TimeAgo from "../TimeAgo";
 
-import { Spin, Modal, Form, Input, Typography, Button, Card, Popconfirm, Empty, Avatar, Popover, Grid, Switch } from 'antd'
+import { Spin, Modal, Form, Input, Typography, Button, Card, Empty, Avatar, Popover, Grid, Switch } from 'antd'
 import {
-  DeleteOutlined,
-  EditOutlined,
   FolderOpenOutlined,
   UserOutlined,
   TagsOutlined,
@@ -157,15 +155,6 @@ function SupportCommunityDisplay({
     return item.description;
   };
 
-  const getDeleteTitle = () => {
-    if (mode === 'reply') {
-      return "Tem a certeza que deseja apagar a resposta?";
-    } else if (mode === 'topic') {
-      return "Tem a certeza que deseja apagar o tópico?";
-    }
-    return "Tem a certeza que deseja apagar a categoria?";
-  };
-
   const canManageItem = (item) => {
     if (mode === 'topic' || mode === 'reply') {
       return loggedUser.canManagePosts()
@@ -296,53 +285,18 @@ function SupportCommunityDisplay({
                       )}
                     </div>
 
-                    {/** Reply/topic menu, or category edit and delete **/}
-                    {(mode === 'reply' || mode === 'topic') ? (
+                    {/** Shared actions menu for reply/topic/category **/}
+                    {(mode !== 'category' || canManageItem(item)) && (
                       <div
                         className="support-community__actions"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ContentActions
                           canViewDeletePostButton={canManageItem(item)}
-                          canViewReportButton={!isOwnItem(item)}
+                          canViewReportButton={mode === 'category' ? false : !isOwnItem(item)}
                           onDeletePost={() => handleDelete(item.uid)}
                           onEdit={() => openEditModal(item)}
                         />
-                      </div>
-                    ) : canManageItem(item) && (
-                      <div className="support-community__actions">
-                        <Popconfirm
-                          title={getDeleteTitle()}
-                          description="Esta ação é irreversível"
-                          onConfirm={(e) => {
-                            e?.stopPropagation?.();
-                            handleDelete(item.uid);
-                          }}
-                          onCancel={(e) => e?.stopPropagation?.()}
-                          okText="Sim"
-                          cancelText="Não"
-                        >
-                          <Button
-                            danger
-                            type="link"
-                            className="support-community__action-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                          >
-                            <DeleteOutlined />
-                          </Button>
-                        </Popconfirm>
-                        <Button
-                          type="link"
-                          className="support-community__action-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEditModal(item);
-                          }}
-                        >
-                          <EditOutlined />
-                        </Button>
                       </div>
                     )}
                   </div>
