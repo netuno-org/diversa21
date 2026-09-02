@@ -656,13 +656,15 @@ function Services() {
               </div>
               
               <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
-                <Button 
-                  type="text" 
-                  size="small"
-                  icon={service.isFavorite ? <FaBookmark className="services-list__bookmark-filled" /> : <FaRegBookmark className="services-list__bookmark-outlined" />} 
-                  onClick={(e) => handleToggleFavorite(service, e)}
-                  className="services-list__favorite-btn"
-                />
+                <Tooltip title={service.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}>
+                  <Button 
+                    type="text" 
+                    size="small"
+                    icon={service.isFavorite ? <FaBookmark className="services-list__bookmark-filled" /> : <FaRegBookmark className="services-list__bookmark-outlined" />} 
+                    onClick={(e) => handleToggleFavorite(service, e)}
+                    className="services-list__favorite-btn"
+                  />
+                </Tooltip>
                 {canCreateService && (
                   <>
                     <Button type="text" size="small" className="services-list__action-btn" onClick={(e) => handleEditClick(service, e)}>
