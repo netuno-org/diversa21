@@ -51,6 +51,7 @@ function Post({
   const navigate = useNavigate();
 
   const isAlreadyIsolated = location.pathname === `/p/${uid}`;
+  const isOwnPost = people?.uid === loggedUser.data?.uid;
   const canViewDeletePostButton = people.uid === loggedUser.data?.uid || loggedUser.canManagePosts();
 
   useEffect(() => {
@@ -240,6 +241,7 @@ function Post({
         <div className="user-info-actions">
           <ContentActions
             canViewDeletePostButton={canViewDeletePostButton}
+            canViewReportButton={!isOwnPost}
             editMode={editMode}
             onDeletePost={onDeletePost}
             onEdit={() => setEditMode(true)}

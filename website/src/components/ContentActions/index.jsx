@@ -6,7 +6,7 @@ import "./index.less";
 
 const { TextArea } = Input;
 
-function ContentActions({ canViewDeletePostButton, editMode, onDeletePost, onEdit }) {
+function ContentActions({ canViewDeletePostButton, canViewReportButton = true, editMode, onDeletePost, onEdit }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportType, setReportType] = useState("reasons");
@@ -33,12 +33,14 @@ function ContentActions({ canViewDeletePostButton, editMode, onDeletePost, onEdi
         },
       ]
       : []),
-    {
-      key: "report",
-      label: "Denunciar",
-      icon: <FlagOutlined />,
-      className: "content-actions-item--report",
-    },
+    ...(canViewReportButton
+      ? [{
+        key: "report",
+        label: "Denunciar",
+        icon: <FlagOutlined />,
+        className: "content-actions-item--report",
+      }]
+      : []),
   ];
 
   const handleMenuClick = ({ key }) => {

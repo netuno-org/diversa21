@@ -357,6 +357,7 @@ function Replies({ topicUid }) {
   const canManageTopic = loggedUser.canManagePosts()
     || topic?.isOwner === true
     || topic?.people?.uid === loggedUser.data?.uid;
+  const isOwnTopic = topic?.isOwner === true || topic?.people?.uid === loggedUser.data?.uid;
 
   return (
     <div className="replies">
@@ -427,6 +428,7 @@ function Replies({ topicUid }) {
               <div className="replies-header__actions">
                 <ContentActions
                   canViewDeletePostButton={canManageTopic}
+                  canViewReportButton={!isOwnTopic}
                   onDeletePost={() => handleDeleteTopic(topic.uid)}
                   onEdit={openEditTopic}
                 />

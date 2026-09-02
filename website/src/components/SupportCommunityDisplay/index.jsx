@@ -175,6 +175,13 @@ function SupportCommunityDisplay({
     return loggedUser.canManageForumCategories();
   };
 
+  const isOwnItem = (item) => {
+    if (mode === 'topic' || mode === 'reply') {
+      return item.isOwner === true || item.people?.uid === loggedUser.data?.uid;
+    }
+    return false;
+  };
+
   const getModalTitle = () => {
     if (formMode === 'reply') {
       return editingReply ? "Editar Resposta" : "Nova Resposta";
@@ -289,14 +296,15 @@ function SupportCommunityDisplay({
                       )}
                     </div>
 
-                    {/** Reply menu, or topic/category edit and delete **/}
-                    {mode === 'reply' ? (
+                    {/** Reply/topic menu, or category edit and delete **/}
+                    {(mode === 'reply' || mode === 'topic') ? (
                       <div
                         className="support-community__actions"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ContentActions
                           canViewDeletePostButton={canManageItem(item)}
+                          canViewReportButton={!isOwnItem(item)}
                           onDeletePost={() => handleDelete(item.uid)}
                           onEdit={() => openEditModal(item)}
                         />
