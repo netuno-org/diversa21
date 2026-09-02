@@ -12,7 +12,7 @@ function HeaderNotifications() {
 
   return (
     <div className="header-notifications__trigger" onClick={() => navigate('/notifications')}>
-      <Badge count={count} size="small" offset={[-2, 4]} color="#FDBA3C">
+      <Badge count={count} size="small" offset={[-12, 2]} color="#FDBA3C">
         <BellOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
       </Badge>
     </div>
