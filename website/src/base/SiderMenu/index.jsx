@@ -79,13 +79,13 @@ const menuItems = [
     link: "/notifications"
   },
   {
+        type: 'divider'
+  },
+  {
     key: "reports",
     label: "Denúncias",
     icon: <FlagOutlined  />,
     link: "/reports"
-  },
-  {
-        type: 'divider'
   },
   {
     key: "locations",

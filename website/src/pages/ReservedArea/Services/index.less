@@ -96,17 +96,41 @@
     justify-content: center;
   }
 
+  &__favorite-btn {
+    color: #8b6aa2 !important;
+
+    &:hover {
+      background: transparent !important;
+    }
+    
+    &:hover .services-list__bookmark-outlined,
+    &:hover .services-list__bookmark-outlined svg,
+    &:hover .services-list__bookmark-outlined path,
+    &:hover .services-list__bookmark-filled,
+    &:hover .services-list__bookmark-filled svg,
+    &:hover .services-list__bookmark-filled path {
+      color: darken(#8b6aa2, 10%) !important;
+      fill: darken(#8b6aa2, 10%) !important;
+    }
+  }
+
   &__bookmark-filled {
-    color: #8b6aa2;
+    color: #8b6aa2 !important;
     font-size: 18px;
+    
+    svg, path {
+      fill: #8b6aa2 !important;
+    }
   }
 
   &__bookmark-outlined {
     font-size: 18px;
-    color: #999;
-    transition: color 0.2s;
-    &:hover {
-      color: #8b6aa2;
+    color: #8b6aa2 !important;
+    transition: all 0.2s ease;
+    
+    svg, path {
+      fill: #8b6aa2 !important;
+      transition: fill 0.2s ease;
     }
   }
 
@@ -141,17 +165,14 @@
   &__description {
     white-space: pre-line;
     word-break: break-word;
-  }
-
-  &__date-text {
-    font-size: 12px;
-  }
-
-  &__description {
     color: #555;
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 8px !important;
+  }
+
+  &__date-text {
+    font-size: 12px;
   }
 
   &__card-meta {
@@ -315,7 +336,6 @@
       opacity: 1;
     }
   }
-
 }
 
 .ant-modal {

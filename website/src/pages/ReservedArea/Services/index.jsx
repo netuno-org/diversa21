@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space, Tooltip } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space, Tooltip, Tabs } from "antd";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined, AppstoreOutlined } from "@ant-design/icons";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
@@ -416,21 +416,6 @@ function Services() {
             },
           } : null}
           
-          extraActionButtons={
-            <Button 
-                type={showFavorites ? "primary" : "default"}
-                icon={showFavorites ? <FaBookmark /> : <FaRegBookmark />}
-                onClick={() => {
-                  setShowFavorites(!showFavorites);
-                  if (pagination.current !== 1) {
-                    handlePaginationChange(1, pagination.size);
-                  }
-                }}
-              >
-                Favoritos
-              </Button>
-          }
-          
           onSearch={(value) => handleSearch(value ? value.trim() : '')}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
@@ -531,12 +516,42 @@ function Services() {
                     onClick={() => setCategoryModalVisible(true)} 
                   />
                 )}
-
               </div>
             </div>
           }
         />
       </div>
+      <Tabs
+        activeKey={showFavorites ? "favorites" : "general"}
+        onChange={(key) => {
+          setShowFavorites(key === "favorites");
+          if (pagination.current !== 1) {
+            handlePaginationChange(1, pagination.size);
+          }
+        }}
+        items={[
+          {
+            key: "general",
+            label: (
+              <span>
+                <AppstoreOutlined style={{ marginRight: 8 }} />
+                Geral
+              </span>
+            ),
+          },
+          {
+            key: "favorites",
+            label: (
+              <span>
+                <FaBookmark style={{ marginRight: 8, fontSize: '12px' }} />
+                Meus Favoritos
+              </span>
+            ),
+          },
+        ]}
+        className="services-list__tabs"
+        style={{ marginBottom: 16 }}
+      />
 
       <div className="services-list__count">
         <Text type="secondary">
@@ -688,25 +703,9 @@ function Services() {
           </div>
         )}
       </div>
-
-      <Modal
-        title={serviceDetails ? serviceDetails.name : ''}
-        open={!!serviceDetails}
-        onCancel={handleCloseService}
-        footer={[
-          <Button 
-            key="close" 
-            type="primary" 
-            onClick={handleCloseService}
-          >
-            Fechar
-          </Button>
-        ]}
-        destroyOnHidden
-      >
+      <Modal title={serviceDetails ? serviceDetails.name : ''} open={!!serviceDetails} onCancel={handleCloseService} footer={[ <Button key="close" type="primary" onClick={handleCloseService}>Fechar</Button> ]} destroyOnHidden>
         {serviceDetails && (
           <div className="services-list__details">
-            
             <div className="services-list__card-subheader">
               {serviceDetails.category?.name && (
                 <Tooltip title={categories.find(c => c.uid === serviceDetails.category.uid)?.description}>
@@ -720,13 +719,11 @@ function Services() {
                 </Text>
               </div>
             </div>
-
             {serviceDetails.description && (
               <Paragraph className="services-list__description">
                 {serviceDetails.description}
               </Paragraph>
             )}
-
             <div className="services-list__card-meta">
               {serviceDetails.phone && (
                 <div className="services-list__meta-item">
@@ -739,11 +736,7 @@ function Services() {
               {serviceDetails.website && (
                 <div className="services-list__meta-item">
                   <LinkOutlined />{' '}
-                  <a
-                    href={serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href={serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`} target="_blank" rel="noreferrer">
                     {serviceDetails.website.replace(/^https?:\/\//, '')}
                   </a>
                 </div>
@@ -751,17 +744,12 @@ function Services() {
               {serviceDetails.instagram && (
                 <div className="services-list__meta-item">
                   <InstagramOutlined />{' '}
-                  <a
-                    href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, '')}`} target="_blank" rel="noreferrer">
                     @{serviceDetails.instagram.replace(/^@/, '')}
                   </a>
                 </div>
               )}
             </div>
-
             {serviceDetails.createdAt && (
               <div className="services-list__card-footer-actions">
                 <div className="services-list__card-date">
@@ -772,47 +760,21 @@ function Services() {
                 </div>
               </div>
             )}
-
           </div>
         )}
       </Modal>
 
-      <Modal
-        title={editingService ? "Editar Anúncio de Serviço" : "Novo Anúncio de Serviço"}
-        open={serviceModalVisible}
-        onCancel={() => {
-          setServiceModalVisible(false);
-          setEditingService(null);
-          serviceForm.resetFields();
-        }}
-        onOk={handleCreateService}
-        confirmLoading={savingService}
-        okText={editingService ? "Guardar" : "Publicar"}
-        destroyOnHidden
-        width={700}
-      >
+      <Modal title={editingService ? "Editar Anúncio de Serviço" : "Novo Anúncio de Serviço"} open={serviceModalVisible} onCancel={() => { setServiceModalVisible(false); setEditingService(null); serviceForm.resetFields(); }} onOk={handleCreateService} confirmLoading={savingService} okText={editingService ? "Guardar" : "Publicar"} destroyOnHidden width={700}>
         <Form form={serviceForm} layout="vertical">
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item
-                label="Nome"
-                name="name"
-                rules={[
-                  { required: true, message: 'Insira o nome do serviço' },
-                  { max: 100, message: 'O nome não pode ter mais de 100 caracteres' }
-                ]}
-              >
+              <Form.Item label="Nome" name="name" rules={[ { required: true, message: 'Insira o nome do serviço' }, { max: 100, message: 'O nome não pode ter mais de 100 caracteres' } ]}>
                 <Input maxLength={100} showCount placeholder="Nome do serviço ou profissional" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
               <Form.Item label="Categoria" name="category" rules={[{ required: true, message: 'Selecione uma categoria' }]}>
-                <Select
-                  showSearch
-                  placeholder="Selecione..."
-                  options={categories.map(c => ({ label: c.name, value: c.uid }))}
-                  filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
-                />
+                <Select showSearch placeholder="Selecione..." options={categories.map(c => ({ label: c.name, value: c.uid }))} filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())} />
               </Form.Item>
             </Col>
           </Row>
@@ -820,77 +782,23 @@ function Services() {
           <Row gutter={16}>
             <Col xs={24} md={12}>
               <Form.Item label="Cidade/Estado" name="city" rules={[{ required: true, message: 'Insira a localização' }]}>
-                <Select
-                  labelInValue
-                  showSearch
-                  placeholder="Pesquisar cidade..."
-                  filterOption={false}
-                  onSearch={handleCitySearch}
-                  options={cityOptions}
-                  notFoundContent={null}
-                />
+                <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item
-                label="Telefone"
-                name="phone"
-                rules={[
-                  { max: 30, message: 'O telefone não pode ter mais de 30 caracteres' }
-                ]}
-              >
+              <Form.Item label="Telefone" name="phone" rules={[ { max: 30, message: 'O telefone não pode ter mais de 30 caracteres' } ]}>
                 <Input maxLength={30} placeholder="Contacto telefónico" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item
-            label="Descrição"
-            name="description"
-            rules={[
-              { required: true, message: 'A descrição é obrigatória' },
-              { max: 250, message: 'A descrição não pode ter mais de 250 caracteres' }
-            ]}
-          >
+          <Form.Item label="Descrição" name="description" rules={[ { required: true, message: 'A descrição é obrigatória' }, { max: 250, message: 'A descrição não pode ter mais de 250 caracteres' } ]}>
             <div className="services-list__description-wrapper">
-              <Input.TextArea
-                ref={textAreaRef}
-                value={descriptionValue}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setDescriptionValue(val);
-                  serviceForm.setFieldsValue({ description: val });
-                }}
-                style={{resize: 'none'}}
-                maxLength={250}
-                showCount
-                rows={5}
-                placeholder="Descreva os serviços prestados..."
-                className="services-list__description-input"
-              />
+              <Input.TextArea ref={textAreaRef} value={descriptionValue} onChange={(e) => { const val = e.target.value; setDescriptionValue(val); serviceForm.setFieldsValue({ description: val }); }} style={{resize: 'none'}} maxLength={250} showCount rows={5} placeholder="Descreva os serviços prestados..." className="services-list__description-input" />
               {!isMobile && (
                 <div className="services-list__emoji-wrapper">
-                  <Popover
-                    content={
-                      <EmojiPicker
-                        onEmojiClick={handleEmojiClick}
-                        skinTonesDisabled={false}
-                        previewConfig={{ showPreview: false }}
-                        emojiData={ptEmojis}
-                        searchPlaceholder="Pesquisar..."
-                        height="320px"
-                        width="280px"
-                      />
-                    }
-                    trigger="click"
-                    placement="topRight"
-                  >
-                    <Button
-                      type="text"
-                      shape="circle"
-                      icon={<SmileOutlined />}
-                      className="services-list__emoji-btn"
-                    />
+                  <Popover content={ <EmojiPicker onEmojiClick={handleEmojiClick} skinTonesDisabled={false} previewConfig={{ showPreview: false }} emojiData={ptEmojis} searchPlaceholder="Pesquisar..." height="320px" width="280px" /> } trigger="click" placement="topRight">
+                    <Button type="text" shape="circle" icon={<SmileOutlined />} className="services-list__emoji-btn" />
                   </Popover>
                 </div>
               )}
@@ -899,24 +807,12 @@ function Services() {
 
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item
-                label="Website"
-                name="website"
-                rules={[
-                  { max: 150, message: 'O website não pode ter mais de 150 caracteres' }
-                ]}
-              >
+              <Form.Item label="Website" name="website" rules={[ { max: 150, message: 'O website não pode ter mais de 150 caracteres' } ]}>
                 <Input maxLength={150} showCount prefix={<LinkOutlined />} placeholder="https://" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item
-                label="Instagram"
-                name="instagram"
-                rules={[
-                  { max: 150, message: 'O instagram não pode ter mais de 150 caracteres' }
-                ]}
-              >
+              <Form.Item label="Instagram" name="instagram" rules={[ { max: 150, message: 'O instagram não pode ter mais de 150 caracteres' } ]}>
                 <Input maxLength={150} showCount prefix={<InstagramOutlined />} placeholder="@utilizador" />
               </Form.Item>
             </Col>
@@ -924,40 +820,13 @@ function Services() {
         </Form>
       </Modal>
 
-      <Modal
-        title="Criar categoria de serviço"
-        open={categoryModalVisible}
-        onCancel={() => {
-          setCategoryModalVisible(false);
-          setCategoryName('');
-          setCategoryDescription('');
-          setCategoryError('');
-        }}
-        onOk={handleCreateCategory}
-        okButtonProps={{ disabled: !categoryName.trim() }}
-        confirmLoading={savingCategory}
-        okText="Criar"
-        destroyOnHidden
-      >
+      <Modal title="Criar categoria de serviço" open={categoryModalVisible} onCancel={() => { setCategoryModalVisible(false); setCategoryName(''); setCategoryDescription(''); setCategoryError(''); }} onOk={handleCreateCategory} okButtonProps={{ disabled: !categoryName.trim() }} confirmLoading={savingCategory} okText="Criar" destroyOnHidden>
         <Form layout="vertical">
           <Form.Item label="Nome da categoria" required validateStatus={categoryError ? "error" : ""} help={categoryError}>
-            <Input
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-              onBlur={() => !categoryName.trim() && setCategoryError('Nome da categoria é obrigatório')}
-              placeholder="Ex: Saúde"
-            />
+            <Input value={categoryName} onChange={(e) => setCategoryName(e.target.value)} onBlur={() => !categoryName.trim() && setCategoryError('Nome da categoria é obrigatório')} placeholder="Ex: Saúde" />
           </Form.Item>
           <Form.Item label="Descrição">
-            <Input.TextArea
-              value={categoryDescription}
-              onChange={(e) => setCategoryDescription(e.target.value)}
-              rows={3}
-              maxLength={250}
-              showCount
-              placeholder="Breve descrição da categoria"
-              style={{resize: 'none'}}
-            />
+            <Input.TextArea value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)} rows={3} maxLength={250} showCount placeholder="Breve descrição da categoria" style={{resize: 'none'}} />
           </Form.Item>
         </Form>
       </Modal>
