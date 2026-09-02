@@ -461,17 +461,28 @@ function Services() {
                         )}
                         {filteredCategories.map((cat) =>
                           editingCategoryUid === cat.uid ? (
-                            <div className="services-list__category-dropdown-row editing" key={cat.uid}>
-                              <Input
-                                size="small"
-                                value={editCategoryDraft.name}
-                                onChange={(e) => setEditCategoryDraft({ ...editCategoryDraft, name: e.target.value })}
-                                placeholder="Nome da categoria"
-                                style={{ flex: 1 }}
-                              />
-                              <Space size={4}>
-                                <Button size="small" type="text" icon={<CheckOutlined />} onClick={() => saveEditCategory(cat.uid)} />
-                                <Button size="small" type="text" icon={<CloseOutlined />} onClick={cancelEditCategory} />
+                            <div className="services-list__category-dropdown-row editing" key={cat.uid} style={{ display: 'block', padding: '12px' }}>
+                              <Space direction="vertical" style={{ width: '100%' }} size={8}>
+                                <Input
+                                  size="small"
+                                  value={editCategoryDraft.name}
+                                  onChange={(e) => setEditCategoryDraft({ ...editCategoryDraft, name: e.target.value })}
+                                  placeholder="Nome da categoria"
+                                />
+                                <Input.TextArea
+                                  size="small"
+                                  value={editCategoryDraft.description}
+                                  onChange={(e) => setEditCategoryDraft({ ...editCategoryDraft, description: e.target.value })}
+                                  placeholder="Descrição da categoria"
+                                  rows={2}
+                                  style={{ resize: 'none' }}
+                                />
+                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                  <Space size={4}>
+                                    <Button size="small" type="text" icon={<CloseOutlined />} onClick={cancelEditCategory} />
+                                    <Button size="small" type="text" style={{ color: '#8b6aa2' }} icon={<CheckOutlined />} onClick={() => saveEditCategory(cat.uid)} />
+                                  </Space>
+                                </div>
                               </Space>
                             </div>
                           ) : (
@@ -556,7 +567,7 @@ function Services() {
       <div className="services-list__count">
         <Text type="secondary">
           {pagination.total} {pagination.total !== 1 ? 'Serviços' : 'Serviço'} Encontrado{pagination.total !== 1 ? 's' : ''}
-          {selectedCategory ? ` na categoria "${selectedCategory.name}"` : ''}
+          {selectedCategory ? ` na Categoria "${selectedCategory.name}"` : ''}
           {showFavorites ? ` nos Favoritos` : ''}
         </Text>
       </div>
