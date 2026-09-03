@@ -1,0 +1,20 @@
+{
+  "tags": [
+    "report"
+  ],
+  "summary": "Update Report Status",
+  "description": "Update the moderation status of a report (restricted to moderators).",
+  "type": "object",
+  "properties": {
+    "reportUid": {
+      "type": "uid"
+    },
+    "status": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "reportUid",
+    "status"
+  ]
+}

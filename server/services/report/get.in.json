@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "report"
+  ],
+  "summary": "List Reports",
+  "description": "List content moderation reports with optional status and entityType filters.",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string"
+    },
+    "entityType": {
+      "type": "string"
+    }
+  }
+}

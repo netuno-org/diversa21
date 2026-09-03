@@ -1,0 +1,9 @@
+{
+  "tags": [
+    "report"
+  ],
+  "summary": "List Report Reasons",
+  "description": "List all active report reasons for users to choose from.",
+  "type": "object",
+  "properties": {}
+}

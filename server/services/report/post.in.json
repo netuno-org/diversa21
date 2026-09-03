@@ -1,0 +1,26 @@
+{
+  "tags": [
+    "report"
+  ],
+  "summary": "Submit Report",
+  "description": "Submit a new content moderation report item.",
+  "type": "object",
+  "properties": {
+    "entityType": {
+      "type": "string-not-empty"
+    },
+    "entityUid": {
+      "type": "uid"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "entityType",
+    "entityUid"
+  ]
+}
