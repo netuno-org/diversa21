@@ -1,35 +1,38 @@
-import { useState } from "react";
-import { Card, Row, Col, Typography, Tag, Empty } from "antd";
+import { useEffect, useState } from "react";
+import { Card, Row, Col, Typography, Tag, Empty, Spin } from "antd";
 import {
   ClockCircleOutlined,
-  EyeOutlined,
   CheckOutlined,
   CloseCircleOutlined,
   WarningOutlined,
+  UserOutlined,
+  CommentOutlined,
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
 import { RiArticleLine } from "react-icons/ri";
 import classNames from "classnames";
+import _service from "@netuno/service-client";
 
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
+import TimeAgo from "../../../components/TimeAgo";
 
 import "./index.less";
 
 const { Text, Title, Paragraph } = Typography;
 
 const STATUS_CARDS = [
-  { key: "all", label: "Total" },
   { key: "pending", label: "Pendentes" },
-  { key: "in_analysis", label: "Em análise" },
   { key: "resolved", label: "Resolvidas" },
   { key: "rejected", label: "Recusadas" },
 ];
 
 const TYPE_CONFIG = {
-  topic: { label: "Tópico", icon: <VscCommentDiscussionQuote /> },
-  reply: { label: "Resposta", icon: <LuReply /> },
+  people: { label: "Perfil", icon: <UserOutlined /> },
   post: { label: "Postagem", icon: <RiArticleLine /> },
+  comment: { label: "Comentário", icon: <CommentOutlined /> },
+  forum_topic: { label: "Tópico", icon: <VscCommentDiscussionQuote /> },
+  forum_reply: { label: "Resposta", icon: <LuReply /> },
 };
 
 const STATUS_CONFIG = {
@@ -37,11 +40,6 @@ const STATUS_CONFIG = {
     label: "Pendente",
     icon: <ClockCircleOutlined />,
     color: "#D0990F",
-  },
-  in_analysis: {
-    label: "Em análise",
-    icon: <EyeOutlined />,
-    color: "#4E5FA0",
   },
   resolved: {
     label: "Resolvido",
@@ -55,66 +53,48 @@ const STATUS_CONFIG = {
   },
 };
 
-const REASON_LABELS = {
-  harassment: "Assédio ou ameaça",
-  discrimination: "Discriminação ou preconceito",
-  offensive: "Conteúdo ofensivo ou inadequado",
-  other: "Outro motivo",
-};
-
-const MOCK_REPORTS = [
-  {
-    type: "topic",
-    status: "pending",
-    reason: "harassment",
-    content: "Você é um completo inútil e não sabe do que está falando. Se aparecer no outro tópico eu vou cuidar de você pessoalmente...",
-    author: { username: "ana.costa" },
-  },
-  {
-    type: "reply",
-    status: "in_analysis",
-    reason: "offensive",
-    content: "Isso não deveria estar publicado aqui.",
-    author: { username: "joao.ferreira" },
-  },
-  {
-    type: "post",
-    status: "resolved",
-    reason: "other",
-    reasonNote: "Spam repetitivo",
-    content: "Venda de material pela plataforma...",
-    author: { username: "mariana.alves" },
-  },
-  {
-    type: "topic",
-    status: "rejected",
-    reason: "discrimination",
-    content: "Não concordo com a opinião desta pessoa e acho que o conteúdo deveria ser removido.",
-    author: { username: "pedro.nunes" },
-  },
-];
-
-function getReasonLabel(report) {
-  if (report.reason === "other" && report.reasonNote) {
-    return `Outro: ${report.reasonNote}`;
+function getReportPreview(report) {
+  const content = report.content || {};
+  if (report.entityType === "people") {
+    return content.name || "";
   }
-  return REASON_LABELS[report.reason];
+  if (report.entityType === "forum_topic") {
+    return content.title || content.content || "";
+  }
+  return content.content || "";
 }
 
 function Reports() {
   const [statusFilter, setStatusFilter] = useState("all");
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setLoading(true);
+    _service({
+      method: "GET",
+      url: "/report",
+      success: ({ json }) => {
+        setReports(json?.data || []);
+        setLoading(false);
+      },
+      fail: (e) => {
+        console.log("Service Error", e);
+        setReports([]);
+        setLoading(false);
+      },
+    });
+  }, []);
+  
   const counts = {
-    all: MOCK_REPORTS.length,
-    pending: MOCK_REPORTS.filter((report) => report.status === "pending").length,
-    in_analysis: MOCK_REPORTS.filter((report) => report.status === "in_analysis").length,
-    resolved: MOCK_REPORTS.filter((report) => report.status === "resolved").length,
-    rejected: MOCK_REPORTS.filter((report) => report.status === "rejected").length,
+    pending: reports.filter((report) => report.statusCode === "pending").length,
+    resolved: reports.filter((report) => report.statusCode === "resolved").length,
+    rejected: reports.filter((report) => report.statusCode === "rejected").length,
   };
 
-  const reports = statusFilter === "all"
-    ? MOCK_REPORTS
-    : MOCK_REPORTS.filter((report) => report.status === statusFilter);
+  const visibleReports = statusFilter === "all"
+    ? reports
+    : reports.filter((report) => report.statusCode === statusFilter);
 
   return (
     <section className="reports">
@@ -137,7 +117,7 @@ function Reports() {
               })}
               onClick={() => setStatusFilter(status.key)}
             >
-              <div type="secondary" className="reports__stat-label">
+              <div className="reports__stat-label">
                 {status.label}
               </div>
               <Title level={2} className="reports__stat-value">
@@ -148,18 +128,33 @@ function Reports() {
         ))}
       </Row>
 
+      <div className="reports__count">
+        <Text type="secondary">
+          {visibleReports.length} {visibleReports.length !== 1 ? "Denúncias" : "Denúncia"} Encontrada{visibleReports.length !== 1 ? "s" : ""}
+        </Text>
+      </div>
+
       <div className="reports__items">
-        {reports.length === 0 ? (
+        {loading ? (
+          <div className="reports__empty">
+            <Spin />
+          </div>
+        ) : visibleReports.length === 0 ? (
           <div className="reports__empty">
             <Empty description="Nenhuma denúncia encontrada." />
           </div>
         ) : (
-          reports.map((report) => {
-            const type = TYPE_CONFIG[report.type];
-            const status = STATUS_CONFIG[report.status];
+          visibleReports.map((report) => {
+            const type = TYPE_CONFIG[report.entityType] || { label: report.entityTypeTitle, icon: <WarningOutlined /> };
+            const status = STATUS_CONFIG[report.statusCode] || {
+              label: report.statusTitle,
+              icon: <ClockCircleOutlined />,
+              color: "default",
+            };
+            const preview = getReportPreview(report);
 
             return (
-              <Card className="reports__card" key={`${report.type}-${report.status}-${report.author.username}`}>
+              <Card className="reports__card" key={report.uid}>
                 <div className="reports__card-header">
                   <div className="reports__card-identity">
                     <div className="reports__card-icon">
@@ -169,7 +164,9 @@ function Reports() {
                       <Text strong className="reports__card-title">
                         {type.label}
                       </Text>
-                      Recido: Há 23h
+                      <span>
+                        <TimeAgo sentAt={report.lastReportedAt || report.createdAt} />
+                      </span>
                     </div>
                   </div>
                   <Tag
@@ -182,20 +179,31 @@ function Reports() {
                   </Tag>
                 </div>
 
-                <Tag
-                  icon={<WarningOutlined />}
-                  color={'error'}
-                  variant="filled"
-                  className="reports__reason-tag"
-                >
-                  {getReasonLabel(report)}
-                </Tag>
+                {report.totalItems >= 0 && (
+                  <Tag
+                    style={{ marginBottom: 10, padding: 0 }}
+                    icon={<WarningOutlined />}
+                    color="error"
+                    variant="filled"
+                    className="reports__reason-tag"
+                  >
+                    Quantidade:{' '}
+                    {(report.totalItems === 1 || report.totalItems === 0)
+                      ? "1 denúncia"
+                      : `${report.totalItems} denúncias`}
+                  </Tag>
+                )}
 
-                <div className="reports__preview">
-                  <Paragraph ellipsis={{ rows: 3 }}>
-                    “{report.content}”
-                  </Paragraph>
-                </div>
+                {preview && (
+                  <div className="reports__preview">
+                    <Title style={{ marginTop: 0 }} level={5}>
+                      Conteúdo:
+                    </Title>
+                    <Paragraph ellipsis={{ rows: 3 }}>
+                      “{preview}”
+                    </Paragraph>
+                  </div>
+                )}
               </Card>
             );
           })
