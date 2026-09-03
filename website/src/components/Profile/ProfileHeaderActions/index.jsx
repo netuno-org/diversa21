@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, Popconfirm } from 'antd';
 import {
-  EditOutlined,
   ClockCircleOutlined,
   CheckOutlined,
   CloseOutlined,
@@ -9,6 +8,8 @@ import {
 } from '@ant-design/icons';
 import { FaUserPlus } from "react-icons/fa";
 import { LuUserCheck } from "react-icons/lu";
+
+import ContentActions from "../../ContentActions";
 
 const FRIENDSHIP_MAP = {
   none: { label: "Adicionar amigo", action: "request" },
@@ -21,10 +22,8 @@ function ProfileHeaderActions({
   user,
   isOwnProfile,
   canEditProfile,
-  isLoggedSuperAdmin,
   friendStatus,
   canRequestFriend,
-  isSmallScreen,
   isLoading,
   isProcessing,
   onEdit,
@@ -35,7 +34,6 @@ function ProfileHeaderActions({
   const currentFriendship = FRIENDSHIP_MAP[friendStatus];
   const canShowFriendButton = !isOwnProfile && currentFriendship && (canRequestFriend || friendStatus !== "none");
   const canShowMessageButton = !isOwnProfile && friendStatus === "friends";
-  const shouldUseEditIconOnly = isLoggedSuperAdmin && !isOwnProfile && canEditProfile && canShowFriendButton && canShowMessageButton && !isSmallScreen;
 
   const getFriendButtonIcon = () => {
     switch (friendStatus) {
@@ -50,18 +48,6 @@ function ProfileHeaderActions({
   return (
     <div className="profile__actions">
       <div className="profile__action-buttons">
-        {canEditProfile && (
-          <Button
-            type="primary"
-            className={`profile__edit-btn ${shouldUseEditIconOnly ? "profile__edit-btn--icon-only" : ""}`}
-            icon={<EditOutlined />}
-            onClick={onEdit}
-            title={shouldUseEditIconOnly ? `Editar perfil de ${user.name}` : undefined}
-          >
-            {!shouldUseEditIconOnly && "Editar Perfil"}
-          </Button>
-        )}
-
         {canShowFriendButton && (
           friendStatus === "none" ? (
             <Button
@@ -123,6 +109,18 @@ function ProfileHeaderActions({
             Mensagem
           </Button>
         )}
+        <ContentActions
+          className="profile__content-actions"
+          entityType="people"
+          entityUid={user.uid}
+          canViewEditButton={canEditProfile}
+          canViewDeletePostButton={false}
+          canViewReportButton={!isOwnProfile}
+          editLabel="Editar perfil"
+          reportLabel="Denunciar perfil"
+          onEdit={onEdit}
+        />
+
       </div>
 
       {friendStatus === "received" && (

@@ -15,10 +15,14 @@ function ContentActions({
   entityType,
   entityUid,
   canViewDeletePostButton,
+  canViewEditButton = canViewDeletePostButton,
   canViewReportButton = true,
   editMode,
-  nDeletePost,
-  onEdit
+  onDeletePost,
+  onEdit,
+  editLabel = "Editar",
+  reportLabel = "Denunciar",
+  className,
 }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -29,28 +33,26 @@ function ContentActions({
   const [form] = Form.useForm();
 
   const items = [
+    ...(canViewEditButton && !editMode
+      ? [{
+        key: "edit",
+        label: editLabel,
+        icon: <EditOutlined />,
+        className: "content-actions-item--edit",
+      }]
+      : []),
     ...(canViewDeletePostButton
-      ? [
-        ...(!editMode
-          ? [{
-            key: "edit",
-            label: "Editar",
-            icon: <EditOutlined />,
-            className: "content-actions-item--edit",
-          }]
-          : []),
-        {
-          key: "delete",
-          label: "Deletar",
-          icon: <DeleteOutlined />,
-          className: "content-actions-item--delete",
-        },
-      ]
+      ? [{
+        key: "delete",
+        label: "Deletar",
+        icon: <DeleteOutlined />,
+        className: "content-actions-item--delete",
+      }]
       : []),
     ...(canViewReportButton
       ? [{
         key: "report",
-        label: "Denunciar",
+        label: reportLabel,
         icon: <FlagOutlined />,
         className: "content-actions-item--report",
       }]
@@ -91,7 +93,6 @@ function ContentActions({
 
     if (key === "report") {
       setReportOpen(true);
-      setReportOpen(true);
     }
   };
 
@@ -131,7 +132,7 @@ function ContentActions({
   };
 
   return (
-    <div className="container-report">
+    <div className={`container-report${className ? ` ${className}` : ""}`}>
       <Popconfirm
         title="Tem a certeza que quer remover a postagem?"
         description="Esta ação é irreversível"
@@ -166,7 +167,7 @@ function ContentActions({
           )}
         >
           <Button
-            style={{ height: '20px' }}
+            className="container-report__trigger"
             color="primary"
             variant="outlined"
             icon={<EllipsisOutlined />}

@@ -40,21 +40,18 @@ function Profile({ user }) {
   const [canRequestFriend, setCanRequestFriend] = useState(false);
   const [screenSize, setScreenSize] = useState({
     isMobile: window.innerWidth <= 768,
-    isSmallScreen: window.innerWidth <= 576,
   });
 
   const { run, isProcessing } = useFriendActions();
 
   const isOwnProfile = user?.username === loggedUser?.data?.username;
   const canEditProfile = isOwnProfile || loggedUser?.canManageUser?.(user);
-  const isLoggedSuperAdmin = loggedUser?.data?.group?.code === "super-admin";
   const isLoading = user?.uid ? isProcessing(user.uid) : false;
 
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({
         isMobile: window.innerWidth <= 768,
-        isSmallScreen: window.innerWidth <= 576,
       });
     };
     window.addEventListener('resize', handleResize);
@@ -281,10 +278,8 @@ function Profile({ user }) {
             user={user}
             isOwnProfile={isOwnProfile}
             canEditProfile={canEditProfile}
-            isLoggedSuperAdmin={isLoggedSuperAdmin}
             friendStatus={friendStatus}
             canRequestFriend={canRequestFriend}
-            isSmallScreen={screenSize.isSmallScreen}
             isLoading={isLoading}
             isProcessing={isProcessing}
             onEdit={handleEdit}
