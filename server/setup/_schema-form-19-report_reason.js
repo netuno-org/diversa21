@@ -1,0 +1,95 @@
+/**
+  *
+  *  CODE GENERATED AUTOMATICALLY
+  *
+  *  THIS FILE SHOULD NOT BE EDITED BY HAND
+  *
+  */
+
+import {_val, _form} from "@netuno/server-types";
+
+_form.sync(
+	_val.map()
+		.set("big", false)
+		.set("control_active", true)
+		.set("control_group", false)
+		.set("control_user", false)
+		.set("description", "")
+		.set("export_id", false)
+		.set("export_json", true)
+		.set("export_lastchange", false)
+		.set("export_uid", true)
+		.set("export_xls", true)
+		.set("export_xml", true)
+		.set("firebase", "")
+		.set("name", "report_reason")
+		.set("parent_uid", "3d02cfbf-dec1-42c9-8aec-998d25c9583e")
+		.set("reorder", 0)
+		.set("report", false)
+		.set("report_behaviour", 0)
+		.set("show_id", true)
+		.set("title", "Motivo")
+		.set("uid", "2c4868d3-2145-4290-abb5-d4e156552634")
+);
+_form.syncField(
+	"2c4868d3-2145-4290-abb5-d4e156552634",
+	_val.map()
+		.set("colspan", 0)
+		.set("description", "")
+		.set("firebase", "")
+		.set("group_id", 0)
+		.set("height", 0)
+		.set("mandatory", false)
+		.set("max", 0)
+		.set("min", 0)
+		.set("name", "code")
+		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
+		.set("rowspan", 0)
+		.set("tdheight", 0)
+		.set("tdwidth", 0)
+		.set("title", "C\u00F3digo")
+		.set("type", "text")
+		.set("uid", "e09a6897-227f-4a22-a648-979d902ef6cc")
+		.set("unique", false)
+		.set("user_id", 0)
+		.set("whenedit", true)
+		.set("whenexport", true)
+		.set("whenfilter", true)
+		.set("whennew", true)
+		.set("whenresult", true)
+		.set("whenview", true)
+		.set("width", 0)
+		.set("x", 1)
+		.set("y", 1)
+);
+_form.syncField(
+	"2c4868d3-2145-4290-abb5-d4e156552634",
+	_val.map()
+		.set("colspan", 0)
+		.set("description", "")
+		.set("firebase", "")
+		.set("group_id", 0)
+		.set("height", 0)
+		.set("mandatory", false)
+		.set("max", 0)
+		.set("min", 0)
+		.set("name", "title")
+		.set("properties", "{\"MASK\":{\"default\":\"\",\"type\":\"STRING\",\"value\":\"\"},\"MASK_REVERSE\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
+		.set("rowspan", 0)
+		.set("tdheight", 0)
+		.set("tdwidth", 0)
+		.set("title", "T\u00EDtulo")
+		.set("type", "text")
+		.set("uid", "ad7a5dbf-6b41-46e0-95a5-420617a21eb0")
+		.set("unique", false)
+		.set("user_id", 0)
+		.set("whenedit", true)
+		.set("whenexport", true)
+		.set("whenfilter", true)
+		.set("whennew", true)
+		.set("whenresult", true)
+		.set("whenview", true)
+		.set("width", 0)
+		.set("x", 1)
+		.set("y", 2)
+);
