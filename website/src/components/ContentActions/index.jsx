@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { Dropdown, Button, Popconfirm, Modal, Form, Input, Radio } from "antd";
+import { useEffect, useState } from "react";
+
+import _service from "@netuno/service-client";
+
+import { Dropdown, Button, Popconfirm, Modal, Form, Input, Radio, Skeleton } from "antd";
 import { EllipsisOutlined, FlagOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 import "./index.less";
@@ -9,10 +12,31 @@ const { TextArea } = Input;
 function ContentActions({ canViewDeletePostButton, canViewReportButton = true, editMode, onDeletePost, onEdit }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
-  const [reportType, setReportType] = useState("reasons");
-  const [otherReason, setOtherReason] = useState(false)
+  const [listReason, setListReason] = useState([]);
+  const [loading, setLoading] = useState(false)
 
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (!reportOpen || listReason.length > 0) {
+      return;
+    }
+    setLoading(true)
+    _service({
+      url: "/report/reason",
+      method: "GET",
+      success: ({ json }) => {
+        if (json) {
+          setListReason(json.data || []);
+        }
+        setLoading(false)
+      },
+      fail: (e) => {
+        console.log("Service Error", e);
+        setLoading(false)
+      },
+    });
+  }, [reportOpen]);
 
   const items = [
     ...(canViewDeletePostButton
@@ -55,6 +79,7 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
     }
 
     if (key === "report") {
+      setReportOpen(true);
       setReportOpen(true);
     }
   };
@@ -104,7 +129,7 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
           )}
         >
           <Button
-            style={{height: '20px'}}
+            style={{ height: '20px' }}
             color="primary"
             variant="outlined"
             icon={<EllipsisOutlined />}
@@ -112,6 +137,7 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
           />
         </Dropdown>
       </Popconfirm>
+
       <Modal
         open={reportOpen}
         onCancel={closeModal}
@@ -122,34 +148,20 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
         onClick={(e) => e.stopPropagation()}
       >
         <div >
-          <Radio.Group
-            className="container-report__options"
-            options={[
-              {
-                label: "Assédio ou ameaça",
-                value: "harassment",
-              },
-              {
-                label: "Discriminação ou preconceito",
-                value: "discrimination",
-              },
-              {
-                label: "Conteúdo ofensivo ou inadequado",
-                value: "offensive",
-              },
-              {
-                label: "Outro motivo",
-                value: "other",
-              },
-            ]}
-            onChange={(e) => {
-              if (e.target.value === "other") {
-                setOtherReason(true);
-              } else {
-                setOtherReason(false)
-              }
-            }}
-          />
+          {loading ? (
+            <Skeleton title={false} active paragraph={{ rows: 5, width: ["40%", "40%", "20%", "45%", "10%"] }} />
+          ) : (
+            <Radio.Group
+              className="container-report__options"
+              options={listReason.map((reason) => ({
+                label: reason.title,
+                value: reason.uid,
+              }))}
+              onChange={(e) => {
+                const selected = listReason.find((reason) => reason.uid === e.target.value);
+              }}
+            />
+          )}
         </div>
         <Form
           form={form}
@@ -157,20 +169,19 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
           onFinish={handleSubmit}
           onClick={(e) => e.stopPropagation()}
         >
-          {otherReason === true &&
-            <Form.Item
-              name="description"
-              rules={[{ required: false }]}
-            >
-              <TextArea
-                placeholder="Descreva o motivo da denúncia..."
-                rows={5}
-                maxLength={500}
-                showCount
-                style={{ resize: "none", marginTop: '20px' }}
-              />
-            </Form.Item>
-          }
+          <Form.Item
+            name="description"
+            rules={[{ required: false }]}
+          >
+            <TextArea
+              placeholder="Faça uma breve descrção da denúncia..."
+              disabled={loading}
+              rows={5}
+              maxLength={300}
+              showCount
+              style={{ resize: "none", marginTop: '20px' }}
+            />
+          </Form.Item>
           <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
             <Button type="primary" htmlType="submit">
               Enviar
@@ -178,6 +189,7 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
           </Form.Item>
         </Form>
       </Modal>
+
     </div>
   );
 }
