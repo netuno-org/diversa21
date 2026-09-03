@@ -292,6 +292,8 @@ function SupportCommunityDisplay({
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ContentActions
+                          entityType={mode === "reply" ? "forum_reply" : "forum_topic"}
+                          entityUid={item.uid}
                           canViewDeletePostButton={canManageItem(item)}
                           canViewReportButton={mode === 'category' ? false : !isOwnItem(item)}
                           onDeletePost={() => handleDelete(item.uid)}

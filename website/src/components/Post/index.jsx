@@ -240,6 +240,7 @@ function Post({
         </div>
         <div className="user-info-actions">
           <ContentActions
+            entityType={parentUid ? "comment" : "post"} entityUid={uid}
             canViewDeletePostButton={canViewDeletePostButton}
             canViewReportButton={!isOwnPost}
             editMode={editMode}

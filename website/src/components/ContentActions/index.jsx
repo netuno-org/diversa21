@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import _service from "@netuno/service-client";
 
+import globalNotification from "../../common/globalNotification";
+
 import { Dropdown, Button, Popconfirm, Modal, Form, Input, Radio, Skeleton } from "antd";
 import { EllipsisOutlined, FlagOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
@@ -9,34 +11,22 @@ import "./index.less";
 
 const { TextArea } = Input;
 
-function ContentActions({ canViewDeletePostButton, canViewReportButton = true, editMode, onDeletePost, onEdit }) {
+function ContentActions({
+  entityType,
+  entityUid,
+  canViewDeletePostButton,
+  canViewReportButton = true,
+  editMode,
+  nDeletePost,
+  onEdit
+}) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [listReason, setListReason] = useState([]);
   const [loading, setLoading] = useState(false)
+  const [submiting, setSubmiting] = useState(false)
 
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    if (!reportOpen || listReason.length > 0) {
-      return;
-    }
-    setLoading(true)
-    _service({
-      url: "/report/reason",
-      method: "GET",
-      success: ({ json }) => {
-        if (json) {
-          setListReason(json.data || []);
-        }
-        setLoading(false)
-      },
-      fail: (e) => {
-        console.log("Service Error", e);
-        setLoading(false)
-      },
-    });
-  }, [reportOpen]);
 
   const items = [
     ...(canViewDeletePostButton
@@ -67,6 +57,27 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
       : []),
   ];
 
+  useEffect(() => {
+    if (!reportOpen || listReason.length > 0) {
+      return;
+    }
+    setLoading(true)
+    _service({
+      method: "GET",
+      url: "/report/reason",
+      success: ({ json }) => {
+        if (json) {
+          setListReason(json.data || []);
+        }
+        setLoading(false)
+      },
+      fail: (e) => {
+        console.log("Service Error", e);
+        setLoading(false)
+      },
+    });
+  }, [reportOpen]);
+
   const handleMenuClick = ({ key }) => {
     if (key === "edit") {
       onEdit?.();
@@ -89,8 +100,34 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
     form.resetFields();
   };
 
-  const handleSubmit = () => {
-    closeModal();
+  const handleSubmit = ({ reason, description }) => {
+    setSubmiting(true)
+    _service({
+      method: "POST",
+      url: "/report",
+      data: {
+        entityType,
+        entityUid,
+        reason,
+        description
+      },
+      success: () => {
+        globalNotification.success({
+          title: "Denúncia enviada.",
+          description: "Denúncia enviada com sucesso.",
+        });
+        setSubmiting(false)
+        closeModal()
+      },
+      fail: (e) => {
+        globalNotification.error({
+          title: "Error",
+          description: "Não foi possível enviar a denúncia.",
+        });
+        console.log("Service Error", e);
+        setSubmiting(false)
+      },
+    });
   };
 
   return (
@@ -142,27 +179,11 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
         open={reportOpen}
         onCancel={closeModal}
         footer={null}
-        title="Denunciar"
+        title="Selecione uma das opções abaixo."
         destroyOnHidden
         centered
         onClick={(e) => e.stopPropagation()}
       >
-        <div >
-          {loading ? (
-            <Skeleton title={false} active paragraph={{ rows: 5, width: ["40%", "40%", "20%", "45%", "10%"] }} />
-          ) : (
-            <Radio.Group
-              className="container-report__options"
-              options={listReason.map((reason) => ({
-                label: reason.title,
-                value: reason.uid,
-              }))}
-              onChange={(e) => {
-                const selected = listReason.find((reason) => reason.uid === e.target.value);
-              }}
-            />
-          )}
-        </div>
         <Form
           form={form}
           layout="vertical"
@@ -170,26 +191,43 @@ function ContentActions({ canViewDeletePostButton, canViewReportButton = true, e
           onClick={(e) => e.stopPropagation()}
         >
           <Form.Item
+            name="reason"
+            rules={[{ required: true, message: "Selecione um motivo" }]}
+          >
+            <div>
+              {loading ? (
+                <Skeleton title={false} active paragraph={{ rows: 5, width: ["40%", "40%", "20%", "45%", "10%"] }} />
+              ) : (
+                <Radio.Group
+                  className="container-report__options"
+                  options={listReason.map((reason) => ({
+                    label: reason.title,
+                    value: reason.code,
+                  }))}
+                />
+              )}
+            </div>
+          </Form.Item>
+          <Form.Item
             name="description"
             rules={[{ required: false }]}
           >
             <TextArea
-              placeholder="Faça uma breve descrção da denúncia..."
-              disabled={loading}
+              placeholder="Faça uma breve descrição da denúncia..."
+              disabled={loading || submiting}
               rows={5}
               maxLength={300}
               showCount
-              style={{ resize: "none", marginTop: '20px' }}
+              style={{ resize: "none" }}
             />
           </Form.Item>
-          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
-            <Button type="primary" htmlType="submit">
+          <Form.Item style={{ marginBottom: 0, paddingTop: '20px', textAlign: "right" }}>
+            <Button type="primary" disabled={submiting || loading} loading={submiting} htmlType="submit">
               Enviar
             </Button>
           </Form.Item>
         </Form>
       </Modal>
-
     </div>
   );
 }

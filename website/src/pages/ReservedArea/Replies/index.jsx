@@ -427,6 +427,7 @@ function Replies({ topicUid }) {
             {topic && (
               <div className="replies-header__actions">
                 <ContentActions
+                  entityType="forum_topic" entityUid={topic.uid}
                   canViewDeletePostButton={canManageTopic}
                   canViewReportButton={!isOwnTopic}
                   onDeletePost={() => handleDeleteTopic(topic.uid)}
