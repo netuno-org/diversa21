@@ -152,6 +152,8 @@ export default function App() {
                 <Route path="/messages" element={<ReservedArea />} />
                 <Route path="/notifications" element={<ReservedArea />} />
                 <Route path="/services" element={<ReservedArea />} />
+                <Route path="/faqs" element={<ReservedArea />} />
+                <Route path="/faq" element={<ReservedArea />} />
                 <Route path="/notification-settings" element={<ReservedArea />} />
                 <Route path="/friends" element={<ReservedArea />} />
                 <Route path="/support-community" element={<ReservedArea />} />

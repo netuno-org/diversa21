@@ -32,6 +32,11 @@ function FooterBase() {
             <Link to="/privacy" className="footer-base__link">
               Privacidade
             </Link>
+
+            <Divider orientation="vertical" className="footer-base__divider" />
+            <Link to="/faqs" className="footer-base__link">
+              FAQS
+            </Link>
           </>
         )}
 

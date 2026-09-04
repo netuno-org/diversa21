@@ -32,6 +32,7 @@ import ReplyPage from "../ReplyPage"
 import TermsPage from '../Terms';
 import Reports from './Reports'
 import PrivacyPage from '../Privacy';
+import FAQs from './FAQs';
 
 import "./index.less";
 
@@ -165,6 +166,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/services") {
         return <Services />;
+      }
+      if (location.pathname === "/faqs" || location.pathname === "/faq") {
+        return <FAQs />;
       }
       if (location.pathname === "/terms") {
         return <TermsPage />;
