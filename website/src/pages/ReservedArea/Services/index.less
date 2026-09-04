@@ -1,11 +1,30 @@
 .services-list {
+  padding: 0 24px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+  
   &__header {
-    margin-bottom: 24px;
+    margin-bottom: 8px;
   }
 
   &__count {
-    margin-top: 16px;
-    padding: 0 24px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding: 0;
+  }
+
+  &__tabs {
+    margin-bottom: 0 !important;
+    
+    .ant-tabs-nav {
+      margin-bottom: 12px !important;
+    }
+  }
+
+  &__tabs-content {
+    padding-bottom: 40px;
   }
 
   &__loading {
