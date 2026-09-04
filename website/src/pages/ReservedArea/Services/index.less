@@ -35,12 +35,14 @@
   }
 
   &__items {
-    column-count: 2;
-    column-gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
     margin-bottom: 24px;
+    align-items: start;
 
     @media (max-width: 900px) {
-      column-count: 1;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -65,10 +67,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     border-radius: 12px;
-    break-inside: avoid;
-    margin-bottom: 16px;
-    display: inline-block;
-    width: 100%;
+    min-width: 0;
 
     &:hover {
       border-color: #8b6aa2;
