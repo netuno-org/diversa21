@@ -2,15 +2,18 @@
   "tags": [
     "report"
   ],
-  "summary": "List Reports",
-  "description": "List content moderation reports with optional status and entityType filters.",
+  "summary": "Get Report Items Detail",
+  "description": "Get detailed individual report items and target content information for a specific report with pagination (10 per page).",
   "type": "object",
   "properties": {
-    "status": {
-      "type": "string"
+    "reportUid": {
+      "type": "uid"
     },
-    "entityType": {
-      "type": "string"
+    "page": {
+      "type": "integer"
     }
-  }
+  },
+  "required": [
+    "reportUid"
+  ]
 }

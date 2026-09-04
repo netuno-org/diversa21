@@ -1,0 +1,37 @@
+{
+  "result": {
+    "type": "boolean"
+  },
+  "data": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "uid": { "type": "uid" },
+            "entityType": { "type": "string" },
+            "entityTypeTitle": { "type": "string" },
+            "statusCode": { "type": "string" },
+            "statusTitle": { "type": "string" },
+            "totalItems": { "type": "integer" },
+            "createdAt": { "type": "string" },
+            "lastReportedAt": { "type": "string" },
+            "resolvedAt": { "type": "string" },
+            "resolvedBy": { "type": "object" },
+            "content": { "type": "object" }
+          }
+        }
+      },
+      "pagination": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer" },
+          "pageSize": { "type": "integer" },
+          "totalCount": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

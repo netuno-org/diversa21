@@ -1,0 +1,25 @@
+{
+  "tags": [
+    "report"
+  ],
+  "summary": "List Reports",
+  "description": "List content moderation reports with pagination (10 per page), status, entityType, reportedUser and reporterUser filters.",
+  "type": "object",
+  "properties": {
+    "page": {
+      "type": "integer"
+    },
+    "status": {
+      "type": "string"
+    },
+    "entityType": {
+      "type": "string"
+    },
+    "reportedUser": {
+      "type": "string"
+    },
+    "reporterUser": {
+      "type": "string"
+    }
+  }
+}
