@@ -150,14 +150,14 @@ function ContentActions({
         okText="Sim"
         cancelText="Não"
       >
-        <Dropdown
+          <Dropdown
           menu={{
             items,
             onClick: handleMenuClick,
           }}
           trigger={["click"]}
           placement="bottomRight"
-          dropdownRender={(menu) => (
+          popupRender={(menu) => (
             <div
               onClick={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
