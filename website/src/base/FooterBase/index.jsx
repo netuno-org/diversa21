@@ -21,35 +21,37 @@ function FooterBase() {
           © diversa21.org {currentYear}
         </Text>
 
-        {!isLoginPage && (
-          <>
-            <Divider orientation="vertical" className="footer-base__divider" />
-            <Link to="/terms" className="footer-base__link">
-              Termos e Condições
-            </Link>
+        <div className="footer-base__links">
+          {!isLoginPage && (
+            <>
+              <Divider type="vertical" className="footer-base__divider footer-base__divider--desktop" />
+              <Link to="/terms" className="footer-base__link">
+                Termos e Condições
+              </Link>
 
-            <Divider orientation="vertical" className="footer-base__divider" />
-            <Link to="/privacy" className="footer-base__link">
-              Privacidade
-            </Link>
+              <Divider type="vertical" className="footer-base__divider" />
+              <Link to="/privacy" className="footer-base__link">
+                Privacidade
+              </Link>
 
-            <Divider orientation="vertical" className="footer-base__divider" />
-            <Link to="/faqs" className="footer-base__link">
-              FAQS
-            </Link>
-          </>
-        )}
+              <Divider type="vertical" className="footer-base__divider" />
+              <Link to="/faqs" className="footer-base__link">
+                FAQs
+              </Link>
+            </>
+          )}
 
-        <Divider orientation="vertical" className="footer-base__divider" />
+          <Divider type="vertical" className="footer-base__divider" />
 
-        <AntLink
-          href="https://github.com/netuno-org/diversa21"
-          target="_blank"
-          className="footer-base__link footer-base__github"
-        >
-          <GithubOutlined />
-          <span>Open Source</span>
-        </AntLink>
+          <AntLink
+            href="https://github.com/netuno-org/diversa21"
+            target="_blank"
+            className="footer-base__link footer-base__github"
+          >
+            <GithubOutlined />
+            <span>Open Source</span>
+          </AntLink>
+        </div>
       </div>
     </Footer>
   );

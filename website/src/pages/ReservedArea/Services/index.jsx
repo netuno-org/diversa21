@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, message as staticMessage, Popconfirm, App, Popover, Grid, Space, Tooltip, Tabs } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined, AppstoreOutlined } from "@ant-design/icons";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, Popconfirm, App, Popover, Grid, Space, Tooltip, Tabs, } from "antd";
+import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined, AppstoreOutlined, } from "@ant-design/icons"; import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
-import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
+import useFilteredPaginatedList from "../../../common/useFilteredPaginatedList.js";
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
 import EmojiPicker from "emoji-picker-react";
 import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
@@ -17,24 +16,25 @@ const { Paragraph, Text, Title } = Typography;
 function Services() {
   const { message } = App.useApp();
   const loggedUser = usePeople();
-  
+  const screens = Grid.useBreakpoint();
+  const isMobile = screens.lg === false;
+
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  
+
   const [catSearchValue, setCatSearchValue] = useState("");
   const [catDropdownOpen, setCatDropdownOpen] = useState(false);
   const [editingCategoryUid, setEditingCategoryUid] = useState(null);
   const [editCategoryDraft, setEditCategoryDraft] = useState({ name: "", description: "" });
   const skipCatCloseRef = useRef(false);
-  
+
   const [showFavorites, setShowFavorites] = useState(false);
-  
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [savingCategory, setSavingCategory] = useState(false);
-  const [categoryName, setCategoryName] = useState('');
-  const [categoryDescription, setCategoryDescription] = useState('');
-  const [categoryError, setCategoryError] = useState('');
+  const [categoryForm] = Form.useForm();
 
   const [serviceModalVisible, setServiceModalVisible] = useState(false);
   const [savingService, setSavingService] = useState(false);
@@ -44,54 +44,18 @@ function Services() {
   const [descriptionValue, setDescriptionValue] = useState("");
   const textAreaRef = useRef(null);
 
-  const screens = Grid.useBreakpoint();
-  const isMobile = screens.lg === false;
-  
   const [serviceDetails, setServiceDetails] = useState(null);
-  
   const [searchParams, setSearchParams] = useSearchParams();
-  const serviceIdFromUrl = searchParams.get('id');
+  const serviceIdFromUrl = searchParams.get("id");
   const [fetchingDetail, setFetchingDetail] = useState(false);
 
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  const canCreateService = ['super-admin', 'management'].includes(loggedUser?.data?.group?.code);
-
-  const handleEmojiClick = (emojiData) => {
-    const text = descriptionValue;
-    const emoji = emojiData.emoji;
-
-    let selectionStart = text.length;
-    let selectionEnd = text.length;
-
-    const textarea = textAreaRef.current?.resizableTextArea?.textArea;
-    if (textarea) {
-      selectionStart = textarea.selectionStart;
-      selectionEnd = textarea.selectionEnd;
-    }
-
-    const updatedText = text.substring(0, selectionStart) + emoji + text.substring(selectionEnd);
-    
-    if (updatedText.length > 250) {
-      return;
-    }
-
-    setDescriptionValue(updatedText);
-    serviceForm.setFieldsValue({ description: updatedText });
-
-    setTimeout(() => {
-      if (textarea) {
-        textarea.focus();
-        textarea.setSelectionRange(selectionStart + emoji.length, selectionStart + emoji.length);
-      }
-    }, 50);
-  };
+  const canCreateService = ["super-admin", "management"].includes(loggedUser?.data?.group?.code);
 
   const requestData = useMemo(
     () => ({
       ...(selectedCategory ? { categoryUid: selectedCategory.uid } : {}),
       ...(showFavorites ? { favoritesOnly: true } : {}),
-      _refresh: refreshTrigger 
+      _refresh: refreshTrigger,
     }),
     [selectedCategory, showFavorites, refreshTrigger]
   );
@@ -106,7 +70,7 @@ function Services() {
     handleLocationClear,
     handleSearchClear,
   } = useFilteredPaginatedList({
-    serviceUrl: 'service/list',
+    serviceUrl: "service/list",
     requestData,
   });
 
@@ -115,38 +79,37 @@ function Services() {
   }, []);
 
   useEffect(() => {
-    if (serviceIdFromUrl && !serviceDetails && !fetchingDetail) {
-      const foundService = services?.find((s) => s.uid === serviceIdFromUrl);
+    if (!serviceIdFromUrl || serviceDetails || fetchingDetail) return;
 
-      if (foundService) {
-        setServiceDetails(foundService);
-      } else if (!loading) {
-        setFetchingDetail(true);
-        _service({
-          url: 'service/list',
-          data: { uid: serviceIdFromUrl },
-          success: ({ json }) => {
-            if (json?.data && Array.isArray(json.data) && json.data.length > 0) {
-              setServiceDetails(json.data[0]);
-            } else if (json?.data && json.data.uid) {
-              setServiceDetails(json.data);
-            }
-            setFetchingDetail(false);
-          },
-          fail: () => {
-            setFetchingDetail(false);
-            message.error('Não foi possível carregar os detalhes do serviço partilhado.');
-          }
-        });
-      }
+    const foundService = services?.find((s) => s.uid === serviceIdFromUrl);
+    if (foundService) {
+      setServiceDetails(foundService);
+      return;
     }
-  }, [serviceIdFromUrl, services, serviceDetails, fetchingDetail, loading]);
 
-  const fetchCategories = (name = '') => {
+    if (!loading) {
+      setFetchingDetail(true);
+      _service({
+        url: "service/list",
+        data: { uid: serviceIdFromUrl },
+        success: ({ json }) => {
+          const detail = Array.isArray(json?.data) ? json.data[0] : json?.data;
+          if (detail?.uid) setServiceDetails(detail);
+          setFetchingDetail(false);
+        },
+        fail: () => {
+          setFetchingDetail(false);
+          message.error("Não foi possível carregar os detalhes do serviço partilhado.");
+        },
+      });
+    }
+  }, [serviceIdFromUrl, services, serviceDetails, fetchingDetail, loading, message]);
+
+  const fetchCategories = (name = "") => {
     setCategoriesLoading(true);
     _service({
-      url: 'service_category/list',
-      method: 'GET',
+      url: "service_category/list",
+      method: "GET",
       data: { name },
       success: ({ json }) => {
         setCategories(json?.data || []);
@@ -160,9 +123,12 @@ function Services() {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-PT', { year: 'numeric', month: 'short', day: 'numeric' });
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString("pt-PT", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   const handleCategoryChange = (categoryUid) => {
@@ -180,31 +146,61 @@ function Services() {
 
   const handleCloseService = () => {
     setServiceDetails(null);
-    searchParams.delete('id');
+    searchParams.delete("id");
     setSearchParams(searchParams, { replace: true });
   };
 
   const handleToggleFavorite = (service, e) => {
-    if (e) e.stopPropagation();
-    const actionMethod = service.isFavorite ? 'DELETE' : 'POST';
+    e?.stopPropagation();
     _service({
-      url: 'service/favorite',
-      method: actionMethod,
+      url: "service/favorite",
+      method: service.isFavorite ? "DELETE" : "POST",
       data: { serviceUid: service.uid },
       success: ({ json }) => {
         if (json?.result) {
-          message.success(service.isFavorite ? 'Removido dos favoritos.' : 'Adicionado aos favoritos!');
-          setRefreshTrigger(prev => prev + 1);
+          message.success(service.isFavorite ? "Removido dos favoritos." : "Adicionado aos favoritos!");
+          setRefreshTrigger((prev) => prev + 1);
         }
       },
-      fail: () => {
-        message.error('Ocorreu um erro ao atualizar os favoritos.');
-      }
+      fail: () => message.error("Ocorreu um erro ao atualizar os favoritos."),
     });
   };
 
-  const handleCatDropdownMouseDown = () => { skipCatCloseRef.current = true; };
-  const handleCatDropdownMouseUp = () => { setTimeout(() => { skipCatCloseRef.current = false; }, 0); };
+  const handleEmojiClick = (emojiData) => {
+    const text = descriptionValue;
+    const emoji = emojiData.emoji;
+    const textarea = textAreaRef.current?.resizableTextArea?.textArea;
+
+    const start = textarea ? textarea.selectionStart : text.length;
+    const end = textarea ? textarea.selectionEnd : text.length;
+    const updatedText = text.substring(0, start) + emoji + text.substring(end);
+
+    if (updatedText.length > 250) return;
+
+    setDescriptionValue(updatedText);
+    serviceForm.setFieldsValue({ description: updatedText });
+
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+      }
+    }, 50);
+  };
+
+  const handleCitySearch = (value) => {
+    if (!value) {
+      setCityOptions([]);
+      return;
+    }
+    _service({
+      url: `location/city/search?name=${value}`,
+      success: ({ json }) => {
+        setCityOptions(json.data.map((city) => ({ label: city.label, value: city.uid })));
+      },
+      fail: () => setCityOptions([]),
+    });
+  };
 
   const startEditCategory = (category) => {
     setEditingCategoryUid(category.uid);
@@ -233,95 +229,71 @@ function Services() {
             setSelectedCategory({ ...selectedCategory, ...editCategoryDraft });
           }
           cancelEditCategory();
-          setRefreshTrigger(prev => prev + 1);
+          setRefreshTrigger((prev) => prev + 1);
         } else {
           message.error(json?.error || "Erro ao atualizar categoria.");
         }
       },
-      fail: () => message.error("Erro ao atualizar categoria.")
+      fail: () => message.error("Erro ao atualizar categoria."),
     });
   };
 
   const handleDeleteCategory = (categoryUid) => {
     _service({
-      url: 'service_category',
-      method: 'DELETE',
+      url: "service_category",
+      method: "DELETE",
       data: { uid: categoryUid },
       success: ({ json }) => {
         if (json?.result) {
-          message.success('Categoria apagada com sucesso!');
+          message.success("Categoria apagada com sucesso!");
           setCategories((prev) => prev.filter((c) => c.uid !== categoryUid));
           if (selectedCategory?.uid === categoryUid) {
             setSelectedCategory(null);
-            setRefreshTrigger(prev => prev + 1);
+            setRefreshTrigger((prev) => prev + 1);
           }
         } else {
-          message.error(json?.error || 'Erro ao apagar categoria.');
+          message.error(json?.error || "Erro ao apagar categoria.");
         }
       },
-      fail: (err) => {
-        const json = err?.json;
-        message.error(json?.error || 'Erro de comunicação ao apagar a categoria.');
-      }
+      fail: (err) => message.error(err?.json?.error || "Erro de comunicação ao apagar a categoria."),
     });
   };
 
   const handleCreateCategory = async () => {
-    if (!categoryName.trim()) {
-      setCategoryError('Nome da categoria é obrigatório');
-      return;
+    try {
+      const values = await categoryForm.validateFields();
+      setSavingCategory(true);
+      _service({
+        url: "service_category",
+        method: "POST",
+        data: { name: values.name.trim(), description: values.description?.trim() || "" },
+        success: ({ json }) => {
+          if (json?.result) {
+            fetchCategories();
+            categoryForm.resetFields();
+            setCategoryModalVisible(false);
+          }
+          setSavingCategory(false);
+        },
+        fail: (err) => {
+          message.error(err?.json?.error || "Erro ao criar categoria.");
+          setSavingCategory(false);
+        },
+      });
+    } catch {
+      // Validação de formulário ativa
     }
-    setCategoryError('');
-    setSavingCategory(true);
-    const payload = {
-      name: categoryName.trim(),
-      description: categoryDescription.trim(),
-    };
-
-    _service({
-      url: 'service_category', 
-      method: 'POST',
-      data: payload,
-      success: ({ json }) => {
-        if (json?.result) {
-          fetchCategories();
-          setCategoryName('');
-          setCategoryDescription('');
-          setCategoryModalVisible(false);
-        }
-        setSavingCategory(false);
-      },
-      fail: (err) => {
-        const json = err?.json;
-        setCategoryError(json?.error || json?.message || 'Erro ao criar categoria');
-        setSavingCategory(false);
-      },
-    });
   };
 
-  const handleCitySearch = (value) => {
-    if (!value) {
-      setCityOptions([]);
-      return;
-    }
-    _service({
-      url: `location/city/search?name=${value}`,
-      success: ({ json }) => {
-        setCityOptions(json.data.map(city => ({ label: city.label, value: city.uid })));
-      },
-      fail: () => setCityOptions([])
-    });
-  };
-
-  const handleCreateService = async () => {
+  const handleCreateOrUpdateService = async () => {
     try {
       const values = await serviceForm.validateFields();
       setSavingService(true);
-      
       const isEdit = !!editingService;
+
       _service({
-        url: 'service',
-        method: isEdit ? 'PUT' : 'POST',
+        url: "service",
+        method: isEdit ? "PUT" : "POST",
         data: {
           ...(isEdit ? { uid: editingService.uid } : {}),
           name: values.name,
@@ -330,7 +302,7 @@ function Services() {
           description: values.description,
           phone: values.phone,
           website: values.website,
-          instagram: values.instagram
+          instagram: values.instagram,
         },
         success: ({ json }) => {
           if (json?.result) {
@@ -338,62 +310,70 @@ function Services() {
             setEditingService(null);
             setDescriptionValue("");
             serviceForm.resetFields();
-            message.success(isEdit ? 'Serviço editado com sucesso!' : 'Serviço publicado com sucesso!');
-            
+            message.success(isEdit ? "Serviço editado com sucesso!" : "Serviço publicado com sucesso!");
+
             if (!isEdit && pagination.current !== 1) {
               handlePaginationChange(1, pagination.size);
             }
-            setRefreshTrigger(prev => prev + 1); 
+            setRefreshTrigger((prev) => prev + 1);
           }
           setSavingService(false);
         },
         fail: (err) => {
-          console.error(isEdit ? 'Falha ao editar serviço' : 'Falha ao criar serviço', err);
-          message.error(isEdit ? 'Erro ao editar serviço.' : 'Erro ao criar serviço.');
+          console.error(isEdit ? "Falha ao editar serviço" : "Falha ao criar serviço", err);
+          message.error(isEdit ? "Erro ao editar serviço." : "Erro ao criar serviço.");
           setSavingService(false);
-        }
+        },
       });
-    } catch (error) {
-      console.log('Validação do formulário falhou:', error);
+    } catch {
+      // Validação de formulário ativa
     }
   };
 
   const handleEditClick = (service, e) => {
-    if (e) e.stopPropagation();
+    e?.stopPropagation();
     setEditingService(service);
-    setCityOptions([{ label: `${service.city?.name}, ${service.state?.name} / ${service.country?.name}`, value: service.city?.uid }]);
+    setCityOptions([
+      {
+        label: `${service.city?.name}, ${service.state?.name} / ${service.country?.name}`,
+        value: service.city?.uid,
+      },
+    ]);
     setDescriptionValue(service.description || "");
     setServiceModalVisible(true);
-    
+
     setTimeout(() => {
       serviceForm.setFieldsValue({
         name: service.name,
         category: service.category?.uid,
-        city: { label: `${service.city?.name}, ${service.state?.name} / ${service.country?.name}`, value: service.city?.uid },
+        city: {
+          label: `${service.city?.name}, ${service.state?.name} / ${service.country?.name}`,
+          value: service.city?.uid,
+        },
         phone: service.phone,
         description: service.description,
         website: service.website,
-        instagram: service.instagram
+        instagram: service.instagram,
       });
     }, 50);
   };
 
   const handleDeleteService = (uid, e) => {
-    if (e) e.stopPropagation();
+    e?.stopPropagation();
     _service({
-      url: 'service',
-      method: 'DELETE',
+      url: "service",
+      method: "DELETE",
       data: { uid },
       success: ({ json }) => {
         if (json?.result) {
-          message.success('Serviço removido com sucesso!');
-          setRefreshTrigger(prev => prev + 1);
+          message.success("Serviço removido com sucesso!");
+          setRefreshTrigger((prev) => prev + 1);
         }
       },
       fail: (err) => {
-        console.error('Falha ao remover serviço', err);
-        message.error('Erro ao remover o serviço.');
-      }
+        console.error("Falha ao remover serviço", err);
+        message.error("Erro ao remover o serviço.");
+      },
     });
   };
 
@@ -406,23 +386,26 @@ function Services() {
       <div className="services-list__header">
         <ListHeaderFilters
           title="Serviços"
-          description={"Explore as categorias e descubra serviços de saúde e bem-estar perto de você."}
-          createButton={canCreateService ? {
-            icon: <PlusOutlined />,
-            text: "Novo Serviço",
-            onClick: () => {
-              setDescriptionValue("");
-              setServiceModalVisible(true);
-            },
-          } : null}
-          
-          onSearch={(value) => handleSearch(value ? value.trim() : '')}
+          description="Explore as categorias e descubra serviços de saúde e bem-estar perto de você."
+          createButton={
+            canCreateService
+              ? {
+                icon: <PlusOutlined />,
+                text: "Novo Serviço",
+                onClick: () => {
+                  setDescriptionValue("");
+                  setEditingService(null);
+                  serviceForm.resetFields();
+                  setServiceModalVisible(true);
+                },
+              }
+              : null
+          }
+          onSearch={(value) => handleSearch(value ? value.trim() : "")}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
           onSearchClear={handleSearchClear}
-          
-          fullWidthSearch={true}
-          
+          fullWidthSearch
           extraFilters={
             <div className="services-list__filters-wrapper">
               <div className="services-list__filters-main">
@@ -444,7 +427,7 @@ function Services() {
                   options={
                     filteredCategories.length > 0
                       ? filteredCategories.map((c) => ({ value: c.uid, label: c.name }))
-                      : [{ value: "__empty__", label: "empty", disabled: true }]
+                      : [{ value: "__empty__", label: "Nenhuma categoria encontrada", disabled: true }]
                   }
                   onChange={(uid) => {
                     handleCategoryChange(uid);
@@ -452,7 +435,10 @@ function Services() {
                     setCatDropdownOpen(false);
                   }}
                   popupRender={() => (
-                    <div onMouseDown={handleCatDropdownMouseDown} onMouseUp={handleCatDropdownMouseUp}>
+                    <div
+                      onMouseDown={() => { skipCatCloseRef.current = true; }}
+                      onMouseUp={() => setTimeout(() => { skipCatCloseRef.current = false; }, 0)}
+                    >
                       <div className="services-list__category-dropdown-list">
                         {filteredCategories.length === 0 && (
                           <div className="services-list__category-dropdown-empty">
@@ -461,8 +447,8 @@ function Services() {
                         )}
                         {filteredCategories.map((cat) =>
                           editingCategoryUid === cat.uid ? (
-                            <div className="services-list__category-dropdown-row editing" key={cat.uid} style={{ display: 'block', padding: '12px' }}>
-                              <Space direction="vertical" style={{ width: '100%' }} size={8}>
+                            <div className="services-list__category-dropdown-row editing" key={cat.uid}>
+                              <Space direction="vertical" style={{ width: "100%" }} size={8}>
                                 <Input
                                   size="small"
                                   value={editCategoryDraft.name}
@@ -475,12 +461,11 @@ function Services() {
                                   onChange={(e) => setEditCategoryDraft({ ...editCategoryDraft, description: e.target.value })}
                                   placeholder="Descrição da categoria"
                                   rows={2}
-                                  style={{ resize: 'none' }}
                                 />
-                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <div style={{ display: "flex", justifyContent: "flex-end" }}>
                                   <Space size={4}>
                                     <Button size="small" type="text" icon={<CloseOutlined />} onClick={cancelEditCategory} />
-                                    <Button size="small" type="text" style={{ color: '#8b6aa2' }} icon={<CheckOutlined />} onClick={() => saveEditCategory(cat.uid)} />
+                                    <Button size="small" type="text" style={{ color: "#8b6aa2" }} icon={<CheckOutlined />} onClick={() => saveEditCategory(cat.uid)} />
                                   </Space>
                                 </div>
                               </Space>
@@ -498,16 +483,15 @@ function Services() {
                               <span className="services-list__category-dropdown-label">{cat.name}</span>
                               {loggedUser.canManageServiceCategories() && (
                                 <Space size={4} className="services-list__category-dropdown-actions" onClick={(e) => e.stopPropagation()}>
-                                  <Button size="small" type="text" icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); startEditCategory(cat); }} />
+                                  <Button size="small" type="text" icon={<EditOutlined />} onClick={() => startEditCategory(cat)} />
                                   <Popconfirm
                                     title="Apagar categoria?"
                                     description="Apenas categorias sem serviços podem ser apagadas."
-                                    onConfirm={(e) => { e.stopPropagation(); handleDeleteCategory(cat.uid); }}
-                                    onCancel={(e) => e.stopPropagation()}
+                                    onConfirm={() => handleDeleteCategory(cat.uid)}
                                     okText="Sim"
                                     cancelText="Não"
                                   >
-                                    <Button size="small" type="text" danger icon={<DeleteOutlined />} onClick={(e) => e.stopPropagation()} />
+                                    <Button size="small" type="text" danger icon={<DeleteOutlined />} />
                                   </Popconfirm>
                                 </Space>
                               )}
@@ -519,12 +503,15 @@ function Services() {
                   )}
                 />
                 {loggedUser.canManageServiceCategories() && (
-                  <Button 
-                    type="primary" 
-                    shape="circle" 
-                    icon={<PlusOutlined />} 
+                  <Button
+                    type="primary"
+                    shape="circle"
+                    icon={<PlusOutlined />}
                     title="Nova categoria"
-                    onClick={() => setCategoryModalVisible(true)} 
+                    onClick={() => {
+                      categoryForm.resetFields();
+                      setCategoryModalVisible(true);
+                    }}
                   />
                 )}
               </div>
@@ -532,6 +519,7 @@ function Services() {
           }
         />
       </div>
+
       <Tabs
         activeKey={showFavorites ? "favorites" : "general"}
         onChange={(key) => {
@@ -554,21 +542,20 @@ function Services() {
             key: "favorites",
             label: (
               <span>
-                <FaRegBookmark style={{ marginRight: 8, fontSize: '12px' }} />
+                <FaRegBookmark style={{ marginRight: 8, fontSize: "12px" }} />
                 Meus Favoritos
               </span>
             ),
           },
         ]}
         className="services-list__tabs"
-        style={{ marginBottom: 16 }}
       />
 
       <div className="services-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'Serviços' : 'Serviço'} Encontrado{pagination.total !== 1 ? 's' : ''}
-          {selectedCategory ? ` na Categoria "${selectedCategory.name}"` : ''}
-          {showFavorites ? ` nos Favoritos` : ''}
+          {pagination.total} {pagination.total !== 1 ? "Serviços" : "Serviço"} Encontrado{pagination.total !== 1 ? "s" : ""}
+          {selectedCategory ? ` na Categoria "${selectedCategory.name}"` : ""}
+          {showFavorites ? " nos Favoritos" : ""}
         </Text>
       </div>
 
@@ -579,131 +566,139 @@ function Services() {
       )}
 
       <div className="services-list__items">
-        {!loading && [...services]
-          .map((service) => (
-          <Card
-            key={service.uid}
-            className="services-list__card"
-            hoverable
-            onClick={() => handleOpenService(service)}
-          >
-            <div className="services-list__card-content">
-              <div className="services-list__card-header">
-                <Title level={4} className="services-list__title">
-                  {service.name}
-                </Title>
-              </div>
+        {!loading &&
+          services.map((service) => (
+            <Card
+              key={service.uid}
+              className="services-list__card"
+              hoverable
+              onClick={() => handleOpenService(service)}
+            >
+              <div className="services-list__card-content">
+                <div className="services-list__card-header">
+                  <Title level={4} className="services-list__title">
+                    {service.name}
+                  </Title>
+                </div>
 
-              <div className="services-list__card-subheader">
-                {service.category?.name && (
-                  <Tooltip title={categories.find(c => c.uid === service.category.uid)?.description}>
-                    <Tag className="services-list__category-tag">{service.category.name}</Tag>
-                  </Tooltip>
-                )}
-                <div className="services-list__card-location">
-                  <EnvironmentOutlined />
-                  <Text type="secondary">
-                    {service.city?.name}, {service.state?.name}
-                  </Text>
-                </div>
-              </div>
-              
-              {service.description && (
-                <Paragraph className="services-list__description" ellipsis={{ rows: 3 }}>
-                  {service.description}
-                </Paragraph>
-              )}
-            </div>
-
-            <div className="services-list__card-meta">
-              {service.phone && (
-                <div className="services-list__meta-item">
-                  <PhoneOutlined />
-                  <a
-                    href={`tel:${service.phone}`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {service.phone}
-                  </a>
-                </div>
-              )}
-              {service.website && (
-                <div className="services-list__meta-item">
-                  <LinkOutlined />
-                  <a
-                    href={service.website.startsWith('http') ? service.website : `https://${service.website}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {service.website.replace(/^https?:\/\//, '')}
-                  </a>
-                </div>
-              )}
-              {service.instagram && (
-                <div className="services-list__meta-item">
-                  <InstagramOutlined />
-                  <a
-                    href={`https://instagram.com/${service.instagram.replace(/^@/, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    @{service.instagram.replace(/^@/, '')}
-                  </a>
-                </div>
-              )}
-            </div>
-            <div className="services-list__card-footer-actions">
-              <div className="services-list__card-date">
-                {service.createdAt && (
-                  <>
-                    <CalendarOutlined />
-                    <Text type="secondary" className="services-list__date-text">
-                    {formatDate(service.createdAt)}
+                <div className="services-list__card-subheader">
+                  {service.category?.name && (
+                    <Tooltip title={categories.find((c) => c.uid === service.category.uid)?.description}>
+                      <Tag className="services-list__category-tag">{service.category.name}</Tag>
+                    </Tooltip>
+                  )}
+                  <div className="services-list__card-location">
+                    <EnvironmentOutlined />
+                    <Text type="secondary">
+                      {service.city?.name}, {service.state?.name}
                     </Text>
-                  </>
+                  </div>
+                </div>
+
+                {service.description && (
+                  <Paragraph className="services-list__description" ellipsis={{ rows: 3 }}>
+                    {service.description}
+                  </Paragraph>
                 )}
               </div>
-              
-              <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
-                <Tooltip title={service.isFavorite ? "Remover dos favoritos." : "Adicionar aos favoritos."}>
-                  <Button 
-                    type="text" 
-                    size="small"
-                    icon={service.isFavorite ? <FaBookmark className="services-list__bookmark-filled" /> : <FaRegBookmark className="services-list__bookmark-outlined" />} 
-                    onClick={(e) => handleToggleFavorite(service, e)}
-                    className="services-list__favorite-btn"
-                  />
-                </Tooltip>
-                {canCreateService && (
-                  <>
-                    <Button type="text" size="small" className="services-list__action-btn" onClick={(e) => handleEditClick(service, e)}>
-                      <EditOutlined />
-                    </Button>
-                    <Popconfirm
-                      title="Remover serviço?"
-                      description="Esta ação é irreversível"
-                      onConfirm={(e) => handleDeleteService(service.uid, e)}
-                      okText="Sim"
-                      cancelText="Não"
+
+              <div className="services-list__card-meta">
+                {service.phone && (
+                  <div className="services-list__meta-item">
+                    <PhoneOutlined />
+                    <a href={`tel:${service.phone}`} onClick={(e) => e.stopPropagation()}>
+                      {service.phone}
+                    </a>
+                  </div>
+                )}
+                {service.website && (
+                  <div className="services-list__meta-item">
+                    <LinkOutlined />
+                    <a
+                      href={service.website.startsWith("http") ? service.website : `https://${service.website}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <Button danger type="text" size="small" className="services-list__action-btn">
-                        <DeleteOutlined />
-                      </Button>
-                    </Popconfirm>
-                  </>
+                      {service.website.replace(/^https?:\/\//, "")}
+                    </a>
+                  </div>
+                )}
+                {service.instagram && (
+                  <div className="services-list__meta-item">
+                    <InstagramOutlined />
+                    <a
+                      href={`https://instagram.com/${service.instagram.replace(/^@/, "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      @{service.instagram.replace(/^@/, "")}
+                    </a>
+                  </div>
                 )}
               </div>
-            </div>
-            
-          </Card>
-        ))}
+
+              <div className="services-list__card-footer-actions">
+                <div className="services-list__card-date">
+                  {service.createdAt && (
+                    <>
+                      <CalendarOutlined />
+                      <Text type="secondary" className="services-list__date-text">
+                        {formatDate(service.createdAt)}
+                      </Text>
+                    </>
+                  )}
+                </div>
+
+                <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
+                  <Tooltip title={service.isFavorite ? "Remover dos favoritos." : "Adicionar aos favoritos."}>
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={
+                        service.isFavorite ? (
+                          <FaBookmark className="services-list__bookmark-filled" />
+                        ) : (
+                          <FaRegBookmark className="services-list__bookmark-outlined" />
+                        )
+                      }
+                      onClick={(e) => handleToggleFavorite(service, e)}
+                      className="services-list__favorite-btn"
+                    />
+                  </Tooltip>
+                  {canCreateService && (
+                    <>
+                      <Button
+                        type="text"
+                        size="small"
+                        className="services-list__action-btn"
+                        onClick={(e) => handleEditClick(service, e)}
+                      >
+                        <EditOutlined />
+                      </Button>
+                      <Popconfirm
+                        title="Remover serviço?"
+                        description="Esta ação é irreversível"
+                        onConfirm={(e) => handleDeleteService(service.uid, e)}
+                        okText="Sim"
+                        cancelText="Não"
+                      >
+                        <Button danger type="text" size="small" className="services-list__action-btn">
+                          <DeleteOutlined />
+                        </Button>
+                      </Popconfirm>
+                    </>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
       </div>
 
       <div className="services-list__footer">
         <Pagination
-          className={`services-list__pagination ${services.length === 0 && !loading ? 'services-list__pagination--hidden' : ''}`}
+          className={`services-list__pagination ${services.length === 0 && !loading ? "services-list__pagination--hidden" : ""}`}
           align="center"
           total={pagination.total}
           current={pagination.current}
@@ -716,12 +711,23 @@ function Services() {
           </div>
         )}
       </div>
-      <Modal title={serviceDetails ? serviceDetails.name : ''} open={!!serviceDetails} onCancel={handleCloseService} footer={[ <Button key="close" type="primary" onClick={handleCloseService}>Fechar</Button> ]} destroyOnHidden>
+
+      <Modal
+        title={serviceDetails ? serviceDetails.name : ""}
+        open={!!serviceDetails}
+        onCancel={handleCloseService}
+        footer={[
+          <Button key="close" type="primary" onClick={handleCloseService}>
+            Fechar
+          </Button>,
+        ]}
+        destroyOnHidden
+      >
         {serviceDetails && (
           <div className="services-list__details">
             <div className="services-list__card-subheader">
               {serviceDetails.category?.name && (
-                <Tooltip title={categories.find(c => c.uid === serviceDetails.category.uid)?.description}>
+                <Tooltip title={categories.find((c) => c.uid === serviceDetails.category.uid)?.description}>
                   <Tag className="services-list__category-tag">{serviceDetails.category.name}</Tag>
                 </Tooltip>
               )}
@@ -733,32 +739,35 @@ function Services() {
               </div>
             </div>
             {serviceDetails.description && (
-              <Paragraph className="services-list__description">
-                {serviceDetails.description}
-              </Paragraph>
+              <Paragraph className="services-list__description">{serviceDetails.description}</Paragraph>
             )}
             <div className="services-list__card-meta">
               {serviceDetails.phone && (
                 <div className="services-list__meta-item">
-                  <PhoneOutlined />{' '}
-                  <a href={`tel:${serviceDetails.phone}`}>
-                    {serviceDetails.phone}
-                  </a>
+                  <PhoneOutlined /> <a href={`tel:${serviceDetails.phone}`}>{serviceDetails.phone}</a>
                 </div>
               )}
               {serviceDetails.website && (
                 <div className="services-list__meta-item">
-                  <LinkOutlined />{' '}
-                  <a href={serviceDetails.website.startsWith('http') ? serviceDetails.website : `https://${serviceDetails.website}`} target="_blank" rel="noreferrer">
-                    {serviceDetails.website.replace(/^https?:\/\//, '')}
+                  <LinkOutlined />{" "}
+                  <a
+                    href={serviceDetails.website.startsWith("http") ? serviceDetails.website : `https://${serviceDetails.website}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {serviceDetails.website.replace(/^https?:\/\//, "")}
                   </a>
                 </div>
               )}
               {serviceDetails.instagram && (
                 <div className="services-list__meta-item">
-                  <InstagramOutlined />{' '}
-                  <a href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, '')}`} target="_blank" rel="noreferrer">
-                    @{serviceDetails.instagram.replace(/^@/, '')}
+                  <InstagramOutlined />{" "}
+                  <a
+                    href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    @{serviceDetails.instagram.replace(/^@/, "")}
                   </a>
                 </div>
               )}
@@ -768,7 +777,7 @@ function Services() {
                 <div className="services-list__card-date">
                   <CalendarOutlined />
                   <Text type="secondary" className="services-list__date-text">
-                  {formatDate(serviceDetails.createdAt)}
+                    {formatDate(serviceDetails.createdAt)}
                   </Text>
                 </div>
               </div>
@@ -777,40 +786,110 @@ function Services() {
         )}
       </Modal>
 
-      <Modal title={editingService ? "Editar Anúncio de Serviço" : "Novo Anúncio de Serviço"} open={serviceModalVisible} onCancel={() => { setServiceModalVisible(false); setEditingService(null); serviceForm.resetFields(); }} onOk={handleCreateService} confirmLoading={savingService} okText={editingService ? "Guardar" : "Publicar"} destroyOnHidden width={700}>
+      <Modal
+        title={editingService ? "Editar Anúncio de Serviço" : "Novo Anúncio de Serviço"}
+        open={serviceModalVisible}
+        onCancel={() => {
+          setServiceModalVisible(false);
+          setEditingService(null);
+          serviceForm.resetFields();
+        }}
+        onOk={handleCreateOrUpdateService}
+        confirmLoading={savingService}
+        okText={editingService ? "Guardar" : "Publicar"}
+        destroyOnHidden
+        width={700}
+      >
         <Form form={serviceForm} layout="vertical">
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item label="Nome" name="name" rules={[ { required: true, message: 'Insira o nome do serviço' }, { max: 100, message: 'O nome não pode ter mais de 100 caracteres' } ]}>
+              <Form.Item
+                label="Nome"
+                name="name"
+                rules={[
+                  { required: true, message: "Insira o nome do serviço" },
+                  { max: 100, message: "O nome não pode ter mais de 100 caracteres" },
+                ]}
+              >
                 <Input maxLength={100} showCount placeholder="Nome do serviço ou profissional" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label="Categoria" name="category" rules={[{ required: true, message: 'Selecione uma categoria' }]}>
-                <Select showSearch placeholder="Selecione..." options={categories.map(c => ({ label: c.name, value: c.uid }))} filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())} />
+              <Form.Item
+                label="Categoria"
+                name="category"
+                rules={[{ required: true, message: "Selecione uma categoria" }]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Selecione..."
+                  options={categories.map((c) => ({ label: c.name, value: c.uid }))}
+                  filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                />
               </Form.Item>
             </Col>
           </Row>
 
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item label="Cidade/Estado" name="city" rules={[{ required: true, message: 'Insira a localização' }]}>
-                <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
+              <Form.Item label="Cidade/Estado" name="city" rules={[{ required: true, message: "Insira a localização" }]}>
+                <Select
+                  labelInValue
+                  showSearch
+                  placeholder="Pesquisar cidade..."
+                  filterOption={false}
+                  onSearch={handleCitySearch}
+                  options={cityOptions}
+                  notFoundContent={null}
+                />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label="Telefone" name="phone" rules={[ { max: 30, message: 'O telefone não pode ter mais de 30 caracteres' } ]}>
+              <Form.Item label="Telefone" name="phone" rules={[{ max: 30, message: "O telefone não pode ter mais de 30 caracteres" }]}>
                 <Input maxLength={30} placeholder="Contacto telefónico" />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Descrição" name="description" rules={[ { required: true, message: 'A descrição é obrigatória' }, { max: 250, message: 'A descrição não pode ter mais de 250 caracteres' } ]}>
+          <Form.Item
+            label="Descrição"
+            name="description"
+            rules={[
+              { required: true, message: "A descrição é obrigatória" },
+              { max: 250, message: "A descrição não pode ter mais de 250 caracteres" },
+            ]}
+          >
             <div className="services-list__description-wrapper">
-              <Input.TextArea ref={textAreaRef} value={descriptionValue} onChange={(e) => { const val = e.target.value; setDescriptionValue(val); serviceForm.setFieldsValue({ description: val }); }} style={{resize: 'none'}} maxLength={250} showCount rows={5} placeholder="Descreva os serviços prestados..." className="services-list__description-input" />
+              <Input.TextArea
+                ref={textAreaRef}
+                value={descriptionValue}
+                onChange={(e) => {
+                  setDescriptionValue(e.target.value);
+                  serviceForm.setFieldsValue({ description: e.target.value });
+                }}
+                maxLength={250}
+                showCount
+                rows={5}
+                placeholder="Descreva os serviços prestados..."
+                className="services-list__description-input"
+              />
               {!isMobile && (
                 <div className="services-list__emoji-wrapper">
-                  <Popover content={ <EmojiPicker onEmojiClick={handleEmojiClick} skinTonesDisabled={false} previewConfig={{ showPreview: false }} emojiData={ptEmojis} searchPlaceholder="Pesquisar..." height="320px" width="280px" /> } trigger="click" placement="topRight">
+                  <Popover
+                    content={
+                      <EmojiPicker
+                        onEmojiClick={handleEmojiClick}
+                        skinTonesDisabled
+                        previewConfig={{ showPreview: false }}
+                        emojiData={ptEmojis}
+                        searchPlaceholder="Pesquisar..."
+                        height="320px"
+                        width="280px"
+                      />
+                    }
+                    trigger="click"
+                    placement="topRight"
+                  >
                     <Button type="text" shape="circle" icon={<SmileOutlined />} className="services-list__emoji-btn" />
                   </Popover>
                 </div>
@@ -820,12 +899,12 @@ function Services() {
 
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item label="Website" name="website" rules={[ { max: 150, message: 'O website não pode ter mais de 150 caracteres' } ]}>
+              <Form.Item label="Website" name="website" rules={[{ max: 150, message: "O website não pode ter mais de 150 caracteres" }]}>
                 <Input maxLength={150} showCount prefix={<LinkOutlined />} placeholder="https://" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label="Instagram" name="instagram" rules={[ { max: 150, message: 'O instagram não pode ter mais de 150 caracteres' } ]}>
+              <Form.Item label="Instagram" name="instagram" rules={[{ max: 150, message: "O instagram não pode ter mais de 150 caracteres" }]}>
                 <Input maxLength={150} showCount prefix={<InstagramOutlined />} placeholder="@utilizador" />
               </Form.Item>
             </Col>
@@ -833,13 +912,28 @@ function Services() {
         </Form>
       </Modal>
 
-      <Modal title="Criar categoria de serviço" open={categoryModalVisible} onCancel={() => { setCategoryModalVisible(false); setCategoryName(''); setCategoryDescription(''); setCategoryError(''); }} onOk={handleCreateCategory} okButtonProps={{ disabled: !categoryName.trim() }} confirmLoading={savingCategory} okText="Criar" destroyOnHidden>
-        <Form layout="vertical">
-          <Form.Item label="Nome da categoria" required validateStatus={categoryError ? "error" : ""} help={categoryError}>
-            <Input value={categoryName} onChange={(e) => setCategoryName(e.target.value)} onBlur={() => !categoryName.trim() && setCategoryError('Nome da categoria é obrigatório')} placeholder="Ex: Saúde" />
+      <Modal
+        title="Criar categoria de serviço"
+        open={categoryModalVisible}
+        onCancel={() => {
+          setCategoryModalVisible(false);
+          categoryForm.resetFields();
+        }}
+        onOk={handleCreateCategory}
+        confirmLoading={savingCategory}
+        okText="Criar"
+        destroyOnHidden
+      >
+        <Form form={categoryForm} layout="vertical">
+          <Form.Item
+            label="Nome da categoria"
+            name="name"
+            rules={[{ required: true, message: "Nome da categoria é obrigatório" }]}
+          >
+            <Input placeholder="Ex: Saúde" />
           </Form.Item>
-          <Form.Item label="Descrição">
-            <Input.TextArea value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)} rows={3} maxLength={250} showCount placeholder="Breve descrição da categoria." style={{resize: 'none'}} />
+          <Form.Item label="Descrição" name="description">
+            <Input.TextArea rows={3} maxLength={250} showCount placeholder="Breve descrição da categoria." />
           </Form.Item>
         </Form>
       </Modal>

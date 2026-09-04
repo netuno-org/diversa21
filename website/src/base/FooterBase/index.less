@@ -5,7 +5,9 @@
   justify-content: center;
   align-items: center;
   background: transparent;
-  padding: 24px;
+  padding: 16px 20px 24px;
+  width: 100%;
+  box-sizing: border-box;
 
   &__container {
     display: flex;
@@ -14,28 +16,45 @@
     justify-content: center;
     gap: 8px 12px;
     max-width: 100%;
+    text-align: center;
 
     @media (max-width: @sm) {
-      gap: 10px 16px;
+      flex-direction: column;
+      gap: 10px;
     }
   }
 
   &__text {
     color: @primary-color;
     white-space: nowrap;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  &__links {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
 
     @media (max-width: @sm) {
-      width: 100%;
-      text-align: center;
+      gap: 8px 12px;
     }
   }
 
   &__divider {
     border-color: @primary-color;
-    opacity: 0.5;
+    opacity: 0.45;
     margin: 0;
 
-    @media (max-width: @sm) {
+    &--desktop {
+      @media (max-width: @sm) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 400px) {
       display: none;
     }
   }
@@ -43,6 +62,8 @@
   &__link {
     color: @primary-color !important;
     white-space: nowrap;
+    font-size: 13px;
+    line-height: 1.5;
     transition: opacity 0.3s ease;
 
     &:hover {
@@ -54,7 +75,7 @@
   &__github {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
 
     .anticon {
       font-size: 15px;

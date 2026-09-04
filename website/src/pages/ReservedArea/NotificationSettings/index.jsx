@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Card, Switch, Typography, Spin, Empty } from 'antd';
+import { Switch, Typography, Spin, Empty } from 'antd';
+import {
+  UserAddOutlined,
+  FileTextOutlined,
+  CommentOutlined,
+  HeartOutlined,
+  MessageOutlined,
+} from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
 import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
@@ -7,7 +14,7 @@ import globalNotification from "../../../common/globalNotification.js";
 
 import './index.less';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 function NotificationSettings() {
   const [types, setTypes] = useState([]);
@@ -18,26 +25,31 @@ function NotificationSettings() {
     {
       key: 'requests',
       title: 'Pedidos',
+      icon: <UserAddOutlined />,
       codes: ['friend-request', 'friend-request-accepted'],
     },
     {
       key: 'posts',
       title: 'Postagens',
+      icon: <FileTextOutlined />,
       codes: ['friend-post', 'institution-post'],
     },
     {
       key: 'comments',
       title: 'Comentários',
+      icon: <CommentOutlined />,
       codes: ['institution-comment', 'friend-comment', 'my-post-comment', 'forum-reply'],
     },
     {
       key: 'likes',
       title: 'Curtidas',
+      icon: <HeartOutlined />,
       codes: ['institution-like', 'friend-like', 'my-post-like', 'forum-reply-like'],
     },
     {
       key: 'messages',
       title: 'Mensagens',
+      icon: <MessageOutlined />,
       codes: ['message'],
     },
   ];
@@ -126,42 +138,51 @@ function NotificationSettings() {
         <ListHeaderFilters title="Preferências de Notificações" hideInputs={true} />
       </div>
 
-      <Card className="notification-settings-page__card" variant="borderless">
-        {loading ? (
-          <div className="notification-settings-page__loading">
-            <Spin />
-          </div>
-        ) : types.length === 0 ? (
+      {loading ? (
+        <div className="notification-settings-page__loading">
+          <Spin size="large" />
+        </div>
+      ) : types.length === 0 ? (
+        <div className="notification-settings-page__empty">
           <Empty description="Não há tipos de notificação disponíveis." />
-        ) : (
-          <div className="notification-settings-page__list">
-            {groupedSections.map((section) => (
-              <div key={section.key} className="notification-settings-page__section">
-                <div className="notification-settings-page__section-title">
-                  <h4>{section.title}</h4>
-                </div>
-                {section.items.map((type) => (
-                  <div key={type.code} className="notification-settings-page__item">
-                    <div className="notification-settings-page__item-info">
-                      <Text strong>{labelMap[type.code] || type.name}</Text>
-                      <Text type="secondary" style={{ fontSize: 13, marginTop: 6 }}>
-                        {descMap[type.code] || `Recebe notificações relacionadas: ${type.name.toLowerCase()}.`}
-                      </Text>
-                    </div>
-                    <Switch
-                      checked={!type.blocked}
-                      loading={loadingCode === type.code}
-                      onChange={() => onToggle(type.code, type.blocked)}
-                      aria-label={`Alternar ${labelMap[type.code] || type.name}`}
-                      aria-checked={!type.blocked}
-                    />
-                  </div>
-                ))}
+        </div>
+      ) : (
+        <div className="notification-settings-page__list">
+          {groupedSections.map((section) => (
+            <div key={section.key} className="notification-settings-page__section">
+              <div className="notification-settings-page__section-title">
+                {section.icon && (
+                  <span className="notification-settings-page__section-icon">
+                    {section.icon}
+                  </span>
+                )}
+                <Title level={5}>{section.title}</Title>
               </div>
-            ))}
-          </div>
-        )}
-      </Card>
+
+              {section.items.map((type) => (
+                <div key={type.code} className="notification-settings-page__item">
+                  <div className="notification-settings-page__item-info">
+                    <Text className="notification-settings-page__item-name">
+                      {labelMap[type.code] || type.name}
+                    </Text>
+                    <Text type="secondary" className="notification-settings-page__item-desc">
+                      {descMap[type.code] || `Recebe notificações relacionadas: ${type.name.toLowerCase()}.`}
+                    </Text>
+                  </div>
+
+                  <Switch
+                    checked={!type.blocked}
+                    loading={loadingCode === type.code}
+                    onChange={() => onToggle(type.code, type.blocked)}
+                    aria-label={`Alternar ${labelMap[type.code] || type.name}`}
+                    aria-checked={!type.blocked}
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

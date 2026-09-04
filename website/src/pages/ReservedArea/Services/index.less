@@ -1,33 +1,15 @@
 .services-list {
-  padding: 0 24px;
-
-  @media (max-width: 768px) {
-    padding: 0 16px;
-  }
-  
   &__header {
-    margin-bottom: 8px;
+    margin-bottom: 24px;
   }
 
   &__count {
-    margin-top: 0;
-    margin-bottom: 12px;
-    padding: 0;
+    margin-top: 16px;
+    padding: 0 24px;
   }
 
-  &__tabs {
-    margin-bottom: 0 !important;
-    
-    .ant-tabs-nav {
-      margin-bottom: 12px !important;
-    }
-  }
-
-  &__tabs-content {
-    padding-bottom: 40px;
-  }
-
-  &__loading {
+  &__loading,
+  &__empty {
     display: flex;
     justify-content: center;
     width: 100%;
@@ -35,14 +17,13 @@
   }
 
   &__items {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    column-count: 2;
+    column-gap: 16px;
+    margin-top: 16px;
     margin-bottom: 24px;
-    align-items: start;
 
     @media (max-width: 900px) {
-      grid-template-columns: minmax(0, 1fr);
+      column-count: 1;
     }
   }
 
@@ -65,9 +46,12 @@
 
   &__card {
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     border-radius: 12px;
-    min-width: 0;
+    break-inside: avoid;
+    margin-bottom: 16px;
+    display: inline-block;
+    width: 100%;
 
     &:hover {
       border-color: #8b6aa2;
@@ -107,11 +91,25 @@
     align-items: center;
   }
 
-  &__action-btn, &__favorite-btn {
+  &__action-btn,
+  &__favorite-btn {
     padding: 0 4px;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  &__tabs {
+    margin-bottom: 16px;
+
+    .ant-tabs-nav {
+      padding: 0 24px;
+      margin-bottom: 0;
+
+      @media (max-width: 900px) {
+        padding: 0 16px;
+      }
+    }
   }
 
   &__favorite-btn {
@@ -119,24 +117,25 @@
 
     &:hover {
       background: transparent !important;
-    }
-    
-    &:hover .services-list__bookmark-outlined,
-    &:hover .services-list__bookmark-outlined svg,
-    &:hover .services-list__bookmark-outlined path,
-    &:hover .services-list__bookmark-filled,
-    &:hover .services-list__bookmark-filled svg,
-    &:hover .services-list__bookmark-filled path {
-      color: darken(#8b6aa2, 10%) !important;
-      fill: darken(#8b6aa2, 10%) !important;
+
+      .services-list__bookmark-outlined,
+      .services-list__bookmark-filled {
+        color: darken(#8b6aa2, 10%) !important;
+
+        svg,
+        path {
+          fill: darken(#8b6aa2, 10%) !important;
+        }
+      }
     }
   }
 
   &__bookmark-filled {
     color: #8b6aa2 !important;
     font-size: 18px;
-    
-    svg, path {
+
+    svg,
+    path {
       fill: #8b6aa2 !important;
     }
   }
@@ -144,9 +143,10 @@
   &__bookmark-outlined {
     font-size: 18px;
     color: #8b6aa2 !important;
-    transition: all 0.2s ease;
-    
-    svg, path {
+    transition: color 0.2s ease;
+
+    svg,
+    path {
       fill: #8b6aa2 !important;
       transition: fill 0.2s ease;
     }
@@ -220,13 +220,13 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      
+
       &:hover {
         text-decoration: underline;
       }
     }
   }
-  
+
   &__card-footer-actions {
     display: flex;
     justify-content: space-between;
@@ -249,12 +249,6 @@
 
   &__pagination--hidden {
     display: none;
-  }
-
-  &__empty {
-    display: flex;
-    justify-content: center;
-    margin-top: 24px;
   }
 
   &__details {
@@ -333,6 +327,9 @@
     &.editing {
       cursor: default;
       gap: 8px;
+      display: block;
+      padding: 12px;
+
       &:hover {
         background: transparent;
       }
