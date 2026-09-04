@@ -554,7 +554,7 @@ function Services() {
             key: "favorites",
             label: (
               <span>
-                <FaBookmark style={{ marginRight: 8, fontSize: '12px' }} />
+                <FaRegBookmark style={{ marginRight: 8, fontSize: '12px' }} />
                 Meus Favoritos
               </span>
             ),
@@ -667,7 +667,7 @@ function Services() {
               </div>
               
               <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
-                <Tooltip title={service.isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}>
+                <Tooltip title={service.isFavorite ? "Remover dos favoritos." : "Adicionar aos favoritos."}>
                   <Button 
                     type="text" 
                     size="small"
@@ -839,7 +839,7 @@ function Services() {
             <Input value={categoryName} onChange={(e) => setCategoryName(e.target.value)} onBlur={() => !categoryName.trim() && setCategoryError('Nome da categoria é obrigatório')} placeholder="Ex: Saúde" />
           </Form.Item>
           <Form.Item label="Descrição">
-            <Input.TextArea value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)} rows={3} maxLength={250} showCount placeholder="Breve descrição da categoria" style={{resize: 'none'}} />
+            <Input.TextArea value={categoryDescription} onChange={(e) => setCategoryDescription(e.target.value)} rows={3} maxLength={250} showCount placeholder="Breve descrição da categoria." style={{resize: 'none'}} />
           </Form.Item>
         </Form>
       </Modal>
