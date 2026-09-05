@@ -56,7 +56,7 @@ if (typeCode === "people") {
       .set("uid", item.getUID("uid"))
       .set("name", item.getString("name"))
       .set("email", item.getString("email"))
-      .set("avatar", item.getString("avatar"));
+      .set("avatar", item.getString("avatar") !== "");
   }
 } else if (typeCode === "post" || typeCode === "comment") {
   const item = _db.queryFirst(`
@@ -79,7 +79,7 @@ if (typeCode === "people") {
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
-        .set("avatar", item.getString("author_avatar"))
+        .set("avatar", item.getString("author_avatar") !== "")
       );
   }
 } else if (typeCode === "forum_topic") {
@@ -89,7 +89,8 @@ if (typeCode === "people") {
       t.title, 
       t.content, 
       pe.uid AS author_uid, 
-      pe.name AS author_name
+      pe.name AS author_name,
+      pe.avatar AS author_avatar
     FROM forum_topic t
     INNER JOIN people pe ON t.people_id = pe.id
     WHERE t.id = ?::int
@@ -102,6 +103,7 @@ if (typeCode === "people") {
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
+        .set("avatar", item.getString("author_avatar") !== "")
       );
   }
 } else if (typeCode === "forum_reply") {
@@ -110,7 +112,8 @@ if (typeCode === "people") {
       r.uid, 
       r.content, 
       pe.uid AS author_uid, 
-      pe.name AS author_name
+      pe.name AS author_name,
+      pe.avatar AS author_avatar
     FROM forum_reply r
     INNER JOIN people pe ON r.people_id = pe.id
     WHERE r.id = ?::int
@@ -122,6 +125,7 @@ if (typeCode === "people") {
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
+        .set("avatar", item.getString("author_avatar") !== "")
       );
   }
 }
@@ -164,7 +168,7 @@ for (const item of dbItems) {
       .set("reporter", _val.map()
         .set("uid", item.getUID("reporter_uid"))
         .set("name", item.getString("reporter_name"))
-        .set("avatar", item.getString("reporter_avatar"))
+        .set("avatar", item.getString("reporter_avatar") !== "")
       )
   );
 }
