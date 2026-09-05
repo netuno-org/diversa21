@@ -162,6 +162,7 @@ export default function App() {
                 <Route path="/c/:categoryUid/t/:topicUid" element={<ReservedArea />} />
                 <Route path="/terms" element={<ReservedArea />} />
                 <Route path="/reports" element={<ReservedArea />} />
+                <Route path="/reports/:uid" element={<ReservedArea />} />
                 <Route path="/privacy" element={<ReservedArea />} />
 
                 {/** // RESERVED AREA **/}
