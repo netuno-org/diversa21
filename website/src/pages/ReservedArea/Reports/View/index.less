@@ -1,0 +1,159 @@
+@import '../../../../styles/variables.less';
+
+.report-page {
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: auto;
+    padding: 0;
+    margin-bottom: 20px;
+    color: @primary-color;
+    font-size: 15px;
+    padding-left: 24px;
+
+    .anticon {
+      margin: 0 !important;
+      font-size: 14px;
+    }
+
+    &:hover,
+    &:focus {
+      color: @primary-color;
+      opacity: 0.75;
+    }
+  }
+
+  &__empty {
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  &__card {
+    border-radius: 8px;
+
+    .ant-card-body {
+      padding: 24px;
+
+      @media (max-width: 480px) {
+        padding: 16px;
+      }
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  &__identity {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border: 1px solid @primary-color;
+    border-radius: 8px;
+    color: @primary-color;
+    font-size: 20px;
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__status-tag {
+    border-radius: 32px;
+    padding: 0;
+  }
+
+  &__author-info {
+    display: block;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  &__preview {
+    margin: 12px 0 16px;
+
+    .ant-typography {
+      margin-bottom: 0;
+      margin-top: 0 !important;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    margin-top: 16px;
+  }
+
+  &__resolved-by {
+    display: block;
+    margin-top: 12px;
+  }
+
+  &__count {
+    margin: 16px 0px;
+    padding-left: 20px;
+  }
+
+  &__item {
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+
+  &__title {
+    margin-top: 0;
+    margin-bottom: 0 !important;
+  }
+
+  &__item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  &__reason {
+    padding-left: 0;
+  } 
+
+  &__container-tag-type {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+  }
+
+  &__reporter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    background: transparent !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+  }
+
+  &__item-description {
+    margin-bottom: 0 !important;
+    margin-top: 10px;
+  }
+}

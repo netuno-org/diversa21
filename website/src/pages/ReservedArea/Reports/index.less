@@ -12,9 +12,16 @@
 
   &__stat-card {
     cursor: pointer;
+    transition: all 0.2s ease;
 
     .ant-card-body {
       padding: 24px;
+    }
+
+    &:hover {
+      border-color: @primary-color;
+      box-shadow: 0 4px 12px fade(@primary-color, 15%);
+      transform: translateY(-2px);
     }
 
     &--active {
@@ -31,6 +38,14 @@
 
   &__stat-value {
     margin: 8px 0 0 !important;
+    min-height: 38px;
+  }
+
+  &__stat-spin {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    min-height: 38px;
   }
 
   &__count {
@@ -43,7 +58,11 @@
   }
 
   &__empty {
-    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 48px;
+    min-height: 160px;
   }
 
   &__card {

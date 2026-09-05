@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, Row, Col, Typography, Tag, Empty, Spin } from "antd";
 import {
   ClockCircleOutlined,
@@ -6,7 +7,6 @@ import {
   CloseCircleOutlined,
   WarningOutlined,
   UserOutlined,
-  CommentOutlined,
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
@@ -22,17 +22,18 @@ import "./index.less";
 const { Text, Title, Paragraph } = Typography;
 
 const STATUS_CARDS = [
-  { key: "pending", label: "Pendentes" },
-  { key: "resolved", label: "Resolvidas" },
-  { key: "rejected", label: "Recusadas" },
+  { key: "all", label: "Total", countSingular: "Encontrada", countPlural: "Encontradas" },
+  { key: "pending", label: "Pendentes", countSingular: "Pendente", countPlural: "Pendentes" },
+  { key: "resolved", label: "Resolvidas", countSingular: "Resolvida", countPlural: "Resolvidas" },
+  { key: "rejected", label: "Recusadas", countSingular: "Recusada", countPlural: "Recusadas" },
 ];
 
 const TYPE_CONFIG = {
-  people: { label: "Perfil", icon: <UserOutlined /> },
-  post: { label: "Postagem", icon: <RiArticleLine /> },
-  comment: { label: "Comentário", icon: <CommentOutlined /> },
-  forum_topic: { label: "Tópico", icon: <VscCommentDiscussionQuote /> },
-  forum_reply: { label: "Resposta", icon: <LuReply /> },
+  people: { icon: <UserOutlined /> },
+  post: { icon: <RiArticleLine /> },
+  comment: { icon: <VscCommentDiscussionQuote /> },
+  forum_topic: { icon: <VscCommentDiscussionQuote /> },
+  forum_reply: { icon: <LuReply /> },
 };
 
 const STATUS_CONFIG = {
@@ -65,17 +66,19 @@ function getReportPreview(report) {
 }
 
 function Reports() {
-  const [statusFilter, setStatusFilter] = useState("all");
   const [reports, setReports] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const statusFilter = searchParams.get("status") || "all";
 
   useEffect(() => {
     setLoading(true);
     _service({
       method: "GET",
-      url: "/report",
+      url: "/report/list",
       success: ({ json }) => {
-        setReports(json?.data || []);
+        setReports(json?.data?.items || []);
         setLoading(false);
       },
       fail: (e) => {
@@ -85,8 +88,9 @@ function Reports() {
       },
     });
   }, []);
-  
+
   const counts = {
+    all: reports.length,
     pending: reports.filter((report) => report.statusCode === "pending").length,
     resolved: reports.filter((report) => report.statusCode === "resolved").length,
     rejected: reports.filter((report) => report.statusCode === "rejected").length,
@@ -96,33 +100,50 @@ function Reports() {
     ? reports
     : reports.filter((report) => report.statusCode === statusFilter);
 
+  const handleCardClick = (uid) => {
+    const status = searchParams.get("status");
+    const query = status ? `?status=${status}` : "";
+
+    window.open(`/reports/${uid}${query}`, "_blank", "noopener,noreferrer");
+  };
+
+  const activeStatusCard =
+    STATUS_CARDS.find((item) => item.key === statusFilter) || STATUS_CARDS[0];
+  const countSuffix = visibleReports.length === 1
+    ? activeStatusCard.countSingular
+    : activeStatusCard.countPlural;
+
   return (
     <section className="reports">
       <div className="reports__header">
         <ListHeaderFilters
           title="Denúncias"
+          searchPlaceholder="Buscar por tipo..."
           description="Acompanhe as denúncias da comunidade e o estado de cada análise."
           hideInputs={false}
           hideLocation={true}
-          searchPlaceholder={"Buscar por Categoria..."}
         />
       </div>
 
       <Row gutter={[16, 16]} className="reports__stats">
         {STATUS_CARDS.map((status) => (
-          <Col xs={12} sm={8} xl={8} key={status.key}>
+          <Col xs={12} sm={12} xl={6} key={status.key}>
             <Card
               className={classNames("reports__stat-card", {
                 "reports__stat-card--active": statusFilter === status.key,
               })}
-              onClick={() => setStatusFilter(status.key)}
+              onClick={() => setSearchParams({ status: status.key })}
             >
               <div className="reports__stat-label">
                 {status.label}
               </div>
-              <Title level={2} className="reports__stat-value">
-                {counts[status.key]}
-              </Title>
+              {loading ? (
+                <Spin size="small" className="reports__stat-spin" />
+              ) : (
+                <Title level={2} className="reports__stat-value">
+                  {counts[status.key]}
+                </Title>
+              )}
             </Card>
           </Col>
         ))}
@@ -130,7 +151,7 @@ function Reports() {
 
       <div className="reports__count">
         <Text type="secondary">
-          {visibleReports.length} {visibleReports.length !== 1 ? "Denúncias" : "Denúncia"} Encontrada{visibleReports.length !== 1 ? "s" : ""}
+          {visibleReports.length} {visibleReports.length !== 1 ? "Denúncias" : "Denúncia"} {countSuffix}
         </Text>
       </div>
 
@@ -145,16 +166,12 @@ function Reports() {
           </div>
         ) : (
           visibleReports.map((report) => {
-            const type = TYPE_CONFIG[report.entityType] || { label: report.entityTypeTitle, icon: <WarningOutlined /> };
-            const status = STATUS_CONFIG[report.statusCode] || {
-              label: report.statusTitle,
-              icon: <ClockCircleOutlined />,
-              color: "default",
-            };
+            const type = TYPE_CONFIG[report.entityType];
+            const status = STATUS_CONFIG[report.statusCode];
             const preview = getReportPreview(report);
 
             return (
-              <Card className="reports__card" key={report.uid}>
+              <Card className="reports__card" onClick={() => handleCardClick(report.uid)} key={report.uid} >
                 <div className="reports__card-header">
                   <div className="reports__card-identity">
                     <div className="reports__card-icon">
@@ -162,7 +179,7 @@ function Reports() {
                     </div>
                     <div className="reports__card-heading">
                       <Text strong className="reports__card-title">
-                        {type.label}
+                        {report.entityTypeTitle}
                       </Text>
                       <span>
                         <TimeAgo sentAt={report.lastReportedAt || report.createdAt} />
@@ -179,26 +196,21 @@ function Reports() {
                   </Tag>
                 </div>
 
-                {report.totalItems >= 0 && (
-                  <Tag
-                    style={{ marginBottom: 10, padding: 0 }}
-                    icon={<WarningOutlined />}
-                    color="error"
-                    variant="filled"
-                    className="reports__reason-tag"
-                  >
-                    Quantidade:{' '}
-                    {(report.totalItems === 1 || report.totalItems === 0)
-                      ? "1 denúncia"
-                      : `${report.totalItems} denúncias`}
-                  </Tag>
-                )}
+                <Tag
+                  style={{ marginBottom: 10, padding: 0 }}
+                  icon={<WarningOutlined />}
+                  color="error"
+                  variant="filled"
+                  className="reports__reason-tag"
+                >
+                  Quantidade:{' '}
+                  {report.totalItems === 1
+                    ? "1 denúncia"
+                    : `${report.totalItems} denúncias`}
+                </Tag>
 
                 {preview && (
                   <div className="reports__preview">
-                    <Title style={{ marginTop: 0 }} level={5}>
-                      Conteúdo:
-                    </Title>
                     <Paragraph ellipsis={{ rows: 3 }}>
                       “{preview}”
                     </Paragraph>

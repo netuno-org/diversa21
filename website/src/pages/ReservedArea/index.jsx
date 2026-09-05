@@ -31,6 +31,7 @@ import CategoryPage from "./CategoryPage"
 import ReplyPage from "../ReplyPage"
 import TermsPage from '../Terms';
 import Reports from './Reports'
+import ReportPage from './Reports/View'
 import PrivacyPage from '../Privacy';
 import FAQs from './FAQs';
 
@@ -175,6 +176,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/reports") {
         return <Reports />;
+      }
+      if (location.pathname.startsWith("/reports/")) {
+        return <ReportPage uid={params.uid} />;
       }
       if (location.pathname === "/privacy") {
         return <PrivacyPage />;
