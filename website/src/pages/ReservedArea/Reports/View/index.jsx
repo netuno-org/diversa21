@@ -33,6 +33,7 @@ const { Text, Title, Paragraph } = Typography;
 const { TextArea } = Input;
 
 const TYPE_CONFIG = {
+  people: { icon: <UserOutlined /> },
   post: { icon: <RiArticleLine /> },
   comment: { icon: <VscCommentDiscussionQuote /> },
   forum_topic: { icon: <VscCommentDiscussionQuote /> },
@@ -209,9 +210,14 @@ function ReportPage({ uid }) {
           </div>
 
           <div className="report-page__container-tag-type">
-            <Title level={5} className="report-page__title">
-              {report.entityTypeTitle}
-            </Title>
+            <div className="report-page__type">
+              {type?.icon && (
+                <span className="report-page__type-icon">{type.icon}</span>
+              )}
+              <Title level={5} className="report-page__title">
+                {report.entityTypeTitle}
+              </Title>
+            </div>
             <Tag
               icon={statusConfig.icon}
               color={statusConfig.color}
