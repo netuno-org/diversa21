@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
+import _auth from '@netuno/auth-client';
 import Config from './common/Config';
 import App from './App';
 
@@ -10,6 +11,7 @@ const reauthkitScript = document.createElement("script");
 reauthkitScript.src = `/reauthkit.js?time=${new Date().getTime()}`;
 reauthkitScript.onload = () => {
   Config.init();
+  _auth.config({ storage: 'local' });
   createRoot(document.getElementById('root'))
     .render(
       <Suspense fallback={""}>
