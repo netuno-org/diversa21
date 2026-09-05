@@ -63,6 +63,7 @@ export default function App() {
 
   useEffect(() => {
     _auth.config({
+      storage: 'local',
       onLogout: () => {
         navigate('/login');
       }
