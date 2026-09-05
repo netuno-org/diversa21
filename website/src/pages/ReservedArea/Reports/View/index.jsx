@@ -9,6 +9,8 @@ import {
   Spin,
   Tag,
   Typography,
+  Input,
+  Form
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -28,6 +30,7 @@ import globalNotification from "../../../../common/globalNotification.js";
 import "./index.less";
 
 const { Text, Title, Paragraph } = Typography;
+const { TextArea } = Input;
 
 const TYPE_CONFIG = {
   post: { icon: <RiArticleLine /> },
@@ -233,24 +236,40 @@ function ReportPage({ uid }) {
           </div>
         )}
         {report.statusCode === "pending" && (
-          <Space className="report-page__actions" wrap>
-            <Button
-              type="dashed"
-              icon={<CheckOutlined />}
-              loading={updating}
-              onClick={() => handleStatusChange("resolved")}
+          <div className="report-page__actions">
+            <Form.Item
+              name="description"
+              layout="vertical"
             >
-              Resolvida
-            </Button>
-            <Button
-              type="dashed"
-              icon={<CloseCircleOutlined />}
-              loading={updating}
-              onClick={() => handleStatusChange("rejected")}
-            >
-              Recusar
-            </Button>
-          </Space>
+              <TextArea
+                rows={4}
+                placeholder="Descreva a solução..."
+                maxLength={500}
+                showCount
+                style={{ resize: 'none' }}
+              />
+            </Form.Item>
+            <Space>
+              <Button
+                type="dashed"
+                className="report-page__action-resolve"
+                icon={<CheckOutlined />}
+                loading={updating}
+                onClick={() => handleStatusChange("resolved")}
+              >
+                Resolvida
+              </Button>
+              <Button
+                type="dashed"
+                className="report-page__action-reject"
+                icon={<CloseCircleOutlined />}
+                loading={updating}
+                onClick={() => handleStatusChange("rejected")}
+              >
+                Recusar
+              </Button>
+            </Space>
+          </div>
         )}
 
         {report.resolvedBy?.name && (

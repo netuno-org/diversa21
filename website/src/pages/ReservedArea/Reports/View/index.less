@@ -97,7 +97,44 @@
 
   &__actions {
     display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     margin-top: 16px;
+
+    .ant-form-item {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .ant-space {
+      margin-top: 24px;
+    }
+  }
+
+  &__action-resolve {
+    color: #50A063;
+    border-color: #50A063;
+    background: transparent;
+
+    &:hover,
+    &:focus {
+      color: darken(#50A063, 8%) !important;
+      border-color: darken(#50A063, 8%) !important;
+      background: transparent !important;
+    }
+  }
+
+  &__action-reject {
+    color: #ff4d4f;
+    border-color: #ff4d4f;
+    background: transparent;
+
+    &:hover,
+    &:focus {
+      color: darken(#ff4d4f, 8%) !important;
+      border-color: darken(#ff4d4f, 8%) !important;
+      background: transparent !important;
+    }
   }
 
   &__resolved-by {
@@ -130,7 +167,7 @@
 
   &__reason {
     padding-left: 0;
-  } 
+  }
 
   &__container-tag-type {
     display: flex;
