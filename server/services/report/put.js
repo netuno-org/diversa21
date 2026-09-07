@@ -13,6 +13,7 @@ const loggedPeopleId = loggedUser.getInt("id");
 
 const reportUid = _req.getUID("reportUid");
 const statusCode = _req.getString("status");
+const resolutionNotes = _req.getString("resolutionNotes");
 
 const dbStatus = _db.queryFirst(`
   SELECT id, code FROM report_status WHERE code = ? AND active = true
@@ -34,6 +35,10 @@ const isResolvedOrRejected = statusCode === "resolved" || statusCode === "reject
 
 const updateMap = _val.map()
   .set("report_status_id", dbStatus.getInt("id"));
+
+if (resolutionNotes !== "") {
+  updateMap.set("resolution_notes", resolutionNotes);
+}
 
 if (isResolvedOrRejected) {
   updateMap

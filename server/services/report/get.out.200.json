@@ -12,6 +12,7 @@
       "statusTitle": { "type": "string" },
       "createdAt": { "type": "string" },
       "resolvedAt": { "type": "string" },
+      "resolutionNotes": { "type": "string" },
       "resolvedBy": { "type": "object" },
       "content": { "type": "object" },
       "items": {

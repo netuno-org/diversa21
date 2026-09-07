@@ -3,7 +3,7 @@
     "report"
   ],
   "summary": "Update Report Status",
-  "description": "Update the moderation status of a report (restricted to moderators).",
+  "description": "Update the moderation status and solution/rejection text of a report (restricted to moderators).",
   "type": "object",
   "properties": {
     "reportUid": {
@@ -11,6 +11,9 @@
     },
     "status": {
       "type": "string-not-empty"
+    },
+    "resolutionNotes": {
+      "type": "string"
     }
   },
   "required": [

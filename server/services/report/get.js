@@ -24,6 +24,7 @@ const dbReport = _db.queryFirst(`
     r.entity, 
     r.created_at, 
     r.resolved_at,
+    r.resolution_notes,
     ret.code AS entity_type_code,
     ret.title AS entity_type_title,
     rs.code AS status_code,
@@ -49,12 +50,21 @@ let targetDetails = null;
 
 if (typeCode === "people") {
   const item = _db.queryFirst(`
-    SELECT uid, name, email, avatar FROM people WHERE id = ?::int
+    SELECT 
+      people.uid, 
+      people.name, 
+      netuno_user.user AS "username", 
+      people.email, 
+      people.avatar 
+    FROM people 
+    LEFT JOIN netuno_user ON people.people_user_id = netuno_user.id
+    WHERE people.id = ?::int
   `, targetId);
   if (item) {
     targetDetails = _val.map()
       .set("uid", item.getUID("uid"))
       .set("name", item.getString("name"))
+      .set("username", item.getString("username"))
       .set("email", item.getString("email"))
       .set("avatar", item.getString("avatar") !== "");
   }
@@ -66,9 +76,11 @@ if (typeCode === "people") {
       p.parent_id,
       pe.uid AS author_uid, 
       pe.name AS author_name, 
+      nu.user AS author_user,
       pe.avatar AS author_avatar
     FROM post p
     INNER JOIN people pe ON p.people_id = pe.id
+    LEFT JOIN netuno_user nu ON pe.people_user_id = nu.id
     WHERE p.id = ?::int
   `, targetId);
   if (item) {
@@ -79,6 +91,7 @@ if (typeCode === "people") {
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
+        .set("username", item.getString("author_user"))
         .set("avatar", item.getString("author_avatar") !== "")
       );
   }
@@ -89,10 +102,12 @@ if (typeCode === "people") {
       t.title, 
       t.content, 
       pe.uid AS author_uid, 
-      pe.name AS author_name,
+      pe.name AS author_name, 
+      nu.user AS author_user,
       pe.avatar AS author_avatar
     FROM forum_topic t
     INNER JOIN people pe ON t.people_id = pe.id
+    LEFT JOIN netuno_user nu ON pe.people_user_id = nu.id
     WHERE t.id = ?::int
   `, targetId);
   if (item) {
@@ -103,6 +118,7 @@ if (typeCode === "people") {
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
+        .set("username", item.getString("author_user"))
         .set("avatar", item.getString("author_avatar") !== "")
       );
   }
@@ -112,10 +128,12 @@ if (typeCode === "people") {
       r.uid, 
       r.content, 
       pe.uid AS author_uid, 
-      pe.name AS author_name,
+      pe.name AS author_name, 
+      nu.user AS author_user,
       pe.avatar AS author_avatar
     FROM forum_reply r
     INNER JOIN people pe ON r.people_id = pe.id
+    LEFT JOIN netuno_user nu ON pe.people_user_id = nu.id
     WHERE r.id = ?::int
   `, targetId);
   if (item) {
@@ -125,6 +143,7 @@ if (typeCode === "people") {
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
+        .set("username", item.getString("author_user"))
         .set("avatar", item.getString("author_avatar") !== "")
       );
   }
@@ -146,9 +165,11 @@ const dbItems = _db.query(`
     rr.title AS reason_title,
     p.uid AS reporter_uid,
     p.name AS reporter_name,
+    nu.user AS reporter_user,
     p.avatar AS reporter_avatar
   FROM report_item ri
   INNER JOIN people p ON ri.reporter_id = p.id
+  LEFT JOIN netuno_user nu ON p.people_user_id = nu.id
   LEFT JOIN report_reason rr ON ri.report_reason_id = rr.id
   WHERE ri.report_id = ?::int AND ri.active = true
   ORDER BY ri.moment DESC
@@ -168,6 +189,7 @@ for (const item of dbItems) {
       .set("reporter", _val.map()
         .set("uid", item.getUID("reporter_uid"))
         .set("name", item.getString("reporter_name"))
+        .set("username", item.getString("reporter_user"))
         .set("avatar", item.getString("reporter_avatar") !== "")
       )
   );
@@ -182,6 +204,7 @@ response.successWithData(
     .set("statusTitle", dbReport.getString("status_title"))
     .set("createdAt", dbReport.getString("created_at"))
     .set("resolvedAt", dbReport.getString("resolved_at"))
+    .set("resolutionNotes", dbReport.getString("resolution_notes"))
     .set("resolvedBy", dbReport.getString("resolved_by_uid") ? _val.map()
       .set("uid", dbReport.getUID("resolved_by_uid"))
       .set("name", dbReport.getString("resolved_by_name")) : null

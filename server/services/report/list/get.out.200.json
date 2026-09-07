@@ -19,9 +19,20 @@
             "createdAt": { "type": "string" },
             "lastReportedAt": { "type": "string" },
             "resolvedAt": { "type": "string" },
+            "resolutionNotes": { "type": "string" },
             "resolvedBy": { "type": "object" },
             "content": { "type": "object" }
           }
+        }
+      },
+      "statusCounts": {
+        "type": "object",
+        "properties": {
+          "all": { "type": "integer" },
+          "pending": { "type": "integer" },
+          "in_review": { "type": "integer" },
+          "resolved": { "type": "integer" },
+          "rejected": { "type": "integer" }
         }
       },
       "pagination": {
