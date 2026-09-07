@@ -5,6 +5,32 @@
     margin-bottom: 16px;
   }
 
+  &__filters {
+    background-color: #fafafa;
+    padding: 24px;
+    border-radius: 8px;
+    margin-top: 20px;
+
+    @media (max-width: @lg) {
+      >.ant-row>.ant-col {
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      >.ant-row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+
+      >.ant-row>.ant-col {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+    }
+  }
+
   &__stats {
     margin-bottom: 16px;
     align-content: center;
@@ -51,6 +77,13 @@
   &__count {
     margin-bottom: 8px;
     padding-left: 20px;
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    margin-bottom: 24px;
   }
 
   &__items {
