@@ -44,6 +44,10 @@ if (isResolvedOrRejected) {
   updateMap
     .set("resolved_by_id", loggedPeopleId)
     .set("resolved_at", _db.timestamp());
+} else {
+  updateMap
+    .set("resolved_by_id", null)
+    .set("resolved_at", null);
 }
 
 _db.update("report", dbReport.getInt("id"), updateMap);
