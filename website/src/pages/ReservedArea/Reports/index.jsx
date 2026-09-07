@@ -81,31 +81,9 @@ function Reports() {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [statusCounts, setStatusCounts] = useState(EMPTY_STATUS_COUNTS);
-  const [countsLoading, setCountsLoading] = useState(true);
   
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get("status") || "all";
-
-  const fetchStatusCounts = () => {
-    setCountsLoading(true);
-    _service({
-      method: "GET",
-      url: "/report/list",
-      data: { page: 1 },
-      success: ({ json }) => {
-        setStatusCounts({
-          ...EMPTY_STATUS_COUNTS,
-          ...(json?.data?.statusCounts || {}),
-        });
-        setCountsLoading(false);
-      },
-      fail: (e) => {
-        console.log("Service Error", e);
-        setStatusCounts(EMPTY_STATUS_COUNTS);
-        setCountsLoading(false);
-      },
-    });
-  };
 
   const fetchList = ({
     status,
@@ -128,6 +106,10 @@ function Reports() {
       success: ({ json }) => {
         setReports(json?.data?.items || []);
         setTotalCount(json?.data?.pagination?.totalCount ?? 0);
+        setStatusCounts({
+          ...EMPTY_STATUS_COUNTS,
+          ...(json?.data?.statusCounts || {}),
+        });
         setLoading(false);
       },
       fail: (e) => {
@@ -138,10 +120,6 @@ function Reports() {
       },
     });
   };
-
-  useEffect(() => {
-    fetchStatusCounts();
-  }, []);
 
   useEffect(() => {
     fetchList({
@@ -237,7 +215,7 @@ function Reports() {
               <div className="reports__stat-label">
                 {status.label}
               </div>
-              {countsLoading ? (
+              {loading ? (
                 <Spin size="small" className="reports__stat-spin" />
               ) : (
                 <Title level={2} className="reports__stat-value">
