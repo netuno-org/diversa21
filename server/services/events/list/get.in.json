@@ -1,0 +1,6 @@
+{
+  "name": "string",
+  "cityUid": "uuid",
+  "uid": "uuid",
+  "page": "integer"
+}

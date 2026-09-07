@@ -34,6 +34,7 @@ import Reports from './Reports'
 import ReportPage from './Reports/View'
 import PrivacyPage from '../Privacy';
 import FAQs from './FAQs';
+import Events from './Events';
 
 import "./index.less";
 
@@ -167,6 +168,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/services") {
         return <Services />;
+      }
+      if (location.pathname === "/events") {
+        return <Events />;
       }
       if (location.pathname === "/faqs" || location.pathname === "/faq") {
         return <FAQs />;

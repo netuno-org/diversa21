@@ -1,5 +1,5 @@
 import _auth from "@netuno/auth-client";
-import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, CloseOutlined, FlagOutlined } from "@ant-design/icons";
+import { MenuOutlined, HomeOutlined, EnvironmentOutlined, BellOutlined, CloseOutlined, FlagOutlined, CalendarOutlined } from "@ant-design/icons";
 import { CgProfile } from "react-icons/cg";
 import { RiCommunityLine, RiArticleLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
@@ -35,6 +35,12 @@ const menuItems = [
     label: "Serviços",
     icon: <FaStethoscope/>,
     link: "/services"
+  },
+  {
+    key: "events",
+    label: "Eventos",
+    icon: <CalendarOutlined />,
+    link: "/events"
   },
   {
     key: "institutions",
