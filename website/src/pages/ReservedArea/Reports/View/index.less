@@ -115,6 +115,8 @@
     color: #50A063;
     border-color: #50A063;
     background: transparent;
+    white-space: normal;
+    text-align: center;
 
     &:hover,
     &:focus {
@@ -122,18 +124,46 @@
       border-color: darken(#50A063, 8%) !important;
       background: transparent !important;
     }
+
+    &--confirmed {
+      color: #fff;
+      background: #50A063;
+      border-color: #50A063;
+
+      &:hover,
+      &:focus {
+        color: #fff !important;
+        background: darken(#50A063, 8%) !important;
+        border-color: darken(#50A063, 8%) !important;
+      }
+    }
   }
 
   &__action-reject {
     color: #ff4d4f;
     border-color: #ff4d4f;
     background: transparent;
+    white-space: normal;
+    text-align: center;
 
     &:hover,
     &:focus {
       color: darken(#ff4d4f, 8%) !important;
       border-color: darken(#ff4d4f, 8%) !important;
       background: transparent !important;
+    }
+
+    &--confirmed {
+      color: #fff;
+      background: #ff4d4f;
+      border-color: #ff4d4f;
+
+      &:hover,
+      &:focus {
+        color: #fff !important;
+        background: darken(#ff4d4f, 8%) !important;
+        border-color: darken(#ff4d4f, 8%) !important;
+      }
     }
   }
 

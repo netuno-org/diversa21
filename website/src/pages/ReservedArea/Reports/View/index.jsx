@@ -74,16 +74,17 @@ function ReportPage({ uid }) {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
+  const [solution, setSolution] = useState("");
 
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const statusFilter = searchParams.get("status");
+  const navigate = useNavigate();
 
   const fetchReport = () => {
     if (!uid) {
       return;
     }
-    setLoading(true);
+
     _service({
       method: "GET",
       url: "/report",
@@ -118,23 +119,31 @@ function ReportPage({ uid }) {
   }, [report]);
 
   const handleStatusChange = (status) => {
+    const previousStatus = report?.statusCode;
     setUpdating(true);
+    setReport((prev) => (prev ? { ...prev, statusCode: status } : prev));
     _service({
       method: "PUT",
       url: "/report",
       data: { reportUid: uid, status },
       success: () => {
-        globalNotification.success({
+        const notification = status === "pending"
+          ? globalNotification.warning
+          : globalNotification.success;
+        notification({
           title: "Denúncia atualizada",
           description: status === "resolved"
             ? "A denúncia foi marcada como resolvida."
-            : "A denúncia foi recusada.",
+            : status === "pending"
+              ? "A denúncia voltou para pendente."
+              : "A denúncia foi recusada.",
         });
         fetchReport();
         setUpdating(false);
       },
       fail: (e) => {
         console.log("Service Error", e);
+        setReport((prev) => (prev ? { ...prev, statusCode: previousStatus } : prev));
         globalNotification.error({
           title: "Não foi possível atualizar",
           description: "Tente novamente em instantes.",
@@ -143,7 +152,7 @@ function ReportPage({ uid }) {
       },
     });
   };
-
+  console.log(report)
   if (loading) {
     return (
       <section className="report-page">
@@ -241,7 +250,9 @@ function ReportPage({ uid }) {
 
           </div>
         )}
-        {report.statusCode === "pending" && (
+        {(report.statusCode === "pending"
+          || report.statusCode === "resolved"
+          || report.statusCode === "rejected") && (
           <div className="report-page__actions">
             <Form.Item
               name="description"
@@ -252,42 +263,57 @@ function ReportPage({ uid }) {
                 placeholder="Descreva a solução..."
                 maxLength={500}
                 showCount
-                style={{ resize: 'none' }}
+                value={solution}
+                onChange={(e) => setSolution(e.target.value)}
+                disabled={report.statusCode !== "pending"}
+                style={{ resize: "none" }}
               />
             </Form.Item>
             <Space>
-              <Button
-                type="dashed"
-                className="report-page__action-resolve"
-                icon={<CheckOutlined />}
-                loading={updating}
-                onClick={() => handleStatusChange("resolved")}
-              >
-                Resolvida
-              </Button>
-              <Button
-                type="dashed"
-                className="report-page__action-reject"
-                icon={<CloseCircleOutlined />}
-                loading={updating}
-                onClick={() => handleStatusChange("rejected")}
-              >
-                Recusar
-              </Button>
+              {report.statusCode !== "rejected" && (
+                <Button
+                  type="dashed"
+                  className={`report-page__action-resolve${report.statusCode === "resolved" ? " report-page__action-resolve--confirmed" : ""}`}
+                  icon={<CheckOutlined />}
+                  loading={updating}
+                  onClick={() => handleStatusChange(
+                    report.statusCode === "resolved" ? "pending" : "resolved"
+                  )}
+                >
+                  {report.statusCode === "resolved"
+                    ? "Clique Para Alterar"
+                    : "Resolvida"}
+                </Button>
+              )}
+              {report.statusCode !== "resolved" && (
+                <Button
+                  type="dashed"
+                  className={`report-page__action-reject${report.statusCode === "rejected" ? " report-page__action-reject--confirmed" : ""}`}
+                  icon={<CloseCircleOutlined />}
+                  loading={updating}
+                  onClick={() => handleStatusChange(
+                    report.statusCode === "rejected" ? "pending" : "rejected"
+                  )}
+                >
+                  {report.statusCode === "rejected"
+                    ? "Clique para Alterar"
+                    : "Recusar"}
+                </Button>
+              )}
             </Space>
           </div>
         )}
-
-        {report.resolvedBy?.name && (
+        {report.statusCode !== "pending" && report.resolvedBy?.name && (
           <Text type="secondary" className="report-page__resolved-by">
             Analisado por {report.resolvedBy.name}
           </Text>
         )}
+
       </Card>
 
       <div className="report-page__count">
         <Text type="secondary">
-          {items.length} {items.length !== 1 ? "Denúncias" : "Denúncia"} Encontrada{items.length !== 1 ? "s" : ""}
+          {items.length} {items.length > 1 ? "Denúncias" : "Denúncia"} Encontrada{items.length > 1 ? "s" : ""}
         </Text>
       </div>
 
