@@ -175,7 +175,10 @@ function ReportPage({ uid }) {
     if (!action) {
       return;
     }
-    handleStatusChange(action, values.solution || "");
+    const solution = (values.solution || "")
+      .replace(/[^\S\n]+/g, " ")
+      .replace(/\n{3,}/g, "\n\n");
+    handleStatusChange(action, solution);
   };
 
   if (loading) {
