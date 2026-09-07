@@ -73,6 +73,7 @@ if (typeCode === "people") {
     SELECT 
       p.uid, 
       p.content, 
+      p.moment,
       p.parent_id,
       pe.uid AS author_uid, 
       pe.name AS author_name, 
@@ -87,6 +88,7 @@ if (typeCode === "people") {
     targetDetails = _val.map()
       .set("uid", item.getUID("uid"))
       .set("content", item.getString("content"))
+      .set("moment", item.getString("moment"))
       .set("isComment", item.getInt("parent_id") > 0)
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
@@ -101,6 +103,7 @@ if (typeCode === "people") {
       t.uid, 
       t.title, 
       t.content, 
+      t.moment, 
       pe.uid AS author_uid, 
       pe.name AS author_name, 
       nu.user AS author_user,
@@ -115,6 +118,7 @@ if (typeCode === "people") {
       .set("uid", item.getUID("uid"))
       .set("title", item.getString("title"))
       .set("content", item.getString("content"))
+      .set("moment", item.getString("moment"))
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
@@ -127,6 +131,7 @@ if (typeCode === "people") {
     SELECT 
       r.uid, 
       r.content, 
+      r.moment, 
       pe.uid AS author_uid, 
       pe.name AS author_name, 
       nu.user AS author_user,
@@ -140,6 +145,7 @@ if (typeCode === "people") {
     targetDetails = _val.map()
       .set("uid", item.getUID("uid"))
       .set("content", item.getString("content"))
+      .set("moment", item.getString("moment"))
       .set("author", _val.map()
         .set("uid", item.getUID("author_uid"))
         .set("name", item.getString("author_name"))
