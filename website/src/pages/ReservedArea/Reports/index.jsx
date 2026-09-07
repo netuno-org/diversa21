@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Card, Row, Col, Typography, Tag, Empty, Spin, Select, Input, Pagination } from "antd";
+import { Card, Row, Col, Typography, Tag, Empty, Spin, Select, Input, Pagination, DatePicker } from "antd";
 import {
   ClockCircleOutlined,
   CheckOutlined,
@@ -20,6 +20,7 @@ import TimeAgo from "../../../components/TimeAgo";
 import "./index.less";
 
 const { Text, Title, Paragraph } = Typography;
+const { RangePicker } = DatePicker;
 
 const STATUS_CARDS = [
   { key: "all", label: "Total", countSingular: "Encontrada", countPlural: "Encontradas" },
@@ -78,10 +79,11 @@ function Reports() {
   const [searchEntityType, setSearchEntityType] = useState('all');
   const [reportedUser, setReportedUser] = useState("");
   const [reporterUser, setReporterUser] = useState("");
+  const [dateRange, setDateRange] = useState(null);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [statusCounts, setStatusCounts] = useState(EMPTY_STATUS_COUNTS);
-  
+
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get("status") || "all";
 
@@ -90,8 +92,11 @@ function Reports() {
     entityType,
     reported,
     reporter,
+    dates,
     currentPage,
   }) => {
+    const startDate = dates?.[0]?.format("YYYY-MM-DD");
+    const endDate = dates?.[1]?.format("YYYY-MM-DD");
     setLoading(true);
     _service({
       method: "GET",
@@ -102,6 +107,8 @@ function Reports() {
         ...(entityType && entityType !== "all" ? { entityType } : {}),
         ...(reported.trim() ? { reportedUser: reported.trim() } : {}),
         ...(reporter.trim() ? { reporterUser: reporter.trim() } : {}),
+        ...(startDate ? { startDate } : {}),
+        ...(endDate ? { endDate } : {}),
       },
       success: ({ json }) => {
         setReports(json?.data?.items || []);
@@ -127,9 +134,10 @@ function Reports() {
       entityType: searchEntityType,
       reported: reportedUser,
       reporter: reporterUser,
+      dates: dateRange,
       currentPage: page,
     });
-  }, [page, statusFilter, searchEntityType, reportedUser, reporterUser]);
+  }, [page, statusFilter, searchEntityType, reportedUser, reporterUser, dateRange]);
 
   const handleCardClick = (uid) => {
     const status = searchParams.get("status");
@@ -156,7 +164,7 @@ function Reports() {
         />
         <div className="reports__filters">
           <Row gutter={[16, 16]}>
-            <Col xs={24} lg={8}>
+            <Col xs={24} md={12}>
               <Input.Search
                 placeholder="Denunciado..."
                 onSearch={(value) => {
@@ -167,7 +175,7 @@ function Reports() {
                 allowClear
               />
             </Col>
-            <Col xs={24} lg={8}>
+            <Col xs={24} md={12}>
               <Input.Search
                 placeholder="Quem denunciou..."
                 onSearch={(value) => {
@@ -178,7 +186,7 @@ function Reports() {
                 allowClear
               />
             </Col>
-            <Col xs={24} lg={8}>
+            <Col xs={24} md={12}>
               <Select
                 allowClear
                 placeholder="Tipo"
@@ -193,6 +201,18 @@ function Reports() {
                 onChange={(value) => {
                   setPage(1);
                   setSearchEntityType(value || "all");
+                }}
+              />
+            </Col>
+            <Col xs={24} md={12}>
+              <RangePicker
+                style={{ width: "100%" }}
+                format="DD/MM/YYYY"
+                allowClear
+                value={dateRange}
+                onChange={(dates) => {
+                  setPage(1);
+                  setDateRange(dates);
                 }}
               />
             </Col>
