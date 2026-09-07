@@ -210,7 +210,6 @@ function ReportPage({ uid }) {
     || (report.entityType === "people" ? report.content : null);
 
   const isEditing = report.statusCode === "pending" || editing;
-  const solutionLines = (report.resolutionNotes || "").split("\n");
 
   return (
     <section className="report-page">
@@ -302,82 +301,74 @@ function ReportPage({ uid }) {
             )}
           </div>
         )}
-        {(report.statusCode === "pending"
-          || report.statusCode === "resolved"
-          || report.statusCode === "rejected") && (
-            <div className="report-page__actions">
-              {isEditing ? (
-                <Form
-                  form={form}
-                  initialValues={{ solution }}
-                  onFinish={handleSaveSolution}
-                  className="report-page__form"
+        <div className="report-page__actions">
+          {isEditing ? (
+            <Form
+              form={form}
+              initialValues={{ solution }}
+              onFinish={handleSaveSolution}
+              className="report-page__form"
+            >
+              <Form.Item
+                name="solution"
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: "Descreva a solução antes de resolver ou recusar a denúncia.",
+                  },
+                ]}
+              >
+                <TextArea
+                  rows={4}
+                  placeholder="Descreva a solução..."
+                  maxLength={500}
+                  showCount
+                  style={{ resize: "none" }}
+                  disabled={updating}
+                />
+              </Form.Item>
+              <Space>
+                <Button
+                  type="dashed"
+                  htmlType="submit"
+                  className="report-page__action-resolve"
+                  icon={<CheckOutlined />}
+                  loading={updating}
+                  onClick={() => { actionRef.current = "resolved"; }}
                 >
-                  <Form.Item
-                    name="solution"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Descreva a solução antes de resolver ou recusar a denúncia.",
-                      },
-                    ]}
-                  >
-                    <TextArea
-                      rows={4}
-                      placeholder="Descreva a solução..."
-                      maxLength={500}
-                      showCount
-                      style={{ resize: "none" }}
-                      disabled={updating}
-                    />
-                  </Form.Item>
-                  <Space>
-                    <Button
-                      type="dashed"
-                      htmlType="submit"
-                      className="report-page__action-resolve"
-                      icon={<CheckOutlined />}
-                      loading={updating}
-                      onClick={() => { actionRef.current = "resolved"; }}
-                    >
-                      Resolvida
-                    </Button>
-                    <Button
-                      type="dashed"
-                      htmlType="submit"
-                      className="report-page__action-reject"
-                      icon={<CloseCircleOutlined />}
-                      loading={updating}
-                      onClick={() => { actionRef.current = "rejected"; }}
-                    >
-                      Recusar
-                    </Button>
-                  </Space>
-                </Form>
-              ) : (
-                <>
-                  <div className="report-page__solution">
-                    {solutionLines.map((line, index) => (
-                      <Paragraph key={index} className="report-page__solution-line">
-                        {line}
-                      </Paragraph>
-                    ))}
-                  </div>
-                  <Space>
-                    <Button
-                      type="dashed"
-                      className={`report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"} report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"}--confirmed`}
-                      icon={report.statusCode === "rejected" ? <CloseCircleOutlined /> : <CheckOutlined />}
-                      onClick={() => setEditing(true)}
-                    >
-                      Clique Para Alterar
-                    </Button>
-                  </Space>
-                </>
-              )}
-            </div>
+                  Resolvida
+                </Button>
+                <Button
+                  type="dashed"
+                  htmlType="submit"
+                  className="report-page__action-reject"
+                  icon={<CloseCircleOutlined />}
+                  loading={updating}
+                  onClick={() => { actionRef.current = "rejected"; }}
+                >
+                  Recusar
+                </Button>
+              </Space>
+            </Form>
+          ) : (
+            <>
+              <div className="report-page__solution">
+                {report.resolutionNotes}
+              </div>
+              <Space>
+                <Button
+                  type="dashed"
+                  className={`report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"} report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"}--confirmed`}
+                  icon={report.statusCode === "rejected" ? <CloseCircleOutlined /> : <CheckOutlined />}
+                  onClick={() => setEditing(true)}
+                >
+                  Clique Para Alterar
+                </Button>
+              </Space>
+            </>
           )}
+        </div>
       </Card>
 
       <div className="report-page__count">
