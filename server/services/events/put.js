@@ -21,6 +21,8 @@ if (!personId && !isAdminOrManager) {
   const name = _req.getString('name');
   const description = _req.getString('description');
   const location = _req.getString('location');
+  const cityUid = _req.getString('city');
+  const startDate = _req.getString('startDate');
 
   if (!eventUid || !name) {
     response.error("O identificador e o nome do evento são obrigatórios.");
@@ -33,9 +35,18 @@ if (!personId && !isAdminOrManager) {
       if (!isAdminOrManager && hostId !== personId) {
         response.error("Não tem permissão para editar este evento.");
       } else {
+        let cityId = null;
+        if (cityUid) {
+          const dbCity = _db.queryFirst("SELECT id FROM city WHERE uid = ?::uuid", cityUid);
+          if (dbCity) {
+            cityId = dbCity.getInt('id');
+          }
+        }
+
         _db.execute(
-          "UPDATE event SET name = ?, description = ?, location = ?, updated_at = NOW() WHERE uid = ?::uuid",
-          name, description, location, eventUid
+          `UPDATE event SET name = ?, description = ?, location = ?, city_id = ?, start_date = NULLIF(?, '')::timestamp, updated_at = NOW() 
+           WHERE uid = ?::uuid`,
+          name, description, location, cityId, startDate, eventUid
         );
         response.successWithData(_val.map());
       }
