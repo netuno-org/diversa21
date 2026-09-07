@@ -1,11 +1,30 @@
 .services-list {
+  padding: 0 24px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+  
   &__header {
-    margin-bottom: 24px;
+    margin-bottom: 8px;
   }
 
   &__count {
-    margin-top: 16px;
-    padding: 0 24px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding: 0;
+  }
+
+  &__tabs {
+    margin-bottom: 0 !important;
+    
+    .ant-tabs-nav {
+      margin-bottom: 12px !important;
+    }
+  }
+
+  &__tabs-content {
+    padding-bottom: 40px;
   }
 
   &__loading,
@@ -17,13 +36,14 @@
   }
 
   &__items {
-    column-count: 2;
-    column-gap: 16px;
-    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
     margin-bottom: 24px;
+    align-items: start;
 
     @media (max-width: 900px) {
-      column-count: 1;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -48,10 +68,7 @@
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     border-radius: 12px;
-    break-inside: avoid;
-    margin-bottom: 16px;
-    display: inline-block;
-    width: 100%;
+    min-width: 0;
 
     &:hover {
       border-color: #8b6aa2;
@@ -97,19 +114,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  &__tabs {
-    margin-bottom: 16px;
-
-    .ant-tabs-nav {
-      padding: 0 24px;
-      margin-bottom: 0;
-
-      @media (max-width: 900px) {
-        padding: 0 16px;
-      }
-    }
   }
 
   &__favorite-btn {
