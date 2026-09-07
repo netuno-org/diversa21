@@ -101,14 +101,29 @@
     align-items: flex-end;
     margin-top: 16px;
 
-    .ant-form-item {
+    .ant-input-textarea,
+    textarea {
       width: 100%;
-      margin-bottom: 12px;
     }
 
     .ant-space {
       margin-top: 24px;
     }
+  }
+
+  &__solution {
+    width: 100%;
+    padding: 16px;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-style: italic;
+  }
+
+  &__solution-line {
+    margin-bottom: 0 !important;
   }
 
   &__action-resolve {

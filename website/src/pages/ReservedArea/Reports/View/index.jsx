@@ -10,7 +10,6 @@ import {
   Tag,
   Typography,
   Input,
-  Form
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -75,6 +74,7 @@ function ReportPage({ uid }) {
   const [updating, setUpdating] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [solution, setSolution] = useState("");
+  const [editing, setEditing] = useState(false);
 
   const [searchParams] = useSearchParams();
   const statusFilter = searchParams.get("status");
@@ -90,12 +90,17 @@ function ReportPage({ uid }) {
       url: "/report",
       data: { reportUid: uid },
       success: ({ json }) => {
-        setReport(json?.data || null);
+        const data = json?.data || null;
+        setReport(data);
+        setSolution(data?.resolutionNotes || "");
+        setEditing(false);
         setLoading(false);
       },
       fail: (e) => {
         console.log("Service Error", e);
         setReport(null);
+        setSolution("");
+        setEditing(false);
         setLoading(false);
       },
     });
@@ -119,13 +124,26 @@ function ReportPage({ uid }) {
   }, [report]);
 
   const handleStatusChange = (status) => {
+    const notes = solution.trim();
+    if (status !== "pending" && !notes) {
+      globalNotification.warning({
+        title: "Descreva a solução",
+        description: "Escreva a solução antes de resolver ou recusar a denúncia.",
+      });
+      return;
+    }
+
     const previousStatus = report?.statusCode;
     setUpdating(true);
     setReport((prev) => (prev ? { ...prev, statusCode: status } : prev));
     _service({
       method: "PUT",
       url: "/report",
-      data: { reportUid: uid, status },
+      data: {
+        reportUid: uid,
+        status,
+        ...(notes ? { resolutionNotes: notes } : {}),
+      },
       success: () => {
         const notification = status === "pending"
           ? globalNotification.warning
@@ -152,7 +170,7 @@ function ReportPage({ uid }) {
       },
     });
   };
-  console.log(report)
+
   if (loading) {
     return (
       <section className="report-page">
@@ -180,6 +198,9 @@ function ReportPage({ uid }) {
 
   const author = report.content?.author
     || (report.entityType === "people" ? report.content : null);
+
+  const isEditing = report.statusCode === "pending" || editing;
+  const solutionLines = (report.resolutionNotes || "").split("\n");
 
   return (
     <section className="report-page">
@@ -254,53 +275,71 @@ function ReportPage({ uid }) {
           || report.statusCode === "resolved"
           || report.statusCode === "rejected") && (
           <div className="report-page__actions">
-            <Form.Item
-              name="description"
-              layout="vertical"
-            >
-              <TextArea
-                rows={4}
-                placeholder="Descreva a solução..."
-                maxLength={500}
-                showCount
-                value={solution}
-                onChange={(e) => setSolution(e.target.value)}
-                disabled={report.statusCode !== "pending"}
-                style={{ resize: "none" }}
-              />
-            </Form.Item>
-            <Space>
-              {report.statusCode !== "rejected" && (
-                <Button
-                  type="dashed"
-                  className={`report-page__action-resolve${report.statusCode === "resolved" ? " report-page__action-resolve--confirmed" : ""}`}
-                  icon={<CheckOutlined />}
-                  loading={updating}
-                  onClick={() => handleStatusChange(
-                    report.statusCode === "resolved" ? "pending" : "resolved"
+            {isEditing ? (
+              <>
+                <TextArea
+                  rows={4}
+                  placeholder="Descreva a solução..."
+                  maxLength={500}
+                  showCount
+                  value={solution}
+                  onChange={(e) => setSolution(e.target.value)}
+                  style={{ resize: "none" }}
+                />
+                <Space>
+                  <Button
+                    type="dashed"
+                    className="report-page__action-resolve"
+                    icon={<CheckOutlined />}
+                    loading={updating}
+                    onClick={() => handleStatusChange("resolved")}
+                  >
+                    Resolvida
+                  </Button>
+                  <Button
+                    type="dashed"
+                    className="report-page__action-reject"
+                    icon={<CloseCircleOutlined />}
+                    loading={updating}
+                    onClick={() => handleStatusChange("rejected")}
+                  >
+                    Recusar
+                  </Button>
+                  {report.statusCode !== "pending" && (
+                    <Button
+                      type="text"
+                      disabled={updating}
+                      onClick={() => {
+                        setSolution(report.resolutionNotes || "");
+                        setEditing(false);
+                      }}
+                    >
+                      Cancelar
+                    </Button>
                   )}
-                >
-                  {report.statusCode === "resolved"
-                    ? "Clique Para Alterar"
-                    : "Resolvida"}
-                </Button>
-              )}
-              {report.statusCode !== "resolved" && (
-                <Button
-                  type="dashed"
-                  className={`report-page__action-reject${report.statusCode === "rejected" ? " report-page__action-reject--confirmed" : ""}`}
-                  icon={<CloseCircleOutlined />}
-                  loading={updating}
-                  onClick={() => handleStatusChange(
-                    report.statusCode === "rejected" ? "pending" : "rejected"
-                  )}
-                >
-                  {report.statusCode === "rejected"
-                    ? "Clique para Alterar"
-                    : "Recusar"}
-                </Button>
-              )}
-            </Space>
+                </Space>
+              </>
+            ) : (
+              <>
+                <div className="report-page__solution">
+                  {solutionLines.map((line, index) => (
+                    <Paragraph key={index} className="report-page__solution-line">
+                      {line || "\u00A0"}
+                    </Paragraph>
+                  ))}
+                </div>
+                <Space>
+                  <Button
+                    type="dashed"
+                    className={`report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"} report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"}--confirmed`}
+                    icon={report.statusCode === "rejected" ? <CloseCircleOutlined /> : <CheckOutlined />}
+                    onClick={() => setEditing(true)}
+                  >
+                    Clique Para Alterar
+                  </Button>
+                </Space>
+              </>
+            )}
           </div>
         )}
         {report.statusCode !== "pending" && report.resolvedBy?.name && (
