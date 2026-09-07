@@ -1,18 +1,40 @@
-import { _req, _db } from "@netuno/server-types";
-import permissions from "#core/lib/permissions.js";
+import { _req, _db, _val, _user, _group } from "@netuno/server-types";
+import { SUPER_ADMIN, MANAGEMENT } from "#core/lib/groups.js";
 import response from "#core/lib/response.js";
 
-if (!permissions.canManageServices()) {
-  response.stopWithPermissionDenied();
+const userId = _user.id();
+let personId = null;
+const groupCode = _group.code();
+let isAdminOrManager = groupCode === SUPER_ADMIN || groupCode === MANAGEMENT;
+
+if (userId) {
+  const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
+  if (dbPerson) {
+    personId = dbPerson.getInt('id');
+  }
 }
 
-const uid = _req.getUID('uid');
-if (!uid) response.stopWithBadRequest('event-uid-required');
+if (!personId && !isAdminOrManager) {
+  response.error("Utilizador não autenticado ou sem permissões.");
+} else {
+  const eventUid = _req.getString('eventUid');
 
-const dbEvent = _db.queryFirst('SELECT id FROM event WHERE uid = ?::uuid', uid);
-if (!dbEvent) response.stopWithBadRequest('event-not-found');
-
-const deleted = _db.delete('event', dbEvent.getInt('id'));
-if (!deleted) response.stopWithBadRequest('event-not-deleted');
-
-response.success();
+  if (!eventUid) {
+    response.error("O identificador do evento é obrigatório.");
+  } else {
+    const dbEvent = _db.queryFirst("SELECT id, host_id FROM event WHERE uid = ?::uuid", eventUid);
+    if (!dbEvent) {
+      response.error("Evento não encontrado.");
+    } else {
+      const hostId = dbEvent.getInt('host_id');
+      if (!isAdminOrManager && hostId !== personId) {
+        response.error("Não tem permissão para eliminar este evento.");
+      } else {
+        const eventId = dbEvent.getInt('id');
+        _db.execute("DELETE FROM event_participant WHERE event_id = ?", eventId);
+        _db.execute("DELETE FROM event WHERE id = ?", eventId);
+        response.successWithData(_val.map());
+      }
+    }
+  }
+}

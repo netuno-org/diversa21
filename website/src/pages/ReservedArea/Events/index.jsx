@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Card, Typography, Spin, Pagination, Button, Modal, Avatar, List, Space, Form, Input, notification } from 'antd';
-import { EnvironmentOutlined, CalendarOutlined, PlusOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, CalendarOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters';
@@ -14,9 +14,12 @@ function Events() {
   const loggedUser = usePeople();
   const [participantsModal, setParticipantsModal] = useState({ visible: false, event: null, loading: false, items: [] });
   const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [currentEvent, setCurrentEvent] = useState(null);
   const [createLoading, setCreateLoading] = useState(false);
   const [actionLoadingUid, setActionLoadingUid] = useState(null);
   const [form] = Form.useForm();
+  const [editForm] = Form.useForm();
   
   const requestData = useMemo(() => ({}), []);
 
@@ -70,6 +73,62 @@ function Events() {
     });
   };
 
+  const openEditModal = (event) => {
+    setCurrentEvent(event);
+    editForm.setFieldsValue({
+      name: event.name,
+      location: event.location,
+      description: event.description,
+    });
+    setEditModalVisible(true);
+  };
+
+  const handleUpdateEvent = (values) => {
+    if (!currentEvent) return;
+    setCreateLoading(true);
+    _service({
+      url: 'events',
+      method: 'PUT',
+      data: { eventUid: currentEvent.uid, ...values },
+      success: () => {
+        setCreateLoading(false);
+        setEditModalVisible(false);
+        setCurrentEvent(null);
+        editForm.resetFields();
+        notification.success({ message: 'Evento atualizado com sucesso!' });
+        fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
+      },
+      fail: () => {
+        setCreateLoading(false);
+        notification.error({ message: 'Erro ao atualizar o evento.' });
+      },
+    });
+  };
+
+  const confirmDeleteEvent = (event) => {
+    Modal.confirm({
+      title: 'Eliminar Evento',
+      content: `Tem a certeza que pretende eliminar o evento "${event.name}"?`,
+      okText: 'Sim',
+      okType: 'danger',
+      cancelText: 'Cancelar',
+      onOk: () => {
+        _service({
+          url: 'events',
+          method: 'DELETE',
+          data: { eventUid: event.uid },
+          success: () => {
+            notification.success({ message: 'Evento eliminado com sucesso!' });
+            fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
+          },
+          fail: () => {
+            notification.error({ message: 'Erro ao eliminar o evento.' });
+          },
+        });
+      },
+    });
+  };
+
   const toggleGoing = (event, e) => {
     if (e) e.stopPropagation();
     setActionLoadingUid(event.uid);
@@ -91,21 +150,17 @@ function Events() {
 
   return (
     <div className="events-page">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ flex: 1 }}>
-          <ListHeaderFilters
-            title="Eventos"
-            description="Crie e descubra eventos — veja quem vai participar e confirme presença."
-            onSearch={(v) => handleSearch(v ? v.trim() : '')}
-            fullWidthSearch
-          />
-        </div>
-        <div style={{ marginLeft: 16 }}>
-          <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => setCreateModalVisible(true)}>
-            Criar Evento
-          </Button>
-        </div>
-      </div>
+      <ListHeaderFilters
+        title="Eventos"
+        description="Crie e descubra eventos — veja quem vai participar e confirme presença."
+        onSearch={(v) => handleSearch(v ? v.trim() : '')}
+        fullWidthSearch
+        createButton={{
+          icon: <PlusOutlined />,
+          text: 'Criar Evento',
+          onClick: () => setCreateModalVisible(true),
+        }}
+      />
 
       {loading && (
         <div className="events-page__loading"><Spin size="large" /></div>
@@ -129,7 +184,7 @@ function Events() {
 
             {ev.description && <Paragraph className="events-page__description" ellipsis={{ rows: 3 }}>{ev.description}</Paragraph>}
 
-            <div className="events-page__actions">
+            <div className="events-page__actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Space>
                 <Button 
                   type={ev.isGoing ? 'primary' : 'default'} 
@@ -140,6 +195,12 @@ function Events() {
                 </Button>
                 <Button type="link" onClick={() => openParticipants(ev)}>{ev.participantsCount || 0} participantes</Button>
               </Space>
+              {ev.canEdit && (
+                <Space>
+                  <Button type="text" icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); openEditModal(ev); }} />
+                  <Button type="text" danger icon={<DeleteOutlined />} onClick={(e) => { e.stopPropagation(); confirmDeleteEvent(ev); }} />
+                </Space>
+              )}
             </div>
           </Card>
         ))}
@@ -149,7 +210,7 @@ function Events() {
         <Pagination total={pagination.total} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
       </div>
 
-      <Modal title="Criar Novo Evento" open={createModalVisible} onCancel={() => setCreateModalVisible(false)} footer={null}>
+      <Modal title="Criar Evento" open={createModalVisible} onCancel={() => setCreateModalVisible(false)} footer={null}>
         <Form form={form} layout="vertical" onFinish={handleCreateEvent}>
           <Form.Item name="name" label="Nome do Evento" rules={[{ required: true, message: 'Insira o nome do evento!' }]}>
             <Input placeholder="Ex: Encontro de Comunidade" />
@@ -163,7 +224,27 @@ function Events() {
           <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
             <Space>
               <Button onClick={() => setCreateModalVisible(false)}>Cancelar</Button>
-              <Button type="primary" htmlType="submit" loading={createLoading}>Criar</Button>
+              <Button type="primary" htmlType="submit" loading={createLoading}>Criar Evento</Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal title="Editar Evento" open={editModalVisible} onCancel={() => setEditModalVisible(false)} footer={null}>
+        <Form form={editForm} layout="vertical" onFinish={handleUpdateEvent}>
+          <Form.Item name="name" label="Nome do Evento" rules={[{ required: true, message: 'Insira o nome do evento!' }]}>
+            <Input placeholder="Ex: Encontro de Comunidade" />
+          </Form.Item>
+          <Form.Item name="location" label="Localização">
+            <Input placeholder="Ex: Auditório Principal" />
+          </Form.Item>
+          <Form.Item name="description" label="Descrição">
+            <Input.TextArea rows={4} placeholder="Descreve o evento..." />
+          </Form.Item>
+          <Form.Item style={{ textAlign: 'right', marginBottom: 0 }}>
+            <Space>
+              <Button onClick={() => setEditModalVisible(false)}>Cancelar</Button>
+              <Button type="primary" htmlType="submit" loading={createLoading}>Guardar</Button>
             </Space>
           </Form.Item>
         </Form>
