@@ -144,15 +144,19 @@
     width: 100%;
     padding: 8px;
     background: #fafafa;
-    border: 1px solid #f0f0f0;
+    border: 1px dashed #f0f0f0;
     border-radius: 8px;
     white-space: pre-wrap;
     word-break: break-word;
     font-style: italic;
-  }
 
-  &__solution-line {
-    margin-bottom: 0 !important;
+    &--resolved {
+      border-color: #50A063;
+    }
+
+    &--rejected {
+      border-color: #ff4d4f;
+    }
   }
 
   &__action-resolve {

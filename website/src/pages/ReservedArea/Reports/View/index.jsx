@@ -353,7 +353,7 @@ function ReportPage({ uid }) {
             </Form>
           ) : (
             <>
-              <div className="report-page__solution">
+              <div className={`report-page__solution report-page__solution--${report.statusCode === "rejected" ? "rejected" : "resolved"}`}>
                 {report.resolutionNotes}
               </div>
               <Space>
