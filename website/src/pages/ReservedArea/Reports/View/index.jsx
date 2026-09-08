@@ -6,6 +6,7 @@ import {
   Card,
   Empty,
   Form,
+  Pagination,
   Space,
   Spin,
   Tag,
@@ -76,14 +77,22 @@ function ReportPage({ uid }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [solution, setSolution] = useState("");
   const [editing, setEditing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loadedUid, setLoadedUid] = useState(uid);
   const [form] = Form.useForm();
   const actionRef = useRef(null);
+
+  if (uid !== loadedUid) {
+    setLoadedUid(uid);
+    setPage(1);
+  }
 
   const [searchParams] = useSearchParams();
   const statusFilter = searchParams.get("status");
   const navigate = useNavigate();
 
-  const fetchReport = (onDone) => {
+  const fetchReport = (onDone, currentPage = page) => {
     if (!uid) {
       return;
     }
@@ -91,10 +100,11 @@ function ReportPage({ uid }) {
     _service({
       method: "GET",
       url: "/report",
-      data: { reportUid: uid },
+      data: { reportUid: uid, page: currentPage },
       success: ({ json }) => {
         const data = json?.data || null;
         setReport(data);
+        setTotalCount(data?.pagination?.totalCount ?? 0);
         setSolution(data?.resolutionNotes || "");
         form.setFieldsValue({ solution: data?.resolutionNotes || "" });
         setEditing(false);
@@ -104,6 +114,7 @@ function ReportPage({ uid }) {
       fail: (e) => {
         console.log("Service Error", e);
         setReport(null);
+        setTotalCount(0);
         setSolution("");
         setEditing(false);
         setLoading(false);
@@ -113,8 +124,9 @@ function ReportPage({ uid }) {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchReport();
-  }, [uid]);
+  }, [uid, page]);
 
   useEffect(() => {
     const people = report?.content?.author
@@ -181,7 +193,7 @@ function ReportPage({ uid }) {
     handleStatusChange(action, solution);
   };
 
-  if (loading) {
+  if (loading && !report) {
     return (
       <section className="report-page">
         <div className="report-page__empty">
@@ -377,48 +389,65 @@ function ReportPage({ uid }) {
         </Text>
       </div>
 
-      {items.length === 0 ? (
-        <Empty description="Nenhum registo individual encontrado." />
-      ) : (
-        items.map((item) => (
-          <Card key={item.uid} className="report-page__item">
-            <div className="report-page__item-header">
-              <div className="report-page__reporter">
-                <Avatar
-                  className="report-page__avatar"
-                  size={50}
-                  src={item.reporter?.avatar && item.reporter?.uid
-                    ? _service.url(`/asset?uid=${item.reporter.uid}&type=avatar&entity=people&t=${Date.now()}`)
-                    : "/images/profile-default.png"}
-                  icon={<UserOutlined />}
-                  shape="square"
-                />
-                <div>
-                  <Text className="report-page__author-info">
-                    {item.reporter?.name}
-                  </Text>
+      <div className="report-page__items">
+        {loading ? (
+          <div className="report-page__items-loading">
+            <Spin />
+          </div>
+        ) : items.length === 0 ? (
+          <Empty description="Nenhum registo individual encontrado." />
+        ) : (
+          items.map((item) => (
+            <Card key={item.uid} className="report-page__item">
+              <div className="report-page__item-header">
+                <div className="report-page__reporter">
+                  <Avatar
+                    className="report-page__avatar"
+                    size={50}
+                    src={item.reporter?.avatar && item.reporter?.uid
+                      ? _service.url(`/asset?uid=${item.reporter.uid}&type=avatar&entity=people&t=${Date.now()}`)
+                      : "/images/profile-default.png"}
+                    icon={<UserOutlined />}
+                    shape="square"
+                  />
                   <div>
-                    <TimeAgo sentAt={item.moment} />
+                    <Text className="report-page__author-info">
+                      {item.reporter?.name}
+                    </Text>
+                    <div>
+                      <TimeAgo sentAt={item.moment} />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div>
-              {item.reasonTitle && (
-                <Tag className="report-page__reason" color="error" variant="filled">
-                  {item.reasonTitle}
-                </Tag>
-              )}
-              {item.description && (
-                <div>
-                  <Paragraph className="report-page__item-description">
-                    {item.description}
-                  </Paragraph>
-                </div>
-              )}
-            </div>
-          </Card>
-        ))
+              <div>
+                {item.reasonTitle && (
+                  <Tag className="report-page__reason" color="error" variant="filled">
+                    {item.reasonTitle}
+                  </Tag>
+                )}
+                {item.description && (
+                  <div>
+                    <Paragraph className="report-page__item-description">
+                      {item.description}
+                    </Paragraph>
+                  </div>
+                )}
+              </div>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {!loading && totalCount > 0 && (
+        <div className="report-page__pagination">
+          <Pagination
+            current={page}
+            pageSize={10}
+            total={totalCount}
+            onChange={(nextPage) => setPage(nextPage)}
+          />
+        </div>
       )}
     </section>
   );
