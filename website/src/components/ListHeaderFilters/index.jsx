@@ -77,18 +77,18 @@ function ListHeaderFilters({
 
   return (
     <div>
+      {categoryName &&
+        <Button
+          type="link"
+          className="list-header-filters__back"
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(-1)}
+        >
+          Voltar as Categorias
+        </Button>
+      }
       {hasHeaderTitle && (
         <div className="list-header-filters__header">
-          {categoryName  &&
-            <Button
-              type="link"
-              className="replies-header__back"
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate(-1)}
-            >
-              Voltar as Categorias
-            </Button>
-          }
           <Row align="middle" gutter={[16, 16]}>
             {title && (
               <Col xs={24} sm={(createButton || extraActionButtons) ? 12 : 24}>
