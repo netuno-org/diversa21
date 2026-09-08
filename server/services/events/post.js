@@ -19,6 +19,7 @@ if (!personId) {
   const location = _req.getString('location');
   const cityUid = _req.getString('city');
   const startDate = _req.getString('startDate');
+  const coverImage = _req.getString('coverImage');
 
   if (!name) {
     response.error("O nome do evento é obrigatório.");
@@ -35,9 +36,9 @@ if (!personId) {
     const nextId = dbMax ? dbMax.getInt("next_id") : 1;
 
     _db.execute(
-      `INSERT INTO event (id, uid, name, description, location, city_id, start_date, host_id, active, participants_count, created_at, updated_at) 
-       VALUES (?, gen_random_uuid(), ?, ?, ?, ?, NULLIF(?, '')::timestamp, ?, true, 0, NOW(), NOW())`,
-      nextId, name, description, location, cityId, startDate, personId
+      `INSERT INTO event (id, uid, name, description, location, city_id, start_date, cover_image, host_id, active, participants_count, created_at, updated_at) 
+       VALUES (?, gen_random_uuid(), ?, ?, ?, ?, NULLIF(?, '')::timestamp, ?, ?, true, 0, NOW(), NOW())`,
+      nextId, name, description, location, cityId, startDate, coverImage, personId
     );
 
     response.successWithData({ id: nextId });

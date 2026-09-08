@@ -1,15 +1,58 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Card, Typography, Spin, Pagination, Button, Modal, Avatar, List, Space, Form, Input, DatePicker, Select, notification } from 'antd';
-import { EnvironmentOutlined, CalendarOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Typography, Spin, Pagination, Button, Modal, Avatar, List, Form, Input, DatePicker, Select, notification, Dropdown, Upload, Tooltip } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, StarOutlined, CheckOutlined, MoreOutlined, UploadOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters';
 import usePeople from '../../../common/usePeople.js';
 import dayjs from 'dayjs';
+import 'dayjs/locale/pt';
 import './index.less';
 import { useNavigate } from 'react-router-dom';
 
+dayjs.locale('pt');
+
 const { Text, Title, Paragraph } = Typography;
+
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
+const UserAvatar = ({ person, size, className = '' }) => {
+  const [failed, setFailed] = useState(false);
+
+  if (!person) return null;
+
+  const defaultSrc = '/images/profile-default.png';
+  let src = defaultSrc;
+
+  if (!failed && person.avatar) {
+    const avatarStr = String(person.avatar);
+    if (avatarStr.startsWith('http') || avatarStr.startsWith('data:')) {
+      src = avatarStr;
+    } else {
+      src = _service.url(`/asset?uid=${person.uid}&type=avatar&entity=people&t=${Date.now()}`);
+    }
+  }
+
+  return (
+    <Tooltip title={person.name || 'Participante'}>
+      <Avatar
+        size={size}
+        src={src}
+        className={`events-page__avatar ${className}`}
+        onError={() => {
+          if (!failed) setFailed(true);
+          return true;
+        }}
+      />
+    </Tooltip>
+  );
+};
 
 function Events() {
   const loggedUser = usePeople();
@@ -68,14 +111,28 @@ function Events() {
 
   const closeParticipants = () => setParticipantsModal({ visible: false, event: null, loading: false, items: [] });
 
-  const handleCreateEvent = (values) => {
-    if (createLoading) return;
-    setCreateLoading(true);
-    const payload = {
+  const processFormPayload = async (values) => {
+    let coverImageBase64 = null;
+    if (values.coverImage && values.coverImage.length > 0) {
+      const fileObj = values.coverImage[0].originFileObj;
+      if (fileObj) {
+        coverImageBase64 = await getBase64(fileObj);
+      } else if (values.coverImage[0].url) {
+        coverImageBase64 = values.coverImage[0].url;
+      }
+    }
+    return {
       ...values,
       city: values.city?.value || values.city,
       startDate: values.startDate ? values.startDate.format('YYYY-MM-DD HH:mm:ss') : null,
+      coverImage: coverImageBase64,
     };
+  };
+
+  const handleCreateEvent = async (values) => {
+    if (createLoading) return;
+    setCreateLoading(true);
+    const payload = await processFormPayload(values);
     _service({
       url: 'events',
       method: 'POST',
@@ -113,19 +170,16 @@ function Events() {
       } : undefined,
       startDate: event.startDate ? dayjs(event.startDate) : null,
       description: event.description,
+      coverImage: event.coverImage ? [{ uid: '-1', name: 'imagem-capa.jpg', status: 'done', url: event.coverImage }] : [],
     });
     setEditModalVisible(true);
   };
 
-  const handleUpdateEvent = (values) => {
+  const handleUpdateEvent = async (values) => {
     if (!currentEvent) return;
     setCreateLoading(true);
-    const payload = {
-      eventUid: currentEvent.uid,
-      ...values,
-      city: values.city?.value || values.city,
-      startDate: values.startDate ? values.startDate.format('YYYY-MM-DD HH:mm:ss') : null,
-    };
+    const payload = await processFormPayload(values);
+    payload.eventUid = currentEvent.uid;
     _service({
       url: 'events',
       method: 'PUT',
@@ -188,16 +242,47 @@ function Events() {
     });
   };
 
+  const formatEventDate = (dateString) => {
+    if (!dateString) return '';
+    const date = dayjs(dateString);
+    if (date.isSame(dayjs(), 'day')) {
+      return `Hoje às ${date.format('HH:mm')}`;
+    }
+    const dayName = date.format('ddd').replace('.', '');
+    const dayMonth = date.format('DD/MM');
+    const time = date.format('HH:mm');
+    return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)}, ${dayMonth} às ${time}`;
+  };
+
+  const normFile = (e) => {
+    if (Array.isArray(e)) return e;
+    return e?.fileList;
+  };
+
+  const getCoverUrl = (coverImage) => {
+    if (!coverImage) return null;
+    if (coverImage.startsWith('http') || coverImage.startsWith('data:')) return coverImage;
+    if (coverImage.startsWith('[') && coverImage.endsWith(']')) {
+      try {
+        const files = JSON.parse(coverImage);
+        if (files.length > 0 && files[0].uid) {
+          return `/_services/core/file/download?uid=${files[0].uid}`;
+        }
+      } catch (e) {}
+    }
+    return coverImage;
+  };
+
   return (
     <div className="events-page">
       <ListHeaderFilters
-        title="Eventos"
-        description="Crie e descubra eventos — veja quem vai participar e confirme presença."
+        title="Descobrir eventos"
+        description="Encontre eventos e atividades perto de si."
         onSearch={(v) => handleSearch(v ? v.trim() : '')}
         fullWidthSearch
         createButton={{
           icon: <PlusOutlined />,
-          text: 'Novo Evento',
+          text: 'Criar Evento',
           onClick: () => {
             setCityOptions([]);
             form.resetFields();
@@ -207,68 +292,99 @@ function Events() {
       />
 
       {loading && (
-        <div className="events-page__loading"><Spin size="large" /></div>
+        <div className="events-page__loading">
+          <Spin size="large" />
+        </div>
       )}
 
-      <div className="events-page__list">
-        {!loading && events.map((ev) => (
-          <Card key={ev.uid} className="events-page__card">
-            <div className="events-page__card-header">
-              <Title level={4} className="events-page__title">{ev.name}</Title>
-              <div className="events-page__host">
-                <Avatar src={ev.host?.avatar ? `/asset?uid=${ev.host.uid}&type=avatar&entity=people` : '/images/profile-default.png'} />
-                <Text>{ev.host?.name}</Text>
-              </div>
-            </div>
+      <div className="events-page__grid">
+        {!loading && events.map((ev) => {
+          const locationText = [
+            ev.location, 
+            ev.city?.name ? `${ev.city.name}${ev.state?.name ? `, ${ev.state.name}` : ''}` : null
+          ].filter(Boolean).join(' - ') || 'Localização não especificada';
+          
+          const coverUrl = getCoverUrl(ev.coverImage);
 
-            <div className="events-page__meta">
-              <div className="events-page__meta-item"><CalendarOutlined /> <Text>{ev.startDate ? new Date(ev.startDate).toLocaleString() : ''}</Text></div>
-              <div className="events-page__meta-item">
-                <EnvironmentOutlined /> 
-                <Text>
-                  {[
-                    ev.city?.name ? `${ev.city.name}${ev.state?.name ? `, ${ev.state.name}` : ''}${ev.country?.name ? ` / ${ev.country.name}` : ''}` : null,
-                    ev.location
-                  ].filter(Boolean).join(' — ') || 'Localização não especificada'}
-                </Text>
-              </div>
-            </div>
-
-            {ev.description && <Paragraph className="events-page__description" ellipsis={{ rows: 3 }}>{ev.description}</Paragraph>}
-
-            <div className="events-page__actions" style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-              <Button 
-                type={ev.isGoing ? 'primary' : 'default'} 
-                loading={actionLoadingUid === ev.uid} 
-                onClick={(e) => toggleGoing(ev, e)}
-                block
-              >
-                {ev.isGoing ? 'Presença Confirmada' : 'Vou'}
-              </Button>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => openParticipants(ev)}>
-                  {ev.participantsPreview && ev.participantsPreview.length > 0 ? (
-                    <Avatar.Group maxCount={3} maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }} style={{ marginRight: 8 }}>
-                      {ev.participantsPreview.map((p, idx) => (
-                        <Avatar key={idx} src={p.avatar ? `/asset?uid=${p.uid}&type=avatar&entity=people` : '/images/profile-default.png'} />
-                      ))}
-                    </Avatar.Group>
-                  ) : null}
-                  <Button type="link" style={{ padding: 0 }}>
-                    {ev.participantsCount || 0} {ev.participantsCount === 1 ? 'participante' : 'participantes'}
-                  </Button>
+          return (
+            <Card 
+              key={ev.uid} 
+              bordered={false}
+              hoverable
+              className="events-page__card"
+              cover={
+                <div 
+                  className="events-page__card-cover"
+                  style={{ backgroundImage: coverUrl ? `url(${coverUrl})` : 'linear-gradient(135deg, #8b6aa2 0%, #5d466c 100%)' }}
+                >
+                  {ev.canEdit && (
+                    <div className="events-page__card-cover-actions" onClick={(e) => e.stopPropagation()}>
+                      <Dropdown 
+                        placement="bottomRight"
+                        menu={{
+                          items: [
+                            { key: 'edit', label: 'Editar', icon: <EditOutlined />, onClick: (e) => { e.domEvent.stopPropagation(); openEditModal(ev); } },
+                            { key: 'delete', label: 'Eliminar', danger: true, icon: <DeleteOutlined />, onClick: (e) => { e.domEvent.stopPropagation(); confirmDeleteEvent(ev); } }
+                          ]
+                        }} 
+                        trigger={['click']}
+                      >
+                        <Button shape="circle" size="small" icon={<MoreOutlined />} />
+                      </Dropdown>
+                    </div>
+                  )}
+                  {!coverUrl && <Title level={3} className="events-page__card-placeholder">EVENTO</Title>}
                 </div>
-                {ev.canEdit && (
-                  <Space size="small">
-                    <Button type="text" icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); openEditModal(ev); }} />
-                    <Button type="text" danger icon={<DeleteOutlined />} onClick={(e) => { e.stopPropagation(); confirmDeleteEvent(ev); }} />
-                  </Space>
-                )}
+              }
+            >
+              <div className="events-page__card-content">
+                
+                <div className="events-page__card-host">
+                  <UserAvatar person={ev.host} size="small" />
+                  <Text type="secondary" className="events-page__card-host-name">{ev.host?.name}</Text>
+                </div>
+
+                <Text className="events-page__card-date">
+                  {formatEventDate(ev.startDate)}
+                </Text>
+                
+                <Title level={5} className="events-page__card-title" ellipsis={{ rows: 2 }}>
+                  {ev.name}
+                </Title>
+                
+                <Text type="secondary" className="events-page__card-location" ellipsis>
+                  {locationText}
+                </Text>
+
+                <div className="events-page__card-participants" onClick={() => openParticipants(ev)}>
+                  <Text type="secondary" className="events-page__card-participants-text">
+                    {ev.participantsCount || 0} {ev.participantsCount === 1 ? 'com interesse' : 'com interesse'}
+                  </Text>
+                  {ev.participantsPreview && ev.participantsPreview.length > 0 && (
+                    <>
+                      <Text type="secondary" className="events-page__card-participants-dot">·</Text>
+                      <Avatar.Group maxCount={3} size="small" maxStyle={{ color: '#fff', backgroundColor: '#8b6aa2' }}>
+                        {ev.participantsPreview.map((p, idx) => (
+                          <UserAvatar key={idx} person={p} size="small" className="events-page__avatar--bordered" />
+                        ))}
+                      </Avatar.Group>
+                    </>
+                  )}
+                </div>
+
+                <Button 
+                  className={`events-page__rsvp-btn ${ev.isGoing ? 'events-page__rsvp-btn--going' : ''}`}
+                  loading={actionLoadingUid === ev.uid} 
+                  onClick={(e) => toggleGoing(ev, e)}
+                  block
+                  icon={ev.isGoing ? <CheckOutlined /> : <StarOutlined />}
+                >
+                  {ev.isGoing ? 'Presença Confirmada' : 'Com interesse'}
+                </Button>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </div>
 
       <div className="events-page__footer">
@@ -277,22 +393,19 @@ function Events() {
 
       <Modal title="Novo Evento" open={createModalVisible} onCancel={() => setCreateModalVisible(false)} onOk={() => form.submit()} confirmLoading={createLoading} okText="Criar Evento" destroyOnHidden>
         <Form form={form} layout="vertical" onFinish={handleCreateEvent}>
+          <Form.Item name="coverImage" label="Imagem de Capa" valuePropName="fileList" getValueFromEvent={normFile}>
+            <Upload listType="picture" maxCount={1} beforeUpload={() => false} accept="image/*">
+              <Button icon={<UploadOutlined />}>Selecionar Imagem</Button>
+            </Upload>
+          </Form.Item>
           <Form.Item name="name" label="Nome do Evento" rules={[{ required: true, message: 'Insira o nome do evento!' }]}>
             <Input placeholder="Ex: Encontro de Comunidade" />
           </Form.Item>
           <Form.Item name="startDate" label="Data e Hora" rules={[{ required: true, message: 'Selecione a data e hora do evento!' }]}>
-            <DatePicker showTime format="YYYY-MM-DD HH:mm" style={{ width: '100%' }} placeholder="Selecione data e hora" />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Selecione data e hora" />
           </Form.Item>
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
-            <Select
-              labelInValue
-              showSearch
-              placeholder="Pesquisar cidade..."
-              filterOption={false}
-              onSearch={handleCitySearch}
-              options={cityOptions}
-              notFoundContent={null}
-            />
+            <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
           </Form.Item>
           <Form.Item name="location" label="Local / Morada">
             <Input placeholder="Ex: Auditório Principal" />
@@ -305,22 +418,19 @@ function Events() {
 
       <Modal title="Editar Evento" open={editModalVisible} onCancel={() => setEditModalVisible(false)} onOk={() => editForm.submit()} confirmLoading={createLoading} okText="Guardar" destroyOnHidden>
         <Form form={editForm} layout="vertical" onFinish={handleUpdateEvent}>
+          <Form.Item name="coverImage" label="Imagem de Capa" valuePropName="fileList" getValueFromEvent={normFile}>
+            <Upload listType="picture" maxCount={1} beforeUpload={() => false} accept="image/*">
+              <Button icon={<UploadOutlined />}>Atualizar Imagem</Button>
+            </Upload>
+          </Form.Item>
           <Form.Item name="name" label="Nome do Evento" rules={[{ required: true, message: 'Insira o nome do evento!' }]}>
             <Input placeholder="Ex: Encontro de Comunidade" />
           </Form.Item>
           <Form.Item name="startDate" label="Data e Hora" rules={[{ required: true, message: 'Selecione a data e hora do evento!' }]}>
-            <DatePicker showTime format="YYYY-MM-DD HH:mm" style={{ width: '100%' }} placeholder="Selecione data e hora" />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Selecione data e hora" />
           </Form.Item>
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
-            <Select
-              labelInValue
-              showSearch
-              placeholder="Pesquisar cidade..."
-              filterOption={false}
-              onSearch={handleCitySearch}
-              options={cityOptions}
-              notFoundContent={null}
-            />
+            <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
           </Form.Item>
           <Form.Item name="location" label="Local / Morada">
             <Input placeholder="Ex: Auditório Principal" />
@@ -333,11 +443,15 @@ function Events() {
 
       <Modal title={participantsModal.event ? `Participantes — ${participantsModal.event.name}` : 'Participantes'} open={participantsModal.visible} onCancel={closeParticipants} footer={null}>
         {participantsModal.loading ? (
-          <div style={{ textAlign: 'center' }}><Spin /></div>
+          <div className="events-page__loading"><Spin /></div>
         ) : (
           <List dataSource={participantsModal.items} renderItem={(p) => (
             <List.Item>
-              <List.Item.Meta avatar={<Avatar src={p.avatar ? `/asset?uid=${p.uid}&type=avatar&entity=people` : '/images/profile-default.png'} />} title={p.name} description={p.username ? `@${p.username}` : ''} />
+              <List.Item.Meta 
+                avatar={<UserAvatar person={p} size="large" />} 
+                title={p.name} 
+                description={p.username ? `@${p.username}` : ''} 
+              />
             </List.Item>
           )} />
         )}

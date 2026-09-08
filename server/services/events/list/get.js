@@ -103,6 +103,7 @@ if (events) {
       .set('name', row.getString('name'))
       .set('description', row.getString('description'))
       .set('location', row.getString('location'))
+      .set('coverImage', row.getString('cover_image'))
       .set('startDate', row.getString('start_date') || row.getString('created_at'))
       .set('isGoing', isGoing)
       .set('canEdit', canEdit)

@@ -23,6 +23,7 @@ if (!personId && !isAdminOrManager) {
   const location = _req.getString('location');
   const cityUid = _req.getString('city');
   const startDate = _req.getString('startDate');
+  const coverImage = _req.getString('coverImage');
 
   if (!eventUid || !name) {
     response.error("O identificador e o nome do evento são obrigatórios.");
@@ -44,9 +45,9 @@ if (!personId && !isAdminOrManager) {
         }
 
         _db.execute(
-          `UPDATE event SET name = ?, description = ?, location = ?, city_id = ?, start_date = NULLIF(?, '')::timestamp, updated_at = NOW() 
+          `UPDATE event SET name = ?, description = ?, location = ?, city_id = ?, start_date = NULLIF(?, '')::timestamp, cover_image = ?, updated_at = NOW() 
            WHERE uid = ?::uuid`,
-          name, description, location, cityId, startDate, eventUid
+          name, description, location, cityId, startDate, coverImage, eventUid
         );
         response.successWithData(_val.map());
       }

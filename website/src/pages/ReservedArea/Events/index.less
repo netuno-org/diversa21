@@ -5,98 +5,164 @@
     padding: 0 16px;
   }
 
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
+  &__loading {
+    text-align: center;
+    padding: 40px;
   }
 
-  &__header-main {
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__header-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  &__loading { text-align: center; margin: 24px 0; }
-
-  &__list {
+  &__grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
-    margin-top: 16px;
-    align-items: start;
-
-    @media (max-width: 900px) {
-      grid-template-columns: minmax(0, 1fr);
-    }
+    margin-top: 24px;
   }
 
   &__card {
+    overflow: hidden;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    cursor: pointer;
-    border-radius: 12px;
-    min-width: 0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:hover {
-      border-color: #8b6aa2;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
       transform: translateY(-2px);
     }
 
     .ant-card-body {
+      padding: 14px 14px 18px 14px;
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
-      padding: 24px;
     }
   }
 
-  &__card-header {
+  &__card-cover {
+    height: 150px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    background-color: #5d466c;
   }
 
-  &__title { margin: 0; }
+  &__card-cover-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
 
-  &__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 8px 0;
-    color: rgba(0,0,0,0.65);
+    .ant-btn {
+      background-color: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+    }
   }
 
-  &__description {
+  &__card-placeholder {
+    color: rgba(255, 255, 255, 0.2) !important;
+    margin: 0 !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  &__card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__card-host {
+    display: flex;
+    align-items: center;
     margin-bottom: 8px;
-    white-space: pre-line;
-    word-break: break-word;
-    color: #555;
-    line-height: 1.5;
+
+    &-name {
+      font-size: 12px;
+      margin-left: 8px;
+    }
   }
 
-  &__actions {
-    margin-top: auto;
+  &__card-date {
+    color: #8b6aa2;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  &__card-title {
+    margin: 0 0 4px 0 !important;
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+  }
+
+  &__card-location {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  &__card-participants {
     display: flex;
-    justify-content: flex-start;
-    gap: 8px;
-    width: 100%;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 2px;
+    flex-grow: 1;
+
+    &-text {
+      font-size: 13px;
+    }
+
+    &-dot {
+      font-size: 13px;
+      margin: 0 4px;
+    }
+  }
+
+  &__avatar {
+    background-color: #f0f2f5;
+
+    &--bordered {
+      border: 1px solid #fff;
+    }
+  }
+
+  &__rsvp-btn {
+    margin-top: 16px;
+    height: 36px;
+    border-radius: 6px;
+    font-weight: 600;
+    background-color: #f0f2f5;
+    border-color: transparent;
+    color: #050505;
+
+    &:hover, &:focus {
+      background-color: #e4e6e9 !important;
+      color: #050505 !important;
+      border-color: transparent !important;
+    }
+
+    &--going {
+      background-color: #8b6aa2;
+      color: #fff;
+
+      &:hover, &:focus {
+        background-color: #7a5d8f !important;
+        color: #fff !important;
+        border-color: transparent !important;
+      }
+    }
   }
 
   &__footer {
-    margin-top: 16px;
+    margin-top: 24px;
     display: flex;
     justify-content: center;
-    padding-bottom: 24px;
+  }
+
+  &__form-full-width {
+    width: 100%;
   }
 }
