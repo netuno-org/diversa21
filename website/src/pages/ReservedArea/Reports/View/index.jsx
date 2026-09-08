@@ -266,7 +266,7 @@ function ReportPage({ uid }) {
               )}
               {report.content?.moment && (
                 <Text type="secondary" className="report-page__published-at">
-                  Publicado <TimeAgo sentAt={report.content.moment} />
+                  <TimeAgo sentAt={report.content.moment} />
                 </Text>
               )}
             </div>
