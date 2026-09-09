@@ -76,7 +76,6 @@ function ReportPage({ uid }) {
   const [updating, setUpdating] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [solution, setSolution] = useState("");
-  const [editing, setEditing] = useState(false);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loadedUid, setLoadedUid] = useState(uid);
@@ -107,7 +106,6 @@ function ReportPage({ uid }) {
         setTotalCount(data?.pagination?.totalCount ?? 0);
         setSolution(data?.resolutionNotes || "");
         form.setFieldsValue({ solution: data?.resolutionNotes || "" });
-        setEditing(false);
         setLoading(false);
         onDone?.();
       },
@@ -116,7 +114,6 @@ function ReportPage({ uid }) {
         setReport(null);
         setTotalCount(0);
         setSolution("");
-        setEditing(false);
         setLoading(false);
         onDone?.();
       },
@@ -221,7 +218,7 @@ function ReportPage({ uid }) {
   const author = report.content?.author
     || (report.entityType === "people" ? report.content : null);
 
-  const isEditing = report.statusCode === "pending" || editing;
+  const isEditing = report.statusCode === "pending";
 
   return (
     <section className="report-page">
@@ -373,7 +370,8 @@ function ReportPage({ uid }) {
                   type="dashed"
                   className={`report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"} report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"}--confirmed`}
                   icon={report.statusCode === "rejected" ? <CloseCircleOutlined /> : <CheckOutlined />}
-                  onClick={() => setEditing(true)}
+                  loading={updating}
+                  onClick={() => handleStatusChange("pending")}
                 >
                   Clique Para Alterar
                 </Button>
