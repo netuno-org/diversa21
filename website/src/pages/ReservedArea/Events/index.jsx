@@ -119,7 +119,7 @@ function Events() {
     if (values.coverImage && values.coverImage.length > 0) {
       const fileObj = values.coverImage[0].originFileObj;
       if (fileObj) {
-        formData.append('coverImage', fileObj);
+        formData.append('coverImage', fileObj); 
       }
     } else if (currentEvent && currentEvent.coverImage) {
       formData.append('clearCoverImage', 'true');
@@ -198,7 +198,7 @@ function Events() {
         fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
         
         if (eventDetails && eventDetails.uid === currentEvent.uid) {
-           setEventDetails(null);
+           setEventDetails(null); 
         }
       },
       fail: () => {
@@ -341,7 +341,7 @@ function Events() {
             label: (
               <span>
                 <StarOutlined style={{ marginRight: 8 }} />
-                Com interesse
+                Participar
               </span>
             ),
           },
@@ -351,7 +351,7 @@ function Events() {
       <div className="events-page__results-count">
         <Text type="secondary">
           {pagination.total} {pagination.total === 1 ? 'Evento Encontrado' : 'Eventos Encontrados'}
-          {showGoingOnly ? ' marcados com interesse' : ''}
+          {showGoingOnly ? ' que vou participar' : ''}
         </Text>
       </div>
 
@@ -424,7 +424,7 @@ function Events() {
                   onClick={(e) => { e.stopPropagation(); openParticipants(ev); }}
                 >
                   <Text type="secondary" className="events-page__card-participants-text">
-                    {ev.participantsCount || 0} {ev.participantsCount === 1 ? 'com interesse' : 'com interesse'}
+                    {ev.participantsCount || 0} {ev.participantsCount === 1 ? 'participante' : 'participantes'}
                   </Text>
                   {ev.participantsPreview && ev.participantsPreview.length > 0 && (
                     <>
@@ -445,7 +445,7 @@ function Events() {
                   block
                   icon={ev.isGoing ? <CheckOutlined /> : <StarOutlined />}
                 >
-                  {ev.isGoing ? 'Presença Confirmada' : 'Com interesse'}
+                  {ev.isGoing ? 'Presença Confirmada' : 'Participar'}
                 </Button>
               </div>
             </Card>
@@ -456,7 +456,6 @@ function Events() {
       <div className="events-page__footer">
         <Pagination total={pagination.total} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
       </div>
-
       <Modal 
         title="Detalhes do Evento" 
         open={!!eventDetails} 
@@ -472,7 +471,7 @@ function Events() {
             onClick={() => toggleGoing(eventDetails)}
             icon={eventDetails?.isGoing ? <CheckOutlined /> : <StarOutlined />}
           >
-            {eventDetails?.isGoing ? 'Presença Confirmada' : 'Com interesse'}
+            {eventDetails?.isGoing ? 'Presença Confirmada' : 'Participar'}
           </Button>
         ]}
       >
@@ -543,7 +542,7 @@ function Events() {
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
             <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
           </Form.Item>
-          <Form.Item name="location" label="Local / Morada">
+          <Form.Item name="location" label="Local / Endereço">
             <Input placeholder="Ex: Auditório Principal" />
           </Form.Item>
           <Form.Item name="description" label="Descrição" rules={[{ required: true, message: 'A descrição é obrigatória' }]}>
@@ -568,7 +567,7 @@ function Events() {
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
             <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
           </Form.Item>
-          <Form.Item name="location" label="Local / Morada">
+          <Form.Item name="location" label="Local / Endereço">
             <Input placeholder="Ex: Auditório Principal" />
           </Form.Item>
           <Form.Item name="description" label="Descrição" rules={[{ required: true, message: 'A descrição é obrigatória' }]}>
