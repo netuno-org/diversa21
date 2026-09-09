@@ -419,20 +419,22 @@ function Events() {
                   {locationText}
                 </Text>
 
-                <div 
-                  className="events-page__card-participants"
-                  onClick={(e) => { e.stopPropagation(); openParticipants(ev); }}
-                >
+                <div className="events-page__card-participants">
                   <Text type="secondary" className="events-page__card-participants-text">
                     {ev.participantsCount || 0} {ev.participantsCount === 1 ? 'participante' : 'participantes'}
                   </Text>
                   {ev.participantsPreview && ev.participantsPreview.length > 0 && (
                     <>
                       <Text type="secondary" className="events-page__card-participants-dot">·</Text>
-                      <Avatar.Group maxCount={3} size="small" maxStyle={{ color: '#fff', backgroundColor: '#8b6aa2' }}>
-                        {ev.participantsPreview.map((p, idx) => (
+                      <Avatar.Group size="small">
+                        {ev.participantsPreview.slice(0, 3).map((p, idx) => (
                           <UserAvatar key={idx} person={p} size="small" className="events-page__avatar--bordered" />
                         ))}
+                        {ev.participantsCount > 3 && (
+                          <Avatar size="small" style={{ backgroundColor: '#8b6aa2', color: '#fff', border: '1px solid #fff' }}>
+                            +{ev.participantsCount - 3}
+                          </Avatar>
+                        )}
                       </Avatar.Group>
                     </>
                   )}
@@ -456,6 +458,7 @@ function Events() {
       <div className="events-page__footer">
         <Pagination total={pagination.total} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
       </div>
+
       <Modal 
         title="Detalhes do Evento" 
         open={!!eventDetails} 
@@ -522,6 +525,36 @@ function Events() {
                 </Paragraph>
               </div>
             )}
+
+            <div className="events-page__details-participants">
+              <Title level={5} className="events-page__details-participants-title">
+                Participantes ({eventDetails.participantsCount})
+              </Title>
+              
+              {eventDetails.participantsPreview && eventDetails.participantsPreview.length > 0 ? (
+                <>
+                  <div className="events-page__details-participants-grid">
+                    {eventDetails.participantsPreview.map((p, idx) => (
+                      <div key={idx} className="events-page__details-participants-item">
+                        <UserAvatar person={p} size="default" />
+                        <Text className="events-page__details-participants-name" ellipsis>{p.name}</Text>
+                      </div>
+                    ))}
+                  </div>
+                  {eventDetails.participantsCount > 10 && (
+                    <div 
+                      className="events-page__details-participants-more"
+                      onClick={(e) => { e.stopPropagation(); openParticipants(eventDetails); }}
+                    >
+                      Ver todos os {eventDetails.participantsCount} participantes...
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Text type="secondary">Ainda ninguém confirmou presença. Seja o primeiro!</Text>
+              )}
+            </div>
+
           </div>
         )}
       </Modal>

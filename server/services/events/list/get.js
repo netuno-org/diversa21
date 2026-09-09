@@ -86,7 +86,7 @@ if (events) {
        FROM event_participant ep 
        JOIN people p ON ep.people_id = p.id 
        WHERE ep.event_id = ? AND ep.active = true 
-       LIMIT 3`,
+       LIMIT 10`,
       eventId
     );
 

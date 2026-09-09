@@ -289,7 +289,7 @@ _form.syncField(
 		.set("mandatory", false)
 		.set("max", 0)
 		.set("min", 0)
-		.set("name", "participant_count")
+		.set("name", "participants_count")
 		.set("properties", "{\"LARGE_NUMBERS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"MASK\":{\"default\":\"#.##0\",\"type\":\"STRING\",\"value\":\"#.##0\"},\"MASK_REVERSE\":{\"default\":\"true\",\"type\":\"BOOLEAN\",\"value\":\"true\"},\"MASK_SELECTONFOCUS\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"},\"SIGN\":{\"default\":\"false\",\"type\":\"BOOLEAN\",\"value\":\"false\"}}")
 		.set("rowspan", 0)
 		.set("tdheight", 0)

@@ -25,7 +25,6 @@
     margin-top: 16px;
   }
 
-  /* ------------------- CARD DO EVENTO ------------------- */
   &__card {
     overflow: hidden;
     border-radius: 10px;
@@ -110,13 +109,12 @@
 
   &__card-location {
     font-size: 13px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   &__card-participants {
     display: flex;
     align-items: center;
-    cursor: pointer;
     margin-top: 2px;
     flex-grow: 1;
 
@@ -249,6 +247,48 @@
         font-size: 15px;
         line-height: 1.6;
         color: #333;
+      }
+    }
+
+    &-participants {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+
+      &-title {
+        margin-bottom: 16px !important;
+      }
+
+      &-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 8px;
+        margin-bottom: 16px;
+      }
+
+      &-item {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+      }
+
+      &-name {
+        font-size: 14px;
+        margin-left: 8px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      &-more {
+        font-size: 14px;
+        color: #8b6aa2;
+        cursor: pointer;
+        font-weight: 500;
+        display: inline-block;
+        
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
