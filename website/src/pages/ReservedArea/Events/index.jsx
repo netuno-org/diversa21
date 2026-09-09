@@ -14,14 +14,6 @@ dayjs.locale('pt');
 
 const { Text, Title, Paragraph } = Typography;
 
-const getBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-
 const UserAvatar = ({ person, size, className = '' }) => {
   const [failed, setFailed] = useState(false);
 
@@ -115,28 +107,32 @@ function Events() {
 
   const closeParticipants = () => setParticipantsModal({ visible: false, event: null, loading: false, items: [] });
 
-  const processFormPayload = async (values) => {
-    let coverImageBase64 = null;
+  const processFormPayload = (values, currentEvent) => {
+    const formData = new FormData();
+    
+    if (values.name) formData.append('name', values.name);
+    if (values.description) formData.append('description', values.description);
+    if (values.location) formData.append('location', values.location);
+    if (values.city) formData.append('city', values.city?.value || values.city);
+    if (values.startDate) formData.append('startDate', values.startDate.format('YYYY-MM-DD HH:mm:ss'));
+
     if (values.coverImage && values.coverImage.length > 0) {
       const fileObj = values.coverImage[0].originFileObj;
       if (fileObj) {
-        coverImageBase64 = await getBase64(fileObj);
-      } else if (values.coverImage[0].url) {
-        coverImageBase64 = values.coverImage[0].url;
+        formData.append('coverImage', fileObj);
       }
+    } else if (currentEvent && currentEvent.coverImage) {
+      formData.append('clearCoverImage', 'true');
     }
-    return {
-      ...values,
-      city: values.city?.value || values.city,
-      startDate: values.startDate ? values.startDate.format('YYYY-MM-DD HH:mm:ss') : null,
-      coverImage: coverImageBase64,
-    };
+    
+    return formData;
   };
 
   const handleCreateEvent = async (values) => {
     if (createLoading) return;
     setCreateLoading(true);
-    const payload = await processFormPayload(values);
+    const payload = processFormPayload(values, null);
+    
     _service({
       url: 'events',
       method: 'POST',
@@ -165,6 +161,9 @@ function Events() {
         },
       ]);
     }
+    
+    const url = getCoverUrl(event.coverImage);
+    
     editForm.setFieldsValue({
       name: event.name,
       location: event.location,
@@ -174,7 +173,7 @@ function Events() {
       } : undefined,
       startDate: event.startDate ? dayjs(event.startDate) : null,
       description: event.description,
-      coverImage: event.coverImage ? [{ uid: '-1', name: 'imagem-capa.jpg', status: 'done', url: event.coverImage }] : [],
+      coverImage: url ? [{ uid: '-1', name: 'capa.jpg', status: 'done', url: url }] : [],
     });
     setEditModalVisible(true);
   };
@@ -182,8 +181,10 @@ function Events() {
   const handleUpdateEvent = async (values) => {
     if (!currentEvent) return;
     setCreateLoading(true);
-    const payload = await processFormPayload(values);
-    payload.eventUid = currentEvent.uid;
+    
+    const payload = processFormPayload(values, currentEvent);
+    payload.append('eventUid', currentEvent.uid);
+
     _service({
       url: 'events',
       method: 'PUT',
@@ -195,6 +196,10 @@ function Events() {
         editForm.resetFields();
         notification.success({ message: 'Evento atualizado com sucesso!' });
         fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
+        
+        if (eventDetails && eventDetails.uid === currentEvent.uid) {
+           setEventDetails(null);
+        }
       },
       fail: () => {
         setCreateLoading(false);
@@ -297,7 +302,7 @@ function Events() {
   return (
     <div className="events-page">
       <ListHeaderFilters
-        title="Eventos"
+        title="Descobrir eventos"
         description="Encontre eventos e atividades perto de si."
         onSearch={(v) => handleSearch(v ? v.trim() : '')}
         fullWidthSearch

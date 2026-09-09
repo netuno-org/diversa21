@@ -1,4 +1,4 @@
-import { _req, _db, _val, _user, _group } from "@netuno/server-types";
+import { _req, _db, _val, _user, _group, _image } from "@netuno/server-types";
 import { SUPER_ADMIN, MANAGEMENT } from "#core/lib/groups.js";
 import response from "#core/lib/response.js";
 
@@ -23,7 +23,9 @@ if (!personId && !isAdminOrManager) {
   const location = _req.getString('location');
   const cityUid = _req.getString('city');
   const startDate = _req.getString('startDate');
-  const coverImage = _req.getString('coverImage');
+  
+  const coverImage = _req.getFile("coverImage");
+  const clearCoverImage = _req.getBoolean("clearCoverImage");
 
   if (!eventUid || !name) {
     response.error("O identificador e o nome do evento são obrigatórios.");
@@ -32,7 +34,9 @@ if (!personId && !isAdminOrManager) {
     if (!dbEvent) {
       response.error("Evento não encontrado.");
     } else {
+      const eventId = dbEvent.getInt('id');
       const hostId = dbEvent.getInt('host_id');
+      
       if (!isAdminOrManager && hostId !== personId) {
         response.error("Não tem permissão para editar este evento.");
       } else {
@@ -44,11 +48,32 @@ if (!personId && !isAdminOrManager) {
           }
         }
 
-        _db.execute(
-          `UPDATE event SET name = ?, description = ?, location = ?, city_id = ?, start_date = NULLIF(?, '')::timestamp, cover_image = ?, updated_at = NOW() 
-           WHERE uid = ?::uuid`,
-          name, description, location, cityId, startDate, coverImage, eventUid
-        );
+        const data = _val.map()
+          .set("name", name)
+          .set("description", description)
+          .set("location", location)
+          .set("city_id", cityId);
+
+        if (startDate) {
+            data.set("start_date", startDate);
+        } else {
+            data.set("start_date", null);
+        }
+
+        if (coverImage) {
+            data.set(
+                "cover_image",
+                _image
+                    .init(coverImage)
+                    .resize(1200, 400)
+                    .file(coverImage.name(), "jpeg")
+            );
+        } 
+        else if (clearCoverImage) {
+            data.set("cover_image", ""); 
+        }
+
+        _db.update("event", eventId, data);
         response.successWithData(_val.map());
       }
     }
