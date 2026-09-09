@@ -162,6 +162,32 @@ function Reports() {
           hideInputs={true}
           hideLocation={true}
         />
+        <Row gutter={[16, 16]} className="reports__stats">
+        {STATUS_CARDS.map((status) => (
+          <Col xs={12} sm={12} xl={6} key={status.key}>
+            <Card
+              className={classNames("reports__stat-card", {
+                "reports__stat-card--active": statusFilter === status.key,
+              })}
+              onClick={() => {
+                setPage(1);
+                setSearchParams({ status: status.key });
+              }}
+            >
+              <div className="reports__stat-label">
+                {status.label}
+              </div>
+              {loading ? (
+                <Spin size="small" className="reports__stat-spin" />
+              ) : (
+                <Title level={2} className="reports__stat-value">
+                  {statusCounts[status.key] ?? 0}
+                </Title>
+              )}
+            </Card>
+          </Col>
+        ))}
+      </Row>
         <div className="reports__filters">
           <Row gutter={[16, 16]}>
             <Col xs={24} md={12}>
@@ -219,33 +245,6 @@ function Reports() {
           </Row>
         </div>
       </div>
-
-      <Row gutter={[16, 16]} className="reports__stats">
-        {STATUS_CARDS.map((status) => (
-          <Col xs={12} sm={12} xl={6} key={status.key}>
-            <Card
-              className={classNames("reports__stat-card", {
-                "reports__stat-card--active": statusFilter === status.key,
-              })}
-              onClick={() => {
-                setPage(1);
-                setSearchParams({ status: status.key });
-              }}
-            >
-              <div className="reports__stat-label">
-                {status.label}
-              </div>
-              {loading ? (
-                <Spin size="small" className="reports__stat-spin" />
-              ) : (
-                <Title level={2} className="reports__stat-value">
-                  {statusCounts[status.key] ?? 0}
-                </Title>
-              )}
-            </Card>
-          </Col>
-        ))}
-      </Row>
 
       <div className="reports__count">
         <Text type="secondary">
