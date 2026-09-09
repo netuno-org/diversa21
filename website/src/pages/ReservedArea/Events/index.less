@@ -5,6 +5,14 @@
     padding: 0 16px;
   }
 
+  &__tabs {
+    margin-top: 16px;
+  }
+
+  &__results-count {
+    margin-bottom: 16px;
+  }
+
   &__loading {
     text-align: center;
     padding: 40px;
@@ -14,9 +22,10 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
-    margin-top: 24px;
+    margin-top: 16px;
   }
 
+  /* ------------------- CARD DO EVENTO ------------------- */
   &__card {
     overflow: hidden;
     border-radius: 10px;
@@ -61,7 +70,7 @@
     }
   }
 
-  &__card-placeholder {
+  &__placeholder {
     color: rgba(255, 255, 255, 0.2) !important;
     margin: 0 !important;
     text-transform: uppercase;
@@ -152,6 +161,109 @@
         background-color: #7a5d8f !important;
         color: #fff !important;
         border-color: transparent !important;
+      }
+    }
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+
+    &-cover {
+      height: 240px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #5d466c;
+    }
+
+    &-title {
+      margin-bottom: 8px !important;
+      line-height: 1.2 !important;
+    }
+
+    &-host {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0;
+
+      &-info {
+        margin-left: 12px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      &-label {
+        font-size: 12px;
+      }
+
+      &-name {
+        font-weight: 600;
+      }
+    }
+
+    &-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+
+      &-item {
+        display: flex;
+        align-items: flex-start;
+      }
+
+      &-icon {
+        font-size: 20px;
+        color: #8b6aa2;
+        margin-right: 16px;
+        margin-top: 4px;
+      }
+
+      &-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      &-value {
+        font-weight: 600;
+        font-size: 15px;
+      }
+    }
+
+    &-about {
+      margin-top: 8px;
+
+      &-title {
+        margin-bottom: 12px !important;
+      }
+
+      &-text {
+        white-space: pre-line;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #333;
+      }
+    }
+
+    &-rsvp-btn {
+      font-weight: 600;
+
+      &--going {
+        background-color: #8b6aa2 !important;
+        border-color: transparent !important;
+        color: #fff !important;
+
+        &:hover, &:focus {
+          background-color: #7a5d8f !important;
+          color: #fff !important;
+        }
       }
     }
   }
