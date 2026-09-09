@@ -125,11 +125,6 @@ const resolveTargetDetails = (typeCode, targetId) => {
 const queryParams = _val.list();
 let whereClause = "WHERE r.active = true";
 
-if (statusFilter && statusFilter !== "all") {
-  whereClause += " AND rs.code = ?";
-  queryParams.add(statusFilter);
-}
-
 if (entityTypeFilter && entityTypeFilter !== "all") {
   whereClause += " AND ret.code = ?";
   queryParams.add(entityTypeFilter);
@@ -184,17 +179,6 @@ if (reporterUserSearch && reporterUserSearch.trim() !== "") {
   queryParams.add(reporterPattern);
 }
 
-const countQuery = `
-  SELECT COUNT(DISTINCT r.id) AS total_count
-  FROM report r
-  INNER JOIN report_entity_type ret ON r.report_entity_type_id = ret.id
-  INNER JOIN report_status rs ON r.report_status_id = rs.id
-  ${whereClause}
-`;
-
-const countResult = _db.queryFirst(countQuery, queryParams);
-const totalCount = countResult ? countResult.getInt("total_count") : 0;
-
 const statusCounts = _val.map().set("all", 0);
 
 const activeStatuses = _db.query(`SELECT code FROM report_status WHERE active = true ORDER BY id ASC`);
@@ -205,12 +189,13 @@ for (const st of activeStatuses) {
 const summaryDb = _db.query(`
   SELECT 
     rs.code,
-    COUNT(r.id) AS total
+    COUNT(DISTINCT r.id) AS total
   FROM report r
+  INNER JOIN report_entity_type ret ON r.report_entity_type_id = ret.id
   INNER JOIN report_status rs ON r.report_status_id = rs.id
-  WHERE r.active = true
+  ${whereClause}
   GROUP BY rs.code
-`);
+`, queryParams);
 
 let totalAll = 0;
 for (const row of summaryDb) {
@@ -219,6 +204,22 @@ for (const row of summaryDb) {
   totalAll += count;
 }
 statusCounts.set("all", totalAll);
+
+if (statusFilter && statusFilter !== "all") {
+  whereClause += " AND rs.code = ?";
+  queryParams.add(statusFilter);
+}
+
+const countQuery = `
+  SELECT COUNT(DISTINCT r.id) AS total_count
+  FROM report r
+  INNER JOIN report_entity_type ret ON r.report_entity_type_id = ret.id
+  INNER JOIN report_status rs ON r.report_status_id = rs.id
+  ${whereClause}
+`;
+
+const countResult = _db.queryFirst(countQuery, queryParams);
+const totalCount = countResult ? countResult.getInt("total_count") : 0;
 
 const sqlQuery = `
   SELECT 
