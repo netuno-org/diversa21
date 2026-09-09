@@ -3,7 +3,7 @@ import { _db, _val, _req } from "@netuno/server-types";
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
-if (!permissions.canManagePosts()) {
+if (!permissions.canManageReports()) {
   response.stopWithPermissionDenied();
 }
 

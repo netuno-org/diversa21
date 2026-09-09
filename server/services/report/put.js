@@ -4,7 +4,7 @@ import people from "#core/lib/people.js";
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
-if (!permissions.canManagePosts()) {
+if (!permissions.canManageReports()) {
   response.stopWithPermissionDenied();
 }
 

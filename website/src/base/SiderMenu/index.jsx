@@ -95,7 +95,10 @@ const menuItems = [
   },
 ];
 
-const RESTRICTED_KEYS = ['locations', 'reports'];
+const RESTRICTED_KEYS = {
+  locations: (user) => user.canManageLocations(),
+  reports: (user) => user.canManageReports(),
+};
 
 function SiderMenu() {
   const [selectedMenuKeys, setSelectedMenuKeys] = useState(["posts"]);
@@ -138,10 +141,8 @@ function SiderMenu() {
   }
 
   const filteredItems = menuItems.filter((item) => {
-    if (RESTRICTED_KEYS.includes(item.key)) {
-      return loggedUser.canManageInstitution();
-    }
-    return true;
+    const canAccess = RESTRICTED_KEYS[item.key];
+    return canAccess ? canAccess(loggedUser) : true;
   });
 
   const menuContent = (

@@ -174,10 +174,14 @@ function ReservedArea() {
       if (location.pathname === "/terms") {
         return <TermsPage />;
       }
-      if (location.pathname === "/reports") {
-        return <Reports />;
-      }
-      if (location.pathname.startsWith("/reports/")) {
+      if (location.pathname === "/reports" || location.pathname.startsWith("/reports/")) {
+        if (!people.canManageReports()) {
+          navigate('/');
+          return;
+        }
+        if (location.pathname === "/reports") {
+          return <Reports />;
+        }
         return <ReportPage uid={params.uid} />;
       }
       if (location.pathname === "/privacy") {
