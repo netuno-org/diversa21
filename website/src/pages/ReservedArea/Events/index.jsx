@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Card, Typography, Spin, Pagination, Button, Modal, Avatar, List, Form, Input, DatePicker, Select, notification, Dropdown, Upload, Tooltip } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, StarOutlined, CheckOutlined, MoreOutlined, UploadOutlined } from '@ant-design/icons';
+import { Card, Typography, Spin, Pagination, Button, Modal, Avatar, List, Form, Input, DatePicker, Select, notification, Dropdown, Upload, Tooltip, Tabs } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, StarOutlined, CheckOutlined, MoreOutlined, UploadOutlined, AppstoreOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters';
@@ -22,7 +22,7 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const UserAvatar = ({ person, size, className = '' }) => {
+const UserAvatar = ({ person, size, style }) => {
   const [failed, setFailed] = useState(false);
 
   if (!person) return null;
@@ -44,10 +44,14 @@ const UserAvatar = ({ person, size, className = '' }) => {
       <Avatar
         size={size}
         src={src}
-        className={`events-page__avatar ${className}`}
         onError={() => {
           if (!failed) setFailed(true);
           return true;
+        }}
+        style={{
+          ...style,
+          backgroundColor: '#f0f2f5',
+          border: style?.border || '1px solid #fff',
         }}
       />
     </Tooltip>
@@ -56,6 +60,7 @@ const UserAvatar = ({ person, size, className = '' }) => {
 
 function Events() {
   const loggedUser = usePeople();
+  const [showGoingOnly, setShowGoingOnly] = useState(false);
   const [participantsModal, setParticipantsModal] = useState({ visible: false, event: null, loading: false, items: [] });
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -66,7 +71,9 @@ function Events() {
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
   
-  const requestData = useMemo(() => ({}), []);
+  const requestData = useMemo(() => ({
+    goingOnly: showGoingOnly
+  }), [showGoingOnly]);
 
   const { items: events, loading, pagination, handlePaginationChange, handleSearch, fetchList } = useFilteredPaginatedList({
     serviceUrl: 'events/list',
@@ -291,13 +298,49 @@ function Events() {
         }}
       />
 
+      <Tabs
+        activeKey={showGoingOnly ? "going" : "general"}
+        onChange={(key) => {
+          setShowGoingOnly(key === "going");
+          if (pagination.current !== 1) {
+            handlePaginationChange(1, pagination.size);
+          }
+        }}
+        items={[
+          {
+            key: "general",
+            label: (
+              <span>
+                <AppstoreOutlined style={{ marginRight: 8 }} />
+                Geral
+              </span>
+            ),
+          },
+          {
+            key: "going",
+            label: (
+              <span>
+                <StarOutlined style={{ marginRight: 8 }} />
+                Com interesse
+              </span>
+            ),
+          },
+        ]}
+        style={{ marginTop: 16 }}
+      />
+
+      <div style={{ marginBottom: 16 }}>
+        <Text type="secondary">
+          {pagination.total} {pagination.total === 1 ? 'Evento Encontrado' : 'Eventos Encontrados'}
+          {showGoingOnly ? ' marcados com interesse' : ''}
+        </Text>
+      </div>
+
       {loading && (
-        <div className="events-page__loading">
-          <Spin size="large" />
-        </div>
+        <div style={{ textAlign: 'center', padding: '40px' }}><Spin size="large" /></div>
       )}
 
-      <div className="events-page__grid">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', marginTop: '16px' }}>
         {!loading && events.map((ev) => {
           const locationText = [
             ev.location, 
@@ -311,14 +354,21 @@ function Events() {
               key={ev.uid} 
               bordered={false}
               hoverable
-              className="events-page__card"
+              styles={{ body: { padding: '14px 14px 18px 14px' } }}
+              style={{ overflow: 'hidden', borderRadius: '10px', display: 'flex', flexDirection: 'column' }}
               cover={
-                <div 
-                  className="events-page__card-cover"
-                  style={{ backgroundImage: coverUrl ? `url(${coverUrl})` : 'linear-gradient(135deg, #8b6aa2 0%, #5d466c 100%)' }}
-                >
+                <div style={{ 
+                  height: '150px', 
+                  position: 'relative', 
+                  backgroundImage: coverUrl ? `url(${coverUrl})` : 'linear-gradient(135deg, #8b6aa2 0%, #5d466c 100%)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}>
                   {ev.canEdit && (
-                    <div className="events-page__card-cover-actions" onClick={(e) => e.stopPropagation()}>
+                    <div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: 10, right: 10 }}>
                       <Dropdown 
                         placement="bottomRight"
                         menu={{
@@ -329,43 +379,43 @@ function Events() {
                         }} 
                         trigger={['click']}
                       >
-                        <Button shape="circle" size="small" icon={<MoreOutlined />} />
+                        <Button shape="circle" size="small" type="text" icon={<MoreOutlined style={{ color: '#fff', fontSize: '18px' }} />} style={{ backgroundColor: 'rgba(0,0,0,0.5)', border: 'none' }} />
                       </Dropdown>
                     </div>
                   )}
-                  {!coverUrl && <Title level={3} className="events-page__card-placeholder">EVENTO</Title>}
+                  {!coverUrl && <Title level={3} style={{ color: 'rgba(255,255,255,0.2)', margin: 0, textTransform: 'uppercase', letterSpacing: '2px' }}>EVENTO</Title>}
                 </div>
               }
             >
-              <div className="events-page__card-content">
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 
-                <div className="events-page__card-host">
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                   <UserAvatar person={ev.host} size="small" />
-                  <Text type="secondary" className="events-page__card-host-name">{ev.host?.name}</Text>
+                  <Text type="secondary" style={{ fontSize: '12px', marginLeft: '8px' }}>{ev.host?.name}</Text>
                 </div>
 
-                <Text className="events-page__card-date">
+                <Text style={{ color: '#8b6aa2', fontWeight: 600, fontSize: '13px', marginBottom: '4px' }}>
                   {formatEventDate(ev.startDate)}
                 </Text>
                 
-                <Title level={5} className="events-page__card-title" ellipsis={{ rows: 2 }}>
+                <Title level={5} style={{ margin: '0 0 4px 0', fontSize: '16px', lineHeight: 1.3 }} ellipsis={{ rows: 2 }}>
                   {ev.name}
                 </Title>
                 
-                <Text type="secondary" className="events-page__card-location" ellipsis>
+                <Text type="secondary" style={{ fontSize: '13px', marginBottom: '4px' }} ellipsis>
                   {locationText}
                 </Text>
 
-                <div className="events-page__card-participants" onClick={() => openParticipants(ev)}>
-                  <Text type="secondary" className="events-page__card-participants-text">
+                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginTop: '2px', flexGrow: 1 }} onClick={() => openParticipants(ev)}>
+                  <Text type="secondary" style={{ fontSize: '13px' }}>
                     {ev.participantsCount || 0} {ev.participantsCount === 1 ? 'com interesse' : 'com interesse'}
                   </Text>
                   {ev.participantsPreview && ev.participantsPreview.length > 0 && (
                     <>
-                      <Text type="secondary" className="events-page__card-participants-dot">·</Text>
+                      <Text type="secondary" style={{ fontSize: '13px', margin: '0 4px' }}>·</Text>
                       <Avatar.Group maxCount={3} size="small" maxStyle={{ color: '#fff', backgroundColor: '#8b6aa2' }}>
                         {ev.participantsPreview.map((p, idx) => (
-                          <UserAvatar key={idx} person={p} size="small" className="events-page__avatar--bordered" />
+                          <UserAvatar key={idx} person={p} size="small" style={{ border: '1px solid #fff' }} />
                         ))}
                       </Avatar.Group>
                     </>
@@ -373,11 +423,20 @@ function Events() {
                 </div>
 
                 <Button 
-                  className={`events-page__rsvp-btn ${ev.isGoing ? 'events-page__rsvp-btn--going' : ''}`}
+                  type={ev.isGoing ? 'primary' : 'default'} 
                   loading={actionLoadingUid === ev.uid} 
                   onClick={(e) => toggleGoing(ev, e)}
                   block
                   icon={ev.isGoing ? <CheckOutlined /> : <StarOutlined />}
+                  style={{ 
+                    marginTop: 16, 
+                    height: '36px', 
+                    borderRadius: '6px', 
+                    fontWeight: 600,
+                    backgroundColor: ev.isGoing ? '#8b6aa2' : '#f0f2f5',
+                    borderColor: 'transparent',
+                    color: ev.isGoing ? '#fff' : '#050505'
+                  }}
                 >
                   {ev.isGoing ? 'Presença Confirmada' : 'Com interesse'}
                 </Button>
@@ -387,7 +446,7 @@ function Events() {
         })}
       </div>
 
-      <div className="events-page__footer">
+      <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
         <Pagination total={pagination.total} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
       </div>
 
@@ -402,7 +461,7 @@ function Events() {
             <Input placeholder="Ex: Encontro de Comunidade" />
           </Form.Item>
           <Form.Item name="startDate" label="Data e Hora" rules={[{ required: true, message: 'Selecione a data e hora do evento!' }]}>
-            <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Selecione data e hora" />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm" style={{ width: '100%' }} placeholder="Selecione data e hora" />
           </Form.Item>
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
             <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
@@ -427,7 +486,7 @@ function Events() {
             <Input placeholder="Ex: Encontro de Comunidade" />
           </Form.Item>
           <Form.Item name="startDate" label="Data e Hora" rules={[{ required: true, message: 'Selecione a data e hora do evento!' }]}>
-            <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Selecione data e hora" />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm" style={{ width: '100%' }} placeholder="Selecione data e hora" />
           </Form.Item>
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
             <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
@@ -443,7 +502,7 @@ function Events() {
 
       <Modal title={participantsModal.event ? `Participantes — ${participantsModal.event.name}` : 'Participantes'} open={participantsModal.visible} onCancel={closeParticipants} footer={null}>
         {participantsModal.loading ? (
-          <div className="events-page__loading"><Spin /></div>
+          <div style={{ textAlign: 'center' }}><Spin /></div>
         ) : (
           <List dataSource={participantsModal.items} renderItem={(p) => (
             <List.Item>

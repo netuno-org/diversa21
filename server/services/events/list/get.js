@@ -16,6 +16,7 @@ if (userId) {
 
 const term = _req.getString('term');
 const location = _req.getString('location');
+const goingOnly = _req.getBoolean('goingOnly');
 const page = _req.getInt('page', 1);
 const pageSize = 10;
 const offset = (page - 1) * pageSize;
@@ -28,24 +29,30 @@ let sql = `SELECT e.*, p.uid as host_uid, p.name as host_name, p.avatar as host_
            LEFT JOIN people p ON e.host_id = p.id 
            LEFT JOIN city c ON e.city_id = c.id 
            LEFT JOIN state s ON c.state_id = s.id 
-           LEFT JOIN country co ON s.country_id = co.id 
-           WHERE e.active = true`;
-let countSql = `SELECT COUNT(*) as total FROM event e LEFT JOIN city c ON e.city_id = c.id WHERE e.active = true`;
+           LEFT JOIN country co ON s.country_id = co.id`;
+
+let countSql = `SELECT COUNT(*) as total FROM event e LEFT JOIN city c ON e.city_id = c.id`;
+
+let where = ` WHERE e.active = true`;
 let params = [];
 
+if (goingOnly && personId) {
+  where += ` AND EXISTS (SELECT 1 FROM event_participant ep_filter WHERE ep_filter.event_id = e.id AND ep_filter.people_id = ? AND ep_filter.active = true)`;
+  params.push(personId);
+}
+
 if (term) {
-  sql += ` AND (e.name ILIKE ? OR e.description ILIKE ?)`;
-  countSql += ` AND (e.name ILIKE ? OR e.description ILIKE ?)`;
+  where += ` AND (e.name ILIKE ? OR e.description ILIKE ?)`;
   params.push(`%${term}%`, `%${term}%`);
 }
 
 if (location) {
-  sql += ` AND (e.location ILIKE ? OR c.name ILIKE ?)`;
-  countSql += ` AND (e.location ILIKE ? OR c.name ILIKE ?)`;
+  where += ` AND (e.location ILIKE ? OR c.name ILIKE ?)`;
   params.push(`%${location}%`, `%${location}%`);
 }
 
-sql += ` ORDER BY e.created_at DESC LIMIT ? OFFSET ?`;
+sql += where + ` ORDER BY e.created_at DESC LIMIT ? OFFSET ?`;
+countSql += where;
 
 const dbCount = _db.queryFirst(countSql, ...params);
 const total = dbCount ? dbCount.getLong('total') : 0;
