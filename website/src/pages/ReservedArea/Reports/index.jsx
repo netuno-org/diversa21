@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Navigate, useNavigate } from "react-router-dom";
 import { Card, Row, Col, Typography, Tag, Empty, Spin, Select, Input, Pagination, DatePicker } from "antd";
 import {
   ClockCircleOutlined,
@@ -84,6 +84,7 @@ function Reports() {
   const [totalCount, setTotalCount] = useState(0);
   const [statusCounts, setStatusCounts] = useState(EMPTY_STATUS_COUNTS);
 
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get("status") || "all";
 
@@ -143,6 +144,15 @@ function Reports() {
     const status = searchParams.get("status");
     const query = status ? `?status=${status}` : "";
 
+    navigate(`/reports/${uid}${query}`);
+  };
+
+  const handleCardMouseDown = (event, uid) => {
+    if (event.button !== 1) return;
+
+    const status = searchParams.get("status");
+    const query = status ? `?status=${status}` : "";
+
     window.open(`/reports/${uid}${query}`, "_blank", "noopener,noreferrer");
   };
 
@@ -163,31 +173,31 @@ function Reports() {
           hideLocation={true}
         />
         <Row gutter={[16, 16]} className="reports__stats">
-        {STATUS_CARDS.map((status) => (
-          <Col xs={12} sm={12} xl={6} key={status.key}>
-            <Card
-              className={classNames("reports__stat-card", {
-                "reports__stat-card--active": statusFilter === status.key,
-              })}
-              onClick={() => {
-                setPage(1);
-                setSearchParams({ status: status.key });
-              }}
-            >
-              <div className="reports__stat-label">
-                {status.label}
-              </div>
-              {loading ? (
-                <Spin size="small" className="reports__stat-spin" />
-              ) : (
-                <Title level={2} className="reports__stat-value">
-                  {statusCounts[status.key] ?? 0}
-                </Title>
-              )}
-            </Card>
-          </Col>
-        ))}
-      </Row>
+          {STATUS_CARDS.map((status) => (
+            <Col xs={12} sm={12} xl={6} key={status.key}>
+              <Card
+                className={classNames("reports__stat-card", {
+                  "reports__stat-card--active": statusFilter === status.key,
+                })}
+                onClick={() => {
+                  setPage(1);
+                  setSearchParams({ status: status.key });
+                }}
+              >
+                <div className="reports__stat-label">
+                  {status.label}
+                </div>
+                {loading ? (
+                  <Spin size="small" className="reports__stat-spin" />
+                ) : (
+                  <Title level={2} className="reports__stat-value">
+                    {statusCounts[status.key] ?? 0}
+                  </Title>
+                )}
+              </Card>
+            </Col>
+          ))}
+        </Row>
         <div className="reports__filters">
           <Row gutter={[16, 16]}>
             <Col xs={24} md={12}>
@@ -268,7 +278,7 @@ function Reports() {
             const preview = getReportPreview(report);
 
             return (
-              <Card className="reports__card" onClick={() => handleCardClick(report.uid)} key={report.uid} >
+              <Card className="reports__card" onClick={() => handleCardClick(report.uid)} onMouseDown={(event) => handleCardMouseDown(event, report.uid)} key={report.uid} >
                 <div className="reports__card-header">
                   <div className="reports__card-identity">
                     <div className="reports__card-icon">
