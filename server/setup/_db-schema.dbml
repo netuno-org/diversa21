@@ -157,6 +157,7 @@ Table report {
   entity int [note: 'Entidade']
   report_entity_type_id int [ref: > report_entity_type.id, note: 'Tipo']
   report_status_id int [ref: > report_status.id, note: 'Estado']
+  resolution_notes text [note: 'Notas']
   resolved_at timestamp [note: 'Resolvido Em']
   resolved_by_id int [ref: > people.id, note: 'Resolvido Por']
   Note: 'Denúncia'

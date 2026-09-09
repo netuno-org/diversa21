@@ -10,7 +10,8 @@
       "type": "uid"
     },
     "page": {
-      "type": "integer"
+      "type": "string",
+      "pattern": "^\\d+$"
     }
   },
   "required": [

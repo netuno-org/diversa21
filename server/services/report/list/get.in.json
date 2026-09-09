@@ -3,11 +3,12 @@
     "report"
   ],
   "summary": "List Reports",
-  "description": "List content moderation reports with pagination (10 per page), status, entityType, reportedUser and reporterUser filters.",
+  "description": "List content moderation reports with pagination, status, entityType, reportedUser, reporterUser, startDate and endDate filters.",
   "type": "object",
   "properties": {
     "page": {
-      "type": "integer"
+      "type": "string",
+      "pattern": "^\\d+$"
     },
     "status": {
       "type": "string"
@@ -19,6 +20,12 @@
       "type": "string"
     },
     "reporterUser": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
       "type": "string"
     }
   }
