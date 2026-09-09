@@ -138,7 +138,7 @@ function Notifications() {
               key: 'unread', label: (
                 <Space size="small">
                   Não Lidas
-                  <Tag color="#FDBA3C" variant="solid" style={{ borderRadius: '32px' }}>
+                  <Tag color="#FEAF04" variant="solid" style={{ borderRadius: '32px' }}>
                     {unreadCount}
                   </Tag>
                 </Space>

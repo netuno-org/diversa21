@@ -178,7 +178,7 @@ function SiderMenu() {
               onClick={() => setDrawerOpen(false)}
               className="drawer-close-btn"
             />
-            <img alt="logo" src="/images/logo.svg" />
+            <img alt="logo" src="/images/logo.png" />
           </div>
           {menuContent}
         </Drawer>
@@ -189,7 +189,7 @@ function SiderMenu() {
   return (
     <Sider className="sider-menu">
       <div className="logo-container">
-        <img alt="logo" src="/images/logo.svg" />
+        <img alt="logo" src="/images/logo.png" />
       </div>
       {menuContent}
     </Sider>

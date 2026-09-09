@@ -248,17 +248,17 @@
     .anticon,
     svg {
       font-size: 16px;
-      color: #8a6aa2;
+      color: @primary-color;
     }
   }
 
   &__detail-link {
-    color: #8a6aa2;
+    color: @primary-color;
     font-weight: 500;
     transition: all 0.2s;
 
     &:hover {
-      color: #6d4f8a;
+      color: #8a6aa2;
     }
   }
 
@@ -437,9 +437,9 @@
   &__gallery-add {
     aspect-ratio: 1 / 1;
     border-radius: 8px;
-    border: 1.5px dashed darken(#8a6aa2, 5%);
+    border: 1.5px dashed darken(@primary-color, 5%);
     background: rgba(138, 106, 162, 0.04);
-    color: #8a6aa2;
+    color: @primary-color;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -452,7 +452,7 @@
 
     &:hover:not(:disabled) {
       background: rgba(138, 106, 162, 0.08);
-      border-color: #8a6aa2;
+      border-color: @primary-color;
     }
 
     &:disabled {
