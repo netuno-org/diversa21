@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Navigate, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Card, Row, Col, Typography, Tag, Empty, Spin, Select, Input, Pagination, DatePicker } from "antd";
 import {
   ClockCircleOutlined,

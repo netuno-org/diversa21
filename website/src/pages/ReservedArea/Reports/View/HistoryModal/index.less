@@ -1,0 +1,49 @@
+.report-history-modal {
+  &__body {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+
+  &__item {
+    padding-bottom: 4px;
+  }
+
+  &__status {
+    margin-inline-end: 0;
+    margin-bottom: 6px;
+  }
+
+  &__item-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  &__person {
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  &__notes {
+    width: 90%;
+    padding: 8px;
+    background: #fafafa;
+    border: 1px dashed #f0f0f0;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-style: italic;
+
+    &--resolved {
+      border-color: #50A063;
+    }
+
+    &--rejected {
+      border-color: #ff4d4f;
+    }
+  }
+}

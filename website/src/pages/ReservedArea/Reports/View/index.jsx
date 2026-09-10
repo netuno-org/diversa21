@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import _service from "@netuno/service-client";
+import globalNotification from "../../../../common/globalNotification.js";
+
+import TimeAgo from "../../../../components/TimeAgo";
+import HistoryModal from "./HistoryModal";
+
 import {
   Avatar,
   Button,
@@ -18,15 +24,12 @@ import {
   CheckOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  HistoryOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { LuReply } from "react-icons/lu";
 import { VscCommentDiscussionQuote } from "react-icons/vsc";
 import { RiArticleLine } from "react-icons/ri";
-import _service from "@netuno/service-client";
-
-import TimeAgo from "../../../../components/TimeAgo";
-import globalNotification from "../../../../common/globalNotification.js";
 
 import "./index.less";
 
@@ -59,26 +62,31 @@ const STATUS_CONFIG = {
   },
 };
 
-function getReportPreview(report) {
-  const content = report.content || {};
-  if (report.entityType === "people") {
-    return content.name || "";
+function getReportAuthor(report) {
+  const content = report?.content;
+  if (!content) {
+    return null;
   }
-  if (report.entityType === "forum_topic") {
-    return content.title || content.content || "";
+  return content.author || (report.entityType === "people" ? content : null);
+}
+
+function peopleAvatarUrl(people) {
+  if (people?.avatar && people?.uid) {
+    return _service.url(`/asset?uid=${people.uid}&type=avatar&entity=people`);
   }
-  return content.content || "";
+  return "/images/profile-default.png";
 }
 
 function ReportPage({ uid }) {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-  const [solution, setSolution] = useState("");
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loadedUid, setLoadedUid] = useState(uid);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
+  
   const [form] = Form.useForm();
   const actionRef = useRef(null);
 
@@ -95,17 +103,18 @@ function ReportPage({ uid }) {
     if (!uid) {
       return;
     }
-
     _service({
       method: "GET",
       url: "/report",
       data: { reportUid: uid, page: currentPage },
       success: ({ json }) => {
         const data = json?.data || null;
+        const nextNotes = data?.resolutionNotes || "";
         setReport(data);
         setTotalCount(data?.pagination?.totalCount ?? 0);
-        setSolution(data?.resolutionNotes || "");
-        form.setFieldsValue({ solution: data?.resolutionNotes || "" });
+        if (data?.uid !== report?.uid || nextNotes !== (report?.resolutionNotes || "")) {
+          form.setFieldsValue({ solution: nextNotes });
+        }
         setLoading(false);
         onDone?.();
       },
@@ -113,7 +122,6 @@ function ReportPage({ uid }) {
         console.log("Service Error", e);
         setReport(null);
         setTotalCount(0);
-        setSolution("");
         setLoading(false);
         onDone?.();
       },
@@ -126,23 +134,19 @@ function ReportPage({ uid }) {
   }, [uid, page]);
 
   useEffect(() => {
-    const people = report?.content?.author
-      || (report?.entityType === "people" ? report?.content : null);
-
-    if (people?.avatar && people?.uid) {
-      setAvatarUrl(
-        _service.url(`/asset?uid=${people.uid}&type=avatar&entity=people&t=${Date.now()}`)
-      );
-      return;
-    }
-    setAvatarUrl("/images/profile-default.png");
+    setAvatarUrl(peopleAvatarUrl(getReportAuthor(report)));
   }, [report]);
 
   const handleStatusChange = (status, notesRaw = "") => {
     const notes = notesRaw.trim();
     const previousStatus = report?.statusCode;
+    const previousNotes = report?.resolutionNotes;
+
     setUpdating(true);
-    setReport((prev) => (prev ? { ...prev, statusCode: status } : prev));
+    setReport((prev) => (prev
+      ? { ...prev, statusCode: status, resolutionNotes: notes || prev.resolutionNotes }
+      : prev));
+      
     _service({
       method: "PUT",
       url: "/report",
@@ -169,7 +173,9 @@ function ReportPage({ uid }) {
       },
       fail: (e) => {
         console.log("Service Error", e);
-        setReport((prev) => (prev ? { ...prev, statusCode: previousStatus } : prev));
+        setReport((prev) => (prev
+          ? { ...prev, statusCode: previousStatus, resolutionNotes: previousNotes }
+          : prev));
         globalNotification.error({
           title: "Não foi possível atualizar",
           description: "Tente novamente em instantes.",
@@ -210,14 +216,18 @@ function ReportPage({ uid }) {
     );
   }
 
-  const type = TYPE_CONFIG[report.entityType];
-  const statusConfig = STATUS_CONFIG[report.statusCode];
-  const preview = getReportPreview(report);
-  const items = report.items || [];
-
-  const author = report.content?.author
-    || (report.entityType === "people" ? report.content : null);
-
+  const iconType = TYPE_CONFIG[report.entityType];
+  const reportStatus = STATUS_CONFIG[report.statusCode];
+  const reportedContent = report.content || {};
+  const reportList = report.items || [];
+  const reportHistory = report.history || [];
+  const author = getReportAuthor(report);
+  const isRejected = report.statusCode === "rejected";
+  const actionClass = isRejected ? "reject" : "resolve";
+  const isTopic = report.entityType === "forum_topic";
+  const previewTitle = isTopic ? reportedContent.title : "";
+  const previewBody = report.entityType === "people" ? "" : (reportedContent.content || "");
+  const showResolvedBy = report.statusCode !== "pending" && report.resolvedBy?.name;
   const isEditing = report.statusCode === "pending";
 
   return (
@@ -242,7 +252,7 @@ function ReportPage({ uid }) {
                 shape="square"
               />
             ) : (
-              <div className="report-page__icon">{type?.icon}</div>
+              <div className="report-page__icon">{iconType?.icon}</div>
             )}
             <div className="report-page__heading">
               {author?.name && (
@@ -261,44 +271,43 @@ function ReportPage({ uid }) {
                   </span>
                 )
               )}
-              {report.content?.moment && (
+              {reportedContent.moment && (
                 <Text type="secondary" className="report-page__published-at">
-                  <TimeAgo sentAt={report.content.moment} />
+                  <TimeAgo sentAt={reportedContent.moment} />
                 </Text>
               )}
             </div>
           </div>
-
           <div className="report-page__container-tag-type">
             <div className="report-page__type">
-              {type?.icon && (
-                <span className="report-page__type-icon">{type.icon}</span>
+              {iconType?.icon && (
+                <span className="report-page__type-icon">{iconType.icon}</span>
               )}
               <Title level={5} className="report-page__title">
                 {report.entityTypeTitle}
               </Title>
             </div>
             <Tag
-              icon={statusConfig.icon}
-              color={statusConfig.color}
+              icon={reportStatus.icon}
+              color={reportStatus.color}
               variant="filled"
               className="report-page__status-tag"
             >
-              {statusConfig.label}
+              {reportStatus.label}
             </Tag>
           </div>
         </div>
-        {preview && (
+        {(previewTitle || previewBody || showResolvedBy) && (
           <div className="report-page__preview">
-            {report.entityType === "forum_topic" && report.content?.title && (
-              <Title level={5}>{report.content.title}</Title>
+            {previewTitle && (
+              <Title level={5}>{previewTitle}</Title>
             )}
-            <Paragraph>
-              {report.entityType === "forum_topic" && report.content?.content
-                ? report.content.content
-                : `“${preview}”`}
-            </Paragraph>
-            {report.statusCode !== "pending" && report.resolvedBy?.name && (
+            {previewBody && (
+              <Paragraph>
+                {isTopic ? previewBody : `“${previewBody}”`}
+              </Paragraph>
+            )}
+            {showResolvedBy && (
               <div className="report-page__resolved-info">
                 <Text type="secondary" className="report-page__resolved-by">
                   Analisado por {report.resolvedBy.name}
@@ -314,7 +323,7 @@ function ReportPage({ uid }) {
           {isEditing ? (
             <Form
               form={form}
-              initialValues={{ solution }}
+              initialValues={{ solution: report.resolutionNotes || "" }}
               onFinish={handleSaveSolution}
               className="report-page__form"
             >
@@ -362,59 +371,69 @@ function ReportPage({ uid }) {
             </Form>
           ) : (
             <>
-              <div className={`report-page__solution report-page__solution--${report.statusCode === "rejected" ? "rejected" : "resolved"}`}>
+              <div className={`report-page__solution report-page__solution--${isRejected ? "rejected" : "resolved"}`}>
                 {report.resolutionNotes}
               </div>
-              <Space>
+              <div className="report-page__solution-actions">
+                {reportHistory.length >= 0 && (
+                  <Button
+                    type="link"
+                    className="report-page__history-button"
+                    icon={<HistoryOutlined />}
+                    onClick={() => setHistoryOpen(true)}
+                  >
+                    Histórico
+                  </Button>
+                )}
                 <Button
                   type="dashed"
-                  className={`report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"} report-page__action-${report.statusCode === "rejected" ? "reject" : "resolve"}--confirmed`}
-                  icon={report.statusCode === "rejected" ? <CloseCircleOutlined /> : <CheckOutlined />}
+                  className={`report-page__action-${actionClass} report-page__action-${actionClass}--confirmed`}
+                  icon={isRejected ? <CloseCircleOutlined /> : <CheckOutlined />}
                   loading={updating}
                   onClick={() => handleStatusChange("pending")}
                 >
                   Clique Para Alterar
                 </Button>
-              </Space>
+              </div>
             </>
           )}
         </div>
       </Card>
-
+      <HistoryModal
+        open={historyOpen}
+        history={reportHistory}
+        reportStatus={STATUS_CONFIG}
+        onClose={() => setHistoryOpen(false)}
+      />
       <div className="report-page__count">
         <Text type="secondary">
-          {items.length} {items.length > 1 ? "Denúncias" : "Denúncia"} Encontrada{items.length > 1 ? "s" : ""}
+          {reportList.length} {reportList.length > 1 ? "Denúncias" : "Denúncia"} Encontrada{reportList.length > 1 ? "s" : ""}
         </Text>
       </div>
-
       <div className="report-page__items">
         {loading ? (
           <div className="report-page__items-loading">
             <Spin />
           </div>
-        ) : items.length === 0 ? (
+        ) : reportList.length === 0 ? (
           <Empty description="Nenhum registo individual encontrado." />
         ) : (
-          items.map((item) => (
+          reportList.map((item) => (
             <Card key={item.uid} className="report-page__item">
-              <div className="report-page__item-header">
-                <div className="report-page__reporter">
-                  <Avatar
-                    className="report-page__avatar"
-                    size={50}
-                    src={item.reporter?.avatar && item.reporter?.uid
-                      ? _service.url(`/asset?uid=${item.reporter.uid}&type=avatar&entity=people&t=${Date.now()}`)
-                      : "/images/profile-default.png"}
-                    icon={<UserOutlined />}
-                    shape="square"
-                  />
+              <div className="report-page__reporter">
+                <Avatar
+                  className="report-page__avatar"
+                  size={50}
+                  src={peopleAvatarUrl(item.reporter)}
+                  icon={<UserOutlined />}
+                  shape="square"
+                />
+                <div>
+                  <Text className="report-page__author-info">
+                    {item.reporter?.name}
+                  </Text>
                   <div>
-                    <Text className="report-page__author-info">
-                      {item.reporter?.name}
-                    </Text>
-                    <div>
-                      <TimeAgo sentAt={item.moment} />
-                    </div>
+                    <TimeAgo sentAt={item.moment} />
                   </div>
                 </div>
               </div>
@@ -425,18 +444,15 @@ function ReportPage({ uid }) {
                   </Tag>
                 )}
                 {item.description && (
-                  <div>
-                    <Paragraph className="report-page__item-description">
-                      {item.description}
-                    </Paragraph>
-                  </div>
+                  <Paragraph className="report-page__item-description">
+                    {item.description}
+                  </Paragraph>
                 )}
               </div>
             </Card>
           ))
         )}
       </div>
-
       {!loading && totalCount > 0 && (
         <div className="report-page__pagination">
           <Pagination
@@ -450,5 +466,4 @@ function ReportPage({ uid }) {
     </section>
   );
 }
-
 export default ReportPage;

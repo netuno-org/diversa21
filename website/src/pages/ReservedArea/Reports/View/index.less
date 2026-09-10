@@ -128,10 +128,6 @@
     textarea {
       width: 100%;
     }
-
-    .ant-space {
-      margin-top: 14px;
-    }
   }
 
   &__form {
@@ -223,6 +219,18 @@
     }
   }
 
+  &__solution-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  &__history-button {
+    padding: 0;
+  }
+
   &__resolved-info {
     display: flex;
     flex-wrap: wrap;
@@ -303,14 +311,6 @@
     margin-bottom: 0 !important;
   }
 
-  &__item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
   &__reason {
     padding-left: 0;
   }
@@ -330,6 +330,7 @@
     align-items: center;
     gap: 12px;
     min-width: 0;
+    margin-bottom: 8px;
   }
 
   &__avatar {
