@@ -14,7 +14,7 @@ dayjs.locale('pt');
 
 const { Text, Title, Paragraph } = Typography;
 
-const UserAvatar = ({ person, size, className = '' }) => {
+const UserAvatar = ({ person, size, className = '', onClick }) => {
   const [failed, setFailed] = useState(false);
 
   if (!person) return null;
@@ -36,6 +36,8 @@ const UserAvatar = ({ person, size, className = '' }) => {
         size={size}
         src={src}
         className={`events-page__avatar ${className}`}
+        onClick={onClick}
+        style={onClick ? { cursor: 'pointer' } : undefined}
         onError={() => {
           if (!failed) setFailed(true);
           return true;
@@ -64,18 +66,7 @@ function Events() {
     goingOnly: showGoingOnly
   }), [showGoingOnly]);
 
-  // CORREÇÃO AQUI: Extração de todos os handlers exatamente como nas Instituições
-  const { 
-    items: events, 
-    loading, 
-    pagination, 
-    handlePaginationChange, 
-    handleSearch, 
-    handleLocationChange,
-    handleLocationClear,
-    handleSearchClear,
-    fetchList 
-  } = useFilteredPaginatedList({
+  const { items: events, loading, pagination, handlePaginationChange, handleSearch, handleLocationChange, handleLocationClear, handleSearchClear, fetchList } = useFilteredPaginatedList({
     serviceUrl: 'events/list',
     requestData,
   });
@@ -104,6 +95,18 @@ function Events() {
     setEventDetails(null);
     searchParams.delete('uid');
     setSearchParams(searchParams);
+  };
+
+  const closeParticipants = () => setParticipantsModal({ visible: false, event: null, loading: false, items: [] });
+
+  const goToProfile = (person, e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    closeParticipants();
+    handleCloseModal();
+    navigate(`/u/${person?.username}`);
   };
 
   const handleCitySearch = (value) => {
@@ -139,8 +142,6 @@ function Events() {
       fail: () => setParticipantsModal({ visible: true, event, loading: false, items: [] }),
     });
   };
-
-  const closeParticipants = () => setParticipantsModal({ visible: false, event: null, loading: false, items: [] });
 
   const processFormPayload = (values, currentEvent) => {
     const formData = new FormData();
@@ -357,7 +358,6 @@ function Events() {
   return (
     <div className="events-page">
       <div className="events-page__header">
-        {/* CORREÇÃO AQUI: Passar todos os handlers para o componente igual às Instituições */}
         <ListHeaderFilters
           title="Eventos"
           description="Encontre eventos e atividades perto de si."
@@ -470,7 +470,11 @@ function Events() {
             >
               <div className="events-page__card-content">
                 
-                <div className="events-page__card-host">
+                <div 
+                  className="events-page__card-host" 
+                  onClick={(e) => goToProfile(ev.host, e)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <UserAvatar person={ev.host} size="small" />
                   <Text type="secondary" className="events-page__card-host-name">{ev.host?.name}</Text>
                 </div>
@@ -505,7 +509,13 @@ function Events() {
                       <Text type="secondary" className="events-page__card-participants-dot">·</Text>
                       <Avatar.Group size="small">
                         {ev.participantsPreview.slice(0, 3).map((p, idx) => (
-                          <UserAvatar key={idx} person={p} size="small" className="events-page__avatar--bordered" />
+                          <UserAvatar 
+                            key={idx} 
+                            person={p} 
+                            size="small" 
+                            className="events-page__avatar--bordered" 
+                            onClick={(e) => goToProfile(p, e)}
+                          />
                         ))}
                         {ev.participantsCount > 3 && (
                           <Avatar size="small" style={{ backgroundColor: '#8b6aa2', color: '#fff', border: '1px solid #fff' }}>
@@ -578,7 +588,11 @@ function Events() {
               <Title level={3} className="events-page__view-name">{eventDetails.name}</Title>
 
               <Space size="large" className="events-page__view-details" wrap>
-                <div className="events-page__view-detail-item">
+                <div 
+                  className="events-page__view-detail-item"
+                  onClick={(e) => goToProfile(eventDetails.host, e)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <UserAvatar person={eventDetails.host} size="small" />
                   <Text type="secondary">
                     Organizado por <strong style={{ color: '#000' }}>{eventDetails.host?.name}</strong>
@@ -598,7 +612,7 @@ function Events() {
                       <>
                         {' • '}
                         {eventDetails.location.startsWith('http') ? (
-                          <a href={eventDetails.location} target="_blank" rel="noreferrer">
+                          <a href={eventDetails.location} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
                             {eventDetails.location}
                           </a>
                         ) : (
@@ -646,7 +660,12 @@ function Events() {
                           <>
                             <div className="events-page__details-participants-grid">
                               {eventDetails.participantsPreview.map((p, idx) => (
-                                <div key={idx} className="events-page__details-participants-item">
+                                <div 
+                                  key={idx} 
+                                  className="events-page__details-participants-item"
+                                  onClick={(e) => goToProfile(p, e)}
+                                  style={{ cursor: 'pointer' }}
+                                >
                                   <UserAvatar person={p} size="default" />
                                   <Text className="events-page__details-participants-name" ellipsis>{p.name}</Text>
                                 </div>
@@ -730,7 +749,10 @@ function Events() {
           <div className="events-page__loading"><Spin /></div>
         ) : (
           <List dataSource={participantsModal.items} renderItem={(p) => (
-            <List.Item>
+            <List.Item
+              onClick={(e) => goToProfile(p, e)}
+              style={{ cursor: 'pointer' }}
+            >
               <List.Item.Meta 
                 avatar={<UserAvatar person={p} size="large" />} 
                 title={p.name} 

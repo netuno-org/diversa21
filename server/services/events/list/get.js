@@ -21,12 +21,14 @@ const page = _req.getInt('page', 1);
 const pageSize = 10;
 const offset = (page - 1) * pageSize;
 
-let sql = `SELECT e.*, p.uid as host_uid, p.name as host_name, p.avatar as host_avatar, 
-                  c.uid as city_uid, c.name as city_name, 
-                  s.uid as state_uid, s.name as state_name, 
-                  co.uid as country_uid, co.name as country_name 
+let sql = `SELECT e.*, 
+                p.uid as host_uid, p.name as host_name, p.avatar as host_avatar, nu_host.user as host_username, 
+                c.uid as city_uid, c.name as city_name, 
+                s.uid as state_uid, s.name as state_name, 
+                co.uid as country_uid, co.name as country_name 
            FROM event e 
            LEFT JOIN people p ON e.host_id = p.id 
+           LEFT JOIN netuno_user nu_host ON p.people_user_id = nu_host.id
            LEFT JOIN city c ON e.city_id = c.id 
            LEFT JOIN state s ON c.state_id = s.id 
            LEFT JOIN country co ON s.country_id = co.id`;
@@ -82,9 +84,10 @@ if (events) {
     const participantsCount = countCheck ? countCheck.getLong('cnt') : 0;
 
     const participantsPreview = _db.query(
-      `SELECT p.uid, p.name, p.avatar 
+      `SELECT p.uid, p.name, p.avatar, nu_p.user as username
        FROM event_participant ep 
        JOIN people p ON ep.people_id = p.id 
+       LEFT JOIN netuno_user nu_p ON p.people_user_id = nu_p.id
        WHERE ep.event_id = ? AND ep.active = true 
        LIMIT 10`,
       eventId
@@ -98,6 +101,7 @@ if (events) {
           .set('uid', pRow.getString('uid'))
           .set('name', pRow.getString('name'))
           .set('avatar', pRow.getString('avatar'))
+          .set('username', pRow.getString('username'))
         );
       }
     }
@@ -135,6 +139,7 @@ if (events) {
         .set('uid', row.getString('host_uid'))
         .set('name', row.getString('host_name'))
         .set('avatar', row.getString('host_avatar'))
+        .set('username', row.getString('host_username'))
       )
     );
   }
