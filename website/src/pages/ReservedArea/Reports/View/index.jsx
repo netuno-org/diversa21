@@ -24,6 +24,7 @@ import {
   CheckOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  CloseOutlined,
   HistoryOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -86,13 +87,15 @@ function ReportPage({ uid }) {
   const [loadedUid, setLoadedUid] = useState(uid);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
-  
+  const [reopening, setReopening] = useState(false);
+
   const [form] = Form.useForm();
   const actionRef = useRef(null);
 
   if (uid !== loadedUid) {
     setLoadedUid(uid);
     setPage(1);
+    setReopening(false);
   }
 
   const [searchParams] = useSearchParams();
@@ -146,7 +149,7 @@ function ReportPage({ uid }) {
     setReport((prev) => (prev
       ? { ...prev, statusCode: status, resolutionNotes: notes || prev.resolutionNotes }
       : prev));
-      
+
     _service({
       method: "PUT",
       url: "/report",
@@ -168,6 +171,7 @@ function ReportPage({ uid }) {
                 ? "A denúncia voltou para pendente."
                 : "A denúncia foi recusada.",
           });
+          setReopening(false);
           setUpdating(false);
         });
       },
@@ -194,6 +198,16 @@ function ReportPage({ uid }) {
       .replace(/[^\S\n]+/g, " ")
       .replace(/\n{3,}/g, "\n\n");
     handleStatusChange(action, solution);
+  };
+
+  const handleStartReopen = () => {
+    form.setFieldsValue({ solution: report?.resolutionNotes || "" });
+    setReopening(true);
+  };
+
+  const handleCancelReopen = () => {
+    form.setFieldsValue({ solution: report?.resolutionNotes || "" });
+    setReopening(false);
   };
 
   if (loading && !report) {
@@ -228,7 +242,7 @@ function ReportPage({ uid }) {
   const previewTitle = isTopic ? reportedContent.title : "";
   const previewBody = report.entityType === "people" ? "" : (reportedContent.content || "");
   const showResolvedBy = report.statusCode !== "pending" && report.resolvedBy?.name;
-  const isEditing = report.statusCode === "pending";
+  const isEditing = report.statusCode === "pending" || reopening;
 
   return (
     <section className="report-page">
@@ -346,28 +360,53 @@ function ReportPage({ uid }) {
                   disabled={updating}
                 />
               </Form.Item>
-              <Space>
-                <Button
-                  type="dashed"
-                  htmlType="submit"
-                  className="report-page__action-resolve"
-                  icon={<CheckOutlined />}
-                  loading={updating}
-                  onClick={() => { actionRef.current = "resolved"; }}
-                >
-                  Resolvida
-                </Button>
-                <Button
-                  type="dashed"
-                  htmlType="submit"
-                  className="report-page__action-reject"
-                  icon={<CloseCircleOutlined />}
-                  loading={updating}
-                  onClick={() => { actionRef.current = "rejected"; }}
-                >
-                  Recusar
-                </Button>
-              </Space>
+              <div className="report-page__form-footer">
+                {reportHistory.length > 0 && (
+                  <Button
+                    type="link"
+                    htmlType="button"
+                    className="report-page__history-button"
+                    icon={<HistoryOutlined />}
+                    onClick={() => setHistoryOpen(true)}
+                  >
+                    Histórico
+                  </Button>
+                )}
+                <Space>
+                  <Button
+                    type="dashed"
+                    htmlType="submit"
+                    className="report-page__action-resolve"
+                    icon={<CheckOutlined />}
+                    loading={updating}
+                    onClick={() => { actionRef.current = "resolved"; }}
+                  >
+                    Resolvida
+                  </Button>
+                  <Button
+                    type="dashed"
+                    htmlType="submit"
+                    className="report-page__action-reject"
+                    icon={<CloseCircleOutlined />}
+                    loading={updating}
+                    onClick={() => { actionRef.current = "rejected"; }}
+                  >
+                    Recusar
+                  </Button>
+                  {reopening && (
+                    <Button
+                      type="dashed"
+                      color="primary"
+                      htmlType="button"
+                      className="report-page__action-cancel"
+                      disabled={updating}
+                      onClick={handleCancelReopen}
+                    >
+                      Cancelar
+                    </Button>
+                  )}
+                </Space>
+              </div>
             </Form>
           ) : (
             <>
@@ -390,7 +429,7 @@ function ReportPage({ uid }) {
                   className={`report-page__action-${actionClass} report-page__action-${actionClass}--confirmed`}
                   icon={isRejected ? <CloseCircleOutlined /> : <CheckOutlined />}
                   loading={updating}
-                  onClick={() => handleStatusChange("pending")}
+                  onClick={handleStartReopen}
                 >
                   Clique Para Alterar
                 </Button>
