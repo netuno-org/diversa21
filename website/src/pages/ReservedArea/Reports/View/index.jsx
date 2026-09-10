@@ -142,13 +142,8 @@ function ReportPage({ uid }) {
 
   const handleStatusChange = (status, notesRaw = "") => {
     const notes = notesRaw.trim();
-    const previousStatus = report?.statusCode;
-    const previousNotes = report?.resolutionNotes;
 
     setUpdating(true);
-    setReport((prev) => (prev
-      ? { ...prev, statusCode: status, resolutionNotes: notes || prev.resolutionNotes }
-      : prev));
 
     _service({
       method: "PUT",
@@ -177,9 +172,6 @@ function ReportPage({ uid }) {
       },
       fail: (e) => {
         console.log("Service Error", e);
-        setReport((prev) => (prev
-          ? { ...prev, statusCode: previousStatus, resolutionNotes: previousNotes }
-          : prev));
         globalNotification.error({
           title: "Não foi possível atualizar",
           description: "Tente novamente em instantes.",
@@ -414,7 +406,7 @@ function ReportPage({ uid }) {
                 {report.resolutionNotes}
               </div>
               <div className="report-page__solution-actions">
-                {reportHistory.length >= 0 && (
+                {reportHistory.length > 0 && (
                   <Button
                     type="link"
                     className="report-page__history-button"
