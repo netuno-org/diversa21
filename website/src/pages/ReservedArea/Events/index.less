@@ -1,21 +1,24 @@
 .events-page {
-  padding: 0 24px;
-
-  @media (max-width: 768px) {
-    padding: 0 16px;
+  @media (max-width: 480px) {
+    padding: 0 10px;
   }
 
   &__tabs {
     margin-top: 16px;
+    padding-left: 24px;
   }
 
   &__results-count {
+    margin-top: 16px;
     margin-bottom: 16px;
+    padding-left: 24px;
   }
 
   &__loading {
-    text-align: center;
-    padding: 40px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 24px;
   }
 
   &__grid {
@@ -23,6 +26,7 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
     margin-top: 16px;
+    width: 100%;
   }
 
   &__card {
@@ -125,6 +129,13 @@
   &__card-location {
     font-size: 13px;
     margin-bottom: 8px;
+    
+    a {
+      color: #8b6aa2;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   &__card-participants {
@@ -244,6 +255,13 @@
       .anticon {
         color: #8b6aa2;
         font-size: 16px;
+      }
+      
+      a {
+        color: #8b6aa2;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 

@@ -64,7 +64,18 @@ function Events() {
     goingOnly: showGoingOnly
   }), [showGoingOnly]);
 
-  const { items: events, loading, pagination, handlePaginationChange, handleSearch, fetchList } = useFilteredPaginatedList({
+  // CORREÇÃO AQUI: Extração de todos os handlers exatamente como nas Instituições
+  const { 
+    items: events, 
+    loading, 
+    pagination, 
+    handlePaginationChange, 
+    handleSearch, 
+    handleLocationChange,
+    handleLocationClear,
+    handleSearchClear,
+    fetchList 
+  } = useFilteredPaginatedList({
     serviceUrl: 'events/list',
     requestData,
   });
@@ -345,21 +356,26 @@ function Events() {
 
   return (
     <div className="events-page">
-      <ListHeaderFilters
-        title="Eventos"
-        description="Encontre eventos e atividades perto de si."
-        onSearch={(v) => handleSearch(v ? v.trim() : '')}
-        fullWidthSearch
-        createButton={{
-          icon: <PlusOutlined />,
-          text: 'Criar Evento',
-          onClick: () => {
-            setCityOptions([]);
-            form.resetFields();
-            setCreateModalVisible(true);
-          },
-        }}
-      />
+      <div className="events-page__header">
+        {/* CORREÇÃO AQUI: Passar todos os handlers para o componente igual às Instituições */}
+        <ListHeaderFilters
+          title="Eventos"
+          description="Encontre eventos e atividades perto de si."
+          createButton={{
+            icon: <PlusOutlined />,
+            text: 'Criar Evento',
+            onClick: () => {
+              setCityOptions([]);
+              form.resetFields();
+              setCreateModalVisible(true);
+            },
+          }}
+          onSearch={handleSearch}
+          onLocationChange={handleLocationChange}
+          onLocationClear={handleLocationClear}
+          onSearchClear={handleSearchClear}
+        />
+      </div>
 
       <Tabs
         activeKey={showGoingOnly ? "going" : "general"}
