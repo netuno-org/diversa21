@@ -24,8 +24,8 @@ if (!personId && !isAdminOrManager) {
   const cityUid = _req.getString('city');
   const startDate = _req.getString('startDate');
   
-  const coverImage = _req.getFile("coverImage");
-  const clearCoverImage = _req.getBoolean("clearCoverImage");
+  const coverImage = _req.getFile("cover_image");
+  const clearCoverImage = _req.getBoolean("clear_cover_image");
 
   if (!eventUid || !name) {
     response.error("O identificador e o nome do evento são obrigatórios.");

@@ -19,7 +19,7 @@ if (!personId) {
   const location = _req.getString('location');
   const cityUid = _req.getString('city');
   const startDate = _req.getString('startDate');
-  const coverImage = _req.getFile("coverImage");
+  const coverImage = _req.getFile("cover_image");
 
   if (!name) {
     response.error("O nome do evento é obrigatório.");
