@@ -170,6 +170,16 @@ Table report_entity_type {
   Note: 'Tipo de Entidade'
 }
 
+Table report_history {
+  id int [pk, increment]
+  moment timestamp [note: 'Momento']
+  notes text [note: 'Notas']
+  people_id int [ref: > people.id, note: 'Pessoa']
+  report_id int [ref: > report.id, note: 'Denúncia']
+  report_status_id int [ref: > report_status.id, note: 'Estado']
+  Note: 'Histórico de Denúncias'
+}
+
 Table report_item {
   id int [pk, increment]
   description text [note: 'Descrição']

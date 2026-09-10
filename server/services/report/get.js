@@ -201,6 +201,38 @@ for (const item of dbItems) {
   );
 }
 
+const dbHistory = _db.query(`
+  SELECT
+    rh.uid,
+    rh.notes,
+    rh.moment,
+    rs.code AS status_code,
+    rs.title AS status_title,
+    p.uid AS people_uid,
+    p.name AS people_name
+  FROM report_history rh
+  INNER JOIN report_status rs ON rh.report_status_id = rs.id
+  INNER JOIN people p ON rh.people_id = p.id
+  WHERE rh.report_id = ?::int AND rh.active = true
+  ORDER BY rh.moment DESC
+`, reportId);
+
+const historyList = _val.list();
+for (const item of dbHistory) {
+  historyList.add(
+    _val.map()
+      .set("uid", item.getUID("uid"))
+      .set("notes", item.getString("notes"))
+      .set("moment", item.getString("moment"))
+      .set("statusCode", item.getString("status_code"))
+      .set("statusTitle", item.getString("status_title"))
+      .set("people", item.getString("people_uid") ? _val.map()
+        .set("uid", item.getUID("people_uid"))
+        .set("name", item.getString("people_name")) : null
+      )
+  );
+}
+
 response.successWithData(
   _val.map()
     .set("uid", dbReport.getUID("uid"))
@@ -217,6 +249,7 @@ response.successWithData(
     )
     .set("content", targetDetails)
     .set("items", itemsList)
+    .set("history", historyList)
     .set("pagination", _val.map()
       .set("page", page)
       .set("pageSize", pageSize)

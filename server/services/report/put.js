@@ -33,6 +33,10 @@ if (!dbReport) {
 
 const isResolvedOrRejected = statusCode === "resolved" || statusCode === "rejected";
 
+if (isResolvedOrRejected && resolutionNotes.trim() === "") {
+  response.stopWithBadRequest("resolution-notes-required");
+}
+
 const updateMap = _val.map()
   .set("report_status_id", dbStatus.getInt("id"));
 
@@ -51,5 +55,17 @@ if (isResolvedOrRejected) {
 }
 
 _db.update("report", dbReport.getInt("id"), updateMap);
+
+if (isResolvedOrRejected) {
+  _db.insert(
+    "report_history",
+    _val.map()
+      .set("report_id", dbReport.getInt("id"))
+      .set("report_status_id", dbStatus.getInt("id"))
+      .set("people_id", loggedPeopleId)
+      .set("notes", resolutionNotes)
+      .set("moment", _db.timestamp())
+  );
+}
 
 response.successWithoutData();
