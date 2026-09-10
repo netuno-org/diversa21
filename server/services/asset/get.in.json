@@ -23,7 +23,8 @@
       "enum": [
         "people",
         "institution",
-        "people_photo"
+        "people_photo",
+        "event"
       ]
     }
   },

@@ -73,6 +73,8 @@ function Events() {
 
   const navigate = useNavigate();
 
+  const totalCount = pagination?.total ?? events.length;
+
   useEffect(() => {
     const uidFromUrl = searchParams.get('uid');
     if (uidFromUrl && !loading && events.length > 0) {
@@ -104,9 +106,12 @@ function Events() {
       e.stopPropagation();
       e.preventDefault();
     }
-    closeParticipants();
-    handleCloseModal();
-    navigate(`/u/${person?.username}`);
+    
+    if (person?.username) {
+      closeParticipants();
+      handleCloseModal();
+      navigate(`/u/${person.username}`);
+    }
   };
 
   const handleCitySearch = (value) => {
@@ -410,7 +415,7 @@ function Events() {
 
       <div className="events-page__results-count">
         <Text type="secondary">
-          {pagination.total} {pagination.total === 1 ? 'Evento Encontrado' : 'Eventos Encontrados'}
+          {totalCount} {totalCount === 1 ? 'Evento Encontrado' : 'Eventos Encontrados'}
           {showGoingOnly ? ' que vou participar' : ''}
         </Text>
       </div>
@@ -543,7 +548,7 @@ function Events() {
       </div>
 
       <div className="events-page__footer">
-        <Pagination total={pagination.total} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
+        <Pagination total={totalCount} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
       </div>
 
       <Modal 
