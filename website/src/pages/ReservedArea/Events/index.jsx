@@ -405,11 +405,8 @@ function Events() {
 
       <div className="events-page__grid">
         {!loading && events.map((ev) => {
-          const locationText = [
-            ev.location, 
-            ev.city?.name ? `${ev.city.name}${ev.state?.name ? `, ${ev.state.name}` : ''}` : null
-          ].filter(Boolean).join(' - ') || 'Localização não especificada';
-          
+          const cityText = ev.city?.name ? `${ev.city.name}${ev.state?.name ? `, ${ev.state.name}` : ''}` : null;
+          const isLocationUrl = ev.location?.startsWith('http');
           const coverUrl = getCoverUrl(ev);
 
           return (
@@ -471,7 +468,16 @@ function Events() {
                 </Title>
                 
                 <Text type="secondary" className="events-page__card-location" ellipsis>
-                  {locationText}
+                  {isLocationUrl ? (
+                    <a href={ev.location} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+                      {ev.location}
+                    </a>
+                  ) : (
+                    ev.location
+                  )}
+                  {ev.location && cityText && ' - '}
+                  {cityText}
+                  {!ev.location && !cityText && 'Localização não especificada'}
                 </Text>
 
                 <div className="events-page__card-participants">
@@ -572,7 +578,18 @@ function Events() {
                   <EnvironmentOutlined />
                   <Text type="secondary">
                     {[eventDetails.city?.name, eventDetails.state?.name].filter(Boolean).join(', ') || 'Sem cidade definida'}
-                    {eventDetails.location && ` • ${eventDetails.location}`}
+                    {eventDetails.location && (
+                      <>
+                        {' • '}
+                        {eventDetails.location.startsWith('http') ? (
+                          <a href={eventDetails.location} target="_blank" rel="noreferrer">
+                            {eventDetails.location}
+                          </a>
+                        ) : (
+                          eventDetails.location
+                        )}
+                      </>
+                    )}
                   </Text>
                 </div>
               </Space>
