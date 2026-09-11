@@ -1,4 +1,4 @@
-import { _req, _db, _val, _user, _image } from "@netuno/server-types";
+import { _req, _db, _val, _user, _image, _uid } from "@netuno/server-types";
 import response from "#core/lib/response.js";
 
 const userId = _user.id();
@@ -33,7 +33,7 @@ if (!personId) {
     }
 
     const data = _val.map()
-      .set("uid", _db.uuid())
+      .set("uid", _uid.generate())
       .set("name", name)
       .set("description", description)
       .set("location", location)
