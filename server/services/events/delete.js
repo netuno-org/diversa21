@@ -22,7 +22,7 @@ if (!personId && !isAdminOrManager) {
   if (!eventUid) {
     response.error("O identificador do evento é obrigatório.");
   } else {
-    const dbEvent = _db.queryFirst("SELECT id, host_id FROM event WHERE uid = ?::uuid", eventUid);
+    const dbEvent = _db.queryFirst("SELECT id, host_id FROM event WHERE uid = ?::uuid AND active = true", eventUid);
     if (!dbEvent) {
       response.error("Evento não encontrado.");
     } else {
@@ -31,9 +31,15 @@ if (!personId && !isAdminOrManager) {
         response.error("Não tem permissão para eliminar este evento.");
       } else {
         const eventId = dbEvent.getInt('id');
-        _db.execute("DELETE FROM event_participant WHERE event_id = ?", eventId);
-        _db.execute("DELETE FROM event WHERE id = ?", eventId);
-        response.successWithData(_val.map());
+        
+        const updateData = _val.map().set("active", false);
+        const rowsAffected = _db.update("event", eventId, updateData);
+
+        if (rowsAffected) {
+          response.successWithData(_val.map());
+        } else {
+          response.error("Erro ao inativar o evento.");
+        }
       }
     }
   }
