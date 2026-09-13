@@ -361,15 +361,15 @@ function Replies({ topicUid }) {
 
   return (
     <div className="replies">
+      <Button
+        type="link"
+        className="replies__back"
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate(-1)}
+      >
+        Voltar
+      </Button>
       <div className="replies-header">
-        <Button
-          type="link"
-          className="replies-header__back"
-          icon={<ArrowLeftOutlined />}
-          onClick={() => navigate(-1)}
-        >
-          Voltar
-        </Button>
         <div className="replies-header__topic">
           {topic?.category?.name && (
             <>

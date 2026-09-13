@@ -101,7 +101,10 @@ const menuItems = [
   },
 ];
 
-const RESTRICTED_KEYS = ['locations', 'reports'];
+const RESTRICTED_KEYS = {
+  locations: (user) => user.canManageLocations(),
+  reports: (user) => user.canManageReports(),
+};
 
 function SiderMenu() {
   const [selectedMenuKeys, setSelectedMenuKeys] = useState(["posts"]);
@@ -144,10 +147,8 @@ function SiderMenu() {
   }
 
   const filteredItems = menuItems.filter((item) => {
-    if (RESTRICTED_KEYS.includes(item.key)) {
-      return loggedUser.canManageInstitution();
-    }
-    return true;
+    const canAccess = RESTRICTED_KEYS[item.key];
+    return canAccess ? canAccess(loggedUser) : true;
   });
 
   const menuContent = (
@@ -184,7 +185,7 @@ function SiderMenu() {
               onClick={() => setDrawerOpen(false)}
               className="drawer-close-btn"
             />
-            <img alt="logo" src="/images/logo.svg" />
+            <img alt="logo" src="/images/logo.png" />
           </div>
           {menuContent}
         </Drawer>
@@ -195,7 +196,7 @@ function SiderMenu() {
   return (
     <Sider className="sider-menu">
       <div className="logo-container">
-        <img alt="logo" src="/images/logo.svg" />
+        <img alt="logo" src="/images/logo.png" />
       </div>
       {menuContent}
     </Sider>

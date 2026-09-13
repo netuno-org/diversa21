@@ -85,14 +85,14 @@ export default function App() {
       locale={antLocale_ptBR}
       theme={{
         token: {
-          colorPrimary: '#8B6AA2',
-          colorLink: '#8B6AA2',
+          colorPrimary: '#6009B6',
+          colorLink: '#6009B6',
           fontSize: 16,
           borderRadius: 20,
-          primaryColor: '#8B6AA2',
+          primaryColor: '#6009B6',
           colorBgBase: '#eff8ff',
           colorBgLayout: '#ffffff',
-          colorBgMask: 'rgba(139, 106, 162, 0.50)',
+          colorBgMask: 'rgba(96, 9, 182, 0.50)',
         },
         components: {
           Layout: {
@@ -100,16 +100,16 @@ export default function App() {
             triggerBg: '#f0f2f5',
             triggerColor: null,
             siderBg: '#f0f2f5',
-            footerBg: '#FDBA3C',
+            footerBg: '#FEAF04',
           },
           Menu: {
             colorBgElevated: '#f0f2f5',
             itemBg: '#f0f2f5',
-            itemColor: '#8B6AA2',
-            itemSelectedColor: '#FDBA3C',
-            itemSelectedBg: '#8B6AA2',
-            itemHoverColor: '#8B6AA2',
-            itemHoverBg: '#FDBA3C',
+            itemColor: '#6009B6',
+            itemSelectedColor: '#FEAF04',
+            itemSelectedBg: '#6009B6',
+            itemHoverColor: '#6009B6',
+            itemHoverBg: '#FEAF04',
             subMenuItemBorderRadius: 0,
             borderRadius: 0,
             borderRadiusLG: 0,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Card, Row, Col, Typography, Tag, Empty, Spin } from "antd";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Card, Row, Col, Typography, Tag, Empty, Spin, Select, Input, Pagination, DatePicker } from "antd";
 import {
   ClockCircleOutlined,
   CheckOutlined,
@@ -20,6 +20,7 @@ import TimeAgo from "../../../components/TimeAgo";
 import "./index.less";
 
 const { Text, Title, Paragraph } = Typography;
+const { RangePicker } = DatePicker;
 
 const STATUS_CARDS = [
   { key: "all", label: "Total", countSingular: "Encontrada", countPlural: "Encontradas" },
@@ -34,6 +35,13 @@ const TYPE_CONFIG = {
   comment: { icon: <VscCommentDiscussionQuote /> },
   forum_topic: { icon: <VscCommentDiscussionQuote /> },
   forum_reply: { icon: <LuReply /> },
+};
+
+const EMPTY_STATUS_COUNTS = {
+  all: 0,
+  pending: 0,
+  resolved: 0,
+  rejected: 0,
 };
 
 const STATUS_CONFIG = {
@@ -68,39 +76,80 @@ function getReportPreview(report) {
 function Reports() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchEntityType, setSearchEntityType] = useState('all');
+  const [reportedUser, setReportedUser] = useState("");
+  const [reporterUser, setReporterUser] = useState("");
+  const [dateRange, setDateRange] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [statusCounts, setStatusCounts] = useState(EMPTY_STATUS_COUNTS);
 
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get("status") || "all";
 
-  useEffect(() => {
+  const fetchList = ({
+    status,
+    entityType,
+    reported,
+    reporter,
+    dates,
+    currentPage,
+  }) => {
+    const startDate = dates?.[0]?.format("YYYY-MM-DD");
+    const endDate = dates?.[1]?.format("YYYY-MM-DD");
     setLoading(true);
     _service({
       method: "GET",
       url: "/report/list",
+      data: {
+        page: currentPage,
+        ...(status && status !== "all" ? { status } : {}),
+        ...(entityType && entityType !== "all" ? { entityType } : {}),
+        ...(reported.trim() ? { reportedUser: reported.trim() } : {}),
+        ...(reporter.trim() ? { reporterUser: reporter.trim() } : {}),
+        ...(startDate ? { startDate } : {}),
+        ...(endDate ? { endDate } : {}),
+      },
       success: ({ json }) => {
         setReports(json?.data?.items || []);
+        setTotalCount(json?.data?.pagination?.totalCount ?? 0);
+        setStatusCounts({
+          ...EMPTY_STATUS_COUNTS,
+          ...(json?.data?.statusCounts || {}),
+        });
         setLoading(false);
       },
       fail: (e) => {
         console.log("Service Error", e);
         setReports([]);
+        setTotalCount(0);
         setLoading(false);
       },
     });
-  }, []);
-
-  const counts = {
-    all: reports.length,
-    pending: reports.filter((report) => report.statusCode === "pending").length,
-    resolved: reports.filter((report) => report.statusCode === "resolved").length,
-    rejected: reports.filter((report) => report.statusCode === "rejected").length,
   };
 
-  const visibleReports = statusFilter === "all"
-    ? reports
-    : reports.filter((report) => report.statusCode === statusFilter);
+  useEffect(() => {
+    fetchList({
+      status: statusFilter,
+      entityType: searchEntityType,
+      reported: reportedUser,
+      reporter: reporterUser,
+      dates: dateRange,
+      currentPage: page,
+    });
+  }, [page, statusFilter, searchEntityType, reportedUser, reporterUser, dateRange]);
 
   const handleCardClick = (uid) => {
+    const status = searchParams.get("status");
+    const query = status ? `?status=${status}` : "";
+
+    navigate(`/reports/${uid}${query}`);
+  };
+
+  const handleCardMouseDown = (event, uid) => {
+    if (event.button !== 1) return;
+
     const status = searchParams.get("status");
     const query = status ? `?status=${status}` : "";
 
@@ -109,49 +158,107 @@ function Reports() {
 
   const activeStatusCard =
     STATUS_CARDS.find((item) => item.key === statusFilter) || STATUS_CARDS[0];
-  const countSuffix = visibleReports.length === 1
-    ? activeStatusCard.countSingular
-    : activeStatusCard.countPlural;
+  const visibleCount = reports.length;
+  const countSuffix = visibleCount > 1
+    ? activeStatusCard.countPlural
+    : activeStatusCard.countSingular;
 
   return (
     <section className="reports">
       <div className="reports__header">
         <ListHeaderFilters
           title="Denúncias"
-          searchPlaceholder="Buscar por tipo..."
           description="Acompanhe as denúncias da comunidade e o estado de cada análise."
-          hideInputs={false}
+          hideInputs={true}
           hideLocation={true}
         />
+        <Row gutter={[16, 16]} className="reports__stats">
+          {STATUS_CARDS.map((status) => (
+            <Col xs={12} sm={12} xl={6} key={status.key}>
+              <Card
+                className={classNames("reports__stat-card", {
+                  "reports__stat-card--active": statusFilter === status.key,
+                })}
+                onClick={() => {
+                  setPage(1);
+                  setSearchParams({ status: status.key });
+                }}
+              >
+                <div className="reports__stat-label">
+                  {status.label}
+                </div>
+                {loading ? (
+                  <Spin size="small" className="reports__stat-spin" />
+                ) : (
+                  <Title level={2} className="reports__stat-value">
+                    {statusCounts[status.key] ?? 0}
+                  </Title>
+                )}
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <div className="reports__filters">
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12}>
+              <Input.Search
+                placeholder="Denunciado..."
+                onSearch={(value) => {
+                  setPage(1);
+                  setReportedUser(value);
+                }}
+                enterButton={true}
+                allowClear
+              />
+            </Col>
+            <Col xs={24} md={12}>
+              <Input.Search
+                placeholder="Quem denunciou..."
+                onSearch={(value) => {
+                  setPage(1);
+                  setReporterUser(value);
+                }}
+                enterButton={true}
+                allowClear
+              />
+            </Col>
+            <Col xs={24} md={12}>
+              <Select
+                allowClear
+                placeholder="Tipo"
+                style={{ width: "100%" }}
+                options={[
+                  { value: "post", label: "Publicação" },
+                  { value: "comment", label: "Comentário" },
+                  { value: "people", label: "Perfil" },
+                  { value: "forum_topic", label: "Tópico" },
+                  { value: "forum_reply", label: "Resposta" },
+                ]}
+                onChange={(value) => {
+                  setPage(1);
+                  setSearchEntityType(value || "all");
+                }}
+              />
+            </Col>
+            <Col xs={24} md={12}>
+              <RangePicker
+                style={{ width: "100%" }}
+                format="DD/MM/YYYY"
+                allowClear
+                value={dateRange}
+                onChange={(dates) => {
+                  setPage(1);
+                  setDateRange(dates);
+                }}
+              />
+            </Col>
+          </Row>
+        </div>
       </div>
-
-      <Row gutter={[16, 16]} className="reports__stats">
-        {STATUS_CARDS.map((status) => (
-          <Col xs={12} sm={12} xl={6} key={status.key}>
-            <Card
-              className={classNames("reports__stat-card", {
-                "reports__stat-card--active": statusFilter === status.key,
-              })}
-              onClick={() => setSearchParams({ status: status.key })}
-            >
-              <div className="reports__stat-label">
-                {status.label}
-              </div>
-              {loading ? (
-                <Spin size="small" className="reports__stat-spin" />
-              ) : (
-                <Title level={2} className="reports__stat-value">
-                  {counts[status.key]}
-                </Title>
-              )}
-            </Card>
-          </Col>
-        ))}
-      </Row>
 
       <div className="reports__count">
         <Text type="secondary">
-          {visibleReports.length} {visibleReports.length !== 1 ? "Denúncias" : "Denúncia"} {countSuffix}
+          {visibleCount} {visibleCount > 1 ? "Denúncias" : "Denúncia"} {countSuffix}
         </Text>
       </div>
 
@@ -160,22 +267,22 @@ function Reports() {
           <div className="reports__empty">
             <Spin />
           </div>
-        ) : visibleReports.length === 0 ? (
+        ) : reports.length === 0 ? (
           <div className="reports__empty">
             <Empty description="Nenhuma denúncia encontrada." />
           </div>
         ) : (
-          visibleReports.map((report) => {
+          reports.map((report) => {
             const type = TYPE_CONFIG[report.entityType];
             const status = STATUS_CONFIG[report.statusCode];
             const preview = getReportPreview(report);
 
             return (
-              <Card className="reports__card" onClick={() => handleCardClick(report.uid)} key={report.uid} >
+              <Card className="reports__card" onClick={() => handleCardClick(report.uid)} onMouseDown={(event) => handleCardMouseDown(event, report.uid)} key={report.uid} >
                 <div className="reports__card-header">
                   <div className="reports__card-identity">
                     <div className="reports__card-icon">
-                      {type.icon}
+                      {type?.icon}
                     </div>
                     <div className="reports__card-heading">
                       <Text strong className="reports__card-title">
@@ -221,6 +328,16 @@ function Reports() {
           })
         )}
       </div>
+      {!loading && totalCount > 0 && (
+        <div className="reports__pagination">
+          <Pagination
+            current={page}
+            pageSize={10}
+            total={totalCount}
+            onChange={(nextPage) => setPage(nextPage)}
+          />
+        </div>
+      )}
     </section>
   );
 }

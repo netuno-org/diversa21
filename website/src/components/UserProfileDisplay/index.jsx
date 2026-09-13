@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Avatar, Button, Tag } from 'antd';
-import { UserOutlined, EnvironmentOutlined, CalendarOutlined, SafetyOutlined, EditOutlined } from '@ant-design/icons';
+import { Avatar, Tag } from 'antd';
+import { UserOutlined, EnvironmentOutlined, CalendarOutlined, SafetyOutlined } from '@ant-design/icons';
 import { BsFillHouseGearFill } from "react-icons/bs";
 import { RiFileEditLine } from "react-icons/ri";
 
 import _service from '@netuno/service-client';
 import dayjs from 'dayjs';
 import usePeople from '../../common/usePeople';
+import ContentActions from '../ContentActions';
 
 import './index.less';
 import { useNavigate } from 'react-router-dom';
@@ -17,10 +18,8 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
   const loggedUser = usePeople();
   const navigate = useNavigate()
 
-  const isLoggedSuperAdmin = loggedUser.data?.group?.code === 'super-admin';
   const isOwnProfile = loggedUser.data?.uid === user?.uid;
-  const canShowEditButton =
-    loggedUser.canManageUser(user) && !(isLoggedSuperAdmin && isOwnProfile);
+  const canViewEditButton = isOwnProfile || loggedUser.canManageUser(user);
 
   const iconSize = 16
 
@@ -66,22 +65,29 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
         <div><CalendarOutlined /> {dayjs().diff(dayjs(user.birthDate), 'year')} anos</div>
         {children}
       </div>
-      {canShowEditButton && (
-        <div className="user-profile-display__actions">
-          {user.active === false && (
-            <Tag variant="filled" color="error" style={{ borderRadius: '32px' }}>
-              Inativo
-            </Tag>
-          )}
-          <Button
-            type="link"
-            onClick={() => navigate(`/e/${user.username}`)}
-            className="people-list__card-btn"
-          >
-            <EditOutlined />
-          </Button>
-        </div>
-      )}
+      <div
+        className="user-profile-display__actions"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        {user.active === false && (
+          <Tag variant="filled" color="error" style={{ borderRadius: '32px' }}>
+            Inativo
+          </Tag>
+        )}
+        <ContentActions
+          entityType="people"
+          entityUid={user.uid}
+          canViewEditButton={canViewEditButton}
+          canViewDeletePostButton={false}
+          canViewReportButton={!isOwnProfile}
+          editLabel="Editar perfil"
+          reportLabel="Denunciar perfil"
+          onEdit={() => navigate(isOwnProfile ? "/profile/edit" : `/e/${user.username}`)}
+        />
+      </div>
     </div>
   );
 }

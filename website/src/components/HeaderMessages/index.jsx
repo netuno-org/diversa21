@@ -13,7 +13,7 @@ function HeaderMessages() {
 
   return (
       <div className="header-messages__trigger">
-        <Badge onClick={() => navigate("/messages")} count={count} size="small" offset={[0, 2]} color="#FDBA3C">
+        <Badge onClick={() => navigate("/messages")} count={count} size="small" offset={[0, 2]} color="#FEAF04">
           <LuMessageCircleMore />
         </Badge>
       </div>

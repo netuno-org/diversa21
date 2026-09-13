@@ -171,7 +171,10 @@ function ContentActions({
             color="primary"
             variant="outlined"
             icon={<EllipsisOutlined />}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
           />
         </Dropdown>
       </Popconfirm>

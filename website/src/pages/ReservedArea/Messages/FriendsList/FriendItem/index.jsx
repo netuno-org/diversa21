@@ -47,7 +47,7 @@ function FriendItem({
           </Text>
           <Col flex="auto" className="messages__friend-item-meta">
             {unreadMessages > 0 && (
-              <Badge color="#FDBA3C" count={unreadMessages} />
+              <Badge color="#FEAF04" count={unreadMessages} />
             )}
           </Col>
         </div>
