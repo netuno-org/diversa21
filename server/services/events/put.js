@@ -23,6 +23,7 @@ if (!personId && !isAdminOrManager) {
   const location = _req.getString('location');
   const cityUid = _req.getString('city');
   const startDate = _req.getString('startDate');
+  const endDate = _req.getString('endDate');
   
   const coverImage = _req.getFile("cover_image");
   const clearCoverImage = _req.getBoolean("clear_cover_image");
@@ -58,6 +59,12 @@ if (!personId && !isAdminOrManager) {
             data.set("start_date", startDate);
         } else {
             data.set("start_date", null);
+        }
+        
+        if (endDate) {
+            data.set("end_date", endDate);
+        } else {
+            data.set("end_date", null);
         }
 
         if (coverImage) {

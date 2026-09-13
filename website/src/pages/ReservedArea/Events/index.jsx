@@ -157,6 +157,7 @@ function Events() {
     if (values.location) formData.append('location', values.location);
     if (values.city) formData.append('city', values.city?.value || values.city);
     if (values.startDate) formData.append('startDate', values.startDate.format('YYYY-MM-DD HH:mm:ss'));
+    if (values.endDate) formData.append('endDate', values.endDate.format('YYYY-MM-DD HH:mm:ss'));
 
     if (values.cover_image && values.cover_image.length > 0) {
       const fileObj = values.cover_image[0].originFileObj;
@@ -245,6 +246,7 @@ function Events() {
         value: event.city?.uid,
       } : undefined,
       startDate: event.startDate ? dayjs(event.startDate) : null,
+      endDate: event.endDate ? dayjs(event.endDate) : null,
       description: event.description,
       cover_image: url ? [{ uid: '-1', name: realFileName, status: 'done', url: url }] : [],
     });
@@ -339,21 +341,44 @@ function Events() {
     });
   };
 
-  const formatEventDate = (dateString) => {
-    if (!dateString) return '';
-    const date = dayjs(dateString);
-    if (date.isSame(dayjs(), 'day')) {
-      return `Hoje às ${date.format('HH:mm')}`;
+  const formatEventDate = (startString, endString) => {
+    if (!startString) return '';
+    const start = dayjs(startString);
+    const isToday = start.isSame(dayjs(), 'day');
+
+    const formatDay = (d) => {
+      const dayStr = d.format('ddd').replace('.', '');
+      return `${dayStr.charAt(0).toUpperCase() + dayStr.slice(1)}, ${d.format('DD/MM')}`;
+    };
+
+    const startTime = start.format('HH:mm');
+    const startText = isToday ? 'Hoje' : formatDay(start);
+    const startFormatted = `${startText} às ${startTime}`;
+
+    if (!endString) return startFormatted;
+
+    const end = dayjs(endString);
+    const endTime = end.format('HH:mm');
+
+    if (start.isSame(end, 'day')) {
+      return `${startFormatted} - ${endTime}`;
     }
-    const dayName = date.format('ddd').replace('.', '');
-    const dayMonth = date.format('DD/MM');
-    const time = date.format('HH:mm');
-    return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)}, ${dayMonth} às ${time}`;
+
+    return `${startFormatted} - ${formatDay(end)} às ${endTime}`;
   };
 
-  const formatFullDate = (dateString) => {
-    if (!dateString) return '';
-    return dayjs(dateString).format('dddd, DD [de] MMMM [de] YYYY [às] HH:mm');
+  const formatFullDate = (startString, endString) => {
+    if (!startString) return '';
+    const startObj = dayjs(startString);
+    const startText = startObj.format('dddd, DD [de] MMMM [de] YYYY [às] HH:mm');
+    
+    if (!endString) return startText;
+    
+    const endObj = dayjs(endString);
+    if (startObj.isSame(endObj, 'day')) {
+      return `${startText} - ${endObj.format('HH:mm')}`;
+    }
+    return `${startText} até ${endObj.format('dddd, DD [de] MMMM [de] YYYY [às] HH:mm')}`;
   };
 
   const normFile = (e) => {
@@ -495,7 +520,7 @@ function Events() {
                 </div>
 
                 <Text className="events-page__card-date">
-                  {formatEventDate(ev.startDate)}
+                  {formatEventDate(ev.startDate, ev.endDate)}
                 </Text>
                 
                 <Title level={5} className="events-page__card-title" ellipsis={{ rows: 2 }}>
@@ -618,7 +643,7 @@ function Events() {
 
                 <div className="events-page__view-detail-item">
                   <CalendarOutlined />
-                  <Text type="secondary">{formatFullDate(eventDetails.startDate)}</Text>
+                  <Text type="secondary">{formatFullDate(eventDetails.startDate, eventDetails.endDate)}</Text>
                 </div>
 
                 <div className="events-page__view-detail-item">
@@ -721,9 +746,16 @@ function Events() {
           <Form.Item name="name" label="Nome do Evento" rules={[{ required: true, message: 'Insira o nome do evento!' }]}>
             <Input placeholder="Ex: Encontro de Comunidade" />
           </Form.Item>
-          <Form.Item name="startDate" label="Data e Hora" rules={[{ required: true, message: 'Selecione a data e hora do evento!' }]}>
-            <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Selecione data e hora" />
-          </Form.Item>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <Form.Item name="startDate" label="Início" rules={[{ required: true, message: 'Selecione o início!' }]}>
+              <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Data e hora" />
+            </Form.Item>
+            <Form.Item name="endDate" label="Fim">
+              <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Data e hora (Opcional)" />
+            </Form.Item>
+          </div>
+
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
             <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
           </Form.Item>
@@ -746,9 +778,16 @@ function Events() {
           <Form.Item name="name" label="Nome do Evento" rules={[{ required: true, message: 'Insira o nome do evento!' }]}>
             <Input placeholder="Ex: Encontro de Comunidade" />
           </Form.Item>
-          <Form.Item name="startDate" label="Data e Hora" rules={[{ required: true, message: 'Selecione a data e hora do evento!' }]}>
-            <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Selecione data e hora" />
-          </Form.Item>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <Form.Item name="startDate" label="Início" rules={[{ required: true, message: 'Selecione o início!' }]}>
+              <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Data e hora" />
+            </Form.Item>
+            <Form.Item name="endDate" label="Fim">
+              <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Data e hora (Opcional)" />
+            </Form.Item>
+          </div>
+
           <Form.Item name="city" label="Cidade/Estado" rules={[{ required: true, message: 'Insira a localização' }]}>
             <Select labelInValue showSearch placeholder="Pesquisar cidade..." filterOption={false} onSearch={handleCitySearch} options={cityOptions} notFoundContent={null} />
           </Form.Item>

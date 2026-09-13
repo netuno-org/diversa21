@@ -19,6 +19,7 @@ if (!personId) {
   const location = _req.getString('location');
   const cityUid = _req.getString('city');
   const startDate = _req.getString('startDate');
+  const endDate = _req.getString('endDate');
   const coverImage = _req.getFile("cover_image");
 
   if (!name) {
@@ -44,6 +45,12 @@ if (!personId) {
 
     if (startDate) {
         data.set("start_date", startDate);
+    }
+    
+    if (endDate) {
+        data.set("end_date", endDate);
+    } else {
+        data.set("end_date", null);
     }
 
     if (coverImage) {

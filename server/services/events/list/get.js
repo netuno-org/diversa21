@@ -126,6 +126,7 @@ if (events) {
       .set('cover_image', coverImageValue)
       .set('hasCoverImage', coverImageValue !== '')
       .set('startDate', row.getString('start_date') || row.getString('created_at'))
+      .set('endDate', row.getString('end_date'))
       .set('isGoing', isGoing)
       .set('canEdit', canEdit)
       .set('participantsCount', participantsCount)
