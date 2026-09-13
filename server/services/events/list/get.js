@@ -14,6 +14,7 @@ if (userId) {
   }
 }
 
+const tab = _req.getString('tab') || 'general';
 const term = _req.getString('term');
 const location = _req.getString('location');
 const goingOnly = _req.getBoolean('goingOnly');
@@ -38,6 +39,12 @@ let countSql = `SELECT COUNT(*) as total FROM event e LEFT JOIN city c ON e.city
 let where = ` WHERE e.active = true`;
 let params = [];
 
+if (tab === 'history') {
+  where += ` AND e.start_date::date < CURRENT_DATE`;
+} else {
+  where += ` AND e.start_date::date >= CURRENT_DATE`;
+}
+
 if (goingOnly && personId) {
   where += ` AND EXISTS (SELECT 1 FROM event_participant ep_filter WHERE ep_filter.event_id = e.id AND ep_filter.people_id = ? AND ep_filter.active = true)`;
   params.push(personId);
@@ -53,7 +60,8 @@ if (location) {
   params.push(`%${location}%`, `%${location}%`);
 }
 
-sql += where + ` ORDER BY e.created_at DESC LIMIT ? OFFSET ?`;
+const sortOrder = tab === 'history' ? 'DESC' : 'ASC';
+sql += where + ` ORDER BY e.start_date ${sortOrder}, e.created_at DESC LIMIT ? OFFSET ?`;
 countSql += where;
 
 const dbCount = _db.queryFirst(countSql, ...params);
@@ -107,7 +115,6 @@ if (events) {
     }
 
     const canEdit = isAdminOrManager || (personId && hostId === personId);
-
     const coverImageValue = row.getString('cover_image') || '';
 
     list.add(_val.map()

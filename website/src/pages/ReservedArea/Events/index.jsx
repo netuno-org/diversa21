@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, Fragment } from 'react';
 import { Card, Typography, Spin, Pagination, Button, Modal, Avatar, List, Form, Input, DatePicker, Select, notification, Dropdown, Upload, Tooltip, Tabs, Divider, Space, Tag, Empty } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, StarOutlined, CheckOutlined, MoreOutlined, UploadOutlined, AppstoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, StarOutlined, CheckOutlined, MoreOutlined, UploadOutlined, AppstoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined, HistoryOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters';
@@ -50,7 +50,7 @@ const UserAvatar = ({ person, size, className = '', onClick }) => {
 function Events() {
   const loggedUser = usePeople();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [showGoingOnly, setShowGoingOnly] = useState(false);
+  const [currentTab, setCurrentTab] = useState('general');
   const [eventDetails, setEventDetails] = useState(null);
   const [participantsModal, setParticipantsModal] = useState({ visible: false, event: null, loading: false, items: [] });
   const [createModalVisible, setCreateModalVisible] = useState(false);
@@ -63,8 +63,9 @@ function Events() {
   const [editForm] = Form.useForm();
   
   const requestData = useMemo(() => ({
-    goingOnly: showGoingOnly
-  }), [showGoingOnly]);
+    tab: currentTab,
+    goingOnly: currentTab === 'going'
+  }), [currentTab]);
 
   const { items: events, loading, pagination, handlePaginationChange, handleSearch, handleLocationChange, handleLocationClear, handleSearchClear, fetchList } = useFilteredPaginatedList({
     serviceUrl: 'events/list',
@@ -383,10 +384,10 @@ function Events() {
       </div>
 
       <Tabs
-        activeKey={showGoingOnly ? "going" : "general"}
+        activeKey={currentTab}
         className="events-page__tabs"
         onChange={(key) => {
-          setShowGoingOnly(key === "going");
+          setCurrentTab(key);
           if (pagination.current !== 1) {
             handlePaginationChange(1, pagination.size);
           }
@@ -406,7 +407,16 @@ function Events() {
             label: (
               <span>
                 <StarOutlined style={{ marginRight: 8 }} />
-                Participar
+                Participação
+              </span>
+            ),
+          },
+          {
+            key: "history",
+            label: (
+              <span>
+                <HistoryOutlined style={{ marginRight: 8 }} />
+                Histórico
               </span>
             ),
           },
@@ -416,7 +426,7 @@ function Events() {
       <div className="events-page__results-count">
         <Text type="secondary">
           {totalCount} {totalCount === 1 ? 'Evento Encontrado' : 'Eventos Encontrados'}
-          {showGoingOnly ? ' que vou participar' : ''}
+          {currentTab === 'going' ? ' Que Vou Participar' : currentTab === 'history' ? ' Passados' : ''}
         </Text>
       </div>
 
@@ -536,6 +546,7 @@ function Events() {
                   className={`events-page__rsvp-btn ${ev.isGoing ? 'events-page__rsvp-btn--going' : ''}`}
                   loading={actionLoadingUid === ev.uid} 
                   onClick={(e) => toggleGoing(ev, e)}
+                  disabled={currentTab === 'history'}
                   block
                   icon={ev.isGoing ? <CheckOutlined /> : <StarOutlined />}
                 >
@@ -566,6 +577,7 @@ function Events() {
             className={`events-page__details-rsvp-btn ${eventDetails?.isGoing ? 'events-page__details-rsvp-btn--going' : ''}`}
             loading={actionLoadingUid === eventDetails?.uid} 
             onClick={() => toggleGoing(eventDetails)}
+            disabled={currentTab === 'history'}
             icon={eventDetails?.isGoing ? <CheckOutlined /> : <StarOutlined />}
           >
             {eventDetails?.isGoing ? 'Presença Confirmada' : 'Participar'}
@@ -749,7 +761,7 @@ function Events() {
         </Form>
       </Modal>
 
-      <Modal title={participantsModal.event ? `Participantes — ${participantsModal.event.name}` : 'Participantes'} open={participantsModal.visible} onCancel={closeParticipants} footer={null}>
+      <Modal title={participantsModal.event ? `Participantes — ${participantsModal.event.event_name || participantsModal.event.name}` : 'Participantes'} open={participantsModal.visible} onCancel={closeParticipants} footer={null}>
         {participantsModal.loading ? (
           <div className="events-page__loading"><Spin /></div>
         ) : (
