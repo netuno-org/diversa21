@@ -52,7 +52,11 @@ function Events() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentTab, setCurrentTab] = useState('general');
   const [eventDetails, setEventDetails] = useState(null);
-  const [participantsModal, setParticipantsModal] = useState({ visible: false, event: null, loading: false, items: [] });
+  
+  const [detailParticipants, setDetailParticipants] = useState([]);
+  const [detailParticipantsPage, setDetailParticipantsPage] = useState(1);
+  const [loadingParticipants, setLoadingParticipants] = useState(false);
+
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
@@ -82,25 +86,31 @@ function Events() {
       const foundEvent = events.find(e => e.uid === uidFromUrl);
       if (foundEvent && (!eventDetails || eventDetails.uid !== uidFromUrl)) {
         setEventDetails(foundEvent);
+        setDetailParticipants(foundEvent.participantsPreview || []);
+        setDetailParticipantsPage(1);
       }
     } else if (!uidFromUrl && eventDetails) {
       setEventDetails(null);
+      setDetailParticipants([]);
+      setDetailParticipantsPage(1);
     }
   }, [searchParams, events, loading]);
 
   const handleOpenModal = (ev) => {
     setEventDetails(ev);
+    setDetailParticipants(ev.participantsPreview || []);
+    setDetailParticipantsPage(1);
     searchParams.set('uid', ev.uid);
     setSearchParams(searchParams);
   };
 
   const handleCloseModal = () => {
     setEventDetails(null);
+    setDetailParticipants([]);
+    setDetailParticipantsPage(1);
     searchParams.delete('uid');
     setSearchParams(searchParams);
   };
-
-  const closeParticipants = () => setParticipantsModal({ visible: false, event: null, loading: false, items: [] });
 
   const goToProfile = (person, e) => {
     if (e) {
@@ -109,7 +119,6 @@ function Events() {
     }
     
     if (person?.username) {
-      closeParticipants();
       handleCloseModal();
       navigate(`/u/${person.username}`);
     }
@@ -129,23 +138,30 @@ function Events() {
     });
   };
 
-  const openParticipants = (event) => {
-    setParticipantsModal({ visible: true, event, loading: true, items: [] });
+  const fetchParticipants = (page) => {
+    if (!eventDetails) return;
+    setLoadingParticipants(true);
+
     _service({
-      url: 'events/participants',
-      data: { eventUid: event.uid },
+      url: `events/participants?eventUid=${eventDetails.uid}&page=${page}&pageSize=10`,
       success: ({ json }) => {
-        let list = [];
+        let newList = [];
         if (Array.isArray(json?.data)) {
-          list = json.data;
+          newList = json.data;
         } else if (Array.isArray(json)) {
-          list = json;
+          newList = json;
         } else if (json?.result && Array.isArray(json.result)) {
-          list = json.result;
+          newList = json.result;
         }
-        setParticipantsModal({ visible: true, event, loading: false, items: list });
+        
+        setDetailParticipants(newList);
+        setDetailParticipantsPage(page);
+        setLoadingParticipants(false);
       },
-      fail: () => setParticipantsModal({ visible: true, event, loading: false, items: [] }),
+      fail: () => {
+        notification.error({ message: 'Erro ao carregar participantes.' });
+        setLoadingParticipants(false);
+      },
     });
   };
 
@@ -698,12 +714,14 @@ function Events() {
                     ),
                     children: (
                       <div className="events-page__view-tabs-content">
-                        {eventDetails.participantsPreview && eventDetails.participantsPreview.length > 0 ? (
+                        {loadingParticipants ? (
+                          <div className="events-page__loading"><Spin /></div>
+                        ) : detailParticipants && detailParticipants.length > 0 ? (
                           <>
                             <div className="events-page__details-participants-grid">
-                              {eventDetails.participantsPreview.map((p, idx) => (
+                              {detailParticipants.map((p, idx) => (
                                 <div 
-                                  key={idx} 
+                                  key={p.uid || idx} 
                                   className="events-page__details-participants-item"
                                   onClick={(e) => goToProfile(p, e)}
                                   style={{ cursor: 'pointer' }}
@@ -713,12 +731,16 @@ function Events() {
                                 </div>
                               ))}
                             </div>
+                            
                             {eventDetails.participantsCount > 10 && (
-                              <div 
-                                className="events-page__details-participants-more"
-                                onClick={(e) => { e.stopPropagation(); openParticipants(eventDetails); }}
-                              >
-                                Ver todos os {eventDetails.participantsCount} participantes...
+                              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
+                                <Pagination 
+                                  current={detailParticipantsPage} 
+                                  total={eventDetails.participantsCount} 
+                                  pageSize={10} 
+                                  onChange={fetchParticipants} 
+                                  showSizeChanger={false} 
+                                />
                               </div>
                             )}
                           </>
@@ -798,25 +820,6 @@ function Events() {
             <Input.TextArea rows={4} placeholder="Descreve o evento..." />
           </Form.Item>
         </Form>
-      </Modal>
-
-      <Modal title={participantsModal.event ? `Participantes — ${participantsModal.event.event_name || participantsModal.event.name}` : 'Participantes'} open={participantsModal.visible} onCancel={closeParticipants} footer={null}>
-        {participantsModal.loading ? (
-          <div className="events-page__loading"><Spin /></div>
-        ) : (
-          <List dataSource={participantsModal.items} renderItem={(p) => (
-            <List.Item
-              onClick={(e) => goToProfile(p, e)}
-              style={{ cursor: 'pointer' }}
-            >
-              <List.Item.Meta 
-                avatar={<UserAvatar person={p} size="large" />} 
-                title={p.name} 
-                description={p.username ? `@${p.username}` : ''} 
-              />
-            </List.Item>
-          )} />
-        )}
       </Modal>
     </div>
   );
