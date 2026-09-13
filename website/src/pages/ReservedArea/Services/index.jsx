@@ -899,13 +899,13 @@ function Services() {
 
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item label="Website" name="website" rules={[{ max: 150, message: "O website não pode ter mais de 150 caracteres" }]}>
-                <Input maxLength={150} showCount prefix={<LinkOutlined />} placeholder="https://" />
+              <Form.Item label="Website" name="website" rules={[{ max: 100, message: "O website não pode ter mais de 100 caracteres" }]}>
+                <Input maxLength={100} showCount prefix={<LinkOutlined />} placeholder="https://" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label="Instagram" name="instagram" rules={[{ max: 150, message: "O instagram não pode ter mais de 150 caracteres" }]}>
-                <Input maxLength={150} showCount prefix={<InstagramOutlined />} placeholder="@utilizador" />
+              <Form.Item label="Instagram" name="instagram" rules={[{ max: 50, message: "O instagram não pode ter mais de 50 caracteres" }]}>
+                <Input maxLength={50} showCount prefix={<InstagramOutlined />} placeholder="@utilizador" />
               </Form.Item>
             </Col>
           </Row>
