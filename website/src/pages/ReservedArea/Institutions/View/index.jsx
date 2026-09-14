@@ -7,12 +7,13 @@ import {
   EditOutlined, MailOutlined, TeamOutlined,
   PhoneOutlined, EnvironmentOutlined, GlobalOutlined,
   FileTextOutlined, CommentOutlined, LikeOutlined,
-  InstagramOutlined
+  InstagramOutlined, CalendarOutlined
 } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
 import UserProfileDisplay from '../../../../components/UserProfileDisplay';
 import ActivityList from "../../../../components/Activity/List";
+import InstitutionEvents from "./Events";
 import usePeople from "../../../../common/usePeople.js";
 
 import "./index.less";
@@ -308,6 +309,20 @@ function View() {
                 </Space>
               ),
               children: membersTab
+            },
+            {
+              key: 'events',
+              label: (
+                <Space>
+                  <CalendarOutlined style={{ fontSize: 18 }} />
+                  <span>Eventos</span>
+                </Space>
+              ),
+              children: (
+                <div className="institution-view__tabs-content">
+                  <InstitutionEvents institutionUid={institution.uid} />
+                </div>
+              )
             },
             {
               key: 'posts',
