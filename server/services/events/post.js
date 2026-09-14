@@ -1,8 +1,11 @@
-import { _req, _db, _val, _user, _image, _uid } from "@netuno/server-types";
+import { _req, _db, _val, _user, _group, _image, _uid } from "@netuno/server-types";
+import { SUPER_ADMIN, MANAGEMENT } from "#core/lib/groups.js";
 import response from "#core/lib/response.js";
 
 const userId = _user.id();
 let personId = null;
+const groupCode = _group.code();
+const isAdminOrManager = groupCode === SUPER_ADMIN || groupCode === MANAGEMENT;
 
 if (userId) {
   const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
@@ -13,6 +16,8 @@ if (userId) {
 
 if (!personId) {
   response.error("Utilizador não autenticado ou sem perfil de pessoa associado.");
+} else if (!isAdminOrManager) {
+  response.error("Não tem permissão para criar eventos.");
 } else {
   const name = _req.getString('name');
   const description = _req.getString('description');

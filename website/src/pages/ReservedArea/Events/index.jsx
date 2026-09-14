@@ -65,7 +65,9 @@ function Events() {
   const [cityOptions, setCityOptions] = useState([]);
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
-  
+
+  const canCreateEvent = ["super-admin", "management"].includes(loggedUser?.data?.group?.code);
+
   const requestData = useMemo(() => ({
     tab: currentTab,
     goingOnly: currentTab === 'going'
@@ -408,15 +410,19 @@ function Events() {
         <ListHeaderFilters
           title="Eventos"
           description="Encontre eventos e atividades perto de si."
-          createButton={{
-            icon: <PlusOutlined />,
-            text: 'Criar Evento',
-            onClick: () => {
-              setCityOptions([]);
-              form.resetFields();
-              setCreateModalVisible(true);
-            },
-          }}
+          createButton={
+            canCreateEvent
+              ? {
+                icon: <PlusOutlined />,
+                text: 'Criar Evento',
+                onClick: () => {
+                  setCityOptions([]);
+                  form.resetFields();
+                  setCreateModalVisible(true);
+                },
+              }
+              : null
+          }
           onSearch={handleSearch}
           onLocationChange={handleLocationChange}
           onLocationClear={handleLocationClear}
