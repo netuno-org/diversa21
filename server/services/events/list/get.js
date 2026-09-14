@@ -17,6 +17,7 @@ if (userId) {
 const tab = _req.getString('tab') || 'general';
 const term = _req.getString('term');
 const location = _req.getString('location');
+const institutionUid = _req.getString('institutionUid');
 const goingOnly = _req.getBoolean('goingOnly');
 const page = _req.getInt('page', 1);
 const pageSize = 10;
@@ -41,7 +42,7 @@ let params = [];
 
 if (tab === 'history') {
   where += ` AND e.start_date::date < CURRENT_DATE`;
-} else {
+} else if (tab !== 'all') {
   where += ` AND e.start_date::date >= CURRENT_DATE`;
 }
 
@@ -60,7 +61,14 @@ if (location) {
   params.push(`%${location}%`, `%${location}%`);
 }
 
-const sortOrder = tab === 'history' ? 'DESC' : 'ASC';
+if (institutionUid) {
+  where += ` AND EXISTS (SELECT 1 FROM people p
+    INNER JOIN institution i ON p.institution_id = i.id
+    WHERE p.id = e.host_id AND i.uid = ?::uuid)`;
+  params.push(institutionUid);
+}
+
+const sortOrder = tab === 'history' || tab === 'all' ? 'DESC' : 'ASC';
 sql += where + ` ORDER BY e.start_date ${sortOrder}, e.created_at DESC LIMIT ? OFFSET ?`;
 countSql += where;
 
