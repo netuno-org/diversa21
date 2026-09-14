@@ -35,6 +35,7 @@ import ReportPage from './Reports/View'
 import PrivacyPage from '../Privacy';
 import FAQs from './FAQs';
 import Events from './Events';
+import EventView from './Events/View';
 
 import "./index.less";
 
@@ -171,6 +172,9 @@ function ReservedArea() {
       }
       if (location.pathname === "/events") {
         return <Events />;
+      }
+      if (location.pathname.match(/^\/events\/[\w-]+$/)) {
+        return <EventView uid={params.uid} />;
       }
       if (location.pathname === "/faqs" || location.pathname === "/faq") {
         return <FAQs />;
