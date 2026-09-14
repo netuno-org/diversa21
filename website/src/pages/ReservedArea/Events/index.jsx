@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState, Fragment } from 'react';
-import { Card, Typography, Spin, Pagination, Button, Modal, Avatar, List, Form, Input, DatePicker, Select, notification, Dropdown, Upload, Tooltip, Tabs, Divider, Space, Tag, Empty } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, StarOutlined, CheckOutlined, MoreOutlined, UploadOutlined, AppstoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined, HistoryOutlined } from '@ant-design/icons';
+import { Card, Typography, Spin, Pagination, Button, Modal, Form, Input, DatePicker, Select, notification, Upload, Tabs, Divider, Space, Tag, Empty } from 'antd';
+import { PlusOutlined, StarOutlined, CheckOutlined, UploadOutlined, AppstoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined, HistoryOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters';
+import EventCard, { UserAvatar, getCoverUrl } from '../../../components/EventCard';
 import usePeople from '../../../common/usePeople.js';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt';
@@ -12,40 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 dayjs.locale('pt');
 
-const { Text, Title, Paragraph } = Typography;
-
-const UserAvatar = ({ person, size, className = '', onClick }) => {
-  const [failed, setFailed] = useState(false);
-
-  if (!person) return null;
-
-  let src = '/images/profile-default.png';
-
-  if (!failed && person.avatar) {
-    const avatarStr = String(person.avatar);
-    if (avatarStr.startsWith('http') || avatarStr.startsWith('data:')) {
-      src = avatarStr;
-    } else {
-      src = _service.url(`/asset?uid=${person.uid}&type=avatar&entity=people`);
-    }
-  }
-
-  return (
-    <Tooltip title={person.name || 'Participante'}>
-      <Avatar
-        size={size}
-        src={src}
-        className={`events-page__avatar ${className}`}
-        onClick={onClick}
-        style={onClick ? { cursor: 'pointer' } : undefined}
-        onError={() => {
-          if (!failed) setFailed(true);
-          return true;
-        }}
-      />
-    </Tooltip>
-  );
-};
+const { Text, Title } = Typography;
 
 function Events() {
   const loggedUser = usePeople();
@@ -212,21 +180,6 @@ function Events() {
     });
   };
 
-  const getCoverUrl = (event) => {
-    if (!event || !event.uid) return null;
-
-    const rawCoverValue = event.cover_image || event.coverImage;
-    if (!rawCoverValue) return null;
-
-    const coverImageStr = String(rawCoverValue);
-
-    if (coverImageStr.startsWith('http') || coverImageStr.startsWith('data:')) {
-      return coverImageStr;
-    }
-
-    return _service.url(`/asset?uid=${event.uid}&type=cover_image&entity=event`);
-  };
-
   const openEditModal = (event) => {
     setCurrentEvent(event);
     if (event.city?.name) {
@@ -350,6 +303,13 @@ function Events() {
           }));
         }
 
+        notification.success({
+          message: event.isGoing ? 'Presença cancelada' : 'Presença confirmada',
+          description: event.isGoing
+            ? 'Presença no evento cancelada.'
+            : 'A sua presença neste evento foi confirmada.',
+        });
+
         fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
       },
       fail: () => {
@@ -357,32 +317,6 @@ function Events() {
         notification.error({ message: 'Erro ao atualizar presença.' });
       },
     });
-  };
-
-  const formatEventDate = (startString, endString) => {
-    if (!startString) return '';
-    const start = dayjs(startString);
-    const isToday = start.isSame(dayjs(), 'day');
-
-    const formatDay = (d) => {
-      const dayStr = d.format('ddd').replace('.', '');
-      return `${dayStr.charAt(0).toUpperCase() + dayStr.slice(1)}, ${d.format('DD/MM')}`;
-    };
-
-    const startTime = start.format('HH:mm');
-    const startText = isToday ? 'Hoje' : formatDay(start);
-    const startFormatted = `${startText} às ${startTime}`;
-
-    if (!endString) return startFormatted;
-
-    const end = dayjs(endString);
-    const endTime = end.format('HH:mm');
-
-    if (start.isSame(end, 'day')) {
-      return `${startFormatted} - ${endTime}`;
-    }
-
-    return `${startFormatted} - ${formatDay(end)} às ${endTime}`;
   };
 
   const formatFullDate = (startString, endString) => {
@@ -481,129 +415,23 @@ function Events() {
         <div className="events-page__loading"><Spin size="large" /></div>
       )}
 
-      <div className="events-page__grid">
-        {!loading && events.map((ev) => {
-          const cityText = ev.city?.name ? `${ev.city.name}${ev.state?.name ? `, ${ev.state.name}` : ''}` : null;
-          const isLocationUrl = ev.location?.startsWith('http');
-          const coverUrl = getCoverUrl(ev);
-
-          return (
-            <Card 
-              key={ev.uid} 
-              bordered={false}
-              hoverable
-              onClick={() => handleOpenModal(ev)}
-              className="events-page__card"
-              cover={
-                <div className="events-page__card-cover">
-                  <div className="events-page__card-cover-fallback">
-                    <Title level={3} className="events-page__placeholder">EVENTO</Title>
-                  </div>
-                  
-                  {coverUrl && (
-                    <img
-                      src={coverUrl}
-                      alt={ev.name}
-                      className="events-page__card-cover-image"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  )}
-
-                  {ev.canEdit && (
-                    <div className="events-page__card-cover-actions" onClick={(e) => e.stopPropagation()}>
-                      <Dropdown 
-                        placement="bottomRight"
-                        menu={{
-                          items: [
-                            { key: 'edit', label: 'Editar', icon: <EditOutlined />, onClick: (e) => { e.domEvent.stopPropagation(); e.domEvent.preventDefault(); openEditModal(ev); } },
-                            { key: 'delete', label: 'Eliminar', danger: true, icon: <DeleteOutlined />, onClick: (e) => { e.domEvent.stopPropagation(); e.domEvent.preventDefault(); confirmDeleteEvent(ev); } }
-                          ]
-                        }} 
-                        trigger={['click']}
-                      >
-                        <Button shape="circle" size="small" icon={<MoreOutlined />} onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />
-                      </Dropdown>
-                    </div>
-                  )}
-                </div>
-              }
-            >
-              <div className="events-page__card-content">
-                
-                <div 
-                  className="events-page__card-host" 
-                  onClick={(e) => goToProfile(ev.host, e)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <UserAvatar person={ev.host} size="small" />
-                  <Text type="secondary" className="events-page__card-host-name">{ev.host?.name}</Text>
-                </div>
-
-                <Text className="events-page__card-date">
-                  {formatEventDate(ev.startDate, ev.endDate)}
-                </Text>
-                
-                <Title level={5} className="events-page__card-title" ellipsis={{ rows: 2 }}>
-                  {ev.name}
-                </Title>
-                
-                <Text type="secondary" className="events-page__card-location" ellipsis>
-                  {isLocationUrl ? (
-                    <a href={ev.location} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-                      {ev.location}
-                    </a>
-                  ) : (
-                    ev.location
-                  )}
-                  {ev.location && cityText && ' - '}
-                  {cityText}
-                  {!ev.location && !cityText && 'Localização não especificada'}
-                </Text>
-
-                <div className="events-page__card-participants">
-                  <Text type="secondary" className="events-page__card-participants-text">
-                    {ev.participantsCount || 0} {ev.participantsCount === 1 ? 'participante' : 'participantes'}
-                  </Text>
-                  {ev.participantsPreview && ev.participantsPreview.length > 0 && (
-                    <>
-                      <Text type="secondary" className="events-page__card-participants-dot">·</Text>
-                      <Avatar.Group size="small">
-                        {ev.participantsPreview.slice(0, 3).map((p, idx) => (
-                          <UserAvatar 
-                            key={idx} 
-                            person={p} 
-                            size="small" 
-                            className="events-page__avatar--bordered" 
-                            onClick={(e) => goToProfile(p, e)}
-                          />
-                        ))}
-                        {ev.participantsCount > 3 && (
-                          <Avatar size="small" style={{ backgroundColor: '#8b6aa2', color: '#fff', border: '1px solid #fff' }}>
-                            +{ev.participantsCount - 3}
-                          </Avatar>
-                        )}
-                      </Avatar.Group>
-                    </>
-                  )}
-                </div>
-
-                <Button 
-                  className={`events-page__rsvp-btn ${ev.isGoing ? 'events-page__rsvp-btn--going' : ''}`}
-                  loading={actionLoadingUid === ev.uid} 
-                  onClick={(e) => toggleGoing(ev, e)}
-                  disabled={currentTab === 'history'}
-                  block
-                  icon={ev.isGoing ? <CheckOutlined /> : <StarOutlined />}
-                >
-                  {ev.isGoing ? 'Presença Confirmada' : 'Participar'}
-                </Button>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+      {!loading && (
+        <div className="events-page__grid">
+          {events.map((ev) => (
+            <EventCard
+              key={ev.uid}
+              event={ev}
+              onClick={handleOpenModal}
+              onEdit={openEditModal}
+              onDelete={confirmDeleteEvent}
+              onToggleGoing={toggleGoing}
+              onPersonClick={goToProfile}
+              goingLoading={actionLoadingUid === ev.uid}
+              rsvpDisabled={currentTab === 'history'}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="events-page__footer">
         <Pagination total={totalCount} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
@@ -620,6 +448,7 @@ function Events() {
         footer={[
           <Button key="close" onClick={handleCloseModal}>Fechar</Button>,
           <Button 
+            type='primary'
             key="rsvp" 
             className={`events-page__details-rsvp-btn ${eventDetails?.isGoing ? 'events-page__details-rsvp-btn--going' : ''}`}
             loading={actionLoadingUid === eventDetails?.uid} 
