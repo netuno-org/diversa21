@@ -1,0 +1,18 @@
+.institution-events {
+  &__loading,
+  &__empty {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  &__pagination {
+    margin-top: 24px;
+  }
+}
