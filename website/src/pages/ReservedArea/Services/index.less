@@ -1,3 +1,5 @@
+@import '../../../styles/variables.less';
+
 .services-list {
   padding: 0 24px;
 
@@ -10,17 +12,22 @@
   }
 
   &__count {
-    margin-top: 0;
-    margin-bottom: 12px;
+    margin-top: 16px;
+    margin-bottom: 16px;
     padding: 0;
     padding-left: 24px;
   }
 
   &__tabs {
     margin-bottom: 0 !important;
-    
+    display: block !important;
+
     .ant-tabs-nav {
-      margin-bottom: 12px !important;
+      margin-bottom: 0 !important;
+    }
+
+    .ant-tabs-content-holder {
+      display: none;
     }
   }
 
@@ -118,41 +125,41 @@
   }
 
   &__favorite-btn {
-    color: #8b6aa2 !important;
+    color: @primary-color !important;
 
     &:hover {
       background: transparent !important;
 
       .services-list__bookmark-outlined,
       .services-list__bookmark-filled {
-        color: darken(#8b6aa2, 10%) !important;
+        color: darken(@primary-color, 10%) !important;
 
         svg,
         path {
-          fill: darken(#8b6aa2, 10%) !important;
+          fill: darken(@primary-color, 10%) !important;
         }
       }
     }
   }
 
   &__bookmark-filled {
-    color: #8b6aa2 !important;
+    color: @primary-color !important;
     font-size: 18px;
 
     svg,
     path {
-      fill: #8b6aa2 !important;
+      fill: @primary-color !important;
     }
   }
 
   &__bookmark-outlined {
     font-size: 18px;
-    color: #8b6aa2 !important;
+    color: @primary-color !important;
     transition: color 0.2s ease;
 
     svg,
     path {
-      fill: #8b6aa2 !important;
+      fill: @primary-color !important;
       transition: fill 0.2s ease;
     }
   }
@@ -215,11 +222,11 @@
     overflow: hidden;
 
     .anticon {
-      color: #8b6aa2;
+      color: @primary-color;
     }
 
     a {
-      color: #8b6aa2;
+      color: @primary-color;
       display: inline-block;
       max-width: 100%;
       overflow: hidden;

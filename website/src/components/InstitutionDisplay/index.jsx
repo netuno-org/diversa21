@@ -23,7 +23,8 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
   return (
     <div className="institution-display">
       <Avatar
-        style={{ backgroundColor: avatarUrl ? '#fff' : '#8A6AA2', ...avatarStyle }}
+        className={!avatarUrl ? 'institution-display__avatar--empty' : undefined}
+        style={{ backgroundColor: avatarUrl ? '#fff' : undefined, ...avatarStyle }}
         src={avatarUrl}
         shape="square"
       >

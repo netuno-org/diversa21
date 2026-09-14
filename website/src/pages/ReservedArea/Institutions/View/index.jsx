@@ -177,9 +177,10 @@ function View() {
               />
             ) : (
               <Avatar
+                className="institution-view__avatar-empty"
                 size={120}
                 shape="square"
-                style={{ backgroundColor: '#8A6AA2', fontSize: 48 }}
+                style={{ fontSize: 48 }}
               >
                 {institution.name?.[0]}
               </Avatar>
@@ -303,7 +304,7 @@ function View() {
               label: (
                 <Space>
                   <TeamOutlined style={{ fontSize: 18 }} />
-                  <span>Membros <Tag color="#8A6AA2" variant='solid' style={{ borderRadius: '32px' }}>{membersCount}</Tag></span>
+                  <span>Membros <Tag color="#6009B6" variant='solid' style={{ borderRadius: '32px' }}>{membersCount}</Tag></span>
                 </Space>
               ),
               children: membersTab

@@ -5,7 +5,17 @@
 
   &__tabs {
     margin-top: 16px;
+    margin-bottom: 0 !important;
     padding-left: 24px;
+    display: block !important;
+
+    .ant-tabs-nav {
+      margin-bottom: 0 !important;
+    }
+
+    .ant-tabs-content-holder {
+      display: none;
+    }
   }
 
   &__results-count {
@@ -25,7 +35,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
-    margin-top: 16px;
+    margin-top: 0;
     width: 100%;
   }
 
