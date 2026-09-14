@@ -522,6 +522,7 @@ function Services() {
 
       <Tabs
         activeKey={showFavorites ? "favorites" : "general"}
+        style={{ paddingLeft: 24 }}
         onChange={(key) => {
           setShowFavorites(key === "favorites");
           if (pagination.current !== 1) {
@@ -861,6 +862,7 @@ function Services() {
           >
             <div className="services-list__description-wrapper">
               <Input.TextArea
+                style={{ resize: 'none' }}
                 ref={textAreaRef}
                 value={descriptionValue}
                 onChange={(e) => {
@@ -933,7 +935,7 @@ function Services() {
             <Input placeholder="Ex: Saúde" />
           </Form.Item>
           <Form.Item label="Descrição" name="description">
-            <Input.TextArea rows={3} maxLength={250} showCount placeholder="Breve descrição da categoria." />
+            <Input.TextArea rows={3} style={{resize: 'none'}} maxLength={250} showCount placeholder="Breve descrição da categoria." />
           </Form.Item>
         </Form>
       </Modal>
