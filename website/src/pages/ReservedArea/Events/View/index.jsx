@@ -144,7 +144,7 @@ function EventView({ uid }) {
             className="event-view__detail-item event-view__detail-item--clickable"
             onClick={(e) => goToProfile(event.host, e)}
           >
-            <UserAvatar person={event.host} size="small" />
+            <UserAvatar person={event.host} size="small" shape="square" />
             <Text type="secondary">
               Organizado por <strong className="event-view__host-name">{event.host?.name}</strong>
             </Text>
@@ -231,7 +231,7 @@ function EventView({ uid }) {
                             className="event-view__participants-item"
                             onClick={(e) => goToProfile(p, e)}
                           >
-                            <UserAvatar person={p} size="default" />
+                            <UserAvatar person={p} size="default" shape="square" />
                             <Text className="event-view__participants-name" ellipsis>{p.name}</Text>
                           </div>
                         ))}

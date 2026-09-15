@@ -56,7 +56,7 @@ export const formatEventDate = (startString, endString) => {
   return `${startFormatted} - ${formatDay(end)} às ${endTime}`;
 };
 
-export const UserAvatar = ({ person, size, className = '', onClick }) => {
+export const UserAvatar = ({ person, size, shape, className = '', onClick }) => {
   const [failed, setFailed] = useState(false);
 
   if (!person) return null;
@@ -76,6 +76,7 @@ export const UserAvatar = ({ person, size, className = '', onClick }) => {
     <Tooltip title={person.name || 'Participante'}>
       <Avatar
         size={size}
+        shape={shape}
         src={src}
         className={`event-card__avatar ${className}`.trim()}
         onClick={onClick}

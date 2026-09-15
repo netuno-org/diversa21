@@ -4,6 +4,11 @@
   min-height: calc(100vh - 140px);
   margin: 0 auto;
 
+  .ant-avatar,
+  .ant-avatar img {
+    border-radius: 8px !important;
+  }
+
   &__loading,
   &__empty {
     display: flex;
@@ -115,7 +120,6 @@
 
   &__about {
 
-
     p {
       color: #333;
       font-size: 15px;
@@ -169,7 +173,6 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px 8px;
-      margin-bottom: 16px;
     }
 
     &-item {
