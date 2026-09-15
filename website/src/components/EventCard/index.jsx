@@ -26,6 +26,10 @@ export const getCoverUrl = (event) => {
   return _service.url(`/asset?uid=${event.uid}&type=cover_image&entity=event`);
 };
 
+export const isPastEvent = (event) => Boolean(
+  event?.startDate && dayjs(event.startDate).isBefore(dayjs(), 'day')
+);
+
 export const formatEventDate = (startString, endString) => {
   if (!startString) return '';
   const start = dayjs(startString);
@@ -106,6 +110,7 @@ function EventCard({
     : null;
   const isLocationUrl = event.location?.startsWith('http');
   const coverUrl = getCoverUrl(event);
+  const isPast = isPastEvent(event);
 
   const menuItems = [
     onEdit && {
@@ -143,7 +148,7 @@ function EventCard({
       bordered={false}
       hoverable={Boolean(onClick)}
       onClick={onClick ? () => onClick(event) : undefined}
-      className={`event-card${className ? ` ${className}` : ''}`}
+      className={`event-card${isPast ? ' event-card--past' : ''}${className ? ` ${className}` : ''}`}
       cover={
         <div className="event-card__cover">
           <div className="event-card__cover-fallback">
@@ -159,6 +164,10 @@ function EventCard({
                 e.currentTarget.style.display = 'none';
               }}
             />
+          )}
+
+          {isPast && (
+            <span className="event-card__past-badge">Realizado</span>
           )}
 
           {showMenu && (
@@ -254,7 +263,7 @@ function EventCard({
             className={`event-card__rsvp-btn${event.isGoing ? ' event-card__rsvp-btn--going' : ''}`}
             loading={goingLoading}
             onClick={(e) => onToggleGoing?.(event, e)}
-            disabled={rsvpDisabled || !onToggleGoing}
+            disabled={rsvpDisabled || isPast || !onToggleGoing}
             block
             icon={event.isGoing ? <CheckOutlined /> : <StarOutlined />}
           >

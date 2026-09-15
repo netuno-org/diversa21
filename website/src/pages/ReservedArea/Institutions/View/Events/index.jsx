@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Spin, Pagination, Empty, notification } from 'antd';
 import _service from '@netuno/service-client';
-import dayjs from 'dayjs';
 
 import useFilteredPaginatedList from '../../../../../common/useFilteredPaginatedList.js';
 import EventCard from '../../../../../components/EventCard';
@@ -70,22 +69,17 @@ function InstitutionEvents({ institutionUid }) {
   return (
     <>
       <div className="institution-events__list">
-        {events.map((event) => {
-          const isPast = event.startDate && dayjs(event.startDate).isBefore(dayjs(), 'day');
-
-          return (
-            <EventCard
-              key={event.uid}
-              event={event}
-              onClick={() => navigate(`/events/${event.uid}`, { state: { event } })}
-              onToggleGoing={toggleGoing}
-              goingLoading={actionLoadingUid === event.uid}
-              rsvpDisabled={isPast}
-              showHost={false}
-              showParticipantsPreview={false}
-            />
-          );
-        })}
+        {events.map((event) => (
+          <EventCard
+            key={event.uid}
+            event={event}
+            onClick={() => navigate(`/events/${event.uid}`, { state: { event } })}
+            onToggleGoing={toggleGoing}
+            goingLoading={actionLoadingUid === event.uid}
+            showHost={false}
+            showParticipantsPreview={false}
+          />
+        ))}
       </div>
 
       {pagination.total > pagination.size && (

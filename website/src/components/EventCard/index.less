@@ -59,6 +59,21 @@
     }
   }
 
+  &__past-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
   &__placeholder {
     color: rgba(255, 255, 255, 0.2) !important;
     margin: 0 !important;
@@ -187,6 +202,29 @@
         color: #fff !important;
         border-color: transparent !important;
       }
+    }
+  }
+
+  &--past {
+    &:hover {
+      box-shadow: none;
+      transform: none;
+    }
+
+    .event-card__cover-image {
+      filter: grayscale(1);
+      opacity: 0.75;
+    }
+
+    .event-card__date-text,
+    .event-card__title {
+      color: rgba(0, 0, 0, 0.45) !important;
+    }
+
+    .event-card__date .anticon,
+    .event-card__location .anticon,
+    .event-card__participants .anticon {
+      color: rgba(0, 0, 0, 0.35);
     }
   }
 }

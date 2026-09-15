@@ -5,7 +5,7 @@ import _service from '@netuno/service-client';
 import { Card, Typography, Spin, Pagination, Button, Tabs, Divider, Space, Tag, Empty, notification } from 'antd';
 import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, StarOutlined, CheckOutlined } from '@ant-design/icons';
 
-import { UserAvatar } from '../../../../components/EventCard';
+import { UserAvatar, isPastEvent } from '../../../../components/EventCard';
 
 import './index.less';
 
@@ -39,7 +39,7 @@ function EventView({ uid }) {
     );
   }
 
-  const isPast = event.startDate && dayjs(event.startDate).isBefore(dayjs(), 'day');
+  const isPast = isPastEvent(event);
 
   const getCoverUrl = () => {
     const rawCover = event.cover_image || event.coverImage;

@@ -427,7 +427,6 @@ function Events() {
               onToggleGoing={toggleGoing}
               onPersonClick={goToProfile}
               goingLoading={actionLoadingUid === ev.uid}
-              rsvpDisabled={currentTab === 'history'}
             />
           ))}
         </div>
