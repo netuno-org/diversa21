@@ -151,12 +151,12 @@ function EventView({ uid }) {
           </div>
 
           <div className="event-view__detail-item">
-            <CalendarOutlined />
+            <CalendarOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
             <Text type="secondary">{formatFullDate(event.startDate, event.endDate)}</Text>
           </div>
 
           <div className="event-view__detail-item">
-            <EnvironmentOutlined />
+            <EnvironmentOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
             <Text type="secondary">
               {[event.city?.name, event.state?.name].filter(Boolean).join(', ') || 'Sem cidade definida'}
               {event.location && (
@@ -190,7 +190,8 @@ function EventView({ uid }) {
         </div>
         <div className="event-view__footer">
           <Button
-            type="primary"
+            type={isGoing ? "dashed" : "default"}
+            style={{ borderColor: '#8A6AA2', color: '#8A6AA2' }}
             loading={actionLoading}
             onClick={toggleGoing}
             disabled={isPast}
@@ -209,7 +210,7 @@ function EventView({ uid }) {
               key: 'participants',
               label: (
                 <Space>
-                  <TeamOutlined style={{ fontSize: 18 }} />
+                  <TeamOutlined style={{ fontSize: 18, color: 'rgba(0, 0, 0, 0.45)' }} />
                   <span>
                     Participantes{' '}
                     <Tag className="event-view__participants-tag" variant="solid">

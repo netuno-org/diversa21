@@ -261,7 +261,8 @@ function EventCard({
 
         {showRsvp && (
           <Button
-            className={`event-card__rsvp-btn${event.isGoing ? ' event-card__rsvp-btn--going' : ''}`}
+            className="event-card__rsvp-btn"
+            type={event.isGoing ? "dashed" : "default"}
             loading={goingLoading}
             onClick={(e) => onToggleGoing?.(event, e)}
             disabled={rsvpDisabled || isPast || !onToggleGoing}

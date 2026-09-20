@@ -718,7 +718,7 @@ function Services() {
         open={!!serviceDetails}
         onCancel={handleCloseService}
         footer={[
-          <Button key="close" type="primary" onClick={handleCloseService}>
+          <Button key="close" onClick={handleCloseService}>
             Fechar
           </Button>,
         ]}
