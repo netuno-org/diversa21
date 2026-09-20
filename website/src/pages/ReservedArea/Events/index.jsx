@@ -1,29 +1,23 @@
-import { useEffect, useMemo, useState, Fragment } from 'react';
-import { Card, Typography, Spin, Pagination, Button, Modal, Form, Input, DatePicker, Select, notification, Upload, Tabs, Divider, Space, Tag, Empty } from 'antd';
-import { PlusOutlined, StarOutlined, CheckOutlined, UploadOutlined, AppstoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined, HistoryOutlined } from '@ant-design/icons';
+import { useMemo, useState } from 'react';
+import { Typography, Spin, Pagination, Button, Modal, Form, Input, DatePicker, Select, notification, Upload, Tabs } from 'antd';
+import { PlusOutlined, StarOutlined, UploadOutlined, AppstoreOutlined, HistoryOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from '../../../components/ListHeaderFilters';
-import EventCard, { UserAvatar, getCoverUrl } from '../../../components/EventCard';
+import EventCard, { getCoverUrl } from '../../../components/EventCard';
 import usePeople from '../../../common/usePeople.js';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt';
 import './index.less';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 dayjs.locale('pt');
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 function Events() {
   const loggedUser = usePeople();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [currentTab, setCurrentTab] = useState('general');
-  const [eventDetails, setEventDetails] = useState(null);
-  
-  const [detailParticipants, setDetailParticipants] = useState([]);
-  const [detailParticipantsPage, setDetailParticipantsPage] = useState(1);
-  const [loadingParticipants, setLoadingParticipants] = useState(false);
 
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -50,38 +44,6 @@ function Events() {
 
   const totalCount = pagination?.total ?? events.length;
 
-  useEffect(() => {
-    const uidFromUrl = searchParams.get('uid');
-    if (uidFromUrl && !loading && events.length > 0) {
-      const foundEvent = events.find(e => e.uid === uidFromUrl);
-      if (foundEvent && (!eventDetails || eventDetails.uid !== uidFromUrl)) {
-        setEventDetails(foundEvent);
-        setDetailParticipants(foundEvent.participantsPreview || []);
-        setDetailParticipantsPage(1);
-      }
-    } else if (!uidFromUrl && eventDetails) {
-      setEventDetails(null);
-      setDetailParticipants([]);
-      setDetailParticipantsPage(1);
-    }
-  }, [searchParams, events, loading]);
-
-  const handleOpenModal = (ev) => {
-    setEventDetails(ev);
-    setDetailParticipants(ev.participantsPreview || []);
-    setDetailParticipantsPage(1);
-    searchParams.set('uid', ev.uid);
-    setSearchParams(searchParams);
-  };
-
-  const handleCloseModal = () => {
-    setEventDetails(null);
-    setDetailParticipants([]);
-    setDetailParticipantsPage(1);
-    searchParams.delete('uid');
-    setSearchParams(searchParams);
-  };
-
   const goToProfile = (person, e) => {
     if (e) {
       e.stopPropagation();
@@ -89,7 +51,6 @@ function Events() {
     }
     
     if (person?.username) {
-      handleCloseModal();
       navigate(`/u/${person.username}`);
     }
   };
@@ -105,33 +66,6 @@ function Events() {
         setCityOptions(json.data.map((city) => ({ label: city.label, value: city.uid })));
       },
       fail: () => setCityOptions([]),
-    });
-  };
-
-  const fetchParticipants = (page) => {
-    if (!eventDetails) return;
-    setLoadingParticipants(true);
-
-    _service({
-      url: `events/participants?eventUid=${eventDetails.uid}&page=${page}&pageSize=10`,
-      success: ({ json }) => {
-        let newList = [];
-        if (Array.isArray(json?.data)) {
-          newList = json.data;
-        } else if (Array.isArray(json)) {
-          newList = json;
-        } else if (json?.result && Array.isArray(json.result)) {
-          newList = json.result;
-        }
-        
-        setDetailParticipants(newList);
-        setDetailParticipantsPage(page);
-        setLoadingParticipants(false);
-      },
-      fail: () => {
-        notification.error({ message: 'Erro ao carregar participantes.' });
-        setLoadingParticipants(false);
-      },
     });
   };
 
@@ -242,10 +176,6 @@ function Events() {
         editForm.resetFields();
         notification.success({ message: 'Evento atualizado com sucesso!' });
         fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
-        
-        if (eventDetails && eventDetails.uid === currentEvent.uid) {
-           handleCloseModal(); 
-        }
       },
       fail: () => {
         setCreateLoading(false);
@@ -268,9 +198,6 @@ function Events() {
           data: { eventUid: event.uid },
           success: () => {
             notification.success({ message: 'Evento eliminado com sucesso!' });
-            if (eventDetails && eventDetails.uid === event.uid) {
-              handleCloseModal();
-            }
             fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
           },
           fail: () => {
@@ -295,14 +222,6 @@ function Events() {
       success: () => {
         setActionLoadingUid(null);
 
-        if (eventDetails && eventDetails.uid === event.uid) {
-          setEventDetails(prev => ({ 
-            ...prev, 
-            isGoing: !prev.isGoing,
-            participantsCount: prev.isGoing ? prev.participantsCount - 1 : prev.participantsCount + 1
-          }));
-        }
-
         notification.success({
           message: event.isGoing ? 'Presença cancelada' : 'Presença confirmada',
           description: event.isGoing
@@ -317,20 +236,6 @@ function Events() {
         notification.error({ message: 'Erro ao atualizar presença.' });
       },
     });
-  };
-
-  const formatFullDate = (startString, endString) => {
-    if (!startString) return '';
-    const startObj = dayjs(startString);
-    const startText = startObj.format('dddd, DD [de] MMMM [de] YYYY [às] HH:mm');
-    
-    if (!endString) return startText;
-    
-    const endObj = dayjs(endString);
-    if (startObj.isSame(endObj, 'day')) {
-      return `${startText} - ${endObj.format('HH:mm')}`;
-    }
-    return `${startText} até ${endObj.format('dddd, DD [de] MMMM [de] YYYY [às] HH:mm')}`;
   };
 
   const normFile = (e) => {
@@ -421,7 +326,7 @@ function Events() {
             <EventCard
               key={ev.uid}
               event={ev}
-              onClick={handleOpenModal}
+              onClick={() => navigate(`/events/${ev.uid}`, { state: { event: ev } })}
               onEdit={openEditModal}
               onDelete={confirmDeleteEvent}
               onToggleGoing={toggleGoing}
@@ -435,162 +340,6 @@ function Events() {
       <div className="events-page__footer">
         <Pagination total={totalCount} current={pagination.current} pageSize={pagination.size} onChange={handlePaginationChange} />
       </div>
-
-      <Modal 
-        title="Detalhes do Evento" 
-        open={!!eventDetails} 
-        onCancel={handleCloseModal} 
-        width={750}
-        destroyOnHidden
-        styles={{ body: { padding: 0, backgroundColor: '#f5f5f5' } }}
-        bodyStyle={{ padding: 0, backgroundColor: '#f5f5f5' }}
-        footer={[
-          <Button key="close" onClick={handleCloseModal}>Fechar</Button>,
-          <Button 
-            type='primary'
-            key="rsvp" 
-            className={`events-page__details-rsvp-btn ${eventDetails?.isGoing ? 'events-page__details-rsvp-btn--going' : ''}`}
-            loading={actionLoadingUid === eventDetails?.uid} 
-            onClick={() => toggleGoing(eventDetails)}
-            disabled={currentTab === 'history'}
-            icon={eventDetails?.isGoing ? <CheckOutlined /> : <StarOutlined />}
-          >
-            {eventDetails?.isGoing ? 'Presença Confirmada' : 'Participar'}
-          </Button>
-        ]}
-      >
-        {eventDetails && (
-          <div className="events-page__view">
-            
-            <div className="events-page__view-cover">
-              <div className="events-page__view-cover-fallback">EVENTO</div>
-              {getCoverUrl(eventDetails) && (
-                <img 
-                  src={getCoverUrl(eventDetails)} 
-                  alt="Capa do Evento" 
-                  className="events-page__view-cover-image"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              )}
-            </div>
-
-            <Card className="events-page__view-card" bordered={false}>
-              <Title level={3} className="events-page__view-name">{eventDetails.name}</Title>
-
-              <Space size="large" className="events-page__view-details" wrap>
-                <div 
-                  className="events-page__view-detail-item"
-                  onClick={(e) => goToProfile(eventDetails.host, e)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <UserAvatar person={eventDetails.host} size="small" />
-                  <Text type="secondary">
-                    Organizado por <strong style={{ color: '#000' }}>{eventDetails.host?.name}</strong>
-                  </Text>
-                </div>
-
-                <div className="events-page__view-detail-item">
-                  <CalendarOutlined />
-                  <Text type="secondary">{formatFullDate(eventDetails.startDate, eventDetails.endDate)}</Text>
-                </div>
-
-                <div className="events-page__view-detail-item">
-                  <EnvironmentOutlined />
-                  <Text type="secondary">
-                    {[eventDetails.city?.name, eventDetails.state?.name].filter(Boolean).join(', ') || 'Sem cidade definida'}
-                    {eventDetails.location && (
-                      <>
-                        {' • '}
-                        {eventDetails.location.startsWith('http') ? (
-                          <a href={eventDetails.location} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-                            {eventDetails.location}
-                          </a>
-                        ) : (
-                          eventDetails.location
-                        )}
-                      </>
-                    )}
-                  </Text>
-                </div>
-              </Space>
-
-              <Divider />
-
-              <div className="events-page__view-about">
-                <Title level={4}>Sobre</Title>
-                <p>
-                  {(eventDetails.description || 'Este evento ainda não adicionou uma descrição.')
-                    .split('\n')
-                    .map((line, index, array) => (
-                      <Fragment key={index}>
-                        {line}
-                        {index < array.length - 1 && <br />}
-                      </Fragment>
-                    ))}
-                </p>
-              </div>
-            </Card>
-
-            <div className="events-page__view-tabs">
-              <Tabs
-                defaultActiveKey="participants"
-                size="large"
-                items={[
-                  {
-                    key: 'participants',
-                    label: (
-                      <Space>
-                        <TeamOutlined style={{ fontSize: 18 }} />
-                        <span>Participantes <Tag color="#8A6AA2" variant="solid" style={{ borderRadius: '32px' }}>{eventDetails.participantsCount}</Tag></span>
-                      </Space>
-                    ),
-                    children: (
-                      <div className="events-page__view-tabs-content">
-                        {loadingParticipants ? (
-                          <div className="events-page__loading"><Spin /></div>
-                        ) : detailParticipants && detailParticipants.length > 0 ? (
-                          <>
-                            <div className="events-page__details-participants-grid">
-                              {detailParticipants.map((p, idx) => (
-                                <div 
-                                  key={p.uid || idx} 
-                                  className="events-page__details-participants-item"
-                                  onClick={(e) => goToProfile(p, e)}
-                                  style={{ cursor: 'pointer' }}
-                                >
-                                  <UserAvatar person={p} size="default" />
-                                  <Text className="events-page__details-participants-name" ellipsis>{p.name}</Text>
-                                </div>
-                              ))}
-                            </div>
-                            
-                            {eventDetails.participantsCount > 10 && (
-                              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
-                                <Pagination 
-                                  current={detailParticipantsPage} 
-                                  total={eventDetails.participantsCount} 
-                                  pageSize={10} 
-                                  onChange={fetchParticipants} 
-                                  showSizeChanger={false} 
-                                />
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <Empty description="Ainda ninguém confirmou presença. Seja o primeiro!" />
-                        )}
-                      </div>
-                    )
-                  }
-                ]}
-              />
-            </div>
-
-          </div>
-        )}
-      </Modal>
 
       <Modal title="Novo Evento" open={createModalVisible} onCancel={() => setCreateModalVisible(false)} onOk={() => form.submit()} confirmLoading={createLoading} okText="Criar Evento" destroyOnHidden>
         <Form form={form} layout="vertical" onFinish={handleCreateEvent}>
