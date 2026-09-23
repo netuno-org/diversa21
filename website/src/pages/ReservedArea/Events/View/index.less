@@ -9,7 +9,6 @@
     border-radius: 8px !important;
   }
 
-  &__loading,
   &__empty {
     display: flex;
     flex-direction: column;
@@ -167,32 +166,6 @@
       border-color: @primary-color !important;
       color: #fff;
       border-radius: 32px;
-    }
-
-    &-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px 8px;
-    }
-
-    &-item {
-      display: flex;
-      align-items: center;
-      min-width: 0;
-      cursor: pointer;
-    }
-
-    &-name {
-      font-size: 14px;
-      margin-left: 8px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    &-pagination {
-      display: flex;
-      justify-content: center;
-      margin-top: 24px;
     }
   }
 }
