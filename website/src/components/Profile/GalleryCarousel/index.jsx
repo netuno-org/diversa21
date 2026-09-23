@@ -64,7 +64,7 @@ function GalleryCarousel({ userUid, isOwnProfile, title = "Fotos", onViewMore })
     <div className="profile-carousel">
       <div>
         <div className="profile-carousel__title-wrapper">
-          <Title level={5} className="profile-carousel__title">
+          <Title level={4} className="profile-carousel__title">
             {title}
           </Title>
           {photos.length > 0 && (

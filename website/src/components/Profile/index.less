@@ -104,7 +104,7 @@
       display: flex;
       flex-direction: column;
 
-      > *,
+      >*,
       .ant-dropdown-trigger {
         display: flex;
         width: 100%;
@@ -258,21 +258,31 @@
     margin: 0;
   }
 
-  &__details {
-    margin-top: 16px;
-  }
-
   &__detail-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 16px;
 
     .anticon,
     svg {
       font-size: 16px;
       color: @primary-color;
     }
+  }
+
+  &__detail-localization {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+  }
+
+  &__detail-age {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
   }
 
   &__detail-link {
@@ -283,10 +293,6 @@
     &:hover {
       color: #8a6aa2;
     }
-  }
-
-  &__about {
-    margin-top: 8px;
   }
 
   &__tabs {
@@ -327,7 +333,6 @@
 
       .ant-tabs-nav-wrap {
         overflow: visible;
-        padding-left: 24px;
 
         &::before,
         &::after {
@@ -356,6 +361,7 @@
       }
     }
   }
+
   &__tabs-content {
     padding-bottom: 40px;
   }
@@ -387,6 +393,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 16px;
+
     @media (max-width: @sm) {
       grid-template-columns: 1fr;
       gap: 12px;

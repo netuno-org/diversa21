@@ -25,7 +25,7 @@ function GalleryTab({ userUid, isOwnProfile }) {
     <div className="profile__gallery">
       {maxPhotos > 0 && (
         <div className="profile__gallery-header">
-          <Text type="secondary" className="profile__gallery-counter">
+          <Text style={{ fontSize: 16 }} type="secondary" className="profile__gallery-counter">
             <span className={photos.length >= maxPhotos ? 'profile__gallery-counter--full' : ''}>
               {photos.length}
             </span>

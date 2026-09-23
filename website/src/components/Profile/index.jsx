@@ -294,9 +294,6 @@ function Profile({ user }) {
             {user.name}
           </Title>
           <div className="profile__username-wrapper">
-            <Text type="secondary" className="profile__username">
-              @{user.username}
-            </Text>
             {renderGroupInfo()}
             {user.active === false && (
               <Tag variant="filled" color="error" className="profile__status-tag">
@@ -307,18 +304,18 @@ function Profile({ user }) {
 
           <Space size="large" className="profile__details" wrap>
             {(user.city?.name || user.country?.name) && (
-              <div className="profile__detail-item">
+              <div className="profile__detail-localization">
                 <EnvironmentOutlined />
-                <Text type="secondary">
+                <Text style={{color: '#000'}} type="secondary">
                   {user.city?.name}{user.city?.name && user.state?.name && ', '}{user.state?.name}
                 </Text>
               </div>
             )}
 
             {formattedAge && (
-              <div className="profile__detail-item">
+              <div className="profile__detail-age">
                 <CalendarOutlined />
-                <Text type="secondary">{formattedAge}</Text>
+                <Text style={{color: '#000'}} type="secondary">{formattedAge}</Text>
               </div>
             )}
 
