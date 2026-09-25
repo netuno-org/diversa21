@@ -86,19 +86,10 @@
     height: 100%;
   }
 
-  &__host {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-
-    &--clickable {
-      cursor: pointer;
-    }
-
-    &-name {
-      font-size: 12px;
-      margin-left: 8px;
-    }
+  &__title {
+    margin: 0 0 12px 0 !important;
+    font-size: 16px !important;
+    line-height: 1.3 !important;
   }
 
   &__date,
@@ -108,73 +99,20 @@
     align-items: center;
     min-width: 0;
     gap: 8px;
+    margin-bottom: 6px;
 
     .anticon {
       flex-shrink: 0;
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.45);
+      color: #000;
     }
   }
 
-  &__date {
-    margin-bottom: 4px;
-
-    &-text {
-      color: rgba(0, 0, 0, 0.45);
-      font-weight: 600;
-      font-size: 13px;
-    }
-  }
-
-  &__title {
-    margin: 0 0 4px 0 !important;
-    font-size: 16px !important;
-    line-height: 1.3 !important;
-  }
-
-  &__location {
-    font-size: 13px;
-    margin-bottom: 8px;
-
-    .ant-typography {
-      flex: 1;
-      min-width: 0;
-    }
-
-    a {
-      color: @primary-color;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-
-  &__participants {
-    margin-top: 2px;
-    flex-grow: 1;
-
-    &-text {
-      font-size: 13px;
-    }
-
-    &-dot {
-      font-size: 13px;
-      margin: 0 4px;
-    }
-  }
-
-  &__avatar {
-    background-color: #f0f2f5;
-
-    &--bordered {
-      border: 1px solid #fff;
-    }
-  }
-
-  &__avatar-more {
-    background-color: @primary-color;
-    color: #fff;
-    border: 1px solid #fff;
+  &__info-text {
+    color: #000 !important;
+    font-size: 13px !important;
+    font-weight: normal !important;
+    margin: 0 !important;
   }
 
   &__rsvp-btn {
@@ -182,12 +120,12 @@
     height: 36px;
     border-radius: 6px;
     font-weight: 600;
-    background-color: transparent !important;
+    background-color: rgba(138, 106, 162, 0.1) !important; 
     border-color: @primary-color !important;
     color: @primary-color !important;
 
     &:hover, &:focus {
-      background-color: rgba(138, 106, 162, 0.1) !important;
+      background-color: rgba(138, 106, 162, 0.2) !important; 
       color: @primary-color !important;
       border-color: @primary-color !important;
     }
@@ -204,15 +142,15 @@
       opacity: 0.75;
     }
 
-    .event-card__date-text,
-    .event-card__title {
+    .event-card__title,
+    .event-card__info-text {
       color: rgba(0, 0, 0, 0.45) !important;
     }
 
     .event-card__date .anticon,
     .event-card__location .anticon,
     .event-card__participants .anticon {
-      color: rgba(0, 0, 0, 0.35);
+      color: rgba(0, 0, 0, 0.35) !important;
     }
   }
 }

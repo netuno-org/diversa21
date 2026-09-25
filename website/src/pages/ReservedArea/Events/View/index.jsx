@@ -2,11 +2,10 @@ import { useState, Fragment } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import _service from '@netuno/service-client';
 
-import { Card, Typography, Button, Tabs, Divider, Space, Tag, Empty, notification } from 'antd';
+import { Card, Typography, Spin, Pagination, Button, Tabs, Divider, Space, Tag, Empty, notification } from 'antd';
 import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, StarOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { UserAvatar, isPastEvent } from '../../../../components/EventCard';
-import ParticipantsList from './ParticipantsList';
 
 import './index.less';
 
@@ -189,10 +188,10 @@ function EventView({ uid }) {
               ))}
           </p>
         </div>
-        <div className="event-view__footer">
+
+        <div className="event-view__footer" style={{ display: 'flex', justifyContent: 'flex-start' }}>
           <Button
-            type={isGoing ? "dashed" : "default"}
-            style={{ borderColor: '#8A6AA2', color: '#8A6AA2' }}
+            className={`event-view__rsvp-btn ${isGoing ? 'event-view__rsvp-btn--going' : ''}`}
             loading={actionLoading}
             onClick={toggleGoing}
             disabled={isPast}
@@ -211,25 +210,54 @@ function EventView({ uid }) {
               key: 'participants',
               label: (
                 <Space>
-                  <TeamOutlined style={{ fontSize: 18 }} />
+                  <TeamOutlined style={{ fontSize: 18, color: 'rgba(0, 0, 0, 0.45)' }} />
                   <span>
                     Participantes{' '}
-                    <Tag className="event-view__participants-tag" variant="solid">
+                    <Tag className="event-view__participants-tag" variant="solid" color="#8A6AA2" style={{ borderRadius: '16px' }}>
                       {participantsCount}
                     </Tag>
                   </span>
+                  {isGoing && (
+                    <Tag color="success" style={{ borderRadius: '16px', margin: 0, border: 'none', background: '#f6ffed' }}>
+                      <CheckOutlined /> Presença confirmada
+                    </Tag>
+                  )}
                 </Space>
               ),
               children: (
                 <div className="event-view__tabs-content">
-                  <ParticipantsList
-                    participants={participants}
-                    total={participantsCount}
-                    page={participantsPage}
-                    loading={loadingParticipants}
-                    onPageChange={fetchParticipants}
-                    onSelect={goToProfile}
-                  />
+                  {loadingParticipants ? (
+                    <div className="event-view__loading"><Spin /></div>
+                  ) : participants.length > 0 ? (
+                    <>
+                      <div className="event-view__participants-grid">
+                        {participants.map((p, idx) => (
+                          <div
+                            key={p.uid || idx}
+                            className="event-view__participants-item"
+                            onClick={(e) => goToProfile(p, e)}
+                          >
+                            <UserAvatar person={p} size="default" shape="square" />
+                            <Text className="event-view__participants-name" ellipsis>{p.name}</Text>
+                          </div>
+                        ))}
+                      </div>
+
+                      {participantsCount > 10 && (
+                        <div className="event-view__participants-pagination">
+                          <Pagination
+                            current={participantsPage}
+                            total={participantsCount}
+                            pageSize={10}
+                            onChange={fetchParticipants}
+                            showSizeChanger={false}
+                          />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Empty description="Ainda ninguém confirmou presença. Seja o primeiro!" />
+                  )}
                 </div>
               )
             }

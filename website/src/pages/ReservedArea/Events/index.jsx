@@ -23,7 +23,6 @@ function Events() {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
   const [createLoading, setCreateLoading] = useState(false);
-  const [actionLoadingUid, setActionLoadingUid] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
@@ -43,17 +42,6 @@ function Events() {
   const navigate = useNavigate();
 
   const totalCount = pagination?.total ?? events.length;
-
-  const goToProfile = (person, e) => {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-    
-    if (person?.username) {
-      navigate(`/u/${person.username}`);
-    }
-  };
 
   const handleCitySearch = (value) => {
     if (!value) {
@@ -208,36 +196,6 @@ function Events() {
     });
   };
 
-  const toggleGoing = (event, e) => {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-    setActionLoadingUid(event.uid);
-    const method = event.isGoing ? 'DELETE' : 'POST';
-    _service({
-      url: 'events/attendance',
-      method,
-      data: method === 'POST' ? { eventUid: event.uid, status: 'going' } : { eventUid: event.uid },
-      success: () => {
-        setActionLoadingUid(null);
-
-        notification.success({
-          message: event.isGoing ? 'Presença cancelada' : 'Presença confirmada',
-          description: event.isGoing
-            ? 'Presença no evento cancelada.'
-            : 'A sua presença neste evento foi confirmada.',
-        });
-
-        fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
-      },
-      fail: () => {
-        setActionLoadingUid(null);
-        notification.error({ message: 'Erro ao atualizar presença.' });
-      },
-    });
-  };
-
   const normFile = (e) => {
     if (Array.isArray(e)) return e;
     return e?.fileList;
@@ -329,9 +287,6 @@ function Events() {
               onClick={() => navigate(`/events/${ev.uid}`, { state: { event: ev } })}
               onEdit={openEditModal}
               onDelete={confirmDeleteEvent}
-              onToggleGoing={toggleGoing}
-              onPersonClick={goToProfile}
-              goingLoading={actionLoadingUid === ev.uid}
             />
           ))}
         </div>

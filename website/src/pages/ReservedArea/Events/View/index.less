@@ -168,4 +168,30 @@
       border-radius: 32px;
     }
   }
+  
+  &__rsvp-btn {
+    height: 36px;
+    border-radius: 6px;
+    font-weight: 600;
+    background-color: #f0f2f5 !important;
+    border-color: transparent !important;
+    color: #050505 !important;
+    padding: 0 24px;
+    box-shadow: none;
+
+    &:hover, &:focus {
+      background-color: #e4e6e9 !important;
+      color: #050505 !important;
+    }
+
+    &--going {
+      background-color: @primary-color !important;
+      color: #fff !important;
+
+      &:hover, &:focus {
+        background-color: #7a5d8f !important;
+        color: #fff !important;
+      }
+    }
+  }
 }

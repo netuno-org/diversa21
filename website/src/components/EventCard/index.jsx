@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Card, Typography, Button, Dropdown, Avatar, Tooltip } from 'antd';
-import { EditOutlined, DeleteOutlined, StarOutlined, CheckOutlined, MoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined } from '@ant-design/icons';
+import { Card, Typography, Button, Dropdown, Avatar, Tooltip, Tag } from 'antd';
+import { EditOutlined, DeleteOutlined, MoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined, CheckOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt';
@@ -95,13 +95,6 @@ function EventCard({
   onClick,
   onEdit,
   onDelete,
-  onToggleGoing,
-  onPersonClick,
-  goingLoading = false,
-  rsvpDisabled = false,
-  showRsvp = true,
-  showHost = true,
-  showParticipantsPreview = true,
   className = '',
 }) {
   if (!event) return null;
@@ -109,7 +102,6 @@ function EventCard({
   const cityText = event.city?.name
     ? `${event.city.name}${event.state?.name ? `, ${event.state.name}` : ''}`
     : null;
-  const isLocationUrl = event.location?.startsWith('http');
   const coverUrl = getCoverUrl(event);
   const isPast = isPastEvent(event);
 
@@ -138,11 +130,6 @@ function EventCard({
   ].filter(Boolean);
 
   const showMenu = event.canEdit && menuItems.length > 0;
-
-  const handlePersonClick = (person, e) => {
-    if (!onPersonClick) return;
-    onPersonClick(person, e);
-  };
 
   return (
     <Card
@@ -194,84 +181,50 @@ function EventCard({
       }
     >
       <div className="event-card__content">
-        {showHost && (
-          <div
-            className={`event-card__host${onPersonClick ? ' event-card__host--clickable' : ''}`}
-            onClick={onPersonClick ? (e) => handlePersonClick(event.host, e) : undefined}
-          >
-            <UserAvatar person={event.host} size="small" />
-            <Text type="secondary" className="event-card__host-name">{event.host?.name}</Text>
-          </div>
-        )}
-
         <Title level={5} className="event-card__title" ellipsis={{ rows: 2 }}>
           {event.name}
         </Title>
 
         <div className="event-card__date">
           <CalendarOutlined />
-          <Text className="event-card__date-text">
+          <Text className="event-card__info-text">
             {formatEventDate(event.startDate, event.endDate)}
           </Text>
         </div>
 
         <div className="event-card__location">
           <EnvironmentOutlined />
-          <Text type="secondary" ellipsis>
-            {isLocationUrl ? (
-              <a href={event.location} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-                {event.location}
-              </a>
-            ) : (
-              event.location
-            )}
+          <Text className="event-card__info-text" ellipsis>
+            {event.location}
             {event.location && cityText && ' - '}
             {cityText}
             {!event.location && !cityText && 'Localização não especificada'}
           </Text>
         </div>
 
-        <div className="event-card__participants">
+        <div className="event-card__participants" style={{ flexWrap: 'wrap' }}>
           <TeamOutlined />
-          <Text type="secondary" className="event-card__participants-text">
+          <Text className="event-card__info-text">
             {event.participantsCount || 0} {event.participantsCount === 1 ? 'participante' : 'participantes'}
           </Text>
-          {showParticipantsPreview && event.participantsPreview?.length > 0 && (
-            <>
-              <Text type="secondary" className="event-card__participants-dot">·</Text>
-              <Avatar.Group size="small">
-                {event.participantsPreview.slice(0, 3).map((p, idx) => (
-                  <UserAvatar
-                    key={p.uid || idx}
-                    person={p}
-                    size="small"
-                    className="event-card__avatar--bordered"
-                    onClick={onPersonClick ? (e) => handlePersonClick(p, e) : undefined}
-                  />
-                ))}
-                {event.participantsCount > 3 && (
-                  <Avatar size="small" className="event-card__avatar-more">
-                    +{event.participantsCount - 3}
-                  </Avatar>
-                )}
-              </Avatar.Group>
-            </>
+          {event.isGoing && (
+            <Tag color="success" style={{ borderRadius: '16px', margin: 0, border: 'none', background: '#f6ffed', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <CheckOutlined style={{ color: '#52c41a', fontSize: '12px' }} /> Presença confirmada
+            </Tag>
           )}
         </div>
 
-        {showRsvp && (
-          <Button
-            className="event-card__rsvp-btn"
-            type={event.isGoing ? "dashed" : "default"}
-            loading={goingLoading}
-            onClick={(e) => onToggleGoing?.(event, e)}
-            disabled={rsvpDisabled || isPast || !onToggleGoing}
-            block
-            icon={event.isGoing ? <CheckOutlined /> : <StarOutlined />}
-          >
-            {event.isGoing ? 'Presença Confirmada' : 'Participar'}
-          </Button>
-        )}
+        <Button
+          className="event-card__rsvp-btn"
+          type="default"
+          block
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onClick) onClick(event);
+          }}
+        >
+          Ver mais
+        </Button>
       </div>
     </Card>
   );
