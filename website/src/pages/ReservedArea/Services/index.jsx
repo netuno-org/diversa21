@@ -590,7 +590,7 @@ function Services() {
                   )}
                   <div className="services-list__card-location">
                     <EnvironmentOutlined />
-                    <Text type="secondary">
+                    <Text className="services-list__info-text">
                       {service.city?.name}, {service.state?.name}
                     </Text>
                   </div>
@@ -603,49 +603,24 @@ function Services() {
                 )}
               </div>
 
-              <div className="services-list__card-meta">
-                {service.phone && (
-                  <div className="services-list__meta-item">
-                    <PhoneOutlined />
-                    <a href={`tel:${service.phone}`} onClick={(e) => e.stopPropagation()}>
-                      {service.phone}
-                    </a>
-                  </div>
-                )}
-                {service.website && (
-                  <div className="services-list__meta-item">
-                    <LinkOutlined />
-                    <a
-                      href={service.website.startsWith("http") ? service.website : `https://${service.website}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {service.website.replace(/^https?:\/\//, "")}
-                    </a>
-                  </div>
-                )}
-                {service.instagram && (
-                  <div className="services-list__meta-item">
-                    <InstagramOutlined />
-                    <a
-                      href={`https://instagram.com/${service.instagram.replace(/^@/, "")}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      @{service.instagram.replace(/^@/, "")}
-                    </a>
-                  </div>
-                )}
-              </div>
+              <Button
+                className="services-list__view-more-btn"
+                type="default"
+                block
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenService(service);
+                }}
+              >
+                Ver mais
+              </Button>
 
               <div className="services-list__card-footer-actions">
                 <div className="services-list__card-date">
                   {service.createdAt && (
                     <>
                       <CalendarOutlined />
-                      <Text type="secondary" className="services-list__date-text">
+                      <Text className="services-list__info-text">
                         {formatDate(service.createdAt)}
                       </Text>
                     </>
@@ -734,7 +709,7 @@ function Services() {
               )}
               <div className="services-list__card-location">
                 <EnvironmentOutlined />
-                <Text type="secondary">
+                <Text className="services-list__info-text">
                   {serviceDetails.city?.name}, {serviceDetails.state?.name} / {serviceDetails.country?.name}
                 </Text>
               </div>
@@ -777,7 +752,7 @@ function Services() {
               <div className="services-list__card-footer-actions">
                 <div className="services-list__card-date">
                   <CalendarOutlined />
-                  <Text type="secondary" className="services-list__date-text">
+                  <Text className="services-list__info-text">
                     {formatDate(serviceDetails.createdAt)}
                   </Text>
                 </div>

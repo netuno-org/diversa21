@@ -183,13 +183,28 @@
     margin: 0;
   }
 
-  &__card-location {
+  &__card-location,
+  &__card-date {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
     margin: 0;
-    color: rgba(0, 0, 0, 0.45);
+
+    .anticon {
+      color: #000 !important;
+      font-size: 14px;
+    }
+  }
+
+  &__info-text {
+    color: #000 !important;
+    font-size: 13px !important;
+    font-weight: normal !important;
+    margin: 0 !important;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__description {
@@ -199,10 +214,6 @@
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 8px !important;
-  }
-
-  &__date-text {
-    font-size: 12px;
   }
 
   &__card-meta {
@@ -216,26 +227,27 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
-    color: #555;
     max-width: 100%;
     overflow: hidden;
 
     .anticon {
-      color: @primary-color;
+      color: #000 !important;
     }
+  }
 
-    a {
-      color: @primary-color;
-      display: inline-block;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+  &__view-more-btn {
+    margin-top: 16px;
+    height: 36px;
+    border-radius: 6px;
+    font-weight: 600;
+    background-color: rgba(138, 106, 162, 0.1) !important; 
+    border-color: @primary-color !important;
+    color: @primary-color !important;
 
-      &:hover {
-        text-decoration: underline;
-      }
+    &:hover, &:focus {
+      background-color: rgba(138, 106, 162, 0.2) !important; 
+      color: @primary-color !important;
+      border-color: @primary-color !important;
     }
   }
 
@@ -243,14 +255,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 8px;
-  }
-
-  &__card-date {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: rgba(0, 0, 0, 0.45);
+    margin-top: 16px;
   }
 
   &__footer {
@@ -272,16 +277,24 @@
       margin-bottom: 4px;
     }
 
+    .services-list__meta-item {
+      .anticon {
+        color: @primary-color !important;
+      }
+      a {
+        color: @primary-color;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
     .services-list__card-meta {
       margin-top: 0;
     }
 
     .services-list__description {
       margin-bottom: 0 !important;
-    }
-
-    .services-list__date-text {
-      font-size: 13px;
     }
   }
 
