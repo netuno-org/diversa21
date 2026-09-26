@@ -1,17 +1,22 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Card, Empty, Typography, Row, Col, Select, Spin, Pagination, Tag, Modal, Form, Input, Button, Popconfirm, App, Popover, Grid, Space, Tooltip, Tabs, } from "antd";
-import { EnvironmentOutlined, LinkOutlined, InstagramOutlined, PlusOutlined, DeleteOutlined, EditOutlined, CalendarOutlined, SmileOutlined, PhoneOutlined, CheckOutlined, CloseOutlined, AppstoreOutlined, } from "@ant-design/icons"; import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { Empty, Typography, Select, Spin, Pagination, Form, Input, Button, Popconfirm, App, Grid, Space, Tabs } from "antd";
+import { PlusOutlined, DeleteOutlined, EditOutlined, CheckOutlined, CloseOutlined, AppstoreOutlined } from "@ant-design/icons"; 
+import { FaRegBookmark } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import _service from "@netuno/service-client";
+
 import usePeople from "../../../common/usePeople.js";
 import useFilteredPaginatedList from "../../../common/useFilteredPaginatedList.js";
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
-import EmojiPicker from "emoji-picker-react";
-import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
+
+import ServiceCard from "./ServiceCard";
+import ServiceViewModal from "./ServiceViewModal";
+import ServiceFormModal from "./ServiceFormModal";
+import CategoryFormModal from "./CategoryFormModal";
 
 import "./index.less";
 
-const { Paragraph, Text, Title } = Typography;
+const { Text } = Typography;
 
 function Services() {
   const { message } = App.useApp();
@@ -281,7 +286,6 @@ function Services() {
         },
       });
     } catch {
-      // Validação de formulário ativa
     }
   };
 
@@ -326,7 +330,6 @@ function Services() {
         },
       });
     } catch {
-      // Validação de formulário ativa
     }
   };
 
@@ -569,106 +572,17 @@ function Services() {
       <div className="services-list__items">
         {!loading &&
           services.map((service) => (
-            <Card
+            <ServiceCard
               key={service.uid}
-              className="services-list__card"
-              hoverable
-              onClick={() => handleOpenService(service)}
-            >
-              <div className="services-list__card-content">
-                <div className="services-list__card-header">
-                  <Title level={4} className="services-list__title">
-                    {service.name}
-                  </Title>
-                </div>
-
-                <div className="services-list__card-subheader">
-                  {service.category?.name && (
-                    <Tooltip title={categories.find((c) => c.uid === service.category.uid)?.description}>
-                      <Tag className="services-list__category-tag">{service.category.name}</Tag>
-                    </Tooltip>
-                  )}
-                  <div className="services-list__card-location">
-                    <EnvironmentOutlined />
-                    <Text className="services-list__info-text">
-                      {service.city?.name}, {service.state?.name}
-                    </Text>
-                  </div>
-                </div>
-
-                {service.description && (
-                  <Paragraph className="services-list__description" ellipsis={{ rows: 3 }}>
-                    {service.description}
-                  </Paragraph>
-                )}
-              </div>
-
-              <Button
-                className="services-list__view-more-btn"
-                type="default"
-                block
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenService(service);
-                }}
-              >
-                Ver mais
-              </Button>
-
-              <div className="services-list__card-footer-actions">
-                <div className="services-list__card-date">
-                  {service.createdAt && (
-                    <>
-                      <CalendarOutlined />
-                      <Text className="services-list__info-text">
-                        {formatDate(service.createdAt)}
-                      </Text>
-                    </>
-                  )}
-                </div>
-
-                <div className="services-list__card-actions" onClick={(e) => e.stopPropagation()}>
-                  <Tooltip title={service.isFavorite ? "Remover dos favoritos." : "Adicionar aos favoritos."}>
-                    <Button
-                      type="text"
-                      size="small"
-                      icon={
-                        service.isFavorite ? (
-                          <FaBookmark className="services-list__bookmark-filled" />
-                        ) : (
-                          <FaRegBookmark className="services-list__bookmark-outlined" />
-                        )
-                      }
-                      onClick={(e) => handleToggleFavorite(service, e)}
-                      className="services-list__favorite-btn"
-                    />
-                  </Tooltip>
-                  {canCreateService && (
-                    <>
-                      <Button
-                        type="text"
-                        size="small"
-                        className="services-list__action-btn"
-                        onClick={(e) => handleEditClick(service, e)}
-                      >
-                        <EditOutlined />
-                      </Button>
-                      <Popconfirm
-                        title="Remover serviço?"
-                        description="Esta ação é irreversível"
-                        onConfirm={(e) => handleDeleteService(service.uid, e)}
-                        okText="Sim"
-                        cancelText="Não"
-                      >
-                        <Button danger type="text" size="small" className="services-list__action-btn">
-                          <DeleteOutlined />
-                        </Button>
-                      </Popconfirm>
-                    </>
-                  )}
-                </div>
-              </div>
-            </Card>
+              service={service}
+              categories={categories}
+              canCreateService={canCreateService}
+              formatDate={formatDate}
+              onOpenService={handleOpenService}
+              onToggleFavorite={handleToggleFavorite}
+              onEditClick={handleEditClick}
+              onDeleteService={handleDeleteService}
+            />
           ))}
       </div>
 
@@ -688,232 +602,45 @@ function Services() {
         )}
       </div>
 
-      <Modal
-        title={serviceDetails ? serviceDetails.name : ""}
-        open={!!serviceDetails}
-        onCancel={handleCloseService}
-        footer={[
-          <Button key="close" onClick={handleCloseService}>
-            Fechar
-          </Button>,
-        ]}
-        destroyOnHidden
-      >
-        {serviceDetails && (
-          <div className="services-list__details">
-            <div className="services-list__card-subheader">
-              {serviceDetails.category?.name && (
-                <Tooltip title={categories.find((c) => c.uid === serviceDetails.category.uid)?.description}>
-                  <Tag className="services-list__category-tag">{serviceDetails.category.name}</Tag>
-                </Tooltip>
-              )}
-              <div className="services-list__card-location">
-                <EnvironmentOutlined />
-                <Text className="services-list__info-text">
-                  {serviceDetails.city?.name}, {serviceDetails.state?.name} / {serviceDetails.country?.name}
-                </Text>
-              </div>
-            </div>
-            {serviceDetails.description && (
-              <Paragraph className="services-list__description">{serviceDetails.description}</Paragraph>
-            )}
-            <div className="services-list__card-meta">
-              {serviceDetails.phone && (
-                <div className="services-list__meta-item">
-                  <PhoneOutlined /> <a href={`tel:${serviceDetails.phone}`}>{serviceDetails.phone}</a>
-                </div>
-              )}
-              {serviceDetails.website && (
-                <div className="services-list__meta-item">
-                  <LinkOutlined />{" "}
-                  <a
-                    href={serviceDetails.website.startsWith("http") ? serviceDetails.website : `https://${serviceDetails.website}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {serviceDetails.website.replace(/^https?:\/\//, "")}
-                  </a>
-                </div>
-              )}
-              {serviceDetails.instagram && (
-                <div className="services-list__meta-item">
-                  <InstagramOutlined />{" "}
-                  <a
-                    href={`https://instagram.com/${serviceDetails.instagram.replace(/^@/, "")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    @{serviceDetails.instagram.replace(/^@/, "")}
-                  </a>
-                </div>
-              )}
-            </div>
-            {serviceDetails.createdAt && (
-              <div className="services-list__card-footer-actions">
-                <div className="services-list__card-date">
-                  <CalendarOutlined />
-                  <Text className="services-list__info-text">
-                    {formatDate(serviceDetails.createdAt)}
-                  </Text>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+      <ServiceViewModal
+        serviceDetails={serviceDetails}
+        categories={categories}
+        onClose={handleCloseService}
+        formatDate={formatDate}
+      />
 
-      <Modal
-        title={editingService ? "Editar Anúncio de Serviço" : "Novo Anúncio de Serviço"}
-        open={serviceModalVisible}
+      <ServiceFormModal
+        visible={serviceModalVisible}
         onCancel={() => {
           setServiceModalVisible(false);
           setEditingService(null);
           serviceForm.resetFields();
         }}
         onOk={handleCreateOrUpdateService}
-        confirmLoading={savingService}
-        okText={editingService ? "Guardar" : "Publicar"}
-        destroyOnHidden
-        width={700}
-      >
-        <Form form={serviceForm} layout="vertical">
-          <Row gutter={16}>
-            <Col xs={24} md={12}>
-              <Form.Item
-                label="Nome"
-                name="name"
-                rules={[
-                  { required: true, message: "Insira o nome do serviço" },
-                  { max: 100, message: "O nome não pode ter mais de 100 caracteres" },
-                ]}
-              >
-                <Input maxLength={100} showCount placeholder="Nome do serviço ou profissional" />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={12}>
-              <Form.Item
-                label="Categoria"
-                name="category"
-                rules={[{ required: true, message: "Selecione uma categoria" }]}
-              >
-                <Select
-                  showSearch
-                  placeholder="Selecione..."
-                  options={categories.map((c) => ({ label: c.name, value: c.uid }))}
-                  filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+        form={serviceForm}
+        saving={savingService}
+        isEdit={!!editingService}
+        categories={categories}
+        cityOptions={cityOptions}
+        handleCitySearch={handleCitySearch}
+        descriptionValue={descriptionValue}
+        setDescriptionValue={setDescriptionValue}
+        textAreaRef={textAreaRef}
+        handleEmojiClick={handleEmojiClick}
+        isMobile={isMobile}
+      />
 
-          <Row gutter={16}>
-            <Col xs={24} md={12}>
-              <Form.Item label="Cidade/Estado" name="city" rules={[{ required: true, message: "Insira a localização" }]}>
-                <Select
-                  labelInValue
-                  showSearch
-                  placeholder="Pesquisar cidade..."
-                  filterOption={false}
-                  onSearch={handleCitySearch}
-                  options={cityOptions}
-                  notFoundContent={null}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={12}>
-              <Form.Item label="Telefone" name="phone" rules={[{ max: 30, message: "O telefone não pode ter mais de 30 caracteres" }]}>
-                <Input maxLength={30} placeholder="Contacto telefónico" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item
-            label="Descrição"
-            name="description"
-            rules={[
-              { required: true, message: "A descrição é obrigatória" },
-              { max: 250, message: "A descrição não pode ter mais de 250 caracteres" },
-            ]}
-          >
-            <div className="services-list__description-wrapper">
-              <Input.TextArea
-                style={{ resize: 'none' }}
-                ref={textAreaRef}
-                value={descriptionValue}
-                onChange={(e) => {
-                  setDescriptionValue(e.target.value);
-                  serviceForm.setFieldsValue({ description: e.target.value });
-                }}
-                maxLength={250}
-                showCount
-                rows={5}
-                placeholder="Descreva os serviços prestados..."
-                className="services-list__description-input"
-              />
-              {!isMobile && (
-                <div className="services-list__emoji-wrapper">
-                  <Popover
-                    content={
-                      <EmojiPicker
-                        onEmojiClick={handleEmojiClick}
-                        skinTonesDisabled
-                        previewConfig={{ showPreview: false }}
-                        emojiData={ptEmojis}
-                        searchPlaceholder="Pesquisar..."
-                        height="320px"
-                        width="280px"
-                      />
-                    }
-                    trigger="click"
-                    placement="topRight"
-                  >
-                    <Button type="text" shape="circle" icon={<SmileOutlined />} className="services-list__emoji-btn" />
-                  </Popover>
-                </div>
-              )}
-            </div>
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col xs={24} md={12}>
-              <Form.Item label="Website" name="website" rules={[{ max: 100, message: "O website não pode ter mais de 100 caracteres" }]}>
-                <Input maxLength={100} showCount prefix={<LinkOutlined />} placeholder="https://" />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={12}>
-              <Form.Item label="Instagram" name="instagram" rules={[{ max: 50, message: "O instagram não pode ter mais de 50 caracteres" }]}>
-                <Input maxLength={50} showCount prefix={<InstagramOutlined />} placeholder="@utilizador" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-
-      <Modal
-        title="Criar categoria de serviço"
-        open={categoryModalVisible}
+      <CategoryFormModal
+        visible={categoryModalVisible}
         onCancel={() => {
           setCategoryModalVisible(false);
           categoryForm.resetFields();
         }}
         onOk={handleCreateCategory}
-        confirmLoading={savingCategory}
-        okText="Criar"
-        destroyOnHidden
-      >
-        <Form form={categoryForm} layout="vertical">
-          <Form.Item
-            label="Nome da categoria"
-            name="name"
-            rules={[{ required: true, message: "Nome da categoria é obrigatório" }]}
-          >
-            <Input placeholder="Ex: Saúde" />
-          </Form.Item>
-          <Form.Item label="Descrição" name="description">
-            <Input.TextArea rows={3} style={{resize: 'none'}} maxLength={250} showCount placeholder="Breve descrição da categoria." />
-          </Form.Item>
-        </Form>
-      </Modal>
+        form={categoryForm}
+        saving={savingCategory}
+      />
+
     </div>
   );
 }
