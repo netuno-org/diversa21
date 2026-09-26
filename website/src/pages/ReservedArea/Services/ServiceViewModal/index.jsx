@@ -2,17 +2,43 @@ import React from 'react';
 import { Modal, Typography, Tooltip, Tag, Button } from 'antd';
 import { EnvironmentOutlined, CalendarOutlined, PhoneOutlined, LinkOutlined, InstagramOutlined } from '@ant-design/icons';
 
+import ContentActions from '../../../../components/ContentActions';
+
 const { Paragraph, Text } = Typography;
 
 export default function ServiceViewModal({
   serviceDetails,
   categories,
   onClose,
-  formatDate
+  formatDate,
+  canCreateService,
+  onEditClick,
+  onDeleteService
 }) {
   return (
     <Modal
-      title={serviceDetails ? serviceDetails.name : ""}
+      title={
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '24px' }}>
+          <span>{serviceDetails ? serviceDetails.name : ""}</span>
+          {serviceDetails && (
+            <ContentActions
+              entityType="service"
+              entityUid={serviceDetails.uid}
+              canViewDeletePostButton={canCreateService}
+              canViewEditButton={canCreateService}
+              canViewReportButton={false}
+              onEdit={() => {
+                onClose();
+                onEditClick(serviceDetails);
+              }}
+              onDeletePost={() => {
+                onClose();
+                onDeleteService(serviceDetails.uid);
+              }}
+            />
+          )}
+        </div>
+      }
       open={!!serviceDetails}
       onCancel={onClose}
       footer={[

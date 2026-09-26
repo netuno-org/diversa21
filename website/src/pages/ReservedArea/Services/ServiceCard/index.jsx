@@ -1,7 +1,9 @@
 import React from 'react';
-import { Card, Typography, Tooltip, Tag, Button, Popconfirm } from 'antd';
-import { EnvironmentOutlined, CalendarOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Typography, Tooltip, Tag, Button } from 'antd';
+import { EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
+
+import ContentActions from '../../../../components/ContentActions';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -18,10 +20,22 @@ export default function ServiceCard({
   return (
     <Card className="services-list__card" hoverable onClick={() => onOpenService(service)}>
       <div className="services-list__card-content">
-        <div className="services-list__card-header">
-          <Title level={4} className="services-list__title">
+        
+        <div className="services-list__card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Title level={4} className="services-list__title" style={{ flex: 1 }}>
             {service.name}
           </Title>
+          <div onClick={(e) => e.stopPropagation()} style={{ marginLeft: 8 }}>
+            <ContentActions
+              entityType="service"
+              entityUid={service.uid}
+              canViewDeletePostButton={canCreateService}
+              canViewEditButton={canCreateService}
+              canViewReportButton={false}
+              onEdit={() => onEditClick(service)}
+              onDeletePost={() => onDeleteService(service.uid)}
+            />
+          </div>
         </div>
 
         <div className="services-list__card-subheader">
@@ -85,24 +99,6 @@ export default function ServiceCard({
               className="services-list__favorite-btn"
             />
           </Tooltip>
-          {canCreateService && (
-            <>
-              <Button type="text" size="small" className="services-list__action-btn" onClick={(e) => onEditClick(service, e)}>
-                <EditOutlined />
-              </Button>
-              <Popconfirm
-                title="Remover serviço?"
-                description="Esta ação é irreversível"
-                onConfirm={(e) => onDeleteService(service.uid, e)}
-                okText="Sim"
-                cancelText="Não"
-              >
-                <Button danger type="text" size="small" className="services-list__action-btn">
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>
-            </>
-          )}
         </div>
       </div>
     </Card>

@@ -6,6 +6,7 @@ import { Card, Typography, Spin, Pagination, Button, Tabs, Divider, Space, Tag, 
 import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, StarOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { UserAvatar, isPastEvent } from '../../../../components/EventCard';
+import ContentActions from '../../../../components/ContentActions';
 
 import './index.less';
 
@@ -120,6 +121,21 @@ function EventView({ uid }) {
     });
   };
 
+  const handleDeleteEvent = () => {
+    _service({
+      url: 'events',
+      method: 'DELETE',
+      data: { eventUid: event.uid },
+      success: () => {
+        notification.success({ message: 'Evento eliminado com sucesso!' });
+        navigate('/events');
+      },
+      fail: () => {
+        notification.error({ message: 'Erro ao eliminar o evento.' });
+      },
+    });
+  };
+
   const coverUrl = getCoverUrl();
 
   return (
@@ -137,9 +153,21 @@ function EventView({ uid }) {
       </div>
 
       <Card className="event-view__card" bordered={false}>
-        <Title level={3} className="event-view__name">{event.name}</Title>
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Title level={3} className="event-view__name" style={{ margin: 0 }}>{event.name}</Title>
+          <ContentActions
+            entityType="event"
+            entityUid={event.uid}
+            canViewDeletePostButton={event.canEdit}
+            canViewEditButton={event.canEdit}
+            canViewReportButton={false}
+            onDeletePost={handleDeleteEvent}
+            onEdit={() => notification.info({ message: 'Podes editar os dados do evento na página de listagem dos eventos.' })}
+          />
+        </div>
 
-        <Space size="small" className="event-view__details" wrap>
+        <Space size="small" className="event-view__details" wrap style={{ marginTop: 16 }}>
           <div
             className="event-view__detail-item event-view__detail-item--clickable"
             onClick={(e) => goToProfile(event.host, e)}
@@ -201,6 +229,7 @@ function EventView({ uid }) {
           </Button>
         </div>
       </Card>
+      
       <div className="event-view__tabs">
         <Tabs
           defaultActiveKey="participants"

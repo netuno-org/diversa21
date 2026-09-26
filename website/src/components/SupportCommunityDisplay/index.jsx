@@ -123,7 +123,7 @@ function SupportCommunityDisplay({
 
   const getCountLabel = () => {
     if (mode === 'reply') {
-      return listItems.length !== 1 ? "Respostas Rncontradas" : "Resposta Encontrada";
+      return listItems.length !== 1 ? "Respostas Encontradas" : "Resposta Encontrada";
     } else if (mode === 'topic') {
       return listItems.length !== 1 ? "Tópicos Encontrados" : "Tópico Encontrado";
     }

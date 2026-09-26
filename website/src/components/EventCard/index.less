@@ -50,10 +50,32 @@
       z-index: 2;
 
       .ant-btn {
-        background-color: rgba(0, 0, 0, 0.5);
-        border: none;
-        color: #fff;
-        font-size: 18px;
+        background-color: #fff !important;
+        border: 1px solid @primary-color !important;
+        color: @primary-color !important;
+        font-size: 18px !important;
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 2px 6px rgba(138, 106, 162, 0.25) !important;
+
+        &:hover, &:focus {
+          background-color: #f9f0ff !important;
+          color: @primary-color !important;
+          border-color: @primary-color !important;
+        }
+
+        .anticon {
+          color: @primary-color !important;
+        }
+
+        svg, path {
+          fill: @primary-color !important;
+        }
       }
     }
   }

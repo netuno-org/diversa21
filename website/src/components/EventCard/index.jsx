@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Card, Typography, Button, Dropdown, Avatar, Tooltip, Tag } from 'antd';
-import { EditOutlined, DeleteOutlined, MoreOutlined, CalendarOutlined, EnvironmentOutlined, TeamOutlined, CheckOutlined } from '@ant-design/icons';
+import { Card, Typography, Button, Avatar, Tooltip, Tag } from 'antd';
+import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, CheckOutlined } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt';
 
+import ContentActions from '../ContentActions';
 import './index.less';
 
 dayjs.locale('pt');
@@ -105,32 +106,6 @@ function EventCard({
   const coverUrl = getCoverUrl(event);
   const isPast = isPastEvent(event);
 
-  const menuItems = [
-    onEdit && {
-      key: 'edit',
-      label: 'Editar',
-      icon: <EditOutlined />,
-      onClick: (e) => {
-        e.domEvent.stopPropagation();
-        e.domEvent.preventDefault();
-        onEdit(event);
-      },
-    },
-    onDelete && {
-      key: 'delete',
-      label: 'Eliminar',
-      danger: true,
-      icon: <DeleteOutlined />,
-      onClick: (e) => {
-        e.domEvent.stopPropagation();
-        e.domEvent.preventDefault();
-        onDelete(event);
-      },
-    },
-  ].filter(Boolean);
-
-  const showMenu = event.canEdit && menuItems.length > 0;
-
   return (
     <Card
       bordered={false}
@@ -158,25 +133,17 @@ function EventCard({
             <span className="event-card__past-badge">Realizado</span>
           )}
 
-          {showMenu && (
-            <div className="event-card__cover-actions" onClick={(e) => e.stopPropagation()}>
-              <Dropdown
-                placement="bottomRight"
-                menu={{ items: menuItems }}
-                trigger={['click']}
-              >
-                <Button
-                  shape="circle"
-                  size="small"
-                  icon={<MoreOutlined />}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                />
-              </Dropdown>
-            </div>
-          )}
+          <div className="event-card__cover-actions" onClick={(e) => e.stopPropagation()}>
+            <ContentActions
+              entityType="event"
+              entityUid={event.uid}
+              canViewDeletePostButton={event.canEdit}
+              canViewEditButton={event.canEdit}
+              canViewReportButton={false}
+              onEdit={() => onEdit && onEdit(event)}
+              onDeletePost={() => onDelete && onDelete(event)}
+            />
+          </div>
         </div>
       }
     >

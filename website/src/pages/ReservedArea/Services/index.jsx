@@ -607,6 +607,9 @@ function Services() {
         categories={categories}
         onClose={handleCloseService}
         formatDate={formatDate}
+        canCreateService={canCreateService}
+        onEditClick={handleEditClick}
+        onDeleteService={handleDeleteService}
       />
 
       <ServiceFormModal

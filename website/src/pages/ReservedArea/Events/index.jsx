@@ -269,8 +269,11 @@ function Events() {
 
       <div className="events-page__results-count">
         <Text type="secondary">
-          {totalCount} {totalCount === 1 ? 'Evento Encontrado' : 'Eventos Encontrados'}
-          {currentTab === 'going' ? ' Que Vou Participar' : currentTab === 'history' ? ' Passados' : ''}
+          {totalCount}{' '}
+          {currentTab === 'history'
+            ? (totalCount === 1 ? 'Evento Realizado Encontrado' : 'Eventos Realizados Encontrados')
+            : (totalCount === 1 ? 'Evento Encontrado' : 'Eventos Encontrados')}
+          {currentTab === 'going' ? ' Que Vou Participar' : ''}
         </Text>
       </div>
 
