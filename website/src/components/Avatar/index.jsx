@@ -98,7 +98,7 @@ function Avatar({ currentImage, onRemove }, ref) {
             )}
           </Space>
 
-          <Text type="secondary" className="avatar-editor__hint">
+          <Text style={{color: "#000"}} type="secondary" className="avatar-editor__hint">
             (Ou arrasta e larga a foto aqui)
           </Text>
         </div>

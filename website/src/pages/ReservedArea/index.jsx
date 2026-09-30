@@ -34,6 +34,8 @@ import Reports from './Reports'
 import ReportPage from './Reports/View'
 import PrivacyPage from '../Privacy';
 import FAQs from './FAQs';
+import Events from './Events';
+import EventView from './Events/View';
 
 import "./index.less";
 
@@ -168,16 +170,26 @@ function ReservedArea() {
       if (location.pathname === "/services") {
         return <Services />;
       }
+      if (location.pathname === "/events") {
+        return <Events />;
+      }
+      if (location.pathname.match(/^\/events\/[\w-]+$/)) {
+        return <EventView uid={params.uid} />;
+      }
       if (location.pathname === "/faqs" || location.pathname === "/faq") {
         return <FAQs />;
       }
       if (location.pathname === "/terms") {
         return <TermsPage />;
       }
-      if (location.pathname === "/reports") {
-        return <Reports />;
-      }
-      if (location.pathname.startsWith("/reports/")) {
+      if (location.pathname === "/reports" || location.pathname.startsWith("/reports/")) {
+        if (!people.canManageReports()) {
+          navigate('/');
+          return;
+        }
+        if (location.pathname === "/reports") {
+          return <Reports />;
+        }
         return <ReportPage uid={params.uid} />;
       }
       if (location.pathname === "/privacy") {

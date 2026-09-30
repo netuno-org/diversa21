@@ -110,7 +110,7 @@
   }
 
   &__preview {
-    margin: 12px 0 16px;
+    margin: 0;
 
     .ant-typography {
       margin-bottom: 0;
@@ -122,15 +122,11 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-top: -14px;
+    margin-top: 16px;
 
     .ant-input-textarea,
     textarea {
       width: 100%;
-    }
-
-    .ant-space {
-      margin-top: 14px;
     }
   }
 
@@ -144,7 +140,40 @@
     .ant-space {
       display: flex;
       justify-content: flex-end;
-      margin-top: 36px;
+
+      @media (max-width: 580px) {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+
+        .ant-space-item,
+        .ant-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  &__form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 36px;
+
+    .ant-space {
+      margin-left: auto;
+    }
+
+    @media (max-width: 580px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+
+      .ant-space {
+        width: 100%;
+        margin-left: 0;
+      }
     }
   }
 
@@ -223,6 +252,21 @@
     }
   }
 
+  &__solution-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  &__history-button {
+    padding: 0;
+
+    @media (max-width: 580px) {
+    }
+  }
+
   &__resolved-info {
     display: flex;
     flex-wrap: wrap;
@@ -230,6 +274,7 @@
     gap: 4px;
     margin-top: 12px;
     font-style: italic;
+    margin-bottom: -15px;
   }
 
   &__resolved-by {
@@ -303,14 +348,6 @@
     margin-bottom: 0 !important;
   }
 
-  &__item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
   &__reason {
     padding-left: 0;
   }
@@ -330,6 +367,7 @@
     align-items: center;
     gap: 12px;
     min-width: 0;
+    margin-bottom: 8px;
   }
 
   &__avatar {

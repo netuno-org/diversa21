@@ -36,7 +36,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
     <div className="user-profile-display">
       <Avatar style={avatarStyle} src={avatarUrl} shape="square" />
       <div className="user-profile-display-content">
-        <div><UserOutlined /> {user.name}</div>
+        <strong><UserOutlined /> {user.name}</strong>
         {user.group.code !== "member" && (
           <div
             style={{

@@ -1,0 +1,8 @@
+{
+  "name": "string",
+  "cityUid": "uuid",
+  "uid": "uuid",
+  "tab": "string",
+  "institutionUid": "uuid",
+  "page": "integer"
+}

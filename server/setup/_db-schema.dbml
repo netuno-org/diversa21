@@ -12,6 +12,31 @@ Table country {
   Note: 'Pais'
 }
 
+Table event {
+  id int [pk, increment]
+  city_id int [ref: > city.id, note: 'Cidade']
+  cover_image text [note: 'Capa']
+  created_at timestamp [note: 'Criado em']
+  description text [note: 'Descrição']
+  end_date timestamp [note: 'Data de Fim']
+  host_id int [not null, ref: > people.id, note: 'Organizador']
+  location varchar(250) [note: 'Local']
+  name varchar(250) [note: 'Nome']
+  participants_count int [note: 'Participantes']
+  start_date timestamp [note: 'Data de Início']
+  updated_at timestamp [note: 'Editado em']
+  Note: 'Evento'
+}
+
+Table event_participant {
+  id int [pk, increment]
+  attendance_status varchar(250) [note: 'Estado de Presença']
+  created_at timestamp [note: 'Criado em']
+  event_id int [not null, ref: > event.id, note: 'Evento']
+  people_id int [not null, ref: > people.id, note: 'Pessoa']
+  Note: 'Participante'
+}
+
 Table forum_topic {
   id int [pk, increment]
   anonymous boolean [note: 'Amônimo']
@@ -168,6 +193,16 @@ Table report_entity_type {
   code varchar(250) [note: 'Código']
   title varchar(250) [note: 'Título']
   Note: 'Tipo de Entidade'
+}
+
+Table report_history {
+  id int [pk, increment]
+  moment timestamp [note: 'Momento']
+  notes text [note: 'Notas']
+  people_id int [ref: > people.id, note: 'Pessoa']
+  report_id int [ref: > report.id, note: 'Denúncia']
+  report_status_id int [ref: > report_status.id, note: 'Estado']
+  Note: 'Histórico de Denúncias'
 }
 
 Table report_item {

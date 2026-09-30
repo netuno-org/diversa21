@@ -39,5 +39,6 @@ export default {
   canManageServiceCategories: () => isSuperAdmin,
   canManageServices: () => isSuperAdmin || isManager,
   canManagePosts: () => isReview || isSuperAdmin,
+  canManageReports: () => isReview || isSuperAdmin,
   canManageLocations: () => isSuperAdmin,
 }

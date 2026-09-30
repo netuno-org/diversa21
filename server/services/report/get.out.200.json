@@ -29,6 +29,20 @@
           }
         }
       },
+      "history": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "uid": { "type": "uid" },
+            "notes": { "type": "string" },
+            "moment": { "type": "string" },
+            "statusCode": { "type": "string" },
+            "statusTitle": { "type": "string" },
+            "people": { "type": "object" }
+          }
+        }
+      },
       "pagination": {
         "type": "object",
         "properties": {

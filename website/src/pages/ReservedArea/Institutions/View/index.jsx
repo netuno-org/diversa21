@@ -4,15 +4,17 @@ import {
   Typography, Card, Spin, Button, Divider, Avatar, Space, Empty, Pagination, Tabs, Tag
 } from "antd";
 import {
-  EditOutlined, MailOutlined, TeamOutlined,
+  MailOutlined, TeamOutlined,
   PhoneOutlined, EnvironmentOutlined, GlobalOutlined,
   FileTextOutlined, CommentOutlined, LikeOutlined,
-  InstagramOutlined
+  InstagramOutlined, CalendarOutlined
 } from '@ant-design/icons';
 import _service from '@netuno/service-client';
 
 import UserProfileDisplay from '../../../../components/UserProfileDisplay';
+import ContentActions from '../../../../components/ContentActions';
 import ActivityList from "../../../../components/Activity/List";
+import InstitutionEvents from "./Events";
 import usePeople from "../../../../common/usePeople.js";
 
 import "./index.less";
@@ -30,6 +32,19 @@ function View() {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersPagination, setUsersPagination] = useState({ current: 1, total: 0 });
+  const [screenSize, setScreenSize] = useState({
+    isMobile: window.innerWidth <= 768,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize({
+        isMobile: window.innerWidth <= 768,
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (slug) {
@@ -177,9 +192,10 @@ function View() {
               />
             ) : (
               <Avatar
+                className="institution-view__avatar-empty"
                 size={120}
                 shape="square"
-                style={{ backgroundColor: '#8A6AA2', fontSize: 48 }}
+                style={{ fontSize: 48 }}
               >
                 {institution.name?.[0]}
               </Avatar>
@@ -188,14 +204,16 @@ function View() {
           <div className="institution-view__actions">
             {canEditInstitution && (
               <div className="institution-view__action-buttons">
-                <Button
-                  type="primary"
-                  className="institution-view__edit-btn"
-                  icon={<EditOutlined />}
-                  onClick={handleEdit}
-                >
-                  Editar Instituição
-                </Button>
+                <ContentActions
+                  className="institution-view__content-actions"
+                  entityType="institution"
+                  entityUid={institution.uid}
+                  canViewEditButton={canEditInstitution}
+                  canViewDeletePostButton={false}
+                  canViewReportButton={false}
+                  editLabel="Editar Instituição"
+                  onEdit={handleEdit}
+                />
               </div>
             )}
           </div>
@@ -215,9 +233,9 @@ function View() {
 
           <Space size="large" className="institution-view__details" wrap>
             {(institution.city?.name || institution.country?.name || institution.state?.name) && (
-              <div className="institution-view__detail-item">
+              <div className="institution-view__detail-localization">
                 <EnvironmentOutlined />
-                <Text type="secondary">
+                <Text style={{ color: '#000' }} type="secondary">
                   {institution.city?.name}{institution.city?.name && (institution.state?.name || institution.country?.name) && ', '}
                   {institution.state?.name || institution.country?.name}
                 </Text>
@@ -225,9 +243,9 @@ function View() {
             )}
 
             {(institution.address || institution.post_code) && (
-              <div className="institution-view__detail-item">
+              <div className="institution-view__detail-localization">
                 <EnvironmentOutlined />
-                <Text type="secondary">
+                <Text style={{ color: '#000' }} type="secondary">
                   {institution.address}
                   {institution.address && institution.post_code && ', '}
                   {institution.post_code}
@@ -297,16 +315,31 @@ function View() {
         <Tabs
           defaultActiveKey="members"
           size="large"
+          tabBarGutter={screenSize.isMobile ? 16 : 32}
           items={[
             {
               key: 'members',
               label: (
                 <Space>
                   <TeamOutlined style={{ fontSize: 18 }} />
-                  <span>Membros <Tag color="#8A6AA2" variant='solid' style={{ borderRadius: '32px' }}>{membersCount}</Tag></span>
+                  <span>Membros <Tag color="#6009B6" variant='solid' style={{ borderRadius: '32px' }}>{membersCount}</Tag></span>
                 </Space>
               ),
               children: membersTab
+            },
+            {
+              key: 'events',
+              label: (
+                <Space>
+                  <CalendarOutlined style={{ fontSize: 18 }} />
+                  <span>Eventos</span>
+                </Space>
+              ),
+              children: (
+                <div className="institution-view__tabs-content">
+                  <InstitutionEvents institutionUid={institution.uid} />
+                </div>
+              )
             },
             {
               key: 'posts',

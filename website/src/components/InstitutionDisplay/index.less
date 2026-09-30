@@ -1,3 +1,5 @@
+@import '../../styles/variables.less';
+
 .institution-display {
   display: flex;
   align-items: center;
@@ -10,6 +12,10 @@
 
   .ant-avatar {
     flex-shrink: 0;
+
+    &.institution-display__avatar--empty {
+      background-color: @primary-color;
+    }
   }
 }
 

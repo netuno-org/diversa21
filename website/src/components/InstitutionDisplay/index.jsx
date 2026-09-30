@@ -23,7 +23,8 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
   return (
     <div className="institution-display">
       <Avatar
-        style={{ backgroundColor: avatarUrl ? '#fff' : '#8A6AA2', ...avatarStyle }}
+        className={!avatarUrl ? 'institution-display__avatar--empty' : undefined}
+        style={{ backgroundColor: avatarUrl ? '#fff' : undefined, ...avatarStyle }}
         src={avatarUrl}
         shape="square"
       >
@@ -44,8 +45,8 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
         {institution.description && (
           <Paragraph
             type="secondary"
-            ellipsis={{ rows: 2, tooltip: true }}
-            style={{ marginBottom: 0, fontSize: 13 }}
+            ellipsis={{ rows: 1, tooltip: true }}
+            style={{ marginBottom: 0, marginTop: 10, color: '#000' }}
           >
             {institution.description}
           </Paragraph>

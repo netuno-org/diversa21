@@ -162,10 +162,10 @@ function NotificationSettings() {
               {section.items.map((type) => (
                 <div key={type.code} className="notification-settings-page__item">
                   <div className="notification-settings-page__item-info">
-                    <Text className="notification-settings-page__item-name">
+                    <Text style={{ fontSize: 16 }} className="notification-settings-page__item-name">
                       {labelMap[type.code] || type.name}
                     </Text>
-                    <Text type="secondary" className="notification-settings-page__item-desc">
+                    <Text style={{ fontSize: 16 }} type="secondary" className="notification-settings-page__item-desc">
                       {descMap[type.code] || `Recebe notificações relacionadas: ${type.name.toLowerCase()}.`}
                     </Text>
                   </div>

@@ -164,7 +164,9 @@ export default function App() {
                 <Route path="/reports" element={<ReservedArea />} />
                 <Route path="/reports/:uid" element={<ReservedArea />} />
                 <Route path="/privacy" element={<ReservedArea />} />
-
+                <Route path="/events" element={<ReservedArea />} />
+                <Route path="/events/:uid" element={<ReservedArea />} />
+                
                 {/** // RESERVED AREA **/}
                 <Route path="*" element={<NotFound/>} />
               </Switch>

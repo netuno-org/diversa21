@@ -290,7 +290,7 @@ function Post({
                 ) : (
                   <Space size="small">
                     Ver Comentários
-                    <Tag color="#8A6AA2" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
+                    <Tag color="#6009B6" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
                       {countComments}
                     </Tag>
                   </Space>
