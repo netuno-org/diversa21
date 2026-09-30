@@ -19,4 +19,53 @@
       }
     }
   }
+
+  &__list {
+    margin-left: 24px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    list-style-type: disc;
+
+    &--numbered {
+      list-style-type: decimal;
+    }
+  }
+
+  &__list-item {
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  &__highlight {
+    font-weight: 600;
+  }
+
+  &__code {
+    background-color: rgba(0, 0, 0, 0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    margin-bottom: 16px;
+    font-size: 0.95em;
+
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 10px 14px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    th {
+      background-color: #f5f5f5;
+      font-weight: 600;
+    }
+  }
 }
