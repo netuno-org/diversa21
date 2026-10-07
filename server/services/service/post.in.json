@@ -12,7 +12,7 @@
       "type": "string-not-empty",
       "maxLength": 250
     },
-    "phone": { "type": "string" },
+    "phone": { "type": "string", "pattern": "^[^A-Za-zÀ-ÖØ-öø-ÿ]*$" },
     "website": { "type": "string" },
     "instagram": { "type": "string" }
   },

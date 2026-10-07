@@ -76,7 +76,14 @@ export default function ServiceFormModal({
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
-            <Form.Item label="Telefone" name="phone" rules={[{ max: 30, message: "O telefone não pode ter mais de 30 caracteres" }]}>
+            <Form.Item
+              label="Telefone"
+              name="phone"
+              rules={[
+                { max: 30, message: "O telefone não pode ter mais de 30 caracteres" },
+                { pattern: /^[^A-Za-zÀ-ÖØ-öø-ÿ]*$/, message: "O telefone não pode conter letras" },
+              ]}
+            >
               <Input maxLength={30} placeholder="Contacto telefónico" />
             </Form.Item>
           </Col>
