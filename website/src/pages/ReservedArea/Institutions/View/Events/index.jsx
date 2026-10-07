@@ -35,10 +35,12 @@ function InstitutionEvents({ institutionUid }) {
       data: method === 'POST' ? { eventUid: event.uid, status: 'going' } : { eventUid: event.uid },
       success: () => {
         setActionLoadingUid(null);
-        notification.success({
-          message: event.isGoing ? 'Presença cancelada' : 'Presença confirmada',
-          description: event.isGoing
-            ? 'Presença no evento cancelada.'
+        const leaving = event.isGoing;
+        const notify = leaving ? notification.warning : notification.success;
+        notify({
+          message: leaving ? 'Presença cancelada' : 'Presença confirmada',
+          description: leaving
+            ? 'A sua presença neste evento foi cancelada'
             : 'A sua presença neste evento foi confirmada.',
         });
         fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });

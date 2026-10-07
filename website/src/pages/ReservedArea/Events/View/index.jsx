@@ -7,6 +7,7 @@ import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, StarOutlined, Chec
 
 import { UserAvatar, isPastEvent } from '../../../../components/EventCard';
 import ContentActions from '../../../../components/ContentActions';
+import usePeople from '../../../../common/usePeople.js';
 
 import './index.less';
 
@@ -16,6 +17,8 @@ const { Text, Title } = Typography;
 
 function EventView({ uid }) {
   const navigate = useNavigate();
+  const loggedUser = usePeople();
+  const hideEventActions = ['member', 'review'].includes(loggedUser?.data?.group?.code);
   const { state } = useLocation();
   const event = state?.event?.uid === uid ? state.event : null;
 
@@ -107,10 +110,11 @@ function EventView({ uid }) {
         setParticipantsCount(leaving ? participantsCount - 1 : participantsCount + 1);
         setIsGoing(!leaving);
         setActionLoading(false);
-        notification.success({
+        const notify = leaving ? notification.warning : notification.success;
+        notify({
           message: leaving ? 'Presença cancelada' : 'Presença confirmada',
           description: leaving
-            ? 'Presença no evento cancelada.'
+            ? 'A sua presença neste evento foi cancelada'
             : 'A sua presença neste evento foi confirmada.',
         });
       },
@@ -156,17 +160,18 @@ function EventView({ uid }) {
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Title level={3} className="event-view__name" style={{ margin: 0 }}>{event.name}</Title>
-          <ContentActions
-            entityType="event"
-            entityUid={event.uid}
-            canViewDeletePostButton={event.canEdit}
-            canViewEditButton={event.canEdit}
-            canViewReportButton={false}
-            onDeletePost={handleDeleteEvent}
-            onEdit={() => notification.info({ message: 'Podes editar os dados do evento na página de listagem dos eventos.' })}
-          />
+          {!hideEventActions && (
+            <ContentActions
+              entityType="event"
+              entityUid={event.uid}
+              canViewDeletePostButton={event.canEdit}
+              canViewEditButton={event.canEdit}
+              canViewReportButton={false}
+              onDeletePost={handleDeleteEvent}
+              onEdit={() => notification.info({ message: 'Podes editar os dados do evento na página de listagem dos eventos.' })}
+            />
+          )}
         </div>
-
         <Space size="small" className="event-view__details" wrap style={{ marginTop: 16 }}>
           <div
             className="event-view__detail-item event-view__detail-item--clickable"

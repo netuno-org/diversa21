@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/pt';
 
 import ContentActions from '../ContentActions';
+import usePeople from '../../common/usePeople.js';
 import './index.less';
 
 dayjs.locale('pt');
@@ -98,6 +99,9 @@ function EventCard({
   onDelete,
   className = '',
 }) {
+  const loggedUser = usePeople();
+  const hideEventActions = ['member', 'review'].includes(loggedUser?.data?.group?.code);
+
   if (!event) return null;
 
   const cityText = event.city?.name
@@ -133,17 +137,19 @@ function EventCard({
             <span className="event-card__past-badge">Realizado</span>
           )}
 
-          <div className="event-card__cover-actions" onClick={(e) => e.stopPropagation()}>
-            <ContentActions
-              entityType="event"
-              entityUid={event.uid}
-              canViewDeletePostButton={event.canEdit}
-              canViewEditButton={event.canEdit}
-              canViewReportButton={false}
-              onEdit={() => onEdit && onEdit(event)}
-              onDeletePost={() => onDelete && onDelete(event)}
-            />
-          </div>
+          {!hideEventActions && (
+            <div className="event-card__cover-actions" onClick={(e) => e.stopPropagation()}>
+              <ContentActions
+                entityType="event"
+                entityUid={event.uid}
+                canViewDeletePostButton={event.canEdit}
+                canViewEditButton={event.canEdit}
+                canViewReportButton={false}
+                onEdit={() => onEdit && onEdit(event)}
+                onDeletePost={() => onDelete && onDelete(event)}
+              />
+            </div>
+          )}
         </div>
       }
     >
