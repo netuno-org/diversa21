@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
 import { Row, Col, Button, Slider, Divider, Space, Typography, Popconfirm } from 'antd';
 import {
   UploadOutlined, ZoomInOutlined, ZoomOutOutlined,
-  UndoOutlined, FormatPainterOutlined, PictureOutlined, DeleteOutlined
+  UndoOutlined, RedoOutlined, FormatPainterOutlined, PictureOutlined, DeleteOutlined
 } from '@ant-design/icons';
 import { useDropzone } from 'react-dropzone';
 import AvatarEditor from 'react-avatar-editor';
@@ -60,6 +60,17 @@ function CoverImage({ currentImage, onRemove }, ref) {
     setScale(1.0);
     setRotate(0);
     setPosition(undefined);
+  };
+
+  const zoomBy = (delta) => {
+    setScale((current) => {
+      const next = Math.round((current + delta) * 100) / 100;
+      return Math.min(2.5, Math.max(1, next));
+    });
+  };
+
+  const rotateBy = (delta) => {
+    setRotate((current) => Math.min(180, Math.max(-180, current + delta)));
   };
 
   const displayImage = removed ? DEFAULT_COVER : (image || currentImage);
@@ -146,7 +157,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
                   </Divider>
 
                   <Row align="middle" gutter={16} className="cover-editor__slider-row">
-                    <Col><ZoomOutOutlined className="cover-editor__icon" /></Col>
+                    <Col><ZoomOutOutlined onClick={() => zoomBy(-0.1)} className="cover-editor__icon cover-editor__icon--action" /></Col>
                     <Col flex="auto">
                       <Slider
                         min={1} max={2.5} step={0.01}
@@ -155,11 +166,11 @@ function CoverImage({ currentImage, onRemove }, ref) {
                         />
                     </Col>
                         ({Math.round(scale * 100)}%)
-                    <Col><ZoomInOutlined className="cover-editor__icon" /></Col>
+                    <Col><ZoomInOutlined onClick={() => zoomBy(0.1)} className="cover-editor__icon cover-editor__icon--action" /></Col>
                   </Row>
 
                   <Row align="middle" gutter={16} className="cover-editor__slider-row cover-editor__slider-row--spaced">
-                    <Col><UndoOutlined className="cover-editor__icon" /></Col>
+                    <Col><UndoOutlined onClick={() => rotateBy(-15)} className="cover-editor__icon cover-editor__icon--action" /></Col>
                     <Col flex="auto">
                       <Slider
                         min={-180} max={180} step={1}
@@ -168,6 +179,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
                       />
                     </Col>
                   ({rotate}°)
+                    <Col><RedoOutlined onClick={() => rotateBy(15)} className="cover-editor__icon cover-editor__icon--action" /></Col>
                   </Row>
                   <Space size="large" align="center" className="cover-editor__actions">
                     <Space>
