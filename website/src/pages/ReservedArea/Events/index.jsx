@@ -56,7 +56,7 @@ function Events() {
       fail: () => setCityOptions([]),
     });
   };
-
+  const disablePastDates = (current) => current && current < dayjs().startOf('day');
   const processFormPayload = (values, currentEvent) => {
     const formData = new FormData();
     
@@ -312,10 +312,19 @@ function Events() {
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <Form.Item name="startDate" label="Início" rules={[{ required: true, message: 'Selecione o início!' }]}>
-              <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Data e hora" />
+              <DatePicker 
+              disabledDate={disablePastDates}
+              showTime 
+              format="YYYY-MM-DD HH:mm" 
+              className="events-page__form-full-width" 
+              placeholder="Data e hora" />
             </Form.Item>
             <Form.Item name="endDate" label="Fim">
-              <DatePicker showTime format="YYYY-MM-DD HH:mm" className="events-page__form-full-width" placeholder="Data e hora (Opcional)" />
+              <DatePicker 
+              disabledDate={disablePastDates}
+              showTime format="YYYY-MM-DD HH:mm" 
+              className="events-page__form-full-width" 
+              placeholder="Data e hora (Opcional)" />
             </Form.Item>
           </div>
 
