@@ -13,7 +13,7 @@
       "type": "string-not-empty",
       "maxLength": 250
     },
-    "phone": { "type": "string", "pattern": "^[^A-Za-zÀ-ÖØ-öø-ÿ]*$" },
+    "phone": { "type": "string", "pattern": "^(\\+?[0-9]{1,15})?$" },
     "website": { "type": "string" },
     "instagram": { "type": "string" }
   },

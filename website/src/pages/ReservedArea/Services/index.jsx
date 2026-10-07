@@ -13,6 +13,7 @@ import ServiceCard from "./ServiceCard";
 import ServiceViewModal from "./ServiceViewModal";
 import ServiceFormModal from "./ServiceFormModal";
 import CategoryFormModal from "./CategoryFormModal";
+import { normalizePhone } from "./phone.js";
 
 import "./index.less";
 
@@ -304,7 +305,7 @@ function Services() {
           category: values.category,
           city: values.city?.value || values.city,
           description: values.description,
-          phone: values.phone,
+          phone: normalizePhone(values.phone),
           website: values.website,
           instagram: values.instagram,
         },

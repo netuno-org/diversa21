@@ -3,6 +3,7 @@ import { Modal, Form, Row, Col, Input, Select, Popover, Button } from 'antd';
 import { LinkOutlined, InstagramOutlined, SmileOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import ptEmojis from 'emoji-picker-react/dist/data/emojis-pt';
+import { normalizePhone, sanitizePhoneInput } from '../phone.js';
 
 export default function ServiceFormModal({
   visible,
@@ -79,12 +80,27 @@ export default function ServiceFormModal({
             <Form.Item
               label="Telefone"
               name="phone"
+              getValueFromEvent={(event) => {
+                const sanitized = sanitizePhoneInput(event.target.value);
+                event.target.value = sanitized;
+                return sanitized;
+              }}
               rules={[
-                { max: 30, message: "O telefone não pode ter mais de 30 caracteres" },
-                { pattern: /^[^A-Za-zÀ-ÖØ-öø-ÿ]*$/, message: "O telefone não pode conter letras" },
+                { max: 20, message: "O telefone não pode ter mais de 20 caracteres" },
+                {
+                  validator: (_, value) => {
+                    if (value == null || value === "") {
+                      return Promise.resolve();
+                    }
+                    if (/^\+?[0-9]{1,15}$/.test(normalizePhone(value))) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error("Insira um telefone válido"));
+                  },
+                },
               ]}
             >
-              <Input maxLength={30} placeholder="Contacto telefónico" />
+              <Input maxLength={20} placeholder="Digite o telefone" />
             </Form.Item>
           </Col>
         </Row>
