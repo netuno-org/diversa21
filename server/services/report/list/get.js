@@ -123,7 +123,21 @@ const resolveTargetDetails = (typeCode, targetId) => {
 };
 
 const queryParams = _val.list();
-let whereClause = "WHERE r.active = true";
+let whereClause = `WHERE r.active = true
+  AND (
+    (ret.code = 'people' AND EXISTS (
+      SELECT 1 FROM people pe WHERE pe.id = r.entity
+    ))
+    OR (ret.code IN ('post', 'comment') AND EXISTS (
+      SELECT 1 FROM post p INNER JOIN people pe ON p.people_id = pe.id WHERE p.id = r.entity
+    ))
+    OR (ret.code = 'forum_topic' AND EXISTS (
+      SELECT 1 FROM forum_topic t INNER JOIN people pe ON t.people_id = pe.id WHERE t.id = r.entity
+    ))
+    OR (ret.code = 'forum_reply' AND EXISTS (
+      SELECT 1 FROM forum_reply fr INNER JOIN people pe ON fr.people_id = pe.id WHERE fr.id = r.entity
+    ))
+  )`;
 
 if (entityTypeFilter && entityTypeFilter !== "all") {
   whereClause += " AND ret.code = ?";
