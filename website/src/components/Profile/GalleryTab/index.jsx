@@ -5,11 +5,10 @@ import { MdOutlineInsertPhoto } from 'react-icons/md';
 import _service from '@netuno/service-client';
 
 import GalleryUploadModal from '../GalleryUploadModal';
-import { useGalleryPhotos } from '../../../common/useGalleryPhotos.js';
 
 const { Text } = Typography;
 
-function GalleryTab({ userUid, isOwnProfile }) {
+function GalleryTab({ gallery, isOwnProfile }) {
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const {
     photos,
@@ -19,7 +18,7 @@ function GalleryTab({ userUid, isOwnProfile }) {
     removingUid,
     uploadPhoto,
     removePhoto,
-  } = useGalleryPhotos(userUid);
+  } = gallery;
 
   return (
     <div className="profile__gallery">

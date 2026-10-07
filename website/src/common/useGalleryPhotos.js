@@ -44,9 +44,9 @@ export function useGalleryPhotos(userUid) {
       data: formData,
       success: ({ json }) => {
         setUploading(false);
-        if (json?.result) {
+        if (json?.result && json.data?.uid) {
+          setPhotos((prev) => [json.data, ...prev]);
           if (onSuccess) onSuccess();
-          fetchPhotos();
         } else {
           message.error("Não foi possível adicionar a foto.");
         }

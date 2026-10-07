@@ -11,12 +11,11 @@ import { MdOutlineInsertPhoto } from 'react-icons/md';
 import _service from '@netuno/service-client';
 
 import GalleryUploadModal from '../GalleryUploadModal';
-import { useGalleryPhotos } from '../../../common/useGalleryPhotos.js';
 import './index.less';
 
 const { Title, Text } = Typography;
 
-function GalleryCarousel({ userUid, isOwnProfile, title = "Fotos", onViewMore }) {
+function GalleryCarousel({ gallery, isOwnProfile, title = "Fotos", onViewMore }) {
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const scrollContainerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -31,7 +30,7 @@ function GalleryCarousel({ userUid, isOwnProfile, title = "Fotos", onViewMore })
     removingUid,
     uploadPhoto,
     removePhoto,
-  } = useGalleryPhotos(userUid);
+  } = gallery;
 
   const checkScroll = () => {
     const el = scrollContainerRef.current;

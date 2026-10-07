@@ -24,6 +24,7 @@ import GalleryCarousel from './GalleryCarousel';
 
 import usePeople from "../../common/usePeople.js";
 import useFriendActions from "../../common/useFriendActions.js";
+import { useGalleryPhotos } from "../../common/useGalleryPhotos.js";
 
 import './index.less';
 
@@ -43,6 +44,7 @@ function Profile({ user }) {
   });
 
   const { run, isProcessing } = useFriendActions();
+  const gallery = useGalleryPhotos(user?.uid);
 
   const isOwnProfile = user?.username === loggedUser?.data?.username;
   const canEditProfile = isOwnProfile || loggedUser?.canManageUser?.(user);
@@ -227,11 +229,11 @@ function Profile({ user }) {
           <span>Galeria</span>
         </Space>
       ),
-      children: <GalleryTab userUid={user.uid} isOwnProfile={isOwnProfile} />,
+      children: <GalleryTab gallery={gallery} isOwnProfile={isOwnProfile} />,
     });
 
     return tabs;
-  }, [user?.uid, loggedUser?.data?.group?.code, isOwnProfile]);
+  }, [user?.uid, loggedUser?.data?.group?.code, isOwnProfile, gallery]);
 
   if (!user) {
     return (
@@ -347,7 +349,7 @@ function Profile({ user }) {
 
         <Divider />
         <GalleryCarousel
-          userUid={user.uid}
+          gallery={gallery}
           isOwnProfile={isOwnProfile}
           onViewMore={() => setActiveTab('gallery')}
         />
