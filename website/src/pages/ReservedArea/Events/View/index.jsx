@@ -168,7 +168,7 @@ function EventView({ uid }) {
               canViewEditButton={event.canEdit}
               canViewReportButton={false}
               onDeletePost={handleDeleteEvent}
-              onEdit={() => notification.info({ message: 'Podes editar os dados do evento na página de listagem dos eventos.' })}
+              onEdit={() => notification.info({ message: 'Você pode editar os dados do evento na página de listagem dos eventos.' })}
             />
           )}
         </div>
