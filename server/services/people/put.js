@@ -14,6 +14,10 @@ const email = _req.getString("email");
 const avatar = _req.getFile("avatar");
 const cover_image = _req.getFile("cover_image");
 const birthDate = _req.getString("birthDate");
+
+if (birthDate && new Date(birthDate) > new Date()) {
+  response.stopWithBadRequest("birth-date-in-future");
+}
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");

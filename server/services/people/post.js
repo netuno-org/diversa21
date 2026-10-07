@@ -12,6 +12,10 @@ const username = _req.getString("username");
 const email = _req.getString("email");
 const password = _req.getString("password");
 const birthDate = _req.getString("birthDate");
+
+if (birthDate && new Date(birthDate) > new Date()) {
+  response.stopWithBadRequest("birth-date-in-future");
+}
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");

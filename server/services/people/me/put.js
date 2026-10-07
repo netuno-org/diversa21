@@ -14,6 +14,10 @@ const removeAvatar = _req.getBoolean("remove_avatar");
 const removeCoverImage = _req.getBoolean("remove_cover_image");
 
 const birthDate = _req.getString("birthDate");
+
+if (birthDate && new Date(birthDate) > new Date()) {
+  response.stopWithBadRequest("birth-date-in-future");
+}
 const cityUid = _req.getUID("city");
 const institutionUid = _req.getUID("institution");
 const description = _req.getString("description");

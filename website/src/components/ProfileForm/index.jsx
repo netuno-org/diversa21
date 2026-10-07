@@ -336,10 +336,21 @@ function ProfileForm({
                   name="birthDate"
                   rules={[
                     { type: 'date', message: 'A data inserida não é válida.' },
-                    { required: true, message: 'Insira a data de nascimento.' }
+                    { required: true, message: 'Insira a data de nascimento.' },
+                    {
+                      validator: (_, value) =>
+                        !value || !value.isAfter(dayjs(), 'day')
+                          ? Promise.resolve()
+                          : Promise.reject(new Error('A data de nascimento não pode estar no futuro.')),
+                    },
                   ]}
                 >
-                  <DatePicker placeholder="DD/MM/AAAA" format="DD/MM/YYYY" style={{ width: '100%' }} />
+                  <DatePicker
+                    placeholder="DD/MM/AAAA"
+                    format="DD/MM/YYYY"
+                    style={{ width: '100%' }}
+                    disabledDate={(current) => current && current.isAfter(dayjs(), 'day')}
+                  />
                 </Form.Item>
               </Col>
             </Row>
