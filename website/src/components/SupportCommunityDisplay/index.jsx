@@ -59,6 +59,8 @@ function SupportCommunityDisplay({
   const titleMaxLength = formMode === 'category' ? 50 : 250;
   const descriptionMaxLength = formMode === 'topic' ? 5000 : formMode === 'reply' ? 2500 : 500;
 
+  let deleteTitle = ''
+
   useEffect(() => {
     if (!showModal) {
       setDescriptionValue("");
@@ -188,7 +190,9 @@ function SupportCommunityDisplay({
     }
     return editingCategory ? "Editar" : "Criar";
   };
-  
+
+  if(mode === 'reply' ? deleteTitle = 'a resposta' : mode === 'topic' ? deleteTitle = 'o tópico' : deleteTitle = 'a categoria')
+
   return (
     <div className="support-community"
       onClick={(e) => e.stopPropagation()}
@@ -298,6 +302,7 @@ function SupportCommunityDisplay({
                           canViewReportButton={mode === 'category' ? false : !isOwnItem(item)}
                           onDeletePost={() => handleDelete(item.uid)}
                           onEdit={() => openEditModal(item)}
+                          deleteTitle={`Tem a certeza que pretende eliminar ${deleteTitle}? Esta ação é irreversível.`}
                         />
                       </div>
                     )}
@@ -509,8 +514,8 @@ function SupportCommunityDisplay({
                 }
               </div>
               <Button style={{ marginTop: '80px' }} type="primary" htmlType="submit">
-                  {getSubmitLabel()}
-                </Button>
+                {getSubmitLabel()}
+              </Button>
             </Form.Item>
           </Form>
         </div>

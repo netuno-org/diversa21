@@ -35,6 +35,7 @@ export default function ServiceViewModal({
                 onClose();
                 onDeleteService(serviceDetails.uid);
               }}
+              deleteTitle={'"Tem a certeza que pretende eliminar o serviço? Esta ação é irreversível.'}
             />
           )}
         </div>

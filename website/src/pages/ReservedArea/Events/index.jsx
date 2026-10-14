@@ -173,25 +173,16 @@ function Events() {
   };
 
   const confirmDeleteEvent = (event) => {
-    Modal.confirm({
-      title: 'Eliminar Evento',
-      content: `Tem a certeza que pretende eliminar o evento "${event.name}"?`,
-      okText: 'Sim',
-      okType: 'danger',
-      cancelText: 'Cancelar',
-      onOk: () => {
-        _service({
-          url: 'events',
-          method: 'DELETE',
-          data: { eventUid: event.uid },
-          success: () => {
-            notification.success({ message: 'Evento eliminado com sucesso!' });
-            fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
-          },
-          fail: () => {
-            notification.error({ message: 'Erro ao eliminar o evento.' });
-          },
-        });
+    _service({
+      url: 'events',
+      method: 'DELETE',
+      data: { eventUid: event.uid },
+      success: () => {
+        notification.success({ message: 'Evento eliminado com sucesso!' });
+        fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
+      },
+      fail: () => {
+        notification.error({ message: 'Erro ao eliminar o evento.' });
       },
     });
   };

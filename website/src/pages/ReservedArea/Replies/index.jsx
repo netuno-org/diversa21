@@ -432,6 +432,7 @@ function Replies({ topicUid }) {
                   canViewReportButton={!isOwnTopic}
                   onDeletePost={() => handleDeleteTopic(topic.uid)}
                   onEdit={openEditTopic}
+                  deleteTitle={'"Tem a certeza que pretende eliminar o Tópico? Esta ação é irreversível.'}
                 />
               </div>
             )}

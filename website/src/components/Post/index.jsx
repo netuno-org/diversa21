@@ -246,6 +246,7 @@ function Post({
             editMode={editMode}
             onDeletePost={onDeletePost}
             onEdit={() => setEditMode(true)}
+            deleteTitle={'"Tem a certeza que pretende eliminar o post? Esta ação é irreversível.'}
           />
         </div>
       </div>

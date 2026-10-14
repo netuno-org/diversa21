@@ -169,6 +169,7 @@ function EventView({ uid }) {
               canViewReportButton={false}
               onDeletePost={handleDeleteEvent}
               onEdit={() => notification.info({ message: 'Você pode editar os dados do evento na página de listagem dos eventos.' })}
+              deleteTitle={'"Tem a certeza que pretende eliminar o evento? Esta ação é irreversível.'}
             />
           )}
         </div>

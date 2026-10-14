@@ -34,6 +34,7 @@ export default function ServiceCard({
               canViewReportButton={false}
               onEdit={() => onEditClick(service)}
               onDeletePost={() => onDeleteService(service.uid)}
+              deleteTitle={'"Tem a certeza que pretende eliminar o serviço? Esta ação é irreversível.'}
             />
           </div>
         </div>

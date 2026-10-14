@@ -147,6 +147,7 @@ function EventCard({
                 canViewReportButton={false}
                 onEdit={() => onEdit && onEdit(event)}
                 onDeletePost={() => onDelete && onDelete(event)}
+                deleteTitle={"Tem a certeza que pretende eliminar o evento? Esta ação é irreversível."}
               />
             </div>
           )}

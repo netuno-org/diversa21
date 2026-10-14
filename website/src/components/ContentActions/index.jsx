@@ -23,6 +23,7 @@ function ContentActions({
   editLabel = "Editar",
   reportLabel = "Denunciar",
   className,
+  deleteTitle = ''
 }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -134,7 +135,7 @@ function ContentActions({
   return (
     <div className={`container-report${className ? ` ${className}` : ""}`}>
       <Popconfirm
-        title="Tem a certeza que quer remover a postagem?"
+        title={deleteTitle}
         description="Esta ação é irreversível"
         open={showDeleteConfirm}
         onClick={(e) => e.stopPropagation()}
