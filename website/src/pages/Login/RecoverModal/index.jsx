@@ -35,8 +35,8 @@ export default function RecoverModal(props) {
       fail: () => {
         setSubmitting(false);
         globalNotification.error({
-          title: 'Erro na Alteração da senha',
-          description: 'Não foi possível alterar a senha, contacte-nos através do chat de suporte.',
+          title: 'Falha na Recuperação de Senha',
+          description: 'Não foi possível enviar as instruções. Tente novamente ou entre em contato com o suporte.',
         });
       }
     });

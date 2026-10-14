@@ -86,22 +86,22 @@ function Login() {
         if (data.isJSON) {
           if (data.json['locked']) {
             globalNotification.error({
-              title: 'Acesso Bloqueado',
-              description: 'O seu login foi bloqueado devido as muitas tentativas, volte a tentar mais tarde ou contate o suporte.',
+              title: 'Acesso Temporariamente Bloqueado',
+              description: 'Limite de tentativas excedido. Tente novamente mais tarde ou entre em contato com o suporte.',
             });
             return;
           }
           if (data.json['custom-blocked']) {
             globalNotification.error({
               title: 'Login Bloqueado',
-              description: 'O login foi bloqueado, realize o processo de desbloqueamento ou contate o suporte.',
+              description: 'O seu acesso está bloqueado. Realize o processo de desbloqueio ou contate o suporte.',
             });
             return;
           }
         }
         globalNotification.error({
-          title: 'Login Inválido',
-          description: 'Por favor verifique as credenciais inseridas.',
+          title: 'Credenciais Inválidas',
+          description: 'E-mail ou senha incorretos. Verifique os dados digitados e tente novamente.',
         });
       }
     });
