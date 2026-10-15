@@ -3,6 +3,7 @@ import { Typography, Tabs } from "antd";
 import { BiSolidLocationPlus } from "react-icons/bi";
 
 import useLocations from '../../../../common/useLocations.js';
+import normalizeSearch from '../../../../common/normalizeSearch.js';
 import usePeople from '../../../../common/usePeople.js';
 import ListHeaderFilters from '../../../../components/ListHeaderFilters/index.jsx';
 
@@ -31,21 +32,21 @@ function LocationList() {
 
   const jumpToMatchTable = (term) => {
     if (term && term.trim() !== '') {
-      const q = term.toLowerCase();
+      const q = normalizeSearch(term);
 
       // Do nothing if a match is already present in the currently active tab
-      if ((activeTab === 'country' && allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q)))
-        || (activeTab === 'state' && allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q)))
-        || (activeTab === 'city' && filteredCities.some(c => c.name?.toLowerCase().includes(q)))) {
+      if ((activeTab === 'country' && allCountries.some(c => normalizeSearch(c.name).includes(q) || normalizeSearch(c.code).includes(q)))
+        || (activeTab === 'state' && allStates.some(s => normalizeSearch(s.name).includes(q) || normalizeSearch(s.code).includes(q)))
+        || (activeTab === 'city' && filteredCities.some(c => normalizeSearch(c.name).includes(q)))) {
         return;
       }
 
       // Switch to the highest-level tab that contains a match
-      if (allCountries.some(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q))) {
+      if (allCountries.some(c => normalizeSearch(c.name).includes(q) || normalizeSearch(c.code).includes(q))) {
         setActiveTab('country');
-      } else if (allStates.some(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q))) {
+      } else if (allStates.some(s => normalizeSearch(s.name).includes(q) || normalizeSearch(s.code).includes(q))) {
         setActiveTab('state');
-      } else if (filteredCities.some(c => c.name?.toLowerCase().includes(q))) {
+      } else if (filteredCities.some(c => normalizeSearch(c.name).includes(q))) {
         setActiveTab('city');
       }
     }

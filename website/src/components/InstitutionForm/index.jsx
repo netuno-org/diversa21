@@ -105,7 +105,7 @@ function InstitutionForm({
       return;
     }
     _service({
-      url: `location/city/search?name=${value}`,
+      url: `location/city/search?name=${encodeURIComponent(value)}`,
       success: ({ json }) => {
         setCityOptions(json.data.map(city => ({ label: city.label, value: city.uid, uid: city.uid })));
       },
@@ -331,7 +331,7 @@ function InstitutionForm({
                     <Form.Item name="city" label="Cidade" rules={[{ required: true }]}>
                       <Select
                         labelInValue
-                        showSearch={{ onSearch: handleCitySearch }}
+                        showSearch={{ filterOption: false, onSearch: handleCitySearch }}
                         options={cityOptions}
                         onChange={(opt) => setSelectedCity(opt)}
                         allowClear

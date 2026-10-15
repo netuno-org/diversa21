@@ -1,5 +1,7 @@
 import { _req, _db, _out } from "@netuno/server-types";
 
+import search from "#core/lib/search.js";
+
 const input = _req.getString('name') || "";
 
 const query = `
@@ -10,7 +12,7 @@ SELECT * FROM (
    FROM city
    INNER JOIN state ON city.state_id = state.id
    INNER JOIN country ON state.country_id = country.id
-   WHERE city.name ILIKE ?::text
+   WHERE ${search.unaccent("city.name")} ILIKE ${search.unaccent("?::text")}
 ) AS results
 LIMIT 10
 `;

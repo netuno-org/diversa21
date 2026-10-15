@@ -1,5 +1,7 @@
 import { _req, _db, _out } from "@netuno/server-types";
 
+import search from "#core/lib/search.js";
+
 const query = _req.getString('query') || "";
 
 const multiQuery = `
@@ -9,7 +11,7 @@ SELECT * FROM (
        name AS label,
        code AS code
    FROM country
-   WHERE name ILIKE ?::text
+   WHERE ${search.unaccent("name")} ILIKE ${search.unaccent("?::text")}
    UNION ALL
    SELECT
        state.uid AS id,
@@ -17,7 +19,7 @@ SELECT * FROM (
        state.code AS code
    FROM state
    INNER JOIN country ON state.country_id = country.id
-   WHERE state.name ILIKE ?::text
+   WHERE ${search.unaccent("state.name")} ILIKE ${search.unaccent("?::text")}
    UNION ALL
    SELECT
        city.uid AS id,
@@ -26,7 +28,7 @@ SELECT * FROM (
    FROM city
    INNER JOIN state ON city.state_id = state.id
    INNER JOIN country ON state.country_id = country.id
-   WHERE city.name ILIKE ?::text
+   WHERE ${search.unaccent("city.name")} ILIKE ${search.unaccent("?::text")}
 ) AS results
 `;
 

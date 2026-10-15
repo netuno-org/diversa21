@@ -3,6 +3,8 @@ import { message } from 'antd';
 
 import _service from '@netuno/service-client';
 
+import normalizeSearch from './normalizeSearch.js';
+
 const CONFIGS = {
   country: { url: 'location/country', label: 'países' },
   state: { url: 'location/state', label: 'estados' },
@@ -88,8 +90,8 @@ function useLocations() {
     let result = countries || [];
 
     if (filters.term) {
-      const q = filters.term.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q));
+      const q = normalizeSearch(filters.term);
+      result = result.filter(c => normalizeSearch(c.name).includes(q) || normalizeSearch(c.code).includes(q));
     }
 
     if (locationParts.country) result = result.filter(c => c.name === locationParts.country);
@@ -101,8 +103,8 @@ function useLocations() {
     let result = states || [];
 
     if (filters.term) {
-      const q = filters.term.toLowerCase();
-      result = result.filter(s => s.name?.toLowerCase().includes(q) || s.code?.toLowerCase().includes(q));
+      const q = normalizeSearch(filters.term);
+      result = result.filter(s => normalizeSearch(s.name).includes(q) || normalizeSearch(s.code).includes(q));
     }
 
     if (locationParts.country) result = result.filter(s => s.countryName === locationParts.country);
@@ -115,8 +117,8 @@ function useLocations() {
     let result = cities || [];
 
     if (filters.term) {
-      const q = filters.term.toLowerCase();
-      result = result.filter(c => c.name?.toLowerCase().includes(q));
+      const q = normalizeSearch(filters.term);
+      result = result.filter(c => normalizeSearch(c.name).includes(q));
     }
 
     if (locationParts.country) result = result.filter(c => c.countryName === locationParts.country);
