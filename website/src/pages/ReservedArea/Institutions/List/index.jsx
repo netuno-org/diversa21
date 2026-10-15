@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Tag, Button } from 'antd';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Tag, Button, Modal } from 'antd';
 import { UserAddOutlined, EditOutlined } from '@ant-design/icons';
 
 import InstitutionDisplay from "../../../../components/InstitutionDisplay";
+import InstitutionForm from "../../../../components/InstitutionForm";
 import usePeople from "../../../../common/usePeople.js";
 import useFilteredPaginatedList from '../../../../common/useFilteredPaginatedList.js';
 import ListHeaderFilters from "../../../../components/ListHeaderFilters";
@@ -19,6 +20,7 @@ function ListInstitution() {
     items: institutionList,
     loading,
     pagination,
+    fetchList,
     handlePaginationChange,
     handleSearch,
     handleLocationChange,
@@ -28,6 +30,7 @@ function ListInstitution() {
     serviceUrl: 'institution/list',
   });
   const navigate = useNavigate();
+  const [createModalVisible, setCreateModalVisible] = useState(false);
   const screens = useBreakpoint();
   const screenSize = screens.xl
     ? 100
@@ -48,7 +51,7 @@ function ListInstitution() {
           createButton={loggedUser.canCreateInstitutions() && {
             icon: <UserAddOutlined />,
             text: "Criar Instituição",
-            onClick: () => navigate('/institutions/new'),
+            onClick: () => setCreateModalVisible(true),
           }}
           onSearch={handleSearch}
           onLocationChange={handleLocationChange}
@@ -121,6 +124,23 @@ function ListInstitution() {
           </div>
         )}
       </div>
+
+      <Modal
+        className="institutions-list__create-modal"
+        open={createModalVisible}
+        onCancel={() => setCreateModalVisible(false)}
+        footer={null}
+        width={700}
+        destroyOnHidden
+      >
+        <InstitutionForm
+          onSuccess={() => {
+            setCreateModalVisible(false);
+            fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
+          }}
+          onCancel={() => setCreateModalVisible(false)}
+        />
+      </Modal>
     </div>
   );
 }

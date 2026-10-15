@@ -1,10 +1,11 @@
-import React from 'react';
-import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid } from 'antd';
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
+import { Card, Spin, Pagination, Empty, Typography, Grid, Modal } from 'antd';
 import { UserAddOutlined } from '@ant-design/icons';
 
 import UserProfileDisplay from '../../../components/UserProfileDisplay';
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
+import ProfileForm from '../../../components/ProfileForm';
 
 import globalNotification from '../../../common/globalNotification.js';
 import usePeople from "../../../common/usePeople.js";
@@ -21,6 +22,7 @@ function People() {
     items: peopleList,
     loading,
     pagination,
+    fetchList,
     handlePaginationChange,
     handleSearch,
     handleLocationChange,
@@ -29,7 +31,7 @@ function People() {
   } = useFilteredPaginatedList({
     serviceUrl: 'people/list',
   });
-  const navigate = useNavigate();
+  const [createModalVisible, setCreateModalVisible] = useState(false);
   const screens = useBreakpoint();
   const screenSize = screens.xl
     ? 100
@@ -60,7 +62,7 @@ function People() {
           createButton={(loggedUser.canCreateAnyUser() || loggedUser.canCreateMember(loggedUser.data?.institution)) && {
             icon: <UserAddOutlined />,
             text: "Criar usuário",
-            onClick: () => navigate('/people/create/user'),
+            onClick: () => setCreateModalVisible(true),
           }}
           onSearch={handleSearch}
           onLocationChange={handleLocationChange}
@@ -109,6 +111,24 @@ function People() {
           </div>
         )}
       </div>
+      <Modal
+        className="people-list__create-modal"
+        open={createModalVisible}
+        onCancel={() => setCreateModalVisible(false)}
+        footer={null}
+        width={700}
+        destroyOnHidden
+      >
+        <ProfileForm
+          operation="create"
+          people={null}
+          onSuccess={() => {
+            setCreateModalVisible(false);
+            fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
+          }}
+          onCancel={() => setCreateModalVisible(false)}
+        />
+      </Modal>
     </div>
   );
 }

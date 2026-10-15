@@ -18,7 +18,9 @@ const { Title } = Typography;
 function ProfileForm({
   operation,
   people,
-  redirectTo
+  redirectTo,
+  onSuccess,
+  onCancel
 }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
@@ -165,7 +167,7 @@ function ProfileForm({
               password_confirm: ""
             });
           }
-          setReady(true);
+          onSuccess ? onSuccess() : setReady(true);
 
           if (itsLoggedUserProfile) {
             loggedUser.reload();
@@ -495,7 +497,7 @@ function ProfileForm({
               <Popconfirm
                 title="Cancelar edição?"
                 description="Todas as alterações não guardadas serão perdidas."
-                onConfirm={() => navigate(redirectTo || -1)}
+                onConfirm={() => onCancel ? onCancel() : navigate(redirectTo || -1)}
                 okText="Sim"
                 cancelText="Não"
                 placement="top"
