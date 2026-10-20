@@ -26,7 +26,7 @@ const FAQ_SECTIONS = [
       },
       {
         q: "Q5: O que devo fazer caso esqueça a minha senha?",
-        a: <>Na tela de login, clique no link <em>"Esqueceu-se da palavra passe?"</em>. Uma janela será aberta solicitando o e-mail cadastrado na sua conta. O sistema enviará automaticamente uma mensagem com um link seguro e temporário para que você possa redefinir sua senha com facilidade.</>
+        a: <>Na tela de login, clique no link <em>"Esqueceu a senha?"</em>. Uma janela será aberta solicitando o e-mail cadastrado na sua conta. O sistema enviará automaticamente uma mensagem com um link seguro e temporário para que você possa redefinir sua senha com facilidade.</>
       }
     ]
   },
