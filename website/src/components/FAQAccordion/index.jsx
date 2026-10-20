@@ -198,7 +198,7 @@ function FAQAccordion({ sections = FAQ_SECTIONS }) {
     <div className="faq-accordion">
       {sections.map((section, idx) => (
         <div key={idx} className="faq-accordion__section">
-          <Title level={4} className="faq-accordion__title">
+          <Title level={4} style={{marginTop: 0, marginBottom: 0}} className="faq-accordion__title">
             {section.title}
           </Title>
           <Collapse
