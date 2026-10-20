@@ -195,7 +195,7 @@ function Login() {
               </Form.Item>
 
               <Form.Item style={{ textAlign: 'center' }}>
-                <Button type="link" onClick={() => setVisible(!visible)} >Esqueceu-se da palavra passe?</Button>
+                <Button type="link" onClick={() => setVisible(!visible)} >Esqueceu a senha?</Button>
                 {visible && <RecoverModal onClose={() => { setVisible(false) }} />}
               </Form.Item>
 

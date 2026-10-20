@@ -45,8 +45,8 @@ function Recovery(props) {
       fail: () => {
         setSubmitting(false);
         globalNotification.error({
-          title: 'Erro na alteração de senha',
-          description: 'Não foi possível alterar a sua senha, o link é inválido ou por favor contacte o suporte.',
+          title: 'Falha na redefinição de senha',
+          description: 'Não foi possível alterar a senha. O link pode estar expirado ou ser inválido. Se o problema persistir, contate o suporte.',
         });
       }
     });
