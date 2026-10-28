@@ -1,4 +1,8 @@
-import { _db } from "@netuno/server-types";
+import {_db, _env, _exec} from "@netuno/server-types";
+
+if (!_env.is("dev")) {
+  _exec.stop();
+}
 
 /**
  * Add slug column to institution table

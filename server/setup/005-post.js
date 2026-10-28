@@ -1,4 +1,8 @@
-import { _log, _val, _db, _user, _group } from "@netuno/server-types";
+import {_log, _val, _db, _env, _exec} from "@netuno/server-types";
+
+if (!_env.is("dev")) {
+  _exec.stop();
+}
 
 // Example posts
 const posts = [

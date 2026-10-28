@@ -1,4 +1,8 @@
-import { _db, _val, _log } from "@netuno/server-types";
+import {_db, _val, _log, _env, _exec} from "@netuno/server-types";
+
+if (!_env.is("dev")) {
+  _exec.stop();
+}
 
 const friends = [
   {
