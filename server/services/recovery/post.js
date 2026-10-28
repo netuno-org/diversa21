@@ -1,3 +1,5 @@
+import {_crypto, _db, _header, _out, _req, _smtp, _storage, _template, _time, _uid, _val} from "@netuno/server-types";
+
 const mail = _req.getString("mail");
 const dbPeople = _db.findFirst(
   "people",
@@ -26,7 +28,7 @@ if (dbPeople != null && dbPeople.getBoolean("active")) {
   smtp.to = dbPeople.getString("email");
   smtp.subject = `Diversa21 - Recuperação de Senha`;
   smtp.text = `
-    Caro ${dbPeople.getString("name")},
+    Olá ${dbPeople.getString("name")},
 
     Para fazer a recuperação da senha clique neste link: ${dbPeople.getString("recovery_link")}
     Obrigado,
