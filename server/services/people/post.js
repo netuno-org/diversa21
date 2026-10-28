@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _header, _out, _group } from "@netuno/server-types"
+import {_req, _db, _val, _user, _header, _out, _group, _template, _storage, _smtp} from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -113,6 +113,35 @@ if (userId) {
         .set("institution_id", institutionId)
         .set("order", order)
     );
+
+    const smtp = _smtp.init();
+    smtp.to = email;
+    smtp.subject = `Acesso ao Diversa21.org`;
+    smtp.text = `
+    Olá ${name},
+    
+    A sua conta foi criada com sucesso:
+    
+    Usuário: ${username}
+    Senha: ${password}
+    
+    Obrigado,
+    diversa21.org
+  `;
+    smtp.html = _template.getOutput(
+      "new-account-mail",
+      _val.map()
+        .set("name", name)
+        .set("username", username)
+        .set("password", password)
+    );
+    smtp.attachment(
+      "logo.png",
+      "image/png",
+      _storage.filesystem("server", "images", "mail-logo.png").file(),
+      "logo"
+    );
+    smtp.send();
   } catch (e) {
     _log.warn("error: user not created", e);
     _user.remove(userId); 
