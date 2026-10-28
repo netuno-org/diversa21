@@ -1,4 +1,4 @@
-import {_val, _db, _env, _exec} from "@netuno/server-types"
+import { _val, _db, _env, _exec, _convert } from "@netuno/server-types"
 
 if (!_env.is("dev")) {
   _exec.stop();
@@ -49,18 +49,20 @@ const institutions = [
 
 for (let i = 0; i < institutions.length; i++) {
   const institution = institutions[i];
+  const slug = _convert.slug(institution.name);
 
   _db.insertIfNotExists(
     "institution",
     _val.map()
-    .set("uid", institution.uid)
-    .set("name", institution.name)
-    .set("description", `${institution.name}, manda email aqui: ${institution.email}.`)
-    .set("email", institution.email)
-    .set("telephone", institution.phone)
-    .set("website", institution.website)
-    .set("address", institution.address)
-    .set("post_code", institution.post_code)
-    .set("city_id", institution.city_id)
+      .set("uid", institution.uid)
+      .set("name", institution.name)
+      .set("description", `${institution.name}, manda email aqui: ${institution.email}.`)
+      .set("email", institution.email)
+      .set("telephone", institution.phone)
+      .set("website", institution.website)
+      .set("address", institution.address)
+      .set("post_code", institution.post_code)
+      .set("city_id", institution.city_id)
+      .set("slug", slug)
   );
 };
