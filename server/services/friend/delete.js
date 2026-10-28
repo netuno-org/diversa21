@@ -44,12 +44,14 @@ const dbNotification = _db.queryFirst(`
       (originator_id = ?::int AND recipient_id = ?::int)
       OR (originator_id = ?::int AND recipient_id = ?::int)
     )
-  `, 
-  requestNotificationTypeId, acceptedNotificationTypeId, 
+  `,
+  requestNotificationTypeId, acceptedNotificationTypeId,
   loggedUserId, friendId,
   friendId, loggedUserId);
 
-_db.delete("notification", dbNotification.getInt("id"));
+if (dbNotification) {
+  _db.delete("notification", dbNotification.getInt("id"));
+}
 
 _out.json(
   _val.map()
