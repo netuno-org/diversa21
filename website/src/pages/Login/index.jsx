@@ -16,6 +16,7 @@ import {
 import isNetworkError from "is-network-error";
 
 import 'altcha';
+import 'altcha/i18n/pt-br';
 
 import usePeople from "../../common/usePeople.js";
 
@@ -179,11 +180,12 @@ function Login() {
 
               { Config.authAltcha() && <Form.Item>
                 <altcha-widget
-                    ref={altcha}
-                    challengeurl={_service.url('/_altcha')}
-                    delay={1}
-                    hidelogo={true}
-                    hidefooter={true}
+                  ref={altcha}
+                  challenge={_service.url('/_altcha')}
+                  language="pt-br"
+                  delay={1}
+                  hidelogo={true}
+                  hidefooter={true}
                 ></altcha-widget>
               </Form.Item> }
 
