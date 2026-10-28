@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noImplicitAny": false,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["**/*.js", "**/*.mjs"],
+  "exclude": ["node_modules", "__tests__"]
+}
