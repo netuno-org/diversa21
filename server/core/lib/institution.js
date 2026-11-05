@@ -64,5 +64,15 @@ export default {
     const sql = baseQuery + `\nAND LOWER(institution.slug) = LOWER(?::text)`
     const dbInstitution = _db.queryFirst(sql, slug);
     return dbInstitution ? mapInstitution(dbInstitution) : null;
-  }
+  },
+
+  getInstitutionMembers: (institutionId, excludePeopleId) => {
+    return _db.query(`
+      SELECT p.id, p.uid, netuno_user.user AS username
+      FROM people p
+      INNER JOIN netuno_user ON p.people_user_id = netuno_user.id
+      WHERE p.institution_id = ?::int
+        AND p.id != ?::int
+    `, institutionId, excludePeopleId);
+  },
 };

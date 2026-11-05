@@ -2,6 +2,8 @@ import { _db, _val, _out } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import notifications, { notificationTypes, notificationMessages } from "#core/lib/notifications.js";
+import friend from "#core/lib/friend.js";
+import institution from "#core/lib/institution.js";
 
 const messages = {
   "friend-post": notificationMessages.FRIEND_POST,
@@ -95,7 +97,7 @@ for (const dbQueueItem of dbQueueItems) {
     typeCode === notificationTypes.FRIEND_COMMENT ||
     typeCode === notificationTypes.FRIEND_LIKE) {
 
-    const dbFriends = notifications.getFriends(originatorId);
+    const dbFriends = friend.getFriends(originatorId);
     const friendsToNotify = _val.list();
     for (const dbFriend of dbFriends) {
       const fId = dbFriend.getInt("id");
@@ -120,14 +122,14 @@ for (const dbQueueItem of dbQueueItems) {
     typeCode === notificationTypes.INSTITUTION_COMMENT ||
     typeCode === notificationTypes.INSTITUTION_LIKE) {
 
-    const dbFriends = notifications.getFriends(originatorId);
+    const dbFriends = friend.getFriends(originatorId);
     for (const dbFriend of dbFriends) {
       notifiedIds[dbFriend.getInt("id")] = true;
     }
 
     const institutionMembersToNotify = _val.list();
     if (originatorInstitutionId > 0) {
-      const dbMembers = notifications.getInstitutionMembers(originatorInstitutionId, originatorId);
+      const dbMembers = institution.getInstitutionMembers(originatorInstitutionId, originatorId);
       for (const dbMember of dbMembers) {
         const mId = dbMember.getInt("id");
         if (!notifiedIds[mId]) {

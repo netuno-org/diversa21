@@ -1,6 +1,17 @@
 import { _db, _val, _ws } from "@netuno/server-types";
 
 export default {
+  getFriends: (peopleId) => {
+    return _db.query(`
+      SELECT p.id, p.uid, netuno_user.user AS username
+      FROM friend f
+      INNER JOIN people p ON p.id = (CASE WHEN f.people_id = ?::int THEN f.friend_id ELSE f.people_id END)
+      INNER JOIN netuno_user ON p.people_user_id = netuno_user.id
+      WHERE (f.people_id = ?::int OR f.friend_id = ?::int)
+        AND f.accepted_at IS NOT NULL
+    `, peopleId, peopleId, peopleId);
+  },
+
   notifyAllWithStatusChanged: (dbPeople, online) => {
     const dbFriendSessions = _db.query(`
       SELECT DISTINCT s.session_id

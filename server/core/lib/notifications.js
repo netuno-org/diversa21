@@ -58,7 +58,7 @@ export default {
         .set("title", title)
         .set("content", content)
         .set("originator_id", originatorId)
-        .set("recipient_id", recipientId) 
+        .set("recipient_id", recipientId)
         .set("sent_at", currentTimestamp)
         .set("read_at", null)
         .set("extra", extra)
@@ -143,25 +143,19 @@ export default {
     `, recipientId, typeId);
   },
 
-  getFriends: (peopleId) => {
-    return _db.query(`
-      SELECT p.id, p.uid, netuno_user.user AS username
-      FROM friend f
-      INNER JOIN people p ON p.id = (CASE WHEN f.people_id = ?::int THEN f.friend_id ELSE f.people_id END)
-      INNER JOIN netuno_user ON p.people_user_id = netuno_user.id
-      WHERE (f.people_id = ?::int OR f.friend_id = ?::int)
-        AND f.accepted_at IS NOT NULL
-    `, peopleId, peopleId, peopleId);
-  },
-
-  getInstitutionMembers: (institutionId, excludePeopleId) => {
-    return _db.query(`
-      SELECT p.id, p.uid, netuno_user.user AS username
-      FROM people p
-      INNER JOIN netuno_user ON p.people_user_id = netuno_user.id
-      WHERE p.institution_id = ?::int
-        AND p.id != ?::int
-    `, institutionId, excludePeopleId);
+  getUnreadTotal: (dbProfile) => {
+    if (!dbProfile) { return 0; }
+    const dbUnread = _db.queryFirst(`
+    SELECT COUNT(n.id) AS total
+    FROM notification n
+    LEFT JOIN notification_type nt ON n.type_id = nt.id
+    LEFT JOIN notification_settings ns ON ns.type_id = nt.id AND ns.profile_id = n.profile_id
+    WHERE n.profile_id = ?
+      AND n.read_at IS NULL
+      AND n.active = true
+      AND (ns.id IS NULL OR ns.active = true)
+  `, dbProfile.getInt("id"));
+    return dbUnread ? dbUnread.getInt("total", 0) : 0;
   },
 
   notifyRecipients: (recipientList, originatorId, originatorUid, originatorUsername, typeCode, title, content, extraMap) => {
@@ -184,9 +178,9 @@ export default {
       if (isBlocked !== null) {
         continue;
       }
-      
+
       const currentTimestamp = _db.timestamp();
-      
+
       let extraJson = "";
       if (extraMap) {
         if (typeof extraMap.toJSON === "function") {
@@ -239,5 +233,5 @@ export default {
         _ws.sendAsService(dbSession.getString("session_id"), wsMessage);
       }
     }
-  }
+  },
 }

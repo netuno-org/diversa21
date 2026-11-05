@@ -74,16 +74,19 @@ export default {
     }
     return null;
   },
+
   getLogged: () => {
     return _db.form("people")
       .where(_db.where("people_user_id").equal(_user.id))
       .first();
   },
+
   getByUid: (uid) => {
     return _db.form("people")
       .where(_db.where("uid").equal(uid))
       .first();
   },
+
   getByUsername: (username) => {
     return _db.queryFirst(`
       SELECT people.*
@@ -92,6 +95,7 @@ export default {
       WHERE netuno_user."user" = ?::varchar;
     `, username);
   },
+
   createOrder: () => {
     let order = '';
     for (let i = 0; i < 7; i++) {
@@ -99,9 +103,11 @@ export default {
     }
     return order;
   },
+
   maxGalleryPhotos: () => {
     return 16;
   },
+
   wsSendService: (dbPeople, message) => {
     const dbSessions = _db.form("people_ws_session")
       .where(_db.where("people_id").equal(dbPeople.getInt("id")))
@@ -110,6 +116,7 @@ export default {
       _ws.sendService(dbSession.getString("session_id"), message);
     }
   },
+
   wsSendAsService: (dbPeople, message) => {
     const dbSessions = _db.form("people_ws_session")
       .where(_db.where("people_id").equal(dbPeople.getInt("id")))
@@ -117,5 +124,6 @@ export default {
     for (const dbSession of dbSessions) {
       _ws.sendAsService(dbSession.getString("session_id"), message);
     }
-  }
+  },
+
 }

@@ -6,12 +6,14 @@ export default {
       .where(_db.where("uid").equal(uid))
       .first();
   },
+
   getUnreadTotal: (dbPeople) => {
     const dbMessagesUnread = _db.queryFirst(`
       SELECT COUNT(DISTINCT originator_id) AS total FROM message WHERE recipient_id = ? AND read_at IS NULL
     `, dbPeople.getInt("id"));
     return dbMessagesUnread.getInt("total", 0);
   },
+
   toData: (dbPeopleFrom, dbPeopleTo, dbMessage) => {
     const data = _val.map()
       .set("uid", dbMessage.getString("uid"))
