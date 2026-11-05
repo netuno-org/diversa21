@@ -39,7 +39,7 @@ const acceptedNotificationTypeId = notifications.getNotificationTypeId(notificat
 const dbNotification = _db.queryFirst(`
     SELECT id 
     FROM notification
-    WHERE type_id = ?::int OR type_id = ?::int
+    WHERE (type_id = ?::int OR type_id = ?::int)
     AND (
       (originator_id = ?::int AND recipient_id = ?::int)
       OR (originator_id = ?::int AND recipient_id = ?::int)
