@@ -33,13 +33,13 @@ if (currentTime - sentTime > 3600000) {
 
 const dbPeopleTo = _db.get("people", dbMessage.getInt("recipient_id"));
 
-_db.form("messages")
+_db.form("message")
   .set("message", updatedContent)
   .set("edited_at", _db.timestamp())
   .where(_db.where("id").equal(dbMessage.getInt("id")))
   .update();
 
-const dbMessageUpdated = _db.form("messages")
+const dbMessageUpdated = _db.form("message")
   .where(_db.where("id").equal(dbMessage.getInt("id")))
   .first();
 

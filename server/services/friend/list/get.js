@@ -59,7 +59,7 @@ let sqlQuery = `
         p.avatar AS "friend_avatar",
         (
             SELECT count(m.id) 
-            FROM messages m
+            FROM message m
             WHERE m.originator_id = p.id 
               AND m.recipient_id = ? 
               AND m.read_at IS NULL
@@ -70,7 +70,7 @@ let sqlQuery = `
                     WHEN m.deleted_at IS NOT NULL OR m.active = false THEN 'Mensagem apagada'
                     ELSE m.message
                 END
-            FROM messages m
+            FROM message m
             WHERE (m.originator_id = p.id AND m.recipient_id = ?)
                OR (m.originator_id = ? AND m.recipient_id = p.id)
             ORDER BY m.sent_at DESC, m.id DESC
@@ -78,7 +78,7 @@ let sqlQuery = `
         ) AS last_message,
         (
             SELECT MAX(m.sent_at)
-            FROM messages m
+            FROM message m
             WHERE (m.originator_id = p.id AND m.recipient_id = ?)
                OR (m.originator_id = ? AND m.recipient_id = p.id)
         ) AS last_message_at,

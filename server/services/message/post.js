@@ -1,4 +1,4 @@
-import {_db, _val, _out, _req} from "@netuno/server-types";
+import { _db, _val, _out, _req } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import message from "#core/lib/message.js";
@@ -11,7 +11,7 @@ const parentUid = _req.getString("parent_uid", "");
 
 let parentId = 0;
 if (parentUid !== "") {
-  const dbParentMessage = _db.form("messages")
+  const dbParentMessage = _db.form("message")
     .where(_db.where("uid").equal(parentUid))
     .first();
   if (dbParentMessage) {
@@ -19,7 +19,7 @@ if (parentUid !== "") {
   }
 }
 
-const dbMessageInserted = _db.form("messages")
+const dbMessageInserted = _db.form("message")
   .set("originator_id", dbPeopleFrom.getInt("id"))
   .set("recipient_id", dbPeopleTo.getInt("id"))
   .set("message", inputMessage)
@@ -27,7 +27,7 @@ const dbMessageInserted = _db.form("messages")
   .set("sent_at", _db.timestamp())
   .insert();
 
-const dbMessage = _db.form("messages")
+const dbMessage = _db.form("message")
   .where(_db.where("id").equal(dbMessageInserted.getInt("id")))
   .first();
 

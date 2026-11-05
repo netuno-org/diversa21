@@ -96,7 +96,7 @@ delete from notification_opt_out
 ;;
 delete from notification
 ;;
-delete from messages
+delete from message
 ;;
 delete from institution
 ;;

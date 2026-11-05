@@ -25,7 +25,7 @@ if (dbMessage.getInt("originator_id") !== dbPeopleLogged.getInt("id")) {
 
 const dbPeopleTo = _db.get("people", dbMessage.getInt("recipient_id"));
 
-_db.form("messages")
+_db.form("message")
   .set("deleted_at", _db.timestamp())
   .set("active", false)
   .where(_db.where("id").equal(dbMessage.getInt("id")))

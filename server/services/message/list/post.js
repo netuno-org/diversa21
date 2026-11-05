@@ -1,4 +1,4 @@
-import {_db, _val, _out, _req} from "@netuno/server-types";
+import { _db, _val, _out, _req } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import message from "#core/lib/message.js";
@@ -8,7 +8,7 @@ const dbPeopleLogged = people.getLogged();
 const dbPeopleFriend = people.getByUid(_req.getString("with"));
 
 const totalMessagesMarkedAsRead = _db.execute(`
-  UPDATE messages SET read_at = CURRENT_TIMESTAMP
+  UPDATE message SET read_at = CURRENT_TIMESTAMP
   WHERE read_at IS NULL AND originator_id = ?::int AND recipient_id = ?::int
 `, dbPeopleFriend.getInt("id"), dbPeopleLogged.getInt("id"));
 
@@ -48,7 +48,7 @@ if (totalMessagesMarkedAsRead > 0 || cleared > 0) {
 
 if (totalMessagesMarkedAsRead > 0) {
   const dbMessageRead = _db.queryFirst(`
-    SELECT read_at FROM messages
+    SELECT read_at FROM message
     WHERE originator_id = ?::int AND recipient_id = ?::int AND read_at IS NOT NULL
     ORDER BY read_at DESC
     LIMIT 1
@@ -78,7 +78,7 @@ if (totalMessagesMarkedAsRead > 0) {
 const page = _req.getInt("page", 1);
 const size = _req.getInt("size", 10);
 
-const dbMessagesPage = _db.form("messages")
+const dbMessagesPage = _db.form("message")
   .where(
     _db.where()
       .and(
@@ -95,15 +95,15 @@ const dbMessagesPage = _db.form("messages")
 const messages = _val.list();
 
 for (const dbMessage of dbMessagesPage.getList("items")) {
-    let dbPeopleFrom = dbPeopleLogged;
-    let dbPeopleTo = dbPeopleFriend;
-    if (dbMessage.getInt("originator_id") === dbPeopleFriend.getInt("id")) {
-      dbPeopleFrom = dbPeopleFriend;
-      dbPeopleTo = dbPeopleLogged;
-    }
-    messages.add(
-      message.toData(dbPeopleFrom, dbPeopleTo, dbMessage)
-    );
+  let dbPeopleFrom = dbPeopleLogged;
+  let dbPeopleTo = dbPeopleFriend;
+  if (dbMessage.getInt("originator_id") === dbPeopleFriend.getInt("id")) {
+    dbPeopleFrom = dbPeopleFriend;
+    dbPeopleTo = dbPeopleLogged;
+  }
+  messages.add(
+    message.toData(dbPeopleFrom, dbPeopleTo, dbMessage)
+  );
 }
 
 _out.json(

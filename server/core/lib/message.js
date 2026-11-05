@@ -1,14 +1,14 @@
-import {_db, _val} from "@netuno/server-types";
+import { _db, _val } from "@netuno/server-types";
 
 export default {
   getByUID: (uid) => {
-    return _db.form("messages")
+    return _db.form("message")
       .where(_db.where("uid").equal(uid))
       .first();
   },
   getUnreadTotal: (dbPeople) => {
     const dbMessagesUnread = _db.queryFirst(`
-      SELECT COUNT(DISTINCT originator_id) AS total FROM messages WHERE recipient_id = ? AND read_at IS NULL
+      SELECT COUNT(DISTINCT originator_id) AS total FROM message WHERE recipient_id = ? AND read_at IS NULL
     `, dbPeople.getInt("id"));
     return dbMessagesUnread.getInt("total", 0);
   },
@@ -26,7 +26,7 @@ export default {
 
     const parentId = dbMessage.getInt("parent_id", 0);
     if (parentId > 0) {
-      const dbParentMessage = _db.form("messages")
+      const dbParentMessage = _db.form("message")
         .where(_db.where("id").equal(parentId))
         .first();
       if (dbParentMessage) {

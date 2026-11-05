@@ -26,12 +26,12 @@ if (dbMessage.getInt("recipient_id") !== dbPeopleLogged.getInt("id")) {
 
 let cleanReaction = reaction ? reaction.replace(/\uFE0F/g, "") : "";
 
-_db.form("messages")
+_db.form("message")
   .set("reaction", cleanReaction)
   .where(_db.where("id").equal(dbMessage.getInt("id")))
   .update();
 
-const dbMessageUpdated = _db.form("messages")
+const dbMessageUpdated = _db.form("message")
   .where(_db.where("id").equal(dbMessage.getInt("id")))
   .first();
 
