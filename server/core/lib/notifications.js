@@ -149,11 +149,11 @@ export default {
     SELECT COUNT(n.id) AS total
     FROM notification n
     LEFT JOIN notification_type nt ON n.type_id = nt.id
-    LEFT JOIN notification_settings ns ON ns.type_id = nt.id AND ns.profile_id = n.profile_id
-    WHERE n.profile_id = ?
+    LEFT JOIN notification_opt_out noo ON noo.type_id != nt.id AND noo.people_id = n.recipient_id
+    WHERE n.recipient_id = ?
       AND n.read_at IS NULL
       AND n.active = true
-      AND (ns.id IS NULL OR ns.active = true)
+      AND (noo.id IS NULL OR noo.active = true)
   `, dbProfile.getInt("id"));
     return dbUnread ? dbUnread.getInt("total", 0) : 0;
   },

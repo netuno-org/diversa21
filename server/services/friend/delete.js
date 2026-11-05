@@ -53,6 +53,22 @@ if (dbNotification) {
   _db.delete("notification", dbNotification.getInt("id"));
 }
 
+const totalUnread = notifications.getUnreadTotal(dbFriend);
+
+people.wsSendService(
+  dbFriend,
+  _val.map()
+    .set("service", "notification/unread-count")
+    .set("content", _val.map().set("total", totalUnread))
+);
+
+people.wsSendService(
+  loggedUser,
+  _val.map()
+    .set("service", "notification/unread-count")
+    .set("content", _val.map().set("total", totalUnread))
+);
+
 _out.json(
   _val.map()
     .set("result", true)
