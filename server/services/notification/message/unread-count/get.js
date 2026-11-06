@@ -9,7 +9,9 @@ const dbCounts = _db.query(`
     FROM notification
     INNER JOIN people recipient ON notification.recipient_id = recipient.id
     INNER JOIN notification_type ON notification.type_id = notification_type.id
-    WHERE recipient.uid = ?::uuid
+    WHERE 1 = 1
+      AND recipient.uid = ?::uuid
+      AND notification.active = true
       AND notification.read_at IS NULL
       AND notification_type.code = 'message'
 `, loggedUserUid);

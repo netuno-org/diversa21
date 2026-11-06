@@ -33,7 +33,7 @@ const dbNotifications = _db.query(`
     INNER JOIN notification_type ON notification.type_id = notification_type.id
     WHERE 1 = 1
         AND recipient.uid = ?::uuid
-        AND notification.active = 't'
+        AND notification.active = true
     ORDER BY notification.sent_at DESC
     LIMIT ?::int OFFSET ?::int
   `, loggedUserUid, pageSize, offset
