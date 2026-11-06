@@ -18,7 +18,7 @@ const { Text } = Typography;
 function Notifications() {
   const loggedUser = usePeople();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("unread");
 
   const {
     notifications,
@@ -145,7 +145,6 @@ function Notifications() {
           onChange={setActiveTab}
           className="notifications-page__tabs"
           items={[
-            { key: "all", label: "Todas" },
             {
               key: "unread", label: (
                 <Space size="small">
@@ -156,6 +155,7 @@ function Notifications() {
                 </Space>
               ),
             },
+            { key: "all", label: "Todas" },
           ]}
         />
 
