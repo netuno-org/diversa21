@@ -10,7 +10,7 @@ import { setOpenChatFriendUid } from "../../../common/useNotifications.js";
 
 import Chat from "./Chat";
 import FriendsList from "./FriendsList/index.jsx";
-import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
+import ListHeaderFilters from "../../../components/ListHeaderFilters/index.jsx";
 
 import "./index.less";
 
@@ -95,7 +95,7 @@ function Messages() {
   };
 
   return (
-    <section className={`messages ${chatFriend ? 'messages--chat-active' : ''}`}>
+    <section className={`messages ${chatFriend ? "messages--chat-active" : ""}`}>
       <div className="messages__body">
         <Card className="messages__card" variant="borderless">
           <Row className="messages__row">
@@ -118,19 +118,19 @@ function Messages() {
         footer={null}
         destroyOnHidden
       >
-        <div style={{ padding: '16px 0' }}>
-          <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
+        <div style={{ padding: "16px 0" }}>
+          <Text type="secondary" style={{ display: "block", marginBottom: 16 }}>
             Pesquise e selecione uma pessoa para iniciar uma troca de mensagens.
           </Text>
           <Select
             showSearch={{ filterOption: false, onSearch: handleModalSearch }}
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
             placeholder="Pesquisar por nome..."
             value={null}
             onChange={handleStartNewChat}
             notFoundContent={
               fetchingPeople ? (
-                <div style={{ textAlign: 'center', padding: 16 }}><Spin size="small" /></div>
+                <div style={{ textAlign: "center", padding: 16 }}><Spin size="small" /></div>
               ) : (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhuma pessoa encontrada." />
               )

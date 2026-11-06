@@ -1,14 +1,13 @@
-import { _db, _map } from "@netuno/server-types"
+import { _db, _map, _req, _val } from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
-const loggedUserUid = people.getLogged().getUID("uid");
-const page = _req.getInt('page', 1);
-
-const pageSize = _req.getInt('pageSize', 5);
-
+const page = _req.getInt("page", 1);
+const pageSize = _req.getInt("pageSize", 5);
 const offset = page > 0 ? (page - 1) * pageSize : 0
+
+const loggedUserUid = people.getLogged().getUID("uid");
 
 const dbNotifications = _db.query(`
     SELECT

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import _service from '@netuno/service-client';
-import _ws from '@netuno/ws-client';
+import { useState, useEffect, useRef } from "react";
+import _service from "@netuno/service-client";
+import _ws from "@netuno/ws-client";
 
 import useWS from "./useWS.js";
+import globalNotification from "./globalNotification.js";
 
 let openChatFriendUid = null;
 
@@ -42,6 +43,36 @@ function useNotifications() {
     }
   }, [ws.data]);
 
+  const loadNotifications = () => {
+    setLoading(true);
+    _service({
+      method: "GET",
+      url: "/notification/list",
+      data: {
+        page: pagination.current,
+        pageSize: pagination.size,
+      },
+      success: (response) => {
+        setLoading(false);
+        if (response.json) {
+          const items = response.json.data.items || [];
+          items.forEach(n => processNotification(n));
+          setNotifications(items);
+          const totalCount = response.json.data.pagination?.totalCount ?? items.length;
+          setCount(totalCount);
+          //   setPagination(prev => ({ ...prev, total: totalCount }));
+        }
+      },
+      fail: () => {
+        setLoading(false);
+        globalNotification.serviceFail({
+          title: "Notificações",
+          description: "Ocorreu um erro ao carregar as notificações.",
+        });
+      },
+    });
+  };
+
   const handlePaginationChange = (page, pageSize) => {
     setPagination(prev => ({ ...prev, current: page, size: pageSize }));
     _ws.sendService({
@@ -64,72 +95,75 @@ function useNotifications() {
     }
     loadedRef.current = true;
 
-    const listenerNotification = _ws.addListener({
-      method: "GET",
-      service: 'notification/list',
-      start: () => setLoading(true),
-      success: (data) => {
-        const items = data.content.data.items || [];
-        items.forEach(n => processNotification(n));
-        setNotifications(items);
-        
-        const totalCount = data.content.data.pagination?.totalCount ?? items.length;
-        setCount(totalCount);
-        
-        setPagination(prev => ({ ...prev, total: totalCount })); 
-      },
-      end: () => setLoading(false)
-    });
+    loadNotifications();
 
-    _ws.sendService({
-      method: "GET",
-      service: "notification/list",
-      data: {
-        page: String(pagination.current),
-        pageSize: String(pagination.size)
-      }
-    });
+    // const notificationListener = _ws.addListener({
+    //   method: "GET",
+    //   service: "notification/list",
+    //   start: () => setLoading(true),
+    //   success: (data) => {
+    //     const items = data.content.data.items || [];
+    //     items.forEach(n => processNotification(n));
+    //     setNotifications(items);
+    //
+    //     const totalCount = data.content.data.pagination?.totalCount ?? items.length;
+    //     setCount(totalCount);
+    //
+    //     setPagination(prev => ({ ...prev, total: totalCount }));
+    //   },
+    //   end: () => setLoading(false)
+    // });
+    //
+    // _ws.sendService({
+    //   method: "GET",
+    //   service: "notification/list",
+    //   data: {
+    //     page: String(pagination.current),
+    //     pageSize: String(pagination.size)
+    //   }
+    // });
 
-    const listenerNewNotification = _ws.addListener({
-      method: "POST",
+    const newNotificationListener = _ws.addListener({
       service: "notification/new",
       success: (data) => {
-        const newNotification = data.content;
-        processNotification(newNotification);
+        // const newNotification = data.content;
+        // processNotification(newNotification);
+        //
+        // if (
+        //   newNotification.type === "message" &&
+        //   openChatFriendUid &&
+        //   newNotification.originator?.uid === openChatFriendUid
+        // ) {
+        //   return;
+        // }
 
-        if (
-          newNotification.type === 'message' &&
-          openChatFriendUid &&
-          newNotification.originator?.uid === openChatFriendUid
-        ) {
-          return;
-        }
+        // setNotifications(prev => {
+        //   if (newNotification.type === "message") {
+        //     const existing = prev.find(n =>
+        //       n.type === "message" && n.originator?.uid === newNotification.originator?.uid
+        //     );
+        //     const previousCount = existing?.messageCount || 1;
+        //     newNotification.messageCount = existing ? previousCount + 1 : 1;
+        //
+        //     if (!existing) {
+        //       setCount((c) => c + 1);
+        //     }
+        //     return [
+        //       newNotification,
+        //       ...prev.filter(n =>
+        //         !(n.type === "message" && n.originator?.uid === newNotification.originator?.uid)
+        //       )
+        //     ];
+        //   }
+        //   setCount((c) => c + 1);
+        //   return [newNotification, ...prev];
+        // });
 
-        setNotifications(prev => {
-          if (newNotification.type === 'message') {
-            const existing = prev.find(n =>
-              n.type === 'message' && n.originator?.uid === newNotification.originator?.uid
-            );
-            const previousCount = existing?.messageCount || 1;
-            newNotification.messageCount = existing ? previousCount + 1 : 1;
-
-            if (!existing) {
-              setCount((c) => c + 1);
-            }
-            return [
-              newNotification,
-              ...prev.filter(n =>
-                !(n.type === 'message' && n.originator?.uid === newNotification.originator?.uid)
-              )
-            ];
-          }
-          setCount((c) => c + 1);
-          return [newNotification, ...prev];
-        });
+        loadNotifications();
       }
     });
 
-    const listenerNotificationRead = _ws.addListener({
+    const notificationReadListener = _ws.addListener({
       method: "POST",
       service: "notification/read",
       success: (data) => {
@@ -137,21 +171,21 @@ function useNotifications() {
         if (!content) {
           return;
         }
-        if (content.type === 'message') {
+        if (content.type === "message") {
           if (content.all) {
-            setNotifications(prev => prev.filter(n => n.type !== 'message'));
+            setNotifications(prev => prev.filter(n => n.type !== "message"));
             return;
           }
           if (content.originator?.uid) {
             setNotifications(prev => prev.filter(n =>
-              !(n.type === 'message' && n.originator?.uid === content.originator.uid)
+              !(n.type === "message" && n.originator?.uid === content.originator.uid)
             ));
           }
           return;
         }
-        
+
         if (content.all) {
-          setNotifications(prev => prev.map(n => n.type !== 'message' ? { ...n, read: true } : n));
+          setNotifications(prev => prev.map(n => n.type !== "message" ? { ...n, read: true } : n));
         } else if (content.uid) {
           setNotifications(prev => prev.map(n => n.uid === content.uid ? { ...n, read: true } : n));
         }
@@ -160,9 +194,8 @@ function useNotifications() {
 
     return () => {
       loadedRef.current = false;
-      _ws.removeListener(listenerNotification);
-      _ws.removeListener(listenerNewNotification);
-      _ws.removeListener(listenerNotificationRead);
+      _ws.removeListener(newNotificationListener);
+      _ws.removeListener(notificationReadListener);
     };
   }, [connected]);
 
@@ -170,17 +203,17 @@ function useNotifications() {
     const handleFriendActionSuccess = (event) => {
       const detail = event?.detail || {};
       const { action, uid } = detail;
-      if (!uid || !['accept', 'reject', 'cancel'].includes(action)) {
+      if (!uid || !["accept", "reject", "cancel"].includes(action)) {
         return;
       }
       setNotifications((prev) => prev.filter((n) =>
-        !(n.type === 'friend-request' && n.originator?.uid === uid)
+        !(n.type === "friend-request" && n.originator?.uid === uid)
       ));
     };
 
-    window.addEventListener('friend-action-success', handleFriendActionSuccess);
+    window.addEventListener("friend-action-success", handleFriendActionSuccess);
     return () => {
-      window.removeEventListener('friend-action-success', handleFriendActionSuccess);
+      window.removeEventListener("friend-action-success", handleFriendActionSuccess);
     };
   }, []);
 
@@ -189,7 +222,7 @@ function useNotifications() {
     n.username = n.originator?.username;
     n.read = Boolean(n.read_at);
 
-    if (n.type === 'message') {
+    if (n.type === "message") {
       n.messageCount = n.messageCount || n.extra?.count || 1;
     } else {
       n.desc = n.content;
@@ -207,12 +240,12 @@ function useNotifications() {
   };
 
   const markAllAsRead = (type) => {
-    if (type === 'message') {
+    if (type === "message") {
       _service({
-        url: 'notification/message/clear',
-        method: 'POST'
+        url: "notification/message/clear",
+        method: "POST"
       });
-      setNotifications(prev => prev.filter(n => n.type !== 'message'));
+      setNotifications(prev => prev.filter(n => n.type !== "message"));
       return;
     }
 
@@ -222,15 +255,15 @@ function useNotifications() {
       if (type && n.type !== type) {
         return n;
       }
-      if (n.type === 'message') {
+      if (n.type === "message") {
         return n;
       }
       return { ...n, read: true };
     }));
 
     _service({
-      url: 'notification',
-      method: 'PUT',
+      url: "notification",
+      method: "PUT",
       fail: (e) => {
         console.error("Falha ao marcar todas as notificações como lidas:", e);
         setNotifications(previousNotifications);
@@ -242,8 +275,8 @@ function useNotifications() {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
 
     _service({
-      url: 'notification',
-      method: 'PUT',
+      url: "notification",
+      method: "PUT",
       data: { uid: id },
       fail: (e) => {
         console.error("Falha ao marcar notificação como lida:", e);
@@ -255,8 +288,8 @@ function useNotifications() {
   const removeNotification = (id) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
     _service({
-      url: 'notification',
-      method: 'DELETE',
+      url: "notification",
+      method: "DELETE",
       data: { uid: id },
       fail: (e) => {
         console.error("Falha ao remover notificação:", e);
@@ -265,11 +298,11 @@ function useNotifications() {
   };
 
   const onNotificationClick = (item, navigate) => {
-    if (item.type === 'message') {
+    if (item.type === "message") {
       setNotifications(prev => prev.filter(n =>
-        !(n.type === 'message' && n.originator?.uid === item.originator?.uid)
+        !(n.type === "message" && n.originator?.uid === item.originator?.uid)
       ));
-      navigate('/messages', {
+      navigate("/messages", {
         state: {
           autoOpenFriend: {
             uid: item.originator?.uid,
@@ -284,12 +317,12 @@ function useNotifications() {
 
     markAsRead(item.id);
 
-    if (item.type === 'forum-reply' || item.type === 'forum-reply-like') {
+    if (item.type === "forum-reply" || item.type === "forum-reply-like") {
       const topicUid = item.topicUid || item.extra?.topicUid;
       const categoryUid = item.categoryUid || item.extra?.categoryUid;
 
       if (!topicUid) {
-        return navigate('/support-community');
+        return navigate("/support-community");
       }
 
       if (categoryUid) {
@@ -297,8 +330,8 @@ function useNotifications() {
       }
 
       _service({
-        url: 'forum/topic',
-        method: 'GET',
+        url: "forum/topic",
+        method: "GET",
         data: { uid: topicUid },
         success: (response) => {
           const fetchedCategoryUid = response.json.data?.category?.uid;
@@ -306,22 +339,22 @@ function useNotifications() {
             navigate(`/c/${fetchedCategoryUid}/t/${topicUid}`);
             return;
           }
-          navigate('/support-community');
+          navigate("/support-community");
         },
         fail: (e) => {
           console.error("Falha ao abrir tópico:", e);
-          navigate('/support-community');
+          navigate("/support-community");
         }
       });
 
     } else if (item.type && ["post", "comment", "like"].some(k => item.type.includes(k))) {
       if (!item.postId) {
-        return navigate('/posts');
+        return navigate("/posts");
       }
 
       _service({
-        url: 'post',
-        method: 'GET',
+        url: "post",
+        method: "GET",
         data: { uid: item.postId },
         success: (response) => {
           const post = response.json.data;
@@ -333,11 +366,11 @@ function useNotifications() {
         },
         fail: (e) => {
           console.error("Falha ao abrir post:", e);
-          navigate('/posts');
+          navigate("/posts");
         }
       });
 
-    } else if (item.type === 'friend-request' || item.type === 'friend-request-accepted') {
+    } else if (item.type === "friend-request" || item.type === "friend-request-accepted") {
       navigate(`/u/${item.username}`);
     }
   };

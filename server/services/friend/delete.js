@@ -55,11 +55,25 @@ if (dbNotification) {
 
 const totalUnread = notifications.getUnreadTotal(dbFriend);
 
+people.wsSendAsService(
+  dbFriend,
+  _val.map()
+    .set("service", "notification/new")
+    .set("content", _val.map())
+);
+
 people.wsSendService(
   dbFriend,
   _val.map()
     .set("service", "notification/unread-count")
     .set("content", _val.map().set("total", totalUnread))
+);
+
+people.wsSendAsService(
+  loggedUser,
+  _val.map()
+    .set("service", "notification/new")
+    .set("content", _val.map())
 );
 
 people.wsSendService(
