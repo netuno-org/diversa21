@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "antd";
 import { BellOutlined } from "@ant-design/icons";
-import useNotificationCount from "../../common/useNotificationCount.js"; 
+import useNotificationCount from "../../common/useNotificationCount.js";
 
 import "./index.less";
 

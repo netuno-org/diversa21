@@ -73,6 +73,27 @@ function useNotifications() {
     });
   };
 
+  const handleDelete = (e, uid) => {
+    e.stopPropagation();
+    _service({
+      method: "DELETE",
+      url: `/notification?uid=${uid}`,
+      success: () => {
+        globalNotification.success({
+          title: "Notificações",
+          description: "Notificação removida com sucesso.",
+        });
+        loadNotifications();
+      },
+      fail: () => {
+        globalNotification.serviceFail({
+          title: "Notificações",
+          description: "Não foi possível eliminar a notificação.",
+        });
+      },
+    });
+  };
+
   const handlePaginationChange = (page, pageSize) => {
     setPagination(prev => ({ ...prev, current: page, size: pageSize }));
     _ws.sendService({
@@ -384,7 +405,8 @@ function useNotifications() {
     removeNotification,
     count,
     pagination,
-    handlePaginationChange
+    handlePaginationChange,
+    handleDelete
   };
 }
 

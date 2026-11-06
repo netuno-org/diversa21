@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm, Pagination } from "antd";
-import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
+import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined, UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import _service from "@netuno/service-client";
 import useFriendActions from "../../../common/useFriendActions.js";
@@ -11,6 +11,7 @@ import usePeople from "../../../common/usePeople.js";
 import useNotifications from "../../../common/useNotifications.js";
 
 import "./index.less";
+import globalNotification from "../../../common/globalNotification.js";
 
 const { Text } = Typography;
 
@@ -19,7 +20,18 @@ function Notifications() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
 
-  const { notifications, loading, markAllAsRead, onNotificationClick, markAsRead, removeNotification, pagination, handlePaginationChange } = useNotifications(loggedUser);
+  const {
+    notifications,
+    loading,
+    markAllAsRead,
+    onNotificationClick,
+    markAsRead,
+    removeNotification,
+    pagination,
+    handlePaginationChange,
+    handleDelete,
+  } = useNotifications(loggedUser);
+
   const { run: runFriendAction, isProcessing } = useFriendActions();
 
   // Mensagens ficam só no header de mensagens — não aparecem nesta página.
@@ -184,6 +196,25 @@ function Notifications() {
                       {item.sent_at && (
                         <TimeAgo sentAt={item.sent_at} className="notifications-page__item-time" />
                       )}
+                    </div>
+                    <div>
+                      <Popconfirm
+                        title="Eliminar notificação"
+                        description="Tens a certeza que pretendes eliminar?"
+                        okText="Sim"
+                        cancelText="Não"
+                        onConfirm={(e) => handleDelete(e, item.uid)}
+                        onPopupClick={(e) => e.stopPropagation()}
+                      >
+                        <Button
+                          type="text"
+                          size="small"
+                          danger
+                          icon={<DeleteOutlined />}
+                          className="notifications-item__delete-btn"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </Popconfirm>
                     </div>
                     <div className="notifications-page__item-description">
                       <Text type="secondary">{item.desc}</Text>
