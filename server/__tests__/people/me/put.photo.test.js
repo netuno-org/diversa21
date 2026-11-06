@@ -2,8 +2,9 @@ import { readFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
-import login from '../../util/login.js';
+import login from "../../util/login.js";
 import config from "../../config.js";
+import { test, expect } from "@jest/globals";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

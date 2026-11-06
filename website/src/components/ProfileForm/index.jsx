@@ -1,17 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, Row, Col, Popconfirm, Typography } from 'antd';
+import { Form, Input, Select, DatePicker, Switch, Button, Card, Spin, Row, Col, Popconfirm, Typography } from "antd";
 import { PasswordInput } from "antd-password-input-strength";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 import isNetworkError from "is-network-error";
 
 import globalNotification from "../../common/globalNotification.js";
 import usePeople from "../../common/usePeople.js";
-import Avatar from '../Avatar/index.jsx';
-import CoverImage from '../CoverImage/index.jsx';
-import './index.less';
+import Avatar from "../Avatar/index.jsx";
+import CoverImage from "../CoverImage/index.jsx";
+import "./index.less";
 
 const { Title } = Typography;
 
@@ -52,8 +52,8 @@ function ProfileForm({
   const [cityOptions, setCityOptions] = useState([]);
   const [institutionOptions, setInstitutionOptions] = useState([]);
   const [passwordRequired, setPasswordRequired] = useState(false);
-  const [avatarImageURL, setAvatarImageURL] = useState('/images/profile-default.png');
-  const [coverImageURL, setCoverImageURL] = useState('');
+  const [avatarImageURL, setAvatarImageURL] = useState("/images/profile-default.png");
+  const [coverImageURL, setCoverImageURL] = useState("");
   const [ready, setReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -112,14 +112,14 @@ function ProfileForm({
   function onFinish(values) {
     setSubmitting(true);
 
-    let url = 'people';
+    let url = "people";
 
     const data = {
       name: values.name,
       username: values.username,
       password: values.password,
       email: values.email,
-      birthDate: values.birthDate?.format('YYYY-MM-DD') ?? '',
+      birthDate: values.birthDate?.format("YYYY-MM-DD") ?? "",
       city: values.city?.value || values.city,
       institution: values.institution?.value || values.institution || people?.institution?.uid || loggedUser.data?.institution?.uid,
       group: values.group?.value || values.group || people?.group?.code || "member",
@@ -137,7 +137,7 @@ function ProfileForm({
       data.remove_cover_image = profileCover?.current?.isRemoved() ?? false;
 
       if (itsLoggedUserProfile) {
-        url += '/me';
+        url += "/me";
       } else {
         data.uid = people.uid;
       }
@@ -153,13 +153,13 @@ function ProfileForm({
         if (json.result) {
           if (operation === "edit") {
             globalNotification.success({
-              title: 'Edição do Perfil',
-              description: 'Os dados do seu perfil foram alterados com sucesso.',
+              title: "Edição do Perfil",
+              description: "Os dados do seu perfil foram alterados com sucesso.",
             });
           } else {
             globalNotification.success({
-              title: 'Conta Criada',
-              description: 'A conta foi criada com sucesso, pode iniciar sessão.',
+              title: "Conta Criada",
+              description: "A conta foi criada com sucesso, pode iniciar sessão.",
             });
 
             profileForm.current.setFieldsValue({
@@ -174,7 +174,7 @@ function ProfileForm({
           }
         } else if (operation === "edit") {
           globalNotification.warning({
-            title: 'Usuário existente',
+            title: "Usuário existente",
             description: json.error,
           });
           profileForm.current.setFieldsValue({
@@ -188,33 +188,33 @@ function ProfileForm({
         setSubmitting(false);
         if (e.error && isNetworkError(e.error)) {
           return globalNotification.error({
-            title: 'Conexão',
-            description: 'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+            title: "Conexão",
+            description: "Há problemas de conexão com o servidor, tente novamente mais tarde.",
           });
         }
         if (e && e.status === 409 && e.json && e.json.error) {
-          if (e.json.error === 'email-already-exists') {
+          if (e.json.error === "email-already-exists") {
             return globalNotification.warning({
-              title: 'E-mail Existente',
-              description: 'Este e-mail já existe, faça a recuperação do acesso na tela de login ou escolha outro.',
+              title: "E-mail Existente",
+              description: "Este e-mail já existe, faça a recuperação do acesso na tela de login ou escolha outro.",
             });
           }
-          if (e.json.error === 'user-already-exists') {
+          if (e.json.error === "user-already-exists") {
             return globalNotification.warning({
-              title: 'Usuário Existente',
-              description: 'Este usuário já existe, faça a recuperação do acesso na tela de login ou escolha outro.',
+              title: "Usuário Existente",
+              description: "Este usuário já existe, faça a recuperação do acesso na tela de login ou escolha outro.",
             });
           }
         }
         if (operation === "edit") {
           globalNotification.error({
-            title: 'Erro na Edição do Perfil',
-            description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
+            title: "Erro na Edição do Perfil",
+            description: "Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.",
           });
         } else if (operation === "create") {
           return globalNotification.error({
-            title: 'Erro na Criação de Conta',
-            description: 'Não foi possível criar a conta, contacte-nos através do chat de suporte.',
+            title: "Erro na Criação de Conta",
+            description: "Não foi possível criar a conta, contacte-nos através do chat de suporte.",
           });
         }
       }
@@ -236,10 +236,10 @@ function ProfileForm({
   return (
     <div className="profile-form">
       <div className="profile-form__body">
-        <Title level={2}>{operation === 'create' ? 'Novo Usuário' : 'Editar Perfil'}</Title>
+        <Title level={2}>{operation === "create" ? "Novo Usuário" : "Editar Perfil"}</Title>
         <Form
           form={form}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
           onValuesChange={onValuesChange}
           ref={profileForm}
           layout="vertical"
@@ -275,14 +275,14 @@ function ProfileForm({
         >
           {operation === "edit" && (
             <>
-              <Card title={`Foto de Perfil`} className="profile-form__card">
+              <Card title={"Foto de Perfil"} className="profile-form__card">
                 <Avatar
                   ref={profileAvatar}
                   currentImage={avatarImageURL}
                 />
               </Card>
 
-              <Card title={`Imagem de Capa`} className="profile-form__card">
+              <Card title={"Imagem de Capa"} className="profile-form__card">
                 <CoverImage
                   ref={profileCover}
                   currentImage={coverImageURL}
@@ -298,8 +298,8 @@ function ProfileForm({
                   label="Nome"
                   name="name"
                   rules={[
-                    { required: true, message: 'Insira o nome.' },
-                    { type: 'string', message: 'Nome inválido.', pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
+                    { required: true, message: "Insira o nome." },
+                    { type: "string", message: "Nome inválido.", pattern: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$" }
                   ]}
                 >
                   <Input disabled={submitting} maxLength={25} />
@@ -310,8 +310,8 @@ function ProfileForm({
                   label="Usuário"
                   name="username"
                   rules={[
-                    { required: true, message: 'Insira o usuário.' },
-                    { type: 'string', message: 'Usuário inválido.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
+                    { required: true, message: "Insira o usuário." },
+                    { type: "string", message: "Usuário inválido.", pattern: "^[a-z]+[a-z0-9]{1,24}$" }
                   ]}
                 >
                   <Input disabled={submitting} maxLength={25} />
@@ -325,8 +325,8 @@ function ProfileForm({
                   label="E-mail"
                   name="email"
                   rules={[
-                    { type: 'email', message: 'O e-mail inserido não é válido.' },
-                    { required: true, message: 'Insira o e-mail.' }
+                    { type: "email", message: "O e-mail inserido não é válido." },
+                    { required: true, message: "Insira o e-mail." }
                   ]}
                 >
                   <Input disabled={submitting} maxLength={250} />
@@ -337,21 +337,21 @@ function ProfileForm({
                   label="Data de Nascimento"
                   name="birthDate"
                   rules={[
-                    { type: 'date', message: 'A data inserida não é válida.' },
-                    { required: true, message: 'Insira a data de nascimento.' },
+                    { type: "date", message: "A data inserida não é válida." },
+                    { required: true, message: "Insira a data de nascimento." },
                     {
                       validator: (_, value) =>
-                        !value || !value.isAfter(dayjs(), 'day')
+                        !value || !value.isAfter(dayjs(), "day")
                           ? Promise.resolve()
-                          : Promise.reject(new Error('A data de nascimento não pode estar no futuro.')),
+                          : Promise.reject(new Error("A data de nascimento não pode estar no futuro.")),
                     },
                   ]}
                 >
                   <DatePicker
                     placeholder="DD/MM/AAAA"
                     format="DD/MM/YYYY"
-                    style={{ width: '100%' }}
-                    disabledDate={(current) => current && current.isAfter(dayjs(), 'day')}
+                    style={{ width: "100%" }}
+                    disabledDate={(current) => current && current.isAfter(dayjs(), "day")}
                   />
                 </Form.Item>
               </Col>
@@ -362,7 +362,7 @@ function ProfileForm({
                 <Form.Item
                   label="Descrição"
                   name="description"
-                  rules={[{ required: true, message: 'Insira a descrição do usuário.' }]}
+                  rules={[{ required: true, message: "Insira a descrição do usuário." }]}
                   style={{ marginBottom: showPermissionsCard ? 8 : undefined }}
                 >
                   <Input.TextArea disabled={submitting} maxLength={1000} autoSize={{ minRows: 3, maxRows: 6 }} />
@@ -379,7 +379,7 @@ function ProfileForm({
                   <Form.Item
                     label="Cidade"
                     name="city"
-                    rules={[{ required: true, message: 'Insira a cidade.' }]}
+                    rules={[{ required: true, message: "Insira a cidade." }]}
                   >
                     <Select
                       labelInValue
@@ -397,7 +397,7 @@ function ProfileForm({
                     <Form.Item
                       label="Instituição"
                       name="institution"
-                      rules={[{ required: true, message: 'Insira a instituição.' }]}
+                      rules={[{ required: true, message: "Insira a instituição." }]}
                     >
                       <Select
                         labelInValue
@@ -423,7 +423,7 @@ function ProfileForm({
                       label="Grupo"
                       name="group"
 
-                      rules={[{ required: true, message: 'Insira o grupo.' }]}
+                      rules={[{ required: true, message: "Insira o grupo." }]}
                       style={{ marginBottom: 0 }}
                     >
                       <Select
@@ -463,8 +463,8 @@ function ProfileForm({
                     label={(operation === "edit" ? "Nova" : "") + " Senha"}
                     name="password"
                     rules={[
-                      (operation === "create" && { required: true, message: 'Insira a senha.' }),
-                      { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                      (operation === "create" && { required: true, message: "Insira a senha." }),
+                      { type: "string", message: "A senha deverá ter entre 8 a 25 caracteres.", min: 8, max: 25 },
                     ]}
                   >
                     {operation === "create" ? <PasswordInput disabled={submitting} maxLength={25} /> : <PasswordInput />}
@@ -476,12 +476,12 @@ function ProfileForm({
                     label={"Confirmar" + (operation === "edit" ? " Nova" : "") + " Senha"}
                     name="password_confirm"
                     rules={[
-                      (operation === "create" ? { required: true, message: `Insira a confirmação da senha.` } : { required: passwordRequired, message: 'Insira a confirmação da nova senha.' }),
-                      { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                      (operation === "create" ? { required: true, message: "Insira a confirmação da senha." } : { required: passwordRequired, message: "Insira a confirmação da nova senha." }),
+                      { type: "string", message: "A senha deverá ter entre 8 a 25 caracteres.", min: 8, max: 25 },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
-                          if (!value || getFieldValue('password') === value) return Promise.resolve();
-                          return Promise.reject('As senhas não são iguais.');
+                          if (!value || getFieldValue("password") === value) return Promise.resolve();
+                          return Promise.reject("As senhas não são iguais.");
                         },
                       })
                     ]}

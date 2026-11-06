@@ -23,7 +23,7 @@ if (description.length > 2000) {
   response.stopWithTextTooLarge();
 }
 
-const dbCity = _db.queryFirst(`SELECT id FROM city WHERE uid = ?::uuid`, cityUid);
+const dbCity = _db.queryFirst("SELECT id FROM city WHERE uid = ?::uuid", cityUid);
 
 if (!dbCity) {
   response.stopWithCityNotFound();
@@ -44,7 +44,7 @@ if (email) {
   institutionData.set("email", email);
 }
 if (telephone) {
-  institutionData.set("telephone", telephone.replace(/\s/g, ''));
+  institutionData.set("telephone", telephone.replace(/\s/g, ""));
 }
 if (address) {
   institutionData.set("address", address);

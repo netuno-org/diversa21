@@ -5,7 +5,7 @@ import people from "#core/lib/people.js";
 
 const institutionUid = _req.getUID("institutionUid");
 const peopleUid = _req.getUID("peopleUid");
-let page = _req.getInt('page', 1);
+let page = _req.getInt("page", 1);
 
 const pageSize = 10;
 let offset = 0;
@@ -97,7 +97,7 @@ for (const dbPost of dbActivities) {
       .set("liked", dbPost.getInt("post_like_id", 0) > 0)
       .set("likes", dbPost.getInt("likes"))
       .set("type", dbPost.getString("type"))
-      .set("rootUid", dbRoot ? dbRoot.getString("root_uid") : '')
+      .set("rootUid", dbRoot ? dbRoot.getString("root_uid") : "")
       .set("parentUid", dbPost.getString("parent_uid"))
       .set("parentPeopleUser", dbPost.getString("parent_people_user"))
       .set("parentPeopleUid", dbPost.getString("parent_people_uid"))

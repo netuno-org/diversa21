@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Fragment, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Card, Typography, Avatar, Divider, Space, Spin, Popover, Tabs, Tag } from 'antd';
+import React, { useState, useEffect, Fragment, useMemo } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Card, Typography, Avatar, Divider, Space, Spin, Popover, Tabs, Tag } from "antd";
 import {
   EnvironmentOutlined,
   CalendarOutlined,
@@ -9,24 +9,24 @@ import {
   CommentOutlined,
   LikeOutlined,
   TeamOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 import { RiCommunityLine, RiFileEditLine } from "react-icons/ri";
 import { BsFillHouseGearFill } from "react-icons/bs";
 import { MdOutlineInsertPhoto } from "react-icons/md";
-import dayjs from 'dayjs';
-import _service from '@netuno/service-client';
+import dayjs from "dayjs";
+import _service from "@netuno/service-client";
 
 import ActivityList from "../Activity/List";
 import FriendList from "../Friend/List";
 import GalleryTab from "./GalleryTab";
 import ProfileHeaderActions from "./ProfileHeaderActions";
-import GalleryCarousel from './GalleryCarousel';
+import GalleryCarousel from "./GalleryCarousel";
 
 import usePeople from "../../common/usePeople.js";
 import useFriendActions from "../../common/useFriendActions.js";
 import { useGalleryPhotos } from "../../common/useGalleryPhotos.js";
 
-import './index.less';
+import "./index.less";
 
 const { Title, Text } = Typography;
 
@@ -34,7 +34,7 @@ function Profile({ user }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('posts');
+  const [activeTab, setActiveTab] = useState("posts");
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
   const [coverUrl, setCoverUrl] = useState();
   const [friendStatus, setFriendStatus] = useState(null);
@@ -56,8 +56,8 @@ function Profile({ user }) {
         isMobile: window.innerWidth <= 768,
       });
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ function Profile({ user }) {
   }, [user, isOwnProfile]);
 
   const handleEdit = () => {
-    navigate(isOwnProfile ? `/profile/edit` : `/e/${user.username}`);
+    navigate(isOwnProfile ? "/profile/edit" : `/e/${user.username}`);
   };
 
   const doFriendAction = (action, nextStatus) => {
@@ -124,7 +124,7 @@ function Profile({ user }) {
 
   const handleOpenMessages = (targetUser) => {
     if (!targetUser?.uid) return;
-    navigate('/messages', {
+    navigate("/messages", {
       state: {
         autoOpenFriend: {
           uid: targetUser.uid,
@@ -161,7 +161,7 @@ function Profile({ user }) {
 
     const tabs = [
       {
-        key: 'posts',
+        key: "posts",
         label: (
           <Space>
             <FileTextOutlined style={{ fontSize: 18 }} />
@@ -175,7 +175,7 @@ function Profile({ user }) {
         ),
       },
       {
-        key: 'comments',
+        key: "comments",
         label: (
           <Space>
             <CommentOutlined style={{ fontSize: 18 }} />
@@ -189,7 +189,7 @@ function Profile({ user }) {
         ),
       },
       {
-        key: 'likes',
+        key: "likes",
         label: (
           <Space>
             <LikeOutlined style={{ fontSize: 18 }} />
@@ -206,7 +206,7 @@ function Profile({ user }) {
 
     if (loggedUser?.data?.group?.code) {
       tabs.push({
-        key: 'friends',
+        key: "friends",
         label: (
           <Space>
             <TeamOutlined style={{ fontSize: 18 }} />
@@ -222,7 +222,7 @@ function Profile({ user }) {
     }
 
     tabs.push({
-      key: 'gallery',
+      key: "gallery",
       label: (
         <Space>
           <MdOutlineInsertPhoto style={{ fontSize: 18 }} />
@@ -253,12 +253,12 @@ function Profile({ user }) {
   );
 
   const formattedAge = user.birthDate && dayjs(user.birthDate).isValid()
-    ? `${dayjs().diff(dayjs(user.birthDate), 'year')} anos`
+    ? `${dayjs().diff(dayjs(user.birthDate), "year")} anos`
     : null;
 
   const defaultDescription = user.institution
-    ? 'Esta instituição ainda não adicionou uma descrição.'
-    : 'Este utilizador ainda não adicionou uma descrição.';
+    ? "Esta instituição ainda não adicionou uma descrição."
+    : "Este utilizador ainda não adicionou uma descrição.";
 
   return (
     <section className="profile">
@@ -308,8 +308,8 @@ function Profile({ user }) {
             {(user.city?.name || user.country?.name) && (
               <div className="profile__detail-localization">
                 <EnvironmentOutlined />
-                <Text style={{color: '#000'}} type="secondary">
-                  {user.city?.name}{user.city?.name && user.state?.name && ', '}{user.state?.name}
+                <Text style={{ color: "#000" }} type="secondary">
+                  {user.city?.name}{user.city?.name && user.state?.name && ", "}{user.state?.name}
                 </Text>
               </div>
             )}
@@ -317,7 +317,7 @@ function Profile({ user }) {
             {formattedAge && (
               <div className="profile__detail-age">
                 <CalendarOutlined />
-                <Text style={{color: '#000'}} type="secondary">{formattedAge}</Text>
+                <Text style={{ color: "#000" }} type="secondary">{formattedAge}</Text>
               </div>
             )}
 
@@ -338,7 +338,7 @@ function Profile({ user }) {
         <div className="profile__about">
           <Title level={4}>Sobre</Title>
           {(user.description || defaultDescription)
-            .split('\n')
+            .split("\n")
             .map((line, index, array) => (
               <Fragment key={index}>
                 {line}
@@ -351,7 +351,7 @@ function Profile({ user }) {
         <GalleryCarousel
           gallery={gallery}
           isOwnProfile={isOwnProfile}
-          onViewMore={() => setActiveTab('gallery')}
+          onViewMore={() => setActiveTab("gallery")}
         />
       </Card>
 

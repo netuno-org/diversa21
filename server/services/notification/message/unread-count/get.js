@@ -1,4 +1,4 @@
-import { _db } from "@netuno/server-types";
+import { _db, _val } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
@@ -17,5 +17,5 @@ const dbCounts = _db.query(`
 const count = dbCounts.length > 0 ? dbCounts[0].getInt("count") : 0;
 
 response.successWithData(
-    _val.map().set("count", count)
+  _val.map().set("count", count)
 );

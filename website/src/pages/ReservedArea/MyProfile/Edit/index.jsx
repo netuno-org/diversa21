@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Typography } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button, Typography } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 import ProfileForm from "../../../../components/ProfileForm"
 

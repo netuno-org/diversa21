@@ -1,4 +1,4 @@
-import { _req, _db, _val, _out } from "@netuno/server-types";
+import { _req, _db, _val, _out, _exec } from "@netuno/server-types";
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
@@ -6,22 +6,22 @@ if (!permissions.canManageServices()) {
   response.stopWithPermissionDenied();
 }
 
-const uid = _req.getString('uid');
-const name = _req.getString('name');
-const categoryUid = _req.getString('category');
-const cityUid = _req.getString('city');
-const description = _req.getString('description');
-const phone = _req.getString('phone');
-const website = _req.getString('website');
-const instagram = _req.getString('instagram');
+const uid = _req.getString("uid");
+const name = _req.getString("name");
+const categoryUid = _req.getString("category");
+const cityUid = _req.getString("city");
+const description = _req.getString("description");
+const phone = _req.getString("phone");
+const website = _req.getString("website");
+const instagram = _req.getString("instagram");
 
 if (!name || !name.trim()) {
-  response.stopWithBadRequest('service-name-required');
+  response.stopWithBadRequest("service-name-required");
 }
 
 if (description && description.length > 250) {
   _out.json(_val.map().set("result", false).set("error", "A descrição não pode ter mais de 250 caracteres."));
-  _req.stop();
+  _exec.stop();
 }
 
 const dbService = _db.queryFirst(`
@@ -29,7 +29,7 @@ const dbService = _db.queryFirst(`
 `, uid);
 
 if (!dbService) {
-  response.stopWithBadRequest('service-not-found');
+  response.stopWithBadRequest("service-not-found");
 }
 
 const category = _db.queryFirst(`
@@ -37,7 +37,7 @@ const category = _db.queryFirst(`
 `, categoryUid);
 
 if (!category) {
-  response.stopWithBadRequest('service-category-not-found');
+  response.stopWithBadRequest("service-category-not-found");
 }
 
 const city = _db.queryFirst(`
@@ -45,24 +45,24 @@ const city = _db.queryFirst(`
 `, cityUid);
 
 if (!city) {
-  response.stopWithCityNotFound(); 
+  response.stopWithCityNotFound();
 }
 
 _db.update(
   "service",
-  dbService.getInt('id'),
+  dbService.getInt("id"),
   _val.map()
-    .set('name', name)
-    .set('category_id', category.getInt('id'))
-    .set('city_id', city.getInt('id'))
-    .set('description', description)
-    .set('phone', phone)
-    .set('website', website)
-    .set('instagram', instagram)
+    .set("name", name)
+    .set("category_id", category.getInt("id"))
+    .set("city_id", city.getInt("id"))
+    .set("description", description)
+    .set("phone", phone)
+    .set("website", website)
+    .set("instagram", instagram)
 );
 
 response.successWithData(
   _val.map()
-    .set('uid', uid)
-    .set('name', name)
+    .set("uid", uid)
+    .set("name", name)
 );

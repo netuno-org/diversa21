@@ -1,8 +1,8 @@
-import React from 'react';
-import { Modal, Typography, Tooltip, Tag, Button } from 'antd';
-import { EnvironmentOutlined, CalendarOutlined, PhoneOutlined, LinkOutlined, InstagramOutlined } from '@ant-design/icons';
+import React from "react";
+import { Modal, Typography, Tooltip, Tag, Button } from "antd";
+import { EnvironmentOutlined, CalendarOutlined, PhoneOutlined, LinkOutlined, InstagramOutlined } from "@ant-design/icons";
 
-import ContentActions from '../../../../components/ContentActions';
+import ContentActions from "../../../../components/ContentActions";
 
 const { Paragraph, Text } = Typography;
 
@@ -18,7 +18,7 @@ export default function ServiceViewModal({
   return (
     <Modal
       title={
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '24px' }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: "24px" }}>
           <span>{serviceDetails ? serviceDetails.name : ""}</span>
           {serviceDetails && (
             <ContentActions
@@ -35,7 +35,7 @@ export default function ServiceViewModal({
                 onClose();
                 onDeleteService(serviceDetails.uid);
               }}
-              deleteTitle={'"Tem a certeza que pretende eliminar o serviço? Esta ação é irreversível.'}
+              deleteTitle={"\"Tem a certeza que pretende eliminar o serviço? Esta ação é irreversível."}
             />
           )}
         </div>

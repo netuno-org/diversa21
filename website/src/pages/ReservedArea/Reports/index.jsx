@@ -76,7 +76,7 @@ function getReportPreview(report) {
 function Reports() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchEntityType, setSearchEntityType] = useState('all');
+  const [searchEntityType, setSearchEntityType] = useState("all");
   const [reportedUser, setReportedUser] = useState("");
   const [reporterUser, setReporterUser] = useState("");
   const [dateRange, setDateRange] = useState(null);
@@ -310,7 +310,7 @@ function Reports() {
                   variant="filled"
                   className="reports__reason-tag"
                 >
-                  Quantidade:{' '}
+                  Quantidade:{" "}
                   {report.totalItems === 1
                     ? "1 denúncia"
                     : `${report.totalItems} denúncias`}

@@ -10,7 +10,7 @@ const isAdminOrManager = groupCode === SUPER_ADMIN || groupCode === MANAGEMENT;
 if (userId) {
   const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
   if (dbPerson) {
-    personId = dbPerson.getInt('id');
+    personId = dbPerson.getInt("id");
   }
 }
 
@@ -19,12 +19,12 @@ if (!personId) {
 } else if (!isAdminOrManager) {
   response.error("Não tem permissão para criar eventos.");
 } else {
-  const name = _req.getString('name');
-  const description = _req.getString('description');
-  const location = _req.getString('location');
-  const cityUid = _req.getString('city');
-  const startDate = _req.getString('startDate');
-  const endDate = _req.getString('endDate');
+  const name = _req.getString("name");
+  const description = _req.getString("description");
+  const location = _req.getString("location");
+  const cityUid = _req.getString("city");
+  const startDate = _req.getString("startDate");
+  const endDate = _req.getString("endDate");
   const coverImage = _req.getFile("cover_image");
 
   if (!name) {
@@ -34,7 +34,7 @@ if (!personId) {
     if (cityUid) {
       const dbCity = _db.queryFirst("SELECT id FROM city WHERE uid = ?::uuid", cityUid);
       if (dbCity) {
-        cityId = dbCity.getInt('id');
+        cityId = dbCity.getInt("id");
       }
     }
 

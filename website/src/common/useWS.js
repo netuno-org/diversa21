@@ -1,9 +1,9 @@
-import {wsLoadAction} from "../redux/actions/index.js";
-import {useDispatch, useSelector} from "react-redux";
+import { wsLoadAction } from "../redux/actions/index.js";
+import { useDispatch, useSelector } from "react-redux";
 import _ws from "@netuno/ws-client";
 import _auth from "@netuno/auth-client";
 import Config from "./Config.js";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 function useWS() {
   const dispatch = useDispatch();
@@ -17,24 +17,24 @@ function useWS() {
   
   const load = (onFinish) => {
     _ws.config({
-      url: Config.websocketURL() + '?auth='+ _auth.accessToken(),
+      url: Config.websocketURL() + "?auth="+ _auth.accessToken(),
       servicesPrefix: Config.websocketServicesPrefix(),
-      method: 'GET',
+      method: "GET",
       autoReconnect: true,
       connect: (event) => {
         setConnecting(false);
-        dispatch(wsLoadAction({connected: true}));
+        dispatch(wsLoadAction({ connected: true }));
         onFinish && onFinish(true);
       },
       close: (event) => {
         setConnecting(false);
-        dispatch(wsLoadAction({connected: false}));
+        dispatch(wsLoadAction({ connected: false }));
         onFinish && onFinish(false);
       },
       error: (error) => {
-        console.log('ws error', error);
+        console.log("ws error", error);
         setConnecting(false);
-        dispatch(wsLoadAction({connected: false}));
+        dispatch(wsLoadAction({ connected: false }));
         onFinish && onFinish(false);
       },
     });

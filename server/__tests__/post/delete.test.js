@@ -1,7 +1,8 @@
 import request from "supertest";
 
-import login from '../util/login.js';
+import login from "../util/login.js";
 import config from "../config.js";
+import { beforeEach, afterEach, it, test } from "@jest/globals";
 
 let newPostUid;
 
@@ -55,7 +56,7 @@ test("delete post", async () => {
     .set("Content-Type", "application/json")
     .send({ content: "new post" })
     .expect(200);
-  
+
   await request(config.NETUNO_URL)
     .delete(`/post?uid=${newPostUid}`)
     .set("Authorization", `Bearer ${accessToken}`)

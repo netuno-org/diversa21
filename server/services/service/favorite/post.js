@@ -1,4 +1,4 @@
-import { _req, _db, _val, _user } from "@netuno/server-types";
+import { _req, _db, _val, _user, _out } from "@netuno/server-types";
 
 const serviceUid = _req.getString("serviceUid");
 const userId = _user.id();

@@ -1,5 +1,6 @@
 import request from "supertest";
 import config from "./config.js"
+import { test, expect } from "@jest/globals";
 
 test("login with user Test", async () => {
   const response = await request(config.NETUNO_URL)

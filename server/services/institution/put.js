@@ -3,8 +3,8 @@ import { _image, _req, _db, _val, _out, _header, _exec } from "@netuno/server-ty
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
 
-const uid = _req.getUID('uid');
-const slug = _req.getString('slug');
+const uid = _req.getUID("uid");
+const slug = _req.getString("slug");
 const name = _req.getString("name");
 const description = _req.getString("description");
 const email = _req.getString("email");
@@ -64,7 +64,7 @@ const institutionData = _val.map()
   .set("name", name)
   .set("description", description)
   .set("email", email)
-  .set("telephone", telephone.replace(/\s/g, ''))
+  .set("telephone", telephone.replace(/\s/g, ""))
   .set("address", address)
   .set("post_code", post_code)
   .set("city_id", cityId);

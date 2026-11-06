@@ -1,10 +1,11 @@
 import request from "supertest";
 
 import { MEMBER } from "#core/lib/groups.js";
-import login from '../util/login.js';
-import { cityUid, institutionUid } from '../util/uids.js';
-import cleanObject from '../util/clean.js';
+import login from "../util/login.js";
+import { cityUid, institutionUid } from "../util/uids.js";
+import cleanObject from "../util/clean.js";
 import config from "../config.js";
+import { test, expect, afterEach } from "@jest/globals";
 
 // TODO: testar com grupo inexistente, cidade inexistente, instituicao inexistente
 // name, username, birthDate e email invalidos
@@ -40,12 +41,12 @@ test("create a new user", async () => {
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  const KEYS_TO_REMOVE = [ "uid", "avatar", "active", "city", "state", "country", "institution", "group" ];
+  const KEYS_TO_REMOVE = ["uid", "avatar", "active", "city", "state", "country", "institution", "group"];
 
   const fetchedUser = cleanObject(newData, KEYS_TO_REMOVE);
 
   // TODO: remover description quando GET people/by for atualizado para retornar description
-  const cleanedNewUser = cleanObject(newData, [ "password", "description" ]);
+  const cleanedNewUser = cleanObject(newData, ["password", "description"]);
 
   fetchedUser.city = newDataResponse.body.data.city.uid;
   fetchedUser.institution = newDataResponse.body.data.institution.uid;

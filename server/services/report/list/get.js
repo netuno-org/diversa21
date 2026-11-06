@@ -195,7 +195,7 @@ if (reporterUserSearch && reporterUserSearch.trim() !== "") {
 
 const statusCounts = _val.map().set("all", 0);
 
-const activeStatuses = _db.query(`SELECT code FROM report_status WHERE active = true ORDER BY id ASC`);
+const activeStatuses = _db.query("SELECT code FROM report_status WHERE active = true ORDER BY id ASC");
 for (const st of activeStatuses) {
   statusCounts.set(st.getString("code"), 0);
 }

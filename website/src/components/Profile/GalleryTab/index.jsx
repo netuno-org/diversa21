@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Typography, Spin, Popconfirm } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
-import { MdOutlineInsertPhoto } from 'react-icons/md';
-import _service from '@netuno/service-client';
+import React, { useState } from "react";
+import { Typography, Spin, Popconfirm } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+import { MdOutlineInsertPhoto } from "react-icons/md";
+import _service from "@netuno/service-client";
 
-import GalleryUploadModal from '../GalleryUploadModal';
+import GalleryUploadModal from "../GalleryUploadModal";
 
 const { Text } = Typography;
 
@@ -25,10 +25,10 @@ function GalleryTab({ gallery, isOwnProfile }) {
       {maxPhotos > 0 && (
         <div className="profile__gallery-header">
           <Text style={{ fontSize: 16 }} type="secondary" className="profile__gallery-counter">
-            <span className={photos.length >= maxPhotos ? 'profile__gallery-counter--full' : ''}>
+            <span className={photos.length >= maxPhotos ? "profile__gallery-counter--full" : ""}>
               {photos.length}
             </span>
-            {' / '}{maxPhotos} fotos
+            {" / "}{maxPhotos} fotos
           </Text>
         </div>
       )}

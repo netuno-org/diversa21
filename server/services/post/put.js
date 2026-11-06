@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
+import { _req, _db, _val, _user, _header, _exec, _out } from "@netuno/server-types"
 import permissions from "#core/lib/permissions.js";
 
 // TODO: import response from "#core/lib/response.js";

@@ -1,9 +1,9 @@
 import _auth from "@netuno/auth-client";
 import { Layout, Typography, Divider } from "antd";
-import { GithubOutlined } from '@ant-design/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { GithubOutlined } from "@ant-design/icons";
+import { Link, useLocation } from "react-router-dom";
 
-import './index.less';
+import "./index.less";
 
 const { Footer } = Layout;
 const { Text, Link: AntLink } = Typography;
@@ -12,7 +12,7 @@ function FooterBase() {
   const currentYear = new Date().getFullYear();
   const location = useLocation();
 
-  const isLoginPage = location.pathname === '/login';
+  const isLoginPage = location.pathname === "/login";
 
   return (
     <Footer className="footer-base">

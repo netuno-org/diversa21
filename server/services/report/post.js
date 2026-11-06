@@ -28,23 +28,23 @@ let entityTypeId = dbEntityType.getInt("id");
 
 let targetId = 0;
 if (entityTypeCode === "people") {
-  const item = _db.queryFirst(`SELECT id FROM people WHERE uid = ?::uuid AND active = true`, entityUid);
+  const item = _db.queryFirst("SELECT id FROM people WHERE uid = ?::uuid AND active = true", entityUid);
   if (item) targetId = item.getInt("id");
 } else if (entityTypeCode === "post" || entityTypeCode === "comment") {
-  const item = _db.queryFirst(`SELECT id, parent_id FROM post WHERE uid = ?::uuid AND active = true`, entityUid);
+  const item = _db.queryFirst("SELECT id, parent_id FROM post WHERE uid = ?::uuid AND active = true", entityUid);
   if (item) {
     targetId = item.getInt("id");
     const resolvedTypeCode = item.getInt("parent_id") > 0 ? "comment" : "post";
-    const resolvedEntityType = _db.queryFirst(`SELECT id FROM report_entity_type WHERE code = ? AND active = true`, resolvedTypeCode);
+    const resolvedEntityType = _db.queryFirst("SELECT id FROM report_entity_type WHERE code = ? AND active = true", resolvedTypeCode);
     if (resolvedEntityType) {
       entityTypeId = resolvedEntityType.getInt("id");
     }
   }
 } else if (entityTypeCode === "forum_topic") {
-  const item = _db.queryFirst(`SELECT id FROM forum_topic WHERE uid = ?::uuid AND active = true`, entityUid);
+  const item = _db.queryFirst("SELECT id FROM forum_topic WHERE uid = ?::uuid AND active = true", entityUid);
   if (item) targetId = item.getInt("id");
 } else if (entityTypeCode === "forum_reply") {
-  const item = _db.queryFirst(`SELECT id FROM forum_reply WHERE uid = ?::uuid AND active = true`, entityUid);
+  const item = _db.queryFirst("SELECT id FROM forum_reply WHERE uid = ?::uuid AND active = true", entityUid);
   if (item) targetId = item.getInt("id");
 }
 

@@ -1,11 +1,12 @@
 import people from "#core/lib/people.js";
 import { MEMBER, MANAGEMENT, REVIEW, SUPER_ADMIN } from "#core/lib/groups.js";
+import { _group } from "@netuno/server-types";
 
 const loggedUserGroupCode = _group.code();
 
-const isManager = loggedUserGroupCode === MANAGEMENT; 
-const isReview = loggedUserGroupCode === REVIEW; 
-const isSuperAdmin = loggedUserGroupCode === SUPER_ADMIN; 
+const isManager = loggedUserGroupCode === MANAGEMENT;
+const isReview = loggedUserGroupCode === REVIEW;
+const isSuperAdmin = loggedUserGroupCode === SUPER_ADMIN;
 
 const isLoggedUserInstitution = (institutionUid) => {
   const peopleUid = people.getLogged().getUID("uid");
@@ -15,13 +16,13 @@ const isLoggedUserInstitution = (institutionUid) => {
 }
 
 const canManageUserOrCreateMember = (otherUserGroupCode, otherUserInstitutionUid) => {
-    return (isSuperAdmin || 
-      (
-        isManager &&
-        isLoggedUserInstitution(otherUserInstitutionUid) &&
-        otherUserGroupCode === MEMBER 
-      )
-    );
+  return (isSuperAdmin ||
+    (
+      isManager &&
+      isLoggedUserInstitution(otherUserInstitutionUid) &&
+      otherUserGroupCode === MEMBER
+    )
+  );
 }
 
 export default {

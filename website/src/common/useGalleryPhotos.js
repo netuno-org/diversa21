@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { message } from 'antd';
-import _service from '@netuno/service-client';
+import { useState, useEffect, useCallback } from "react";
+import { message } from "antd";
+import _service from "@netuno/service-client";
 
 export function useGalleryPhotos(userUid) {
   const [photos, setPhotos] = useState([]);

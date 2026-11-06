@@ -1,4 +1,4 @@
-import { PEOPLE_LOAD } from '../actions/actionTypes';
+import { PEOPLE_LOAD } from "../actions/actionTypes";
 
 const initialState = {
   data: null

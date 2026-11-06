@@ -40,7 +40,7 @@ function Replies({ topicUid }) {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
 
-  const mode = 'reply'
+  const mode = "reply"
 
   useEffect(() => {
     const people = topic?.people;
@@ -432,7 +432,7 @@ function Replies({ topicUid }) {
                   canViewReportButton={!isOwnTopic}
                   onDeletePost={() => handleDeleteTopic(topic.uid)}
                   onEdit={openEditTopic}
-                  deleteTitle={'"Tem a certeza que pretende eliminar o Tópico? Esta ação é irreversível.'}
+                  deleteTitle={"\"Tem a certeza que pretende eliminar o Tópico? Esta ação é irreversível."}
                 />
               </div>
             )}
@@ -483,7 +483,7 @@ function Replies({ topicUid }) {
         mode={mode}
       />
       {!loading && repliesCount > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "24px", marginBottom: "24px" }}>
           <Pagination
             current={page}
             pageSize={10}

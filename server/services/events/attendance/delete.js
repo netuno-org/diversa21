@@ -7,14 +7,14 @@ let personId = null;
 if (userId) {
   const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
   if (dbPerson) {
-    personId = dbPerson.getInt('id');
+    personId = dbPerson.getInt("id");
   }
 }
 
 if (!personId) {
   response.error("Utilizador não autenticado ou sem perfil de pessoa associado.");
 } else {
-  const eventUid = _req.getString('eventUid');
+  const eventUid = _req.getString("eventUid");
 
   if (!eventUid) {
     response.error("O identificador do evento é obrigatório.");
@@ -23,7 +23,7 @@ if (!personId) {
     if (!dbEvent) {
       response.error("Evento não encontrado.");
     } else {
-      const eventId = dbEvent.getInt('id');
+      const eventId = dbEvent.getInt("id");
 
       _db.execute(
         "DELETE FROM event_participant WHERE event_id = ? AND people_id = ?",

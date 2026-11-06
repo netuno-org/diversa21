@@ -8,7 +8,7 @@ import _service from "@netuno/service-client";
 
 const { TextArea } = Input;
 
-import './index.less';
+import "./index.less";
 
 function Editor({
   onSubmitted,
@@ -218,11 +218,11 @@ function Editor({
                   type="text"
                   shape="circle"
                   icon={<SmileOutlined />}
-                  style={{ fontSize: 20, color: '#8c8c8c' }}
+                  style={{ fontSize: 20, color: "#8c8c8c" }}
                 />
               </Popover>
             )}
-            <span className="editor-form__word-count" style={{ marginLeft: 'auto', color: '#8c8c8c', fontSize: '12px' }}>
+            <span className="editor-form__word-count" style={{ marginLeft: "auto", color: "#8c8c8c", fontSize: "12px" }}>
               {getGraphemeCount(contentValue)}/500
             </span>
           </div>
@@ -230,15 +230,15 @@ function Editor({
       </Form.Item>
 
       <Form.Item className="editor-form__footer-item">
-        <div className="editor-form__actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ flex: '1 1 auto', minWidth: '200px' }}>
+        <div className="editor-form__actions" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+          <div style={{ flex: "1 1 auto", minWidth: "200px" }}>
             {getGraphemeCount(contentValue) >= 500 && (
-              <span style={{ color: '#ff4d4f', fontSize: '13px', fontWeight: '500', fontFamily: 'inherit', display: 'block', textAlign: 'left' }}>
+              <span style={{ color: "#ff4d4f", fontSize: "13px", fontWeight: "500", fontFamily: "inherit", display: "block", textAlign: "left" }}>
                 Você não pode ultrapassar o limite de 500 caracteres.
               </span>
             )}
           </div>
-          <Space size="middle" className="editor-form__actions-group" align="center" style={{ flex: '0 0 auto' }}>
+          <Space size="middle" className="editor-form__actions-group" align="center" style={{ flex: "0 0 auto" }}>
 
             {types[type].showCancelButton && (
               <Popconfirm

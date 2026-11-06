@@ -63,7 +63,7 @@ if (!notifications.isNotificationBlocked(friendId, notificationTypeId)) {
     notificationMessages.FRIEND_REQUEST,
     loggedUserId,
     friendId,
-    '',
+    "",
     notificationTypeId
   );
 

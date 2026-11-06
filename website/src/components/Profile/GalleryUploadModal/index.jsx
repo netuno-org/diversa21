@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Modal, Button, Typography, Row, Col, Slider, Divider, Space } from 'antd';
+import React, { useState, useEffect, useRef } from "react";
+import { Modal, Button, Typography, Row, Col, Slider, Divider, Space } from "antd";
 import {
   UploadOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
   UndoOutlined,
   FormatPainterOutlined,
-} from '@ant-design/icons';
-import { useDropzone } from 'react-dropzone';
-import AvatarEditor from 'react-avatar-editor';
+} from "@ant-design/icons";
+import { useDropzone } from "react-dropzone";
+import AvatarEditor from "react-avatar-editor";
 
-import './index.less';
+import "./index.less";
 
 const { Text } = Typography;
 const MAX_SIZE_MB = 5;
@@ -19,7 +19,7 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
   const [imageFile, setImageFile] = useState(null);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
-  const [color, setColor] = useState('#ffffff');
+  const [color, setColor] = useState("#ffffff");
   const [error, setError] = useState(null);
 
   const editorRef = useRef(null);
@@ -27,15 +27,15 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
   useEffect(() => {
     if (!open) {
       setImageFile(null);
-      setColor('#ffffff');
+      setColor("#ffffff");
       setError(null);
     }
   }, [open]);
 
   const validateAndSetFile = (selected) => {
     if (!selected) return;
-    if (!selected.type.startsWith('image/')) {
-      setError('O ficheiro selecionado não é uma imagem.');
+    if (!selected.type.startsWith("image/")) {
+      setError("O ficheiro selecionado não é uma imagem.");
       return;
     }
     if (selected.size > MAX_SIZE_MB * 1024 * 1024) {
@@ -50,7 +50,7 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
     noClick: true,
     noKeyboard: true,
     multiple: false,
-    accept: { 'image/*': [] },
+    accept: { "image/*": [] },
     onDrop: ([selected]) => validateAndSetFile(selected),
   });
 
@@ -65,11 +65,11 @@ function GalleryUploadModal({ open, uploading, onCancel, onUpload }) {
     const canvas = editorRef.current.getImageScaledToCanvas();
     canvas.toBlob((blob) => {
       if (!blob) return;
-      const finalFile = new File([blob], imageFile.name || 'photo.png', {
-        type: 'image/png',
+      const finalFile = new File([blob], imageFile.name || "photo.png", {
+        type: "image/png",
       });
       onUpload(finalFile);
-    }, 'image/png');
+    }, "image/png");
   };
 
   return (

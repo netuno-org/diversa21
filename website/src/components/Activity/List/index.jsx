@@ -103,7 +103,7 @@ function ActivityList({ url = "activity/list", author, parent, institution, onLo
       ))}
 
       {!loadingPosts && posts.length === 0 && (
-        <div style={{ padding: '40px 20px', background: '#fff', borderRadius: '8px', border: '1px solid #f0f0f0' }}>
+        <div style={{ padding: "40px 20px", background: "#fff", borderRadius: "8px", border: "1px solid #f0f0f0" }}>
           <Empty
             description={"Ainda não existe atividade."}
             image={Empty.PRESENTED_IMAGE_SIMPLE}

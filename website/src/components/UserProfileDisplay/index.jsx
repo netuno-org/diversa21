@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Avatar, Tag } from 'antd';
-import { UserOutlined, EnvironmentOutlined, CalendarOutlined, SafetyOutlined } from '@ant-design/icons';
+import { useState, useEffect } from "react";
+import { Avatar, Tag } from "antd";
+import { UserOutlined, EnvironmentOutlined, CalendarOutlined, SafetyOutlined } from "@ant-design/icons";
 import { BsFillHouseGearFill } from "react-icons/bs";
 import { RiFileEditLine } from "react-icons/ri";
 
-import _service from '@netuno/service-client';
-import dayjs from 'dayjs';
-import usePeople from '../../common/usePeople';
-import ContentActions from '../ContentActions';
+import _service from "@netuno/service-client";
+import dayjs from "dayjs";
+import usePeople from "../../common/usePeople";
+import ContentActions from "../ContentActions";
 
-import './index.less';
-import { useNavigate } from 'react-router-dom';
+import "./index.less";
+import { useNavigate } from "react-router-dom";
 
 function UserProfileDisplay({ user, avatarStyle, children }) {
   const [avatarUrl, setAvatarUrl] = useState("/images/profile-default.png");
@@ -62,7 +62,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
           </div>
         )}
         <div><EnvironmentOutlined /> {user.city.name}, {user.state.name}, {user.country.name}</div>
-        <div><CalendarOutlined /> {dayjs().diff(dayjs(user.birthDate), 'year')} anos</div>
+        <div><CalendarOutlined /> {dayjs().diff(dayjs(user.birthDate), "year")} anos</div>
         {children}
       </div>
       <div
@@ -73,7 +73,7 @@ function UserProfileDisplay({ user, avatarStyle, children }) {
         }}
       >
         {user.active === false && (
-          <Tag variant="filled" color="error" style={{ borderRadius: '32px' }}>
+          <Tag variant="filled" color="error" style={{ borderRadius: "32px" }}>
             Inativo
           </Tag>
         )}

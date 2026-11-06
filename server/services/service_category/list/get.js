@@ -1,7 +1,7 @@
 import { _req, _db, _val } from "@netuno/server-types";
 import response from "#core/lib/response.js";
 
-const name = _req.getString('name');
+const name = _req.getString("name");
 
 const dbCategories = _db.query(`
     SELECT
@@ -18,9 +18,9 @@ const categories = _val.list();
 for (const dbCategory of dbCategories) {
   categories.add(
     _val.map()
-      .set('uid', dbCategory.getUID('uid'))
-      .set('name', dbCategory.getString('name'))
-      .set('description', dbCategory.getString('description'))
+      .set("uid", dbCategory.getUID("uid"))
+      .set("name", dbCategory.getString("name"))
+      .set("description", dbCategory.getString("description"))
   );
 }
 

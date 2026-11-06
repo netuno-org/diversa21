@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { Layout, Typography, Form, Input, Button } from 'antd';
+import { Layout, Typography, Form, Input, Button } from "antd";
 import { PasswordInput } from "antd-password-input-strength";
-import _service from '@netuno/service-client';
-import globalNotification from '../../common/globalNotification.js';
+import _service from "@netuno/service-client";
+import globalNotification from "../../common/globalNotification.js";
 
 //import './index.less';
 
@@ -26,8 +26,8 @@ function Recovery(props) {
     setSubmitting(true);
     const { password } = values;
     _service({
-      method: 'PUT',
-      url: 'recovery',
+      method: "PUT",
+      url: "recovery",
       data: {
         password,
         key: hash
@@ -35,8 +35,8 @@ function Recovery(props) {
       success: (response) => {
         if (response.json.result) {
           globalNotification.success({
-            title: 'Alteração de senha',
-            description: 'A sua senha foi alterada com sucesso.',
+            title: "Alteração de senha",
+            description: "A sua senha foi alterada com sucesso.",
           });
           setSubmitting(false);
           setReady(true);
@@ -45,15 +45,15 @@ function Recovery(props) {
       fail: () => {
         setSubmitting(false);
         globalNotification.error({
-          title: 'Falha na redefinição de senha',
-          description: 'Não foi possível alterar a senha. O link pode estar expirado ou ser inválido. Se o problema persistir, contate o suporte.',
+          title: "Falha na redefinição de senha",
+          description: "Não foi possível alterar a senha. O link pode estar expirado ou ser inválido. Se o problema persistir, contate o suporte.",
         });
       }
     });
   }
 
   function onFinishFailed(errorInfo) {
-    console.log('Failed:', errorInfo);
+    console.log("Failed:", errorInfo);
   }
 
   if (ready) {
@@ -79,8 +79,8 @@ function Recovery(props) {
                 label="Senha"
                 name="password"
                 rules={[
-                  { required: true, message: 'Insira a senha.' },
-                  { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                  { required: true, message: "Insira a senha." },
+                  { type: "string", message: "A senha deverá ter entre 8 a 25 caracteres.", min: 8, max: 25 },
                 ]}
               >
                 <PasswordInput disabled={submitting} maxLength={25} />
@@ -89,14 +89,14 @@ function Recovery(props) {
                 label="Confirmar a senha"
                 name="password_confirm"
                 rules={[
-                  { required: true, message: 'Insira a confirmação da senha.' },
-                  { type: 'string', message: 'A senha deverá ter entre 8 a 25 caracteres.', min: 8, max: 25 },
+                  { required: true, message: "Insira a confirmação da senha." },
+                  { type: "string", message: "A senha deverá ter entre 8 a 25 caracteres.", min: 8, max: 25 },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
-                      if (!value || getFieldValue('password') === value) {
+                      if (!value || getFieldValue("password") === value) {
                         return Promise.resolve();
                       }
-                      return Promise.reject('As senhas não são iguais.');
+                      return Promise.reject("As senhas não são iguais.");
                     },
                   })
                 ]}
@@ -111,7 +111,7 @@ function Recovery(props) {
             </Form>
           </div>
         </Content>
-        <Sider width={'50%'}>
+        <Sider width={"50%"}>
           <span className="helper" /><img alt="sider-recovery" src={"/images/sider-recovery.png"} />
         </Sider>
       </Layout>

@@ -1,4 +1,4 @@
-import { _req, _db, _header, _exec, _out } from "@netuno/server-types";
+import { _req, _db, _header, _exec, _out, _val } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";

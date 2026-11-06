@@ -3,11 +3,11 @@ import { _req, _db, _val, _out } from "@netuno/server-types"
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
-const name = _req.getString('name');
-const cityUid = _req.getUID('cityUid');
-const stateUid = _req.getUID('stateUid');
-const countryUid = _req.getUID('countryUid');
-let page = _req.getInt('page', 1);
+const name = _req.getString("name");
+const cityUid = _req.getUID("cityUid");
+const stateUid = _req.getUID("stateUid");
+const countryUid = _req.getUID("countryUid");
+let page = _req.getInt("page", 1);
 
 const pageSize = 10;
 
@@ -33,16 +33,16 @@ const params = _val.list();
 params.add(`%${name}%`);
 
 if (cityUid) {
-  sqlQuery += ` OR city.uid = ?::uuid `;
+  sqlQuery += " OR city.uid = ?::uuid ";
   params.add(cityUid);
 } else if (stateUid) {
-  sqlQuery += ` OR state.uid = ?::uuid `;
+  sqlQuery += " OR state.uid = ?::uuid ";
   params.add(stateUid);
 } else if (countryUid) {
-  sqlQuery += ` OR country.uid = ?::uuid `;
+  sqlQuery += " OR country.uid = ?::uuid ";
   params.add(countryUid);
 } else {
-  sqlQuery += ` OR 1 = 1 `;
+  sqlQuery += " OR 1 = 1 ";
 }
 
 params.add(offset);

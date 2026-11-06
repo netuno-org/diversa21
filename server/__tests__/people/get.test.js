@@ -1,9 +1,10 @@
 import request from "supertest";
 
-import toBePeople from '../custom/people.js';
-import login from '../util/login.js';
-import { userUid } from '../util/uids.js'
+import toBePeople from "../custom/people.js";
+import login from "../util/login.js";
+import { userUid } from "../util/uids.js"
 import config from "../config.js";
+import { expect, test } from "@jest/globals";
 
 expect.extend({ toBePeople });
 
@@ -47,6 +48,6 @@ test("get by uid not found", async () => {
     .get(`/people?uid=${userUid.notExist}`)
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(404);
-  
+
   expect(response.body.error).toBe("user-not-found");
 });

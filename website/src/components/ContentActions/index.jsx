@@ -23,7 +23,7 @@ function ContentActions({
   editLabel = "Editar",
   reportLabel = "Denunciar",
   className,
-  deleteTitle = ''
+  deleteTitle = ""
 }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -226,7 +226,7 @@ function ContentActions({
               style={{ resize: "none" }}
             />
           </Form.Item>
-          <Form.Item style={{ marginBottom: 0, paddingTop: '20px', textAlign: "right" }}>
+          <Form.Item style={{ marginBottom: 0, paddingTop: "20px", textAlign: "right" }}>
             <Button type="primary" disabled={submiting || loading} loading={submiting} htmlType="submit">
               Enviar
             </Button>

@@ -1,13 +1,13 @@
 import { _req, _db, _val, _user } from "@netuno/server-types";
 import response from "#core/lib/response.js";
 
-const name = _req.getString('name');
-const categoryUid = _req.getUID('categoryUid');
-const cityUid = _req.getUID('cityUid');
-const stateUid = _req.getUID('stateUid');
-const countryUid = _req.getUID('countryUid');
-const favoritesOnly = _req.getBoolean('favoritesOnly');
-let page = _req.getInt('page', 1);
+const name = _req.getString("name");
+const categoryUid = _req.getUID("categoryUid");
+const cityUid = _req.getUID("cityUid");
+const stateUid = _req.getUID("stateUid");
+const countryUid = _req.getUID("countryUid");
+const favoritesOnly = _req.getBoolean("favoritesOnly");
+let page = _req.getInt("page", 1);
 
 const pageSize = 10;
 let offset = 0;
@@ -58,31 +58,31 @@ let sqlQuery = `
 `;
 
 if (favoritesOnly) {
-  sqlQuery += ` AND service_favorite.id IS NOT NULL `;
+  sqlQuery += " AND service_favorite.id IS NOT NULL ";
 }
 
 if (name) {
-  sqlQuery += ` AND service.name ILIKE ?::text `;
+  sqlQuery += " AND service.name ILIKE ?::text ";
   params.add(`%${name}%`);
 }
 
 if (categoryUid) {
-  sqlQuery += ` AND service_category.uid = ?::uuid `;
+  sqlQuery += " AND service_category.uid = ?::uuid ";
   params.add(categoryUid);
 }
 
 if (cityUid) {
-  sqlQuery += ` AND city.uid = ?::uuid `;
+  sqlQuery += " AND city.uid = ?::uuid ";
   params.add(cityUid);
 }
 
 if (stateUid) {
-  sqlQuery += ` AND state.uid = ?::uuid `;
+  sqlQuery += " AND state.uid = ?::uuid ";
   params.add(stateUid);
 }
 
 if (countryUid) {
-  sqlQuery += ` AND country.uid = ?::uuid `;
+  sqlQuery += " AND country.uid = ?::uuid ";
   params.add(countryUid);
 }
 
@@ -99,38 +99,38 @@ const services = _val.list();
 for (const dbService of dbServices) {
   services.add(
     _val.map()
-      .set('uid', dbService.getUID('uid'))
-      .set('name', dbService.getString('name'))
-      .set('description', dbService.getString('description'))
-      .set('phone', dbService.getString('phone'))
-      .set('website', dbService.getString('website'))
-      .set('instagram', dbService.getString('instagram'))
-      .set('active', dbService.getBoolean('active'))
-      .set('createdAt', dbService.getString('created_at'))
-      .set('isFavorite', dbService.getBoolean('is_favorite'))
-      .set('category', _val.map()
-        .set('uid', dbService.getUID('category_uid'))
-        .set('name', dbService.getString('category_name'))
+      .set("uid", dbService.getUID("uid"))
+      .set("name", dbService.getString("name"))
+      .set("description", dbService.getString("description"))
+      .set("phone", dbService.getString("phone"))
+      .set("website", dbService.getString("website"))
+      .set("instagram", dbService.getString("instagram"))
+      .set("active", dbService.getBoolean("active"))
+      .set("createdAt", dbService.getString("created_at"))
+      .set("isFavorite", dbService.getBoolean("is_favorite"))
+      .set("category", _val.map()
+        .set("uid", dbService.getUID("category_uid"))
+        .set("name", dbService.getString("category_name"))
       )
-      .set('city', _val.map()
-        .set('uid', dbService.getUID('city_uid'))
-        .set('name', dbService.getString('city_name'))
+      .set("city", _val.map()
+        .set("uid", dbService.getUID("city_uid"))
+        .set("name", dbService.getString("city_name"))
       )
-      .set('state', _val.map()
-        .set('uid', dbService.getUID('state_uid'))
-        .set('name', dbService.getString('state_name'))
+      .set("state", _val.map()
+        .set("uid", dbService.getUID("state_uid"))
+        .set("name", dbService.getString("state_name"))
       )
-      .set('country', _val.map()
-        .set('uid', dbService.getUID('country_uid'))
-        .set('name', dbService.getString('country_name'))
+      .set("country", _val.map()
+        .set("uid", dbService.getUID("country_uid"))
+        .set("name", dbService.getString("country_name"))
       )
   );
 }
 
-const totalCount = dbServices.length === 0 ? 0 : dbServices[0].getInt('total_count');
+const totalCount = dbServices.length === 0 ? 0 : dbServices[0].getInt("total_count");
 
 response.successWithData(
   _val.map()
-    .set('items', services)
-    .set('pagination', { pageSize, totalCount })
+    .set("items", services)
+    .set("pagination", { pageSize, totalCount })
 );

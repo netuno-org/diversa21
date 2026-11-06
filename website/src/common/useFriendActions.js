@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-import globalNotification from '../common/globalNotification.js';
+import globalNotification from "../common/globalNotification.js";
 
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 
 const ACTION_CONFIG = {
   send: {
@@ -65,8 +65,8 @@ function useFriendActions() {
             description: config.successDescription,
           });
         }
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('friend-action-success', {
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("friend-action-success", {
             detail: { action, uid, response }
           }));
         }

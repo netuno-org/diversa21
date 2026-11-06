@@ -1,8 +1,9 @@
 import request from "supertest";
 
-import toBePeople from '../../custom/people.js';
-import login from '../../util/login.js';
+import toBePeople from "../../custom/people.js";
+import login from "../../util/login.js";
 import config from "../../config.js";
+import { expect, test } from "@jest/globals";
 
 expect.extend({ toBePeople });
 
@@ -13,7 +14,7 @@ test("list people without loging in", async () => {
 });
 
 test("list people", async () => {
-  const accessToken = await login.asTest(); 
+  const accessToken = await login.asTest();
 
   const response = await request(config.NETUNO_URL)
     .get("/people/list")

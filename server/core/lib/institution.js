@@ -55,13 +55,13 @@ export const mapInstitution = (dbInstitution) =>
 
 export default {
   getByUID: (uid) => {
-    const sql = baseQuery + `\nAND institution.uid = ?::uuid`
+    const sql = baseQuery + "\nAND institution.uid = ?::uuid"
     const dbInstitution = _db.queryFirst(sql, uid);
     return dbInstitution ? mapInstitution(dbInstitution) : null;
   },
 
   getBySlug: (slug) => {
-    const sql = baseQuery + `\nAND LOWER(institution.slug) = LOWER(?::text)`
+    const sql = baseQuery + "\nAND LOWER(institution.slug) = LOWER(?::text)"
     const dbInstitution = _db.queryFirst(sql, slug);
     return dbInstitution ? mapInstitution(dbInstitution) : null;
   },

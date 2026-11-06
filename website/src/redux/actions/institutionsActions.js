@@ -5,7 +5,7 @@ import {
   INSTITUTIONS_SET_LOADING,
   INSTITUTIONS_SET_ERROR,
   INSTITUTIONS_CLEAR_CURRENT
-} from './institutionsActionTypes';
+} from "./institutionsActionTypes";
 
 export const institutionsSetList = (data) => ({
   type: INSTITUTIONS_SET_LIST,

@@ -45,8 +45,8 @@ export default {
             .set("name", dbPeople.getString("group_name"))
         )
         .set("email", dbPeople.getString("email"))
-        .set("avatar", dbPeople.getString("avatar") !== '')
-        .set("cover_image", dbPeople.getString("cover_image") !== '')
+        .set("avatar", dbPeople.getString("avatar") !== "")
+        .set("cover_image", dbPeople.getString("cover_image") !== "")
         .set("birthDate", dbPeople.getString("birth_date"))
         .set("city",
           _val.map()
@@ -97,7 +97,7 @@ export default {
   },
 
   createOrder: () => {
-    let order = '';
+    let order = "";
     for (let i = 0; i < 7; i++) {
       order += Math.floor(Math.random() * 10)
     }

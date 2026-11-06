@@ -1,9 +1,10 @@
 import request from "supertest";
 
-import toBePost from '../../custom/post.js';
-import login from '../../util/login.js';
-import { userUid, postUid } from '../../util/uids.js'
+import toBePost from "../../custom/post.js";
+import login from "../../util/login.js";
+import { userUid, postUid } from "../../util/uids.js"
 import config from "../../config.js";
+import { expect, test, it } from "@jest/globals";
 
 expect.extend({ toBePost });
 

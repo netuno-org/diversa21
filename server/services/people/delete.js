@@ -1,4 +1,4 @@
-import {_db, _val, _user, _out} from "@netuno/server-types"
+import { _db, _val, _user, _out, _header, _req } from "@netuno/server-types"
 
 const peopleUid = _req.getUID("uid");
 const username = _req.getString("username");
@@ -35,12 +35,12 @@ if (dbPeople) {
   _user.remove(dbPeople.getInt("people_user_id"));
   _out.json(
     _val.map()
-    .set("result", true)
+      .set("result", true)
   );
 } else {
   _header.status(404);
   _out.json(
     _val.map()
-    .set("error", "not-exist")
+      .set("error", "not-exist")
   );
 }

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Typography, Button, Input, Select, Row, Col, Space, Avatar, Divider } from 'antd';
+import { Typography, Button, Input, Select, Row, Col, Space, Avatar, Divider } from "antd";
 import { PlusOutlined, FolderOpenOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 import _service from "@netuno/service-client";
 import usePeople from "../../common/usePeople.js";
 
-import './index.less'
+import "./index.less"
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -28,7 +28,7 @@ function ListHeaderFilters({
   categoryDescription,
   description,
 }) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [locationOptions, setLocationOptions] = useState([])
   const hasHeaderTitle = title || createButton || extraActionButtons || categoryName;
 
@@ -43,13 +43,13 @@ function ListHeaderFilters({
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    if (value === '') {
-      onSearch && onSearch('');
+    if (value === "") {
+      onSearch && onSearch("");
     }
   };
 
   const handleLocationSearch = (value) => {
-    if (value.trim() === '') {
+    if (value.trim() === "") {
       setLocationOptions([]);
       return;
     }
@@ -105,7 +105,7 @@ function ListHeaderFilters({
                       icon={(createButton && createButton.icon) || <PlusOutlined />}
                       onClick={createButton && createButton.onClick}
                     >
-                      {(createButton && createButton.text) || 'Adicionar Novo'}
+                      {(createButton && createButton.text) || "Adicionar Novo"}
                     </Button>
                   )}
                 </Space>
@@ -162,7 +162,7 @@ function ListHeaderFilters({
             {!hideLocation && (
               <Col xs={24} md={fullWidthSearch ? 12 : 12}>
                 <Select
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   notFoundContent={null}
                   placeholder="Cidade, estado ou país..."
                   options={locationOptions}

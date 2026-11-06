@@ -36,15 +36,15 @@ function usePeople() {
   const load = (onFinish) => {
     unloaded = false;
     _service({
-      method: 'GET',
-      url: 'people/me',
+      method: "GET",
+      url: "people/me",
       success: (response) => {
         if (response.json.result) {
           dispatch(peopleLoadAction(response.json.data));
           onFinish && onFinish(true);
         } else {
           globalNotification.warning({
-            title: 'Dados do Usuário',
+            title: "Dados do Usuário",
             description: response.json.error,
           });
           onFinish && onFinish(false);
@@ -52,10 +52,10 @@ function usePeople() {
         }
       },
       fail: (e) => {
-        console.error('Dados do Usuário', e);
+        console.error("Dados do Usuário", e);
         globalNotification.serviceFail({
-          title: 'Dados do Usuário',
-          description: 'Ocorreu um erro a carregar os dados, por favor tente novamente mais tarde.',
+          title: "Dados do Usuário",
+          description: "Ocorreu um erro a carregar os dados, por favor tente novamente mais tarde.",
         });
         _auth.logout();
         onFinish && onFinish(false);
@@ -67,25 +67,25 @@ function usePeople() {
     const isEditing = !!personData.uid;
 
     _service({
-      method: isEditing ? 'PUT' : 'POST',
-      url: 'people',
+      method: isEditing ? "PUT" : "POST",
+      url: "people",
       data: personData,
       success: (response) => {
         if (response.json.result) {
           callbacks.onSuccess && callbacks.onSuccess(response.json);
         } else {
           globalNotification.warning({
-            title: isEditing ? 'Atualizar Pessoa' : 'Nova Pessoa',
-            description: response.json.error || 'Não foi possível guardar o registro.',
+            title: isEditing ? "Atualizar Pessoa" : "Nova Pessoa",
+            description: response.json.error || "Não foi possível guardar o registro.",
           });
           callbacks.onFail && callbacks.onFail(response.json);
         }
       },
       fail: (e) => {
-        console.error('Erro ao guardar pessoa:', e);
+        console.error("Erro ao guardar pessoa:", e);
         globalNotification.serviceFail({
-          title: isEditing ? 'Atualizar Pessoa' : 'Nova Pessoa',
-          description: 'Ocorreu um erro de comunicação ao guardar. Tente novamente mais tarde.',
+          title: isEditing ? "Atualizar Pessoa" : "Nova Pessoa",
+          description: "Ocorreu um erro de comunicação ao guardar. Tente novamente mais tarde.",
         });
         callbacks.onFail && callbacks.onFail(e);
       }
@@ -94,25 +94,25 @@ function usePeople() {
 
   const remove = (uid, callbacks = {}) => {
     _service({
-      method: 'DELETE',
-      url: 'people',
+      method: "DELETE",
+      url: "people",
       data: { uid },
       success: (response) => {
         if (response.json.result) {
           callbacks.onSuccess && callbacks.onSuccess(response.json);
         } else {
           globalNotification.warning({
-            title: 'Apagar Pessoa',
-            description: response.json.error || 'Não foi possível apagar o registro.',
+            title: "Apagar Pessoa",
+            description: response.json.error || "Não foi possível apagar o registro.",
           });
           callbacks.onFail && callbacks.onFail(response.json);
         }
       },
       fail: (e) => {
-        console.error('Erro ao apagar pessoa:', e);
+        console.error("Erro ao apagar pessoa:", e);
         globalNotification.serviceFail({
-          title: 'Apagar Pessoa',
-          description: 'Ocorreu um erro de comunicação ao apagar. Tente novamente mais tarde.',
+          title: "Apagar Pessoa",
+          description: "Ocorreu um erro de comunicação ao apagar. Tente novamente mais tarde.",
         });
         callbacks.onFail && callbacks.onFail(e);
       }

@@ -1,11 +1,11 @@
-import {_val, _auth, _exec} from '@netuno/server-types';
+import { _val, _auth, _exec } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 
 const onAbort = () => {
   _auth.signInAbortWithData(
     _val.map()
-      .set('error', 'invalid-user')
+      .set("error", "invalid-user")
   );
   _exec.stop();
 };

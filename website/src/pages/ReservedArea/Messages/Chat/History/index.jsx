@@ -245,7 +245,7 @@ function History({ friend, reload, onRef, onReply }) {
 
   const scrollToBottom = () => {
     if (refList.current) {
-      refList.current.scrollTo({ top: refList.current.scrollHeight, behavior: 'smooth' });
+      refList.current.scrollTo({ top: refList.current.scrollHeight, behavior: "smooth" });
     }
   };
 
@@ -376,7 +376,7 @@ function History({ friend, reload, onRef, onReply }) {
       {!loading && (
         <ul className="messages__history-list">
           {loadingMore && (
-            <li className="messages__history-loading-more" style={{ textAlign: 'center', padding: '8px 0', listStyleType: 'none' }}>
+            <li className="messages__history-loading-more" style={{ textAlign: "center", padding: "8px 0", listStyleType: "none" }}>
               <Spin size="small" />
             </li>
           )}
@@ -388,7 +388,7 @@ function History({ friend, reload, onRef, onReply }) {
             if (!prevMessage) {
               showTime = true;
             } else {
-              const diffMinutes = dayjs(message.sent_at).diff(dayjs(prevMessage.sent_at), 'minute');
+              const diffMinutes = dayjs(message.sent_at).diff(dayjs(prevMessage.sent_at), "minute");
               if (diffMinutes >= 10) {
                 showTime = true;
               }

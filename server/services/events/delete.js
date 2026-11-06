@@ -10,14 +10,14 @@ let isAdminOrManager = groupCode === SUPER_ADMIN || groupCode === MANAGEMENT;
 if (userId) {
   const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
   if (dbPerson) {
-    personId = dbPerson.getInt('id');
+    personId = dbPerson.getInt("id");
   }
 }
 
 if (!personId && !isAdminOrManager) {
   response.error("Utilizador não autenticado ou sem permissões.");
 } else {
-  const eventUid = _req.getString('eventUid');
+  const eventUid = _req.getString("eventUid");
 
   if (!eventUid) {
     response.error("O identificador do evento é obrigatório.");
@@ -26,11 +26,11 @@ if (!personId && !isAdminOrManager) {
     if (!dbEvent) {
       response.error("Evento não encontrado.");
     } else {
-      const hostId = dbEvent.getInt('host_id');
+      const hostId = dbEvent.getInt("host_id");
       if (!isAdminOrManager && hostId !== personId) {
         response.error("Não tem permissão para eliminar este evento.");
       } else {
-        const eventId = dbEvent.getInt('id');
+        const eventId = dbEvent.getInt("id");
         
         const updateData = _val.map().set("active", false);
         const rowsAffected = _db.update("event", eventId, updateData);

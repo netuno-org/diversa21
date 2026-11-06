@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { Navigate, Link } from "react-router-dom";
-import { Layout, Typography, Form, Input, Button, Checkbox } from 'antd';
+import { Layout, Typography, Form, Input, Button, Checkbox } from "antd";
 import { MdOutlineLogin } from "react-icons/md";
-import _auth from '@netuno/auth-client';
-import _service from '@netuno/service-client';
-import Config from '../../common/Config';
-import withRouter from '../../common/withRouter';
-import RecoverModal from './RecoverModal';
-import globalNotification from '../../common/globalNotification.js';
+import _auth from "@netuno/auth-client";
+import _service from "@netuno/service-client";
+import Config from "../../common/Config";
+import withRouter from "../../common/withRouter";
+import RecoverModal from "./RecoverModal";
+import globalNotification from "../../common/globalNotification.js";
 
 import {
   FaGoogle, FaWindows, FaFacebook, FaDiscord, FaGithub
@@ -15,12 +15,12 @@ import {
 
 import isNetworkError from "is-network-error";
 
-import 'altcha';
-import 'altcha/i18n/pt-br';
+import "altcha";
+import "altcha/i18n/pt-br";
 
 import usePeople from "../../common/usePeople.js";
 
-import './index.less';
+import "./index.less";
 
 const { Title } = Typography;
 const { Content, Sider } = Layout;
@@ -71,7 +71,7 @@ function Login() {
         }
         return data;
       },
-      success: ({json}) => {
+      success: ({ json }) => {
         people.set(json.extra);
         setSubmitting(false);
       },
@@ -79,37 +79,37 @@ function Login() {
         setSubmitting(false);
         if (data.error && isNetworkError(data.error)) {
           globalNotification.error({
-            title: 'Conexão',
-            description: 'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+            title: "Conexão",
+            description: "Há problemas de conexão com o servidor, tente novamente mais tarde.",
           });
           return;
         }
         if (data.isJSON) {
-          if (data.json['locked']) {
+          if (data.json["locked"]) {
             globalNotification.error({
-              title: 'Acesso Temporariamente Bloqueado',
-              description: 'Limite de tentativas excedido. Tente novamente mais tarde ou entre em contato com o suporte.',
+              title: "Acesso Temporariamente Bloqueado",
+              description: "Limite de tentativas excedido. Tente novamente mais tarde ou entre em contato com o suporte.",
             });
             return;
           }
-          if (data.json['custom-blocked']) {
+          if (data.json["custom-blocked"]) {
             globalNotification.error({
-              title: 'Login Bloqueado',
-              description: 'O seu acesso está bloqueado. Realize o processo de desbloqueio ou contate o suporte.',
+              title: "Login Bloqueado",
+              description: "O seu acesso está bloqueado. Realize o processo de desbloqueio ou contate o suporte.",
             });
             return;
           }
         }
         globalNotification.error({
-          title: 'Credenciais Inválidas',
-          description: 'E-mail ou senha incorretos. Verifique os dados digitados e tente novamente.',
+          title: "Credenciais Inválidas",
+          description: "E-mail ou senha incorretos. Verifique os dados digitados e tente novamente.",
         });
       }
     });
   }
 
   function onFinishFailed(errorInfo) {
-    console.log('Failed:', errorInfo);
+    console.log("Failed:", errorInfo);
   }
 
   let initialValues = { remember: true };
@@ -159,8 +159,8 @@ function Login() {
                 label="Usuário"
                 name="username"
                 rules={[
-                  { required: true, message: 'Insira o seu usuário.' },
-                  { type: 'string', message: 'Usuário inválido, apenas letras minúsculas e maiúsculas.', pattern: "^[a-z]+[a-z0-9]{1,24}$" }
+                  { required: true, message: "Insira o seu usuário." },
+                  { type: "string", message: "Usuário inválido, apenas letras minúsculas e maiúsculas.", pattern: "^[a-z]+[a-z0-9]{1,24}$" }
               ]}
               >
                 <Input />
@@ -169,7 +169,7 @@ function Login() {
               <Form.Item
                 label="Senha"
                 name="password"
-                rules={[{ required: true, message: 'Insira a senha.' }]}
+                rules={[{ required: true, message: "Insira a senha." }]}
               >
                 <Input.Password />
               </Form.Item>
@@ -181,7 +181,7 @@ function Login() {
               { Config.authAltcha() && <Form.Item>
                 <altcha-widget
                   ref={altcha}
-                  challenge={_service.url('/_altcha')}
+                  challenge={_service.url("/_altcha")}
                   language="pt-br"
                   delay={1}
                   hidelogo={true}
@@ -196,7 +196,7 @@ function Login() {
                 </Button>
               </Form.Item>
 
-              <Form.Item style={{ textAlign: 'center' }}>
+              <Form.Item style={{ textAlign: "center" }}>
                 <Button type="link" onClick={() => setVisible(!visible)} >Esqueceu a senha?</Button>
                 {visible && <RecoverModal onClose={() => { setVisible(false) }} />}
               </Form.Item>
@@ -205,7 +205,7 @@ function Login() {
           </div>
 
         </Content>
-        <Sider width={'50%'} className="login-sider">
+        <Sider width={"50%"} className="login-sider">
           <span className="helper" /><img alt="sider-login" src={"/images/sider-login.png"} />
         </Sider>
       </Layout>

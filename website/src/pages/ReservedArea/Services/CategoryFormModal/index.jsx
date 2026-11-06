@@ -1,5 +1,5 @@
-import React from 'react';
-import { Modal, Form, Input } from 'antd';
+import React from "react";
+import { Modal, Form, Input } from "antd";
 
 export default function CategoryFormModal({
   visible,
@@ -27,7 +27,7 @@ export default function CategoryFormModal({
           <Input placeholder="Ex: Saúde" />
         </Form.Item>
         <Form.Item label="Descrição" name="description">
-          <Input.TextArea rows={3} style={{resize: 'none'}} maxLength={250} showCount placeholder="Breve descrição da categoria." />
+          <Input.TextArea rows={3} style={{ resize: "none" }} maxLength={250} showCount placeholder="Breve descrição da categoria." />
         </Form.Item>
       </Form>
     </Modal>

@@ -1,4 +1,4 @@
-import {_val, _group} from "@netuno/server-types"
+import { _val, _group } from "@netuno/server-types"
 
 _group.createIfNotExists(
     _val.map()

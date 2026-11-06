@@ -10,16 +10,16 @@ let isAdminOrManager = groupCode === SUPER_ADMIN || groupCode === MANAGEMENT;
 if (userId) {
   const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
   if (dbPerson) {
-    personId = dbPerson.getInt('id');
+    personId = dbPerson.getInt("id");
   }
 }
 
-const tab = _req.getString('tab') || 'general';
-const term = _req.getString('term');
-const location = _req.getString('location');
-const institutionUid = _req.getString('institutionUid');
-const goingOnly = _req.getBoolean('goingOnly');
-const page = _req.getInt('page', 1);
+const tab = _req.getString("tab") || "general";
+const term = _req.getString("term");
+const location = _req.getString("location");
+const institutionUid = _req.getString("institutionUid");
+const goingOnly = _req.getBoolean("goingOnly");
+const page = _req.getInt("page", 1);
 const pageSize = 10;
 const offset = (page - 1) * pageSize;
 
@@ -35,29 +35,29 @@ let sql = `SELECT e.*,
            LEFT JOIN state s ON c.state_id = s.id 
            LEFT JOIN country co ON s.country_id = co.id`;
 
-let countSql = `SELECT COUNT(*) as total FROM event e LEFT JOIN city c ON e.city_id = c.id`;
+let countSql = "SELECT COUNT(*) as total FROM event e LEFT JOIN city c ON e.city_id = c.id";
 
-let where = ` WHERE e.active = true`;
+let where = " WHERE e.active = true";
 let params = [];
 
-if (tab === 'history') {
-  where += ` AND e.start_date::date < CURRENT_DATE`;
-} else if (tab !== 'all') {
-  where += ` AND e.start_date::date >= CURRENT_DATE`;
+if (tab === "history") {
+  where += " AND e.start_date::date < CURRENT_DATE";
+} else if (tab !== "all") {
+  where += " AND e.start_date::date >= CURRENT_DATE";
 }
 
 if (goingOnly && personId) {
-  where += ` AND EXISTS (SELECT 1 FROM event_participant ep_filter WHERE ep_filter.event_id = e.id AND ep_filter.people_id = ? AND ep_filter.active = true)`;
+  where += " AND EXISTS (SELECT 1 FROM event_participant ep_filter WHERE ep_filter.event_id = e.id AND ep_filter.people_id = ? AND ep_filter.active = true)";
   params.push(personId);
 }
 
 if (term) {
-  where += ` AND (e.name ILIKE ? OR e.description ILIKE ?)`;
+  where += " AND (e.name ILIKE ? OR e.description ILIKE ?)";
   params.push(`%${term}%`, `%${term}%`);
 }
 
 if (location) {
-  where += ` AND (e.location ILIKE ? OR c.name ILIKE ?)`;
+  where += " AND (e.location ILIKE ? OR c.name ILIKE ?)";
   params.push(`%${location}%`, `%${location}%`);
 }
 
@@ -68,12 +68,12 @@ if (institutionUid) {
   params.push(institutionUid);
 }
 
-const sortOrder = tab === 'history' || tab === 'all' ? 'DESC' : 'ASC';
+const sortOrder = tab === "history" || tab === "all" ? "DESC" : "ASC";
 sql += where + ` ORDER BY e.start_date ${sortOrder}, e.created_at DESC LIMIT ? OFFSET ?`;
 countSql += where;
 
 const dbCount = _db.queryFirst(countSql, ...params);
-const total = dbCount ? dbCount.getLong('total') : 0;
+const total = dbCount ? dbCount.getLong("total") : 0;
 
 const events = _db.query(sql, ...params, pageSize, offset);
 const list = _val.list();
@@ -81,8 +81,8 @@ const list = _val.list();
 if (events) {
   for (let i = 0; i < events.size(); i++) {
     const row = events.get(i);
-    const eventId = row.getInt('id');
-    const hostId = row.getInt('host_id');
+    const eventId = row.getInt("id");
+    const hostId = row.getInt("host_id");
 
     let isGoing = false;
     if (personId) {
@@ -97,7 +97,7 @@ if (events) {
       "SELECT COUNT(*) as cnt FROM event_participant WHERE event_id = ? AND active = true",
       eventId
     );
-    const participantsCount = countCheck ? countCheck.getLong('cnt') : 0;
+    const participantsCount = countCheck ? countCheck.getLong("cnt") : 0;
 
     const participantsPreview = _db.query(
       `SELECT p.uid, p.name, p.avatar, nu_p.user as username
@@ -114,48 +114,48 @@ if (events) {
       for (let j = 0; j < participantsPreview.size(); j++) {
         const pRow = participantsPreview.get(j);
         participantsList.add(_val.map()
-          .set('uid', pRow.getString('uid'))
-          .set('name', pRow.getString('name'))
-          .set('avatar', pRow.getString('avatar'))
-          .set('username', pRow.getString('username'))
+          .set("uid", pRow.getString("uid"))
+          .set("name", pRow.getString("name"))
+          .set("avatar", pRow.getString("avatar"))
+          .set("username", pRow.getString("username"))
         );
       }
     }
 
     const canEdit = isAdminOrManager || (personId && hostId === personId);
-    const coverImageValue = row.getString('cover_image') || '';
+    const coverImageValue = row.getString("cover_image") || "";
 
     list.add(_val.map()
-      .set('id', eventId)
-      .set('uid', row.getString('uid'))
-      .set('name', row.getString('name'))
-      .set('description', row.getString('description'))
-      .set('location', row.getString('location'))
-      .set('cover_image', coverImageValue)
-      .set('hasCoverImage', coverImageValue !== '')
-      .set('startDate', row.getString('start_date') || row.getString('created_at'))
-      .set('endDate', row.getString('end_date'))
-      .set('isGoing', isGoing)
-      .set('canEdit', canEdit)
-      .set('participantsCount', participantsCount)
-      .set('participantsPreview', participantsList)
-      .set('city', _val.map()
-        .set('uid', row.getString('city_uid'))
-        .set('name', row.getString('city_name'))
+      .set("id", eventId)
+      .set("uid", row.getString("uid"))
+      .set("name", row.getString("name"))
+      .set("description", row.getString("description"))
+      .set("location", row.getString("location"))
+      .set("cover_image", coverImageValue)
+      .set("hasCoverImage", coverImageValue !== "")
+      .set("startDate", row.getString("start_date") || row.getString("created_at"))
+      .set("endDate", row.getString("end_date"))
+      .set("isGoing", isGoing)
+      .set("canEdit", canEdit)
+      .set("participantsCount", participantsCount)
+      .set("participantsPreview", participantsList)
+      .set("city", _val.map()
+        .set("uid", row.getString("city_uid"))
+        .set("name", row.getString("city_name"))
       )
-      .set('state', _val.map()
-        .set('uid', row.getString('state_uid'))
-        .set('name', row.getString('state_name'))
+      .set("state", _val.map()
+        .set("uid", row.getString("state_uid"))
+        .set("name", row.getString("state_name"))
       )
-      .set('country', _val.map()
-        .set('uid', row.getString('country_uid'))
-        .set('name', row.getString('country_name'))
+      .set("country", _val.map()
+        .set("uid", row.getString("country_uid"))
+        .set("name", row.getString("country_name"))
       )
-      .set('host', _val.map()
-        .set('uid', row.getString('host_uid'))
-        .set('name', row.getString('host_name'))
-        .set('avatar', row.getString('host_avatar'))
-        .set('username', row.getString('host_username'))
+      .set("host", _val.map()
+        .set("uid", row.getString("host_uid"))
+        .set("name", row.getString("host_name"))
+        .set("avatar", row.getString("host_avatar"))
+        .set("username", row.getString("host_username"))
       )
     );
   }
@@ -163,6 +163,6 @@ if (events) {
 
 response.successWithData(
   _val.map()
-    .set('items', list)
-    .set('pagination', _val.map().set('pageSize', pageSize).set('page', page).set('total', total))
+    .set("items", list)
+    .set("pagination", _val.map().set("pageSize", pageSize).set("page", page).set("total", total))
 );

@@ -29,13 +29,13 @@ import CategoryTopics from "./CategoryTopics/index.jsx"
 import Services from "./Services/index.jsx"
 import CategoryPage from "./CategoryPage"
 import ReplyPage from "../ReplyPage"
-import TermsPage from '../Terms';
-import Reports from './Reports'
-import ReportPage from './Reports/View'
-import PrivacyPage from '../Privacy';
-import FAQs from './FAQs';
-import Events from './Events';
-import EventView from './Events/View';
+import TermsPage from "../Terms";
+import Reports from "./Reports"
+import ReportPage from "./Reports/View"
+import PrivacyPage from "../Privacy";
+import FAQs from "./FAQs";
+import Events from "./Events";
+import EventView from "./Events/View";
 
 import "./index.less";
 
@@ -120,7 +120,7 @@ function ReservedArea() {
       }
       if (location.pathname === "/people/create/user") {
         if (!(people.canCreateAnyUser() || people.canCreateMember(people.data?.institution))) {
-          navigate('/people');
+          navigate("/people");
           return;
         }
         return <CreateUser />;
@@ -129,7 +129,7 @@ function ReservedArea() {
         return <InstitutionsList />;
       }
       if (location.pathname === "/institutions/new") {
-        return <InstitutionForm onSuccess={() => navigate('/institutions')} onCancel={() => navigate('/institutions')} />;
+        return <InstitutionForm onSuccess={() => navigate("/institutions")} onCancel={() => navigate("/institutions")} />;
       }
       if (location.pathname.match(/^\/institutions\/[\w-]+$/)) {
         return <InstitutionView />;
@@ -144,7 +144,7 @@ function ReservedArea() {
       }
       if (location.pathname === "/locations") {
         if (!people.canManageLocations()) {
-          navigate('/');
+          navigate("/");
           return;
         }
         return <LocationList />;
@@ -184,7 +184,7 @@ function ReservedArea() {
       }
       if (location.pathname === "/reports" || location.pathname.startsWith("/reports/")) {
         if (!people.canManageReports()) {
-          navigate('/');
+          navigate("/");
           return;
         }
         if (location.pathname === "/reports") {
@@ -225,7 +225,7 @@ function ReservedArea() {
             <img
               src="/images/logo.png"
               alt="Não Autorizado"
-              style={{ width: 250, margin: '0 auto' }}
+              style={{ width: 250, margin: "0 auto" }}
             />
           }
           extra={

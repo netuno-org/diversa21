@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import _ws from '@netuno/ws-client';
-import useWS from './useWS';
+import { useState, useEffect } from "react";
+import _ws from "@netuno/ws-client";
+import useWS from "./useWS";
 
 let messageCountLoaded = false;
 
@@ -53,7 +53,7 @@ export default function useMessageCount() {
       service: "notification/new",
       success: (data) => {
         const newNotif = data.content;
-        if (newNotif?.type === 'message') {
+        if (newNotif?.type === "message") {
           fetchCount();
         }
       }
@@ -64,7 +64,7 @@ export default function useMessageCount() {
       service: "notification/read",
       success: (data) => {
         const content = data.content;
-        if (!content || content.type !== 'message') return;
+        if (!content || content.type !== "message") return;
 
         if (content.all) {
           setCount(0);

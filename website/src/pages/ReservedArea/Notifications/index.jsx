@@ -1,47 +1,47 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm, Pagination } from 'antd';
-import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined, UserOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm, Pagination } from "antd";
+import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
-import _service from '@netuno/service-client';
-import useFriendActions from '../../../common/useFriendActions.js';
-import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
-import TimeAgo from '../../../components/TimeAgo';
+import _service from "@netuno/service-client";
+import useFriendActions from "../../../common/useFriendActions.js";
+import ListHeaderFilters from "../../../components/ListHeaderFilters/index.jsx";
+import TimeAgo from "../../../components/TimeAgo";
 import usePeople from "../../../common/usePeople.js";
 import useNotifications from "../../../common/useNotifications.js";
 
-import './index.less';
+import "./index.less";
 
 const { Text } = Typography;
 
 function Notifications() {
   const loggedUser = usePeople();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState("all");
 
   const { notifications, loading, markAllAsRead, onNotificationClick, markAsRead, removeNotification, pagination, handlePaginationChange } = useNotifications(loggedUser);
   const { run: runFriendAction, isProcessing } = useFriendActions();
 
   // Mensagens ficam só no header de mensagens — não aparecem nesta página.
-  const generalNotifications = notifications.filter((n) => n.type !== 'message');
+  const generalNotifications = notifications.filter((n) => n.type !== "message");
   const unreadCount = generalNotifications.filter(n => !n.read).length;
 
   const getIconForType = (type) => {
     switch (type) {
-      case 'institution-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
-      case 'friend-post': return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: '#50a063' }} />;
-      case 'my-post-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
-      case 'institution-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
-      case 'friend-comment': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
-      case 'forum-reply': return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: '#1890ff' }} />;
-      case 'my-post-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
-      case 'institution-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
-      case 'friend-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
-      case 'forum-reply-like': return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: '#eb2f96' }} />;
-      case 'friend-request': return <Avatar icon={<UserAddOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
-      case 'friend-request-accepted': return <Avatar icon={<TeamOutlined />} style={{ backgroundColor: '#52c41a' }} />;
-      case 'security': return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: '#fa8c16' }} />;
-      default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#bfbfbf' }} />;
+      case "institution-post": return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: "#50a063" }} />;
+      case "friend-post": return <Avatar icon={<FileTextOutlined />} style={{ backgroundColor: "#50a063" }} />;
+      case "my-post-comment": return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: "#1890ff" }} />;
+      case "institution-comment": return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: "#1890ff" }} />;
+      case "friend-comment": return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: "#1890ff" }} />;
+      case "forum-reply": return <Avatar icon={<CommentOutlined />} style={{ backgroundColor: "#1890ff" }} />;
+      case "my-post-like": return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: "#eb2f96" }} />;
+      case "institution-like": return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: "#eb2f96" }} />;
+      case "friend-like": return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: "#eb2f96" }} />;
+      case "forum-reply-like": return <Avatar icon={<HeartOutlined />} style={{ backgroundColor: "#eb2f96" }} />;
+      case "friend-request": return <Avatar icon={<UserAddOutlined />} style={{ backgroundColor: "#fa8c16" }} />;
+      case "friend-request-accepted": return <Avatar icon={<TeamOutlined />} style={{ backgroundColor: "#52c41a" }} />;
+      case "security": return <Avatar icon={<SafetyOutlined />} style={{ backgroundColor: "#fa8c16" }} />;
+      default: return <Avatar icon={<NotificationOutlined />} style={{ backgroundColor: "#bfbfbf" }} />;
     }
   };
 
@@ -49,39 +49,39 @@ function Notifications() {
     let icon;
     let color;
     switch (type) {
-      case 'institution-post':
-      case 'friend-post':
+      case "institution-post":
+      case "friend-post":
         icon = <FileTextOutlined style={{ fontSize: 10 }} />;
-        color = '#50a063';
+        color = "#50a063";
         break;
-      case 'my-post-comment':
-      case 'institution-comment':
-      case 'friend-comment':
-      case 'forum-reply':
+      case "my-post-comment":
+      case "institution-comment":
+      case "friend-comment":
+      case "forum-reply":
         icon = <CommentOutlined style={{ fontSize: 10 }} />;
-        color = '#1890ff';
+        color = "#1890ff";
         break;
-      case 'my-post-like':
-      case 'institution-like':
-      case 'friend-like':
-      case 'forum-reply-like':
+      case "my-post-like":
+      case "institution-like":
+      case "friend-like":
+      case "forum-reply-like":
         icon = <HeartOutlined style={{ fontSize: 10 }} />;
-        color = '#eb2f96';
+        color = "#eb2f96";
         break;
-      case 'security':
+      case "security":
         icon = <SafetyOutlined style={{ fontSize: 10 }} />;
-        color = '#fa8c16';
+        color = "#fa8c16";
         break;
-      case 'friend-request':
-      case 'friend-request-accepted':
+      case "friend-request":
+      case "friend-request-accepted":
         icon = <CheckOutlined style={{ fontSize: 10 }} />;
-        color = '#52c41a';
+        color = "#52c41a";
         break;
       default:
         icon = <NotificationOutlined style={{ fontSize: 10 }} />;
-        color = '#bfbfbf';
+        color = "#bfbfbf";
     }
-    return <Avatar size={18} style={{ backgroundColor: color, border: '2px solid #fff' }} icon={icon} />;
+    return <Avatar size={18} style={{ backgroundColor: color, border: "2px solid #fff" }} icon={icon} />;
   };
 
   const getNotificationAvatar = (item) => {
@@ -114,17 +114,17 @@ function Notifications() {
     return item.title;
   };
 
-  const filteredNotifications = activeTab === 'unread'
+  const filteredNotifications = activeTab === "unread"
     ? generalNotifications.filter((n) => !n.read)
     : generalNotifications;
 
   return (
     <section className="notifications-page">
       <div className="notifications-page__header">
-        <ListHeaderFilters 
-        title="Notificações" 
-        description={"Acompanhe as novidades e interações relacionadas à sua conta."}
-        hideInputs={true} />
+        <ListHeaderFilters
+          title="Notificações"
+          description={"Acompanhe as novidades e interações relacionadas à sua conta."}
+          hideInputs={true} />
       </div>
 
       <div className="notifications-page__toolbar">
@@ -133,12 +133,12 @@ function Notifications() {
           onChange={setActiveTab}
           className="notifications-page__tabs"
           items={[
-            { key: 'all', label: 'Todas' },
+            { key: "all", label: "Todas" },
             {
-              key: 'unread', label: (
+              key: "unread", label: (
                 <Space size="small">
                   Não Lidas
-                  <Tag color="#FEAF04" variant="solid" style={{ borderRadius: '32px' }}>
+                  <Tag color="#FEAF04" variant="solid" style={{ borderRadius: "32px" }}>
                     {unreadCount}
                   </Tag>
                 </Space>
@@ -168,9 +168,9 @@ function Notifications() {
             filteredNotifications.map((item) => (
               <div
                 key={item.id}
-                className={`notifications-page__item ${!item.read ? 'notifications-page__item--unread' : ''}`}
+                className={`notifications-page__item ${!item.read ? "notifications-page__item--unread" : ""}`}
                 onClick={() => onNotificationClick(item, navigate)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
               >
                 <div className="notifications-page__item-meta">
                   <div className="notifications-page__item-avatar">
@@ -188,20 +188,20 @@ function Notifications() {
                     <div className="notifications-page__item-description">
                       <Text type="secondary">{item.desc}</Text>
                     </div>
-                    {item.type === 'friend-request' && item.originator?.uid && !item.read && (
+                    {item.type === "friend-request" && item.originator?.uid && !item.read && (
                       <div className="notifications-page__item-actions" onClick={(e) => e.stopPropagation()}>
                         <Button
                           size="small"
                           type="primary"
                           icon={<CheckOutlined />}
                           onClick={() => {
-                            runFriendAction('accept', item.originator.uid, {
+                            runFriendAction("accept", item.originator.uid, {
                               onSuccess: () => {
                                 removeNotification(item.id);
                               }
                             });
                           }}
-                          loading={isProcessing(item.originator.uid, 'accept')}
+                          loading={isProcessing(item.originator.uid, "accept")}
                           disabled={isProcessing(item.originator.uid)}
                         >
                           Aceitar
@@ -210,7 +210,7 @@ function Notifications() {
                           title="Recusar solicitação"
                           description="Tem certeza que deseja recusar este pedido de amizade?"
                           onConfirm={() => {
-                            runFriendAction('reject', item.originator.uid, {
+                            runFriendAction("reject", item.originator.uid, {
                               onSuccess: () => {
                                 removeNotification(item.id);
                               }
@@ -224,7 +224,7 @@ function Notifications() {
                             type="primary"
                             className="profile__secondary-btn"
                             icon={<CloseOutlined />}
-                            loading={isProcessing(item.originator.uid, 'reject')}
+                            loading={isProcessing(item.originator.uid, "reject")}
                             disabled={isProcessing(item.originator.uid)}
                           >
                             Recusar
@@ -243,7 +243,7 @@ function Notifications() {
         </div>
         <div className="notifications-page__footer">
           <Pagination
-            className={`notifications-page__pagination ${filteredNotifications.length === 0 && !loading ? 'notifications-page__pagination--hidden' : ''}`}
+            className={`notifications-page__pagination ${filteredNotifications.length === 0 && !loading ? "notifications-page__pagination--hidden" : ""}`}
             align="center"
             total={pagination.total}
             current={pagination.current}

@@ -13,7 +13,7 @@ function TopicPage({ categoryUid }) {
   const loggedUser = usePeople();
   const navigate = useNavigate();
 
-  const canManageTopic = loggedUser.canManagePosts() || loggedUser.data.group.code === 'member'
+  const canManageTopic = loggedUser.canManagePosts() || loggedUser.data.group.code === "member"
 
   const [topicList, setTopicList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ function TopicPage({ categoryUid }) {
   const [searchTitle, setSearchTitle] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
 
-  const mode = 'topic'
+  const mode = "topic"
 
   useEffect(() => {
     if (!categoryUid) {
@@ -256,7 +256,7 @@ function TopicPage({ categoryUid }) {
         mode={mode}
       />
       {!loading && totalCount > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "24px", marginBottom: "24px" }}>
           <Pagination
             current={page}
             pageSize={10}

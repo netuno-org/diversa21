@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Form, Modal, Input, Select } from 'antd';
+import { useState, useEffect } from "react";
+import { Form, Modal, Input, Select } from "antd";
 
-import _service from '@netuno/service-client';
-import globalNotification from '../../../../common/globalNotification';
+import _service from "@netuno/service-client";
+import globalNotification from "../../../../common/globalNotification";
 
 function LocationModal({
   visible,
@@ -44,39 +44,39 @@ function LocationModal({
 
       if (isEditing) data.uid = editingItem.uid;
 
-      if (activeTab === 'country') {
+      if (activeTab === "country") {
         data.code = values.code.trim().toUpperCase();
-      } else if (activeTab === 'state') {
+      } else if (activeTab === "state") {
         data.code = values.code.trim().toUpperCase();
         data.countryUid = values.countryUid;
-      } else if (activeTab === 'city') {
+      } else if (activeTab === "city") {
         data.stateUid = values.stateUid;
       }
 
       _service({
         url,
-        method: isEditing ? 'PUT' : 'POST',
+        method: isEditing ? "PUT" : "POST",
         data,
         success: ({ json }) => {
           if (json?.result) {
             globalNotification.success({
-              title: 'Sucesso',
-              description: isEditing ? 'Registro atualizado com sucesso.' : 'Registro guardado com sucesso.'
+              title: "Sucesso",
+              description: isEditing ? "Registro atualizado com sucesso." : "Registro guardado com sucesso."
             });
             onSuccess() && onSuccess();
             onClose() && onClose();
           } else {
             globalNotification.error({
-              title: 'Erro',
-              description: json?.error || 'Não foi possível guardar o registro.'
+              title: "Erro",
+              description: json?.error || "Não foi possível guardar o registro."
             });
           }
           setIsSaving(false);
         },
         fail: () => {
           globalNotification.error({
-            title: 'Falha de comunicação',
-            description: 'Falha de comunicação ao guardar o registro.'
+            title: "Falha de comunicação",
+            description: "Falha de comunicação ao guardar o registro."
           });
           setIsSaving(false);
         },
@@ -90,7 +90,7 @@ function LocationModal({
   return (
     <>
       <Modal
-        title={editingItem ? 'Editar Registro' : 'Novo Registro'}
+        title={editingItem ? "Editar Registro" : "Novo Registro"}
         open={visible}
         onOk={handleSave}
         onCancel={onClose}
@@ -100,26 +100,26 @@ function LocationModal({
         destroyOnHidden
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'O nome é obrigatório!' }]}>
+          <Form.Item name="name" label="Nome" rules={[{ required: true, message: "O nome é obrigatório!" }]}>
             <Input />
           </Form.Item>
 
-          {(activeTab === 'country' || activeTab === 'state') && (
+          {(activeTab === "country" || activeTab === "state") && (
             <Form.Item
               name="code"
               label="Código"
               rules={[
-                { required: true, message: 'O código é obrigatório!' },
-                { max: 3, message: 'O código não pode ter mais de 3 letras.' },
-                { pattern: /^[a-zA-Z]+$/, message: 'Apenas letras são permitidas.' }
+                { required: true, message: "O código é obrigatório!" },
+                { max: 3, message: "O código não pode ter mais de 3 letras." },
+                { pattern: /^[a-zA-Z]+$/, message: "Apenas letras são permitidas." }
               ]}
             >
               <Input placeholder="Ex: PT, BR, SP" />
             </Form.Item>
           )}
 
-          {activeTab === 'state' && (
-            <Form.Item name="countryUid" label="País" rules={[{ required: true, message: 'O país é obrigatório!' }]}>
+          {activeTab === "state" && (
+            <Form.Item name="countryUid" label="País" rules={[{ required: true, message: "O país é obrigatório!" }]}>
               <Select
                 placeholder="Selecione um país"
                 options={allCountries.map(c => ({ value: c.uid, label: c.name }))}
@@ -128,8 +128,8 @@ function LocationModal({
             </Form.Item>
           )}
 
-          {activeTab === 'city' && (
-            <Form.Item name="stateUid" label="Estado" rules={[{ required: true, message: 'O estado é obrigatório!' }]}>
+          {activeTab === "city" && (
+            <Form.Item name="stateUid" label="Estado" rules={[{ required: true, message: "O estado é obrigatório!" }]}>
               <Select
                 placeholder="Selecione um estado"
                 options={allStates.map(s => ({ value: s.uid, label: `${s.name} | ${s.countryName}` }))}

@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Row, Col, Button, Slider, Divider, Space, Typography, Popconfirm } from 'antd';
+import React, { useState, useEffect, useRef, useImperativeHandle } from "react";
+import { Row, Col, Button, Slider, Divider, Space, Typography, Popconfirm } from "antd";
 import {
   UploadOutlined, ZoomInOutlined, ZoomOutOutlined,
   UndoOutlined, RedoOutlined, FormatPainterOutlined, PictureOutlined, DeleteOutlined
-} from '@ant-design/icons';
-import { useDropzone } from 'react-dropzone';
-import AvatarEditor from 'react-avatar-editor';
+} from "@ant-design/icons";
+import { useDropzone } from "react-dropzone";
+import AvatarEditor from "react-avatar-editor";
 
-import './index.less';
+import "./index.less";
 
 const { Text } = Typography;
 
@@ -18,12 +18,12 @@ function CoverImage({ currentImage, onRemove }, ref) {
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
   const [position, setPosition] = useState(undefined);
-  const [color, setColor] = useState('#ffffff');
+  const [color, setColor] = useState("#ffffff");
   const [removed, setRemoved] = useState(false);
 
   const refAvatarEditor = useRef(null);
 
-  const imageEditing = image && typeof image !== 'string';
+  const imageEditing = image && typeof image !== "string";
 
   useEffect(() => {
     setImage(null);
@@ -85,11 +85,11 @@ function CoverImage({ currentImage, onRemove }, ref) {
             <img src={displayImage} alt="Capa" className="cover-editor__preview" />
           ) : (
             <div className="cover-editor__preview cover-editor__preview--empty">
-              <PictureOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+              <PictureOutlined style={{ fontSize: 48, color: "#d9d9d9" }} />
             </div>
           )}
 
-          <Space orientation="vertical" size="middle" style={{ marginTop: 24, width: '100%', alignItems: 'center' }}>
+          <Space orientation="vertical" size="middle" style={{ marginTop: 24, width: "100%", alignItems: "center" }}>
             <Button
               onClick={open}
               type="primary"
@@ -115,7 +115,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
             )}
           </Space>
 
-          <Text style={{color: '#000'}} type="secondary" className="cover-editor__hint">
+          <Text style={{ color: "#000" }} type="secondary" className="cover-editor__hint">
             (Ou arrasta e larga a foto aqui)
           </Text>
         </div>
@@ -136,7 +136,7 @@ function CoverImage({ currentImage, onRemove }, ref) {
                 scale={scale}
                 rotate={rotate}
                 className="cover-editor__canvas"
-                style={{ width: '100%', height: 'auto', maxWidth: '740px' }}
+                style={{ width: "100%", height: "auto", maxWidth: "740px" }}
               />
             </Col>
 

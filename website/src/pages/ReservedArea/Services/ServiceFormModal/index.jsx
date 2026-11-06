@@ -1,9 +1,9 @@
-import React from 'react';
-import { Modal, Form, Row, Col, Input, Select, Popover, Button } from 'antd';
-import { LinkOutlined, InstagramOutlined, SmileOutlined } from '@ant-design/icons';
-import EmojiPicker from 'emoji-picker-react';
-import ptEmojis from 'emoji-picker-react/dist/data/emojis-pt';
-import { normalizePhone, sanitizePhoneInput } from '../phone.js';
+import React from "react";
+import { Modal, Form, Row, Col, Input, Select, Popover, Button } from "antd";
+import { LinkOutlined, InstagramOutlined, SmileOutlined } from "@ant-design/icons";
+import EmojiPicker from "emoji-picker-react";
+import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
+import { normalizePhone, sanitizePhoneInput } from "../phone.js";
 
 export default function ServiceFormModal({
   visible,
@@ -115,7 +115,7 @@ export default function ServiceFormModal({
         >
           <div className="services-list__description-wrapper">
             <Input.TextArea
-              style={{ resize: 'none' }}
+              style={{ resize: "none" }}
               ref={textAreaRef}
               value={descriptionValue}
               onChange={(e) => {

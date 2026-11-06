@@ -1,9 +1,9 @@
-import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
+import { _req, _db, _val, _user, _header, _exec, _out } from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
 import notifications, { notificationTypes, notificationMessages } from "#core/lib/notifications.js";
 
-const postUid = _req.getString('uid');
+const postUid = _req.getString("uid");
 
 const dbPost = _db.queryFirst(`
     SELECT post.id AS id, post.likes, author.id AS author_id
@@ -19,7 +19,7 @@ if (!dbPost) {
 }
 
 const loggedUser = people.getLogged();
-const loggedUserId = loggedUser.getInt('id');
+const loggedUserId = loggedUser.getInt("id");
 const loggedUserUid = loggedUser.getUID("uid");
 const loggedUsername = people.getData(loggedUserUid).getString("username");
 
@@ -29,7 +29,7 @@ const dbLike = _db.queryFirst(`
     WHERE 1 = 1
         AND post_id = ?::int
         AND people_id = ?::int
-`, dbPost.getInt('id'), loggedUserId);
+`, dbPost.getInt("id"), loggedUserId);
 
 if (dbLike) {
   _header.status(400);
@@ -37,18 +37,18 @@ if (dbLike) {
 }
 
 _db.insert(
-  'post_like',
+  "post_like",
   _val.map()
-    .set('post_id', dbPost.getInt('id'))
-    .set('people_id', loggedUserId)
-    .set('moment', _db.timestamp())
+    .set("post_id", dbPost.getInt("id"))
+    .set("people_id", loggedUserId)
+    .set("moment", _db.timestamp())
 );
 
 _db.update(
-  'post',
-  dbPost.getInt('id'),
+  "post",
+  dbPost.getInt("id"),
   _val.map()
-    .set('likes', dbPost.getInt('likes') + 1)
+    .set("likes", dbPost.getInt("likes") + 1)
 );
 
 const notificationTypeId = notifications.getNotificationTypeId(notificationTypes.MY_POST_LIKE);
@@ -120,5 +120,5 @@ if (loggedInstitutionId > 0) {
 
 _out.json(
   _val.map()
-    .set('result', true)
+    .set("result", true)
 );

@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
-import { Table, Button, Space, Popconfirm, Typography, Empty, message } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useState, useMemo } from "react";
+import { Table, Button, Space, Popconfirm, Typography, Empty, message } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
-import _service from '@netuno/service-client';
-import globalNotification from '../../../../common/globalNotification';
+import _service from "@netuno/service-client";
+import globalNotification from "../../../../common/globalNotification";
 
 const { Text } = Typography;
 
@@ -23,30 +23,30 @@ function LocationTable({
     setDeletingUid(uid);
     _service({
       url: `location/${activeTab}`,
-      method: 'DELETE',
+      method: "DELETE",
       data: { uid },
       success: ({ json }) => {
         if (json?.result) {
-          globalNotification.success({ title: 'Sucesso', description: 'Registro apagado com sucesso.' });
+          globalNotification.success({ title: "Sucesso", description: "Registro apagado com sucesso." });
           onDeleteSuccess() && onDeleteSuccess();
         } else {
-          globalNotification.error({ title: 'Erro', description: json?.error || 'Não foi possível apagar o registro.' });
+          globalNotification.error({ title: "Erro", description: json?.error || "Não foi possível apagar o registro." });
         }
         setDeletingUid(null);
       },
       fail: (response) => {
         const json = response?.json;
-        let desc = json?.error || 'Falha de comunicação ao apagar o registro.';
+        let desc = json?.error || "Falha de comunicação ao apagar o registro.";
 
         // Catch custom backend database constraint errors to show friendly messages
-        if (json?.error === 'country-has-states') {
-          desc = 'Não é possível apagar: existem estados associados a este país.';
+        if (json?.error === "country-has-states") {
+          desc = "Não é possível apagar: existem estados associados a este país.";
         }
-        if (json?.error === 'state-has-cities') {
-          desc = 'Não é possível apagar: existem cidades associadas a este estado.';
+        if (json?.error === "state-has-cities") {
+          desc = "Não é possível apagar: existem cidades associadas a este estado.";
         }
 
-        globalNotification.error({ title: 'Erro', description: desc });
+        globalNotification.error({ title: "Erro", description: desc });
         setDeletingUid(null);
       },
     });
@@ -55,25 +55,25 @@ function LocationTable({
   // Dynamically constructs the table columns based on the selected geographic level
   const columns = useMemo(() => {
     const baseColumns = [
-      { title: 'Nome', dataIndex: 'name', key: 'name', render: (text) => <Text>{text}</Text> },
+      { title: "Nome", dataIndex: "name", key: "name", render: (text) => <Text>{text}</Text> },
     ];
 
-    if (activeTab === 'country' || activeTab === 'state') {
-      baseColumns.push({ title: 'Código', dataIndex: 'code', key: 'code' });
+    if (activeTab === "country" || activeTab === "state") {
+      baseColumns.push({ title: "Código", dataIndex: "code", key: "code" });
     }
-    if (activeTab === 'city') {
-      baseColumns.push({ title: 'Estado', dataIndex: 'stateName', key: 'stateName', render: (text) => <Text>{text}</Text> });
+    if (activeTab === "city") {
+      baseColumns.push({ title: "Estado", dataIndex: "stateName", key: "stateName", render: (text) => <Text>{text}</Text> });
     }
-    if (activeTab === 'state' || activeTab === 'city') {
-      baseColumns.push({ title: 'País', dataIndex: 'countryName', key: 'countryName', render: (text) => <Text>{text}</Text> });
+    if (activeTab === "state" || activeTab === "city") {
+      baseColumns.push({ title: "País", dataIndex: "countryName", key: "countryName", render: (text) => <Text>{text}</Text> });
     }
 
     // Action buttons
     baseColumns.push({
-      title: 'Ações',
-      key: 'actions',
+      title: "Ações",
+      key: "actions",
       width: 120,
-      align: 'center',
+      align: "center",
       render: (_, record) => (
         <Space size="small">
           <Button type="link" icon={<EditOutlined />} onClick={() => onEdit(record)} />
@@ -93,14 +93,14 @@ function LocationTable({
   }, [activeTab, deletingUid, onEdit]);
 
   const totalText = (total) => {
-    if (activeTab === 'country') {
-      return total === 1 ? '1 País' : `${total} Países`;
+    if (activeTab === "country") {
+      return total === 1 ? "1 País" : `${total} Países`;
     }
-    if (activeTab === 'state') {
-      return total === 1 ? '1 Estado' : `${total} Estados`;
+    if (activeTab === "state") {
+      return total === 1 ? "1 Estado" : `${total} Estados`;
     }
-    if (activeTab === 'city') {
-      return total === 1 ? '1 Cidade' : `${total} Cidades`;
+    if (activeTab === "city") {
+      return total === 1 ? "1 Cidade" : `${total} Cidades`;
     }
     return `Total: ${total}`;
   };
@@ -122,12 +122,12 @@ function LocationTable({
         columns={columns}
         rowKey="uid"
         loading={loading}
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: "max-content" }}
         pagination={{
           current: pagination.current,
           pageSize: pagination.pageSize,
           onChange: (page, pageSize) => setPagination({ current: page, pageSize }),
-          placement: ['bottomCenter'],
+          placement: ["bottomCenter"],
           showTotal: totalText,
         }}
       />

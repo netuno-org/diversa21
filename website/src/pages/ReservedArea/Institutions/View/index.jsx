@@ -1,5 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, Fragment } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Typography, Card, Spin, Button, Divider, Avatar, Space, Empty, Pagination, Tabs, Tag
 } from "antd";
@@ -8,11 +8,11 @@ import {
   PhoneOutlined, EnvironmentOutlined, GlobalOutlined,
   FileTextOutlined, CommentOutlined, LikeOutlined,
   InstagramOutlined, CalendarOutlined
-} from '@ant-design/icons';
-import _service from '@netuno/service-client';
+} from "@ant-design/icons";
+import _service from "@netuno/service-client";
 
-import UserProfileDisplay from '../../../../components/UserProfileDisplay';
-import ContentActions from '../../../../components/ContentActions';
+import UserProfileDisplay from "../../../../components/UserProfileDisplay";
+import ContentActions from "../../../../components/ContentActions";
 import ActivityList from "../../../../components/Activity/List";
 import InstitutionEvents from "./Events";
 import usePeople from "../../../../common/usePeople.js";
@@ -42,27 +42,27 @@ function View() {
         isMobile: window.innerWidth <= 768,
       });
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     if (slug) {
       setLoading(true);
       _service({
-        method: 'GET',
-        url: `/institution`,
+        method: "GET",
+        url: "/institution",
         data: { slug },
         success: ({ json }) => {
           if (json.data) {
             setInstitution(json.data);
           } else {
-            setError('Instituição não encontrada.');
+            setError("Instituição não encontrada.");
           }
           setLoading(false);
         },
         fail: () => {
-          setError('Não foi possível carregar os dados da instituição.');
+          setError("Não foi possível carregar os dados da instituição.");
           setLoading(false);
         }
       });
@@ -76,8 +76,8 @@ function View() {
   const fetchUsers = (page) => {
     setUsersLoading(true);
     _service({
-      method: 'GET',
-      url: '/institution/people/list',
+      method: "GET",
+      url: "/institution/people/list",
       data: { uid: institution.uid, page },
       success: ({ json }) => {
         setUsers(json.data.items);
@@ -111,7 +111,7 @@ function View() {
         <div className="institution-view__error">
           <Empty description={error || "Instituição não encontrada."} />
           {canEditInstitution &&
-            <Button type="primary" onClick={() => navigate('/institutions')}>
+            <Button type="primary" onClick={() => navigate("/institutions")}>
               Voltar à listagem
             </Button>
           }
@@ -136,7 +136,7 @@ function View() {
                     <Link to={`/u/${user.username}`} style={{ color: "inherit" }}>
                       <UserProfileDisplay
                         user={user}
-                        avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }}
+                        avatarStyle={{ width: "60px", height: "60px", borderRadius: "8px" }}
                       />
                     </Link>
                   </div>
@@ -164,7 +164,7 @@ function View() {
     </div>
   );
 
-  const membersCount = usersLoading ? '' : ` ${usersPagination.total}`;
+  const membersCount = usersLoading ? "" : ` ${usersPagination.total}`;
 
   return (
     <section className="institution-view">
@@ -188,7 +188,7 @@ function View() {
                 src={_service.url(`/asset?uid=${institution.uid}&type=avatar&entity=institution`)}
                 size={120}
                 shape="square"
-                style={{ backgroundColor: '#fff' }}
+                style={{ backgroundColor: "#fff" }}
               />
             ) : (
               <Avatar
@@ -235,8 +235,8 @@ function View() {
             {(institution.city?.name || institution.country?.name || institution.state?.name) && (
               <div className="institution-view__detail-localization">
                 <EnvironmentOutlined />
-                <Text style={{ color: '#000' }} type="secondary">
-                  {institution.city?.name}{institution.city?.name && (institution.state?.name || institution.country?.name) && ', '}
+                <Text style={{ color: "#000" }} type="secondary">
+                  {institution.city?.name}{institution.city?.name && (institution.state?.name || institution.country?.name) && ", "}
                   {institution.state?.name || institution.country?.name}
                 </Text>
               </div>
@@ -245,9 +245,9 @@ function View() {
             {(institution.address || institution.post_code) && (
               <div className="institution-view__detail-localization">
                 <EnvironmentOutlined />
-                <Text style={{ color: '#000' }} type="secondary">
+                <Text style={{ color: "#000" }} type="secondary">
                   {institution.address}
-                  {institution.address && institution.post_code && ', '}
+                  {institution.address && institution.post_code && ", "}
                   {institution.post_code}
                 </Text>
               </div>
@@ -284,12 +284,12 @@ function View() {
               <div className="institution-view__detail-item">
                 <InstagramOutlined />
                 <a
-                  href={`https://instagram.com/${institution.instagram.replace('@', '')}`}
+                  href={`https://instagram.com/${institution.instagram.replace("@", "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="institution-view__detail-link"
                 >
-                  @{institution.instagram.replace('@', '')}
+                  @{institution.instagram.replace("@", "")}
                 </a>
               </div>
             )}
@@ -300,8 +300,8 @@ function View() {
 
         <div className="institution-view__about">
           <Title level={4}>Sobre</Title>
-          {(institution.description || 'Esta instituição ainda não adicionou uma descrição.')
-            .split('\n')
+          {(institution.description || "Esta instituição ainda não adicionou uma descrição.")
+            .split("\n")
             .map((line, index, array) => (
               <Fragment key={index}>
                 {line}
@@ -318,17 +318,17 @@ function View() {
           tabBarGutter={screenSize.isMobile ? 16 : 32}
           items={[
             {
-              key: 'members',
+              key: "members",
               label: (
                 <Space>
                   <TeamOutlined style={{ fontSize: 18 }} />
-                  <span>Membros <Tag color="#6009B6" variant='solid' style={{ borderRadius: '32px' }}>{membersCount}</Tag></span>
+                  <span>Membros <Tag color="#6009B6" variant='solid' style={{ borderRadius: "32px" }}>{membersCount}</Tag></span>
                 </Space>
               ),
               children: membersTab
             },
             {
-              key: 'events',
+              key: "events",
               label: (
                 <Space>
                   <CalendarOutlined style={{ fontSize: 18 }} />
@@ -342,7 +342,7 @@ function View() {
               )
             },
             {
-              key: 'posts',
+              key: "posts",
               label: (
                 <Space>
                   <FileTextOutlined style={{ fontSize: 18 }} />
@@ -356,7 +356,7 @@ function View() {
               )
             },
             {
-              key: 'comments',
+              key: "comments",
               label: (
                 <Space>
                   <CommentOutlined style={{ fontSize: 18 }} />
@@ -370,7 +370,7 @@ function View() {
               )
             },
             {
-              key: 'likes',
+              key: "likes",
               label: (
                 <Space>
                   <LikeOutlined style={{ fontSize: 18 }} />

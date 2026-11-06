@@ -3,7 +3,7 @@ import { _req, _db, _val, _user, _out, _group } from "@netuno/server-types"
 import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
 
-let page = _req.getInt('page', 1);
+let page = _req.getInt("page", 1);
 
 const pageSize = 10;
 
@@ -20,9 +20,9 @@ if (_group.code() !== "member" && _group.code() !== "management" && _group.code(
 
 const profileUid = _req.getString("uid");
 const name = _req.getString("name");
-const cityUid = _req.getUID('cityUid');
-const stateUid = _req.getUID('stateUid');
-const countryUid = _req.getUID('countryUid');
+const cityUid = _req.getUID("cityUid");
+const stateUid = _req.getUID("stateUid");
+const countryUid = _req.getUID("countryUid");
 
 const loggedId = loggedUser.getInt("id");
 let targetId = loggedId;
@@ -104,13 +104,13 @@ let sqlQuery = `
 `;
 
 if (cityUid) {
-  sqlQuery += ` AND city.uid = ?::uuid `;
+  sqlQuery += " AND city.uid = ?::uuid ";
   params.add(cityUid);
 } else if (stateUid) {
-  sqlQuery += ` AND state.uid = ?::uuid `;
+  sqlQuery += " AND state.uid = ?::uuid ";
   params.add(stateUid);
 } else if (countryUid) {
-  sqlQuery += ` AND country.uid = ?::uuid `;
+  sqlQuery += " AND country.uid = ?::uuid ";
   params.add(countryUid);
 }
 

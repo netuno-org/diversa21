@@ -4,8 +4,8 @@ import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
 
 const peopleUid = _req.getUID("peopleUid");
-const parent = _req.getString('parent');
-let page = _req.getInt('page', 1);
+const parent = _req.getString("parent");
+let page = _req.getInt("page", 1);
 
 const pageSize = 10;
 
@@ -16,8 +16,8 @@ if (page > 0) {
 
 let dbParent = _val.map();
 
-if (parent != '') {
-  dbParent = _db.get('post', parent);
+if (parent != "") {
+  dbParent = _db.get("post", parent);
 }
 
 if (!dbParent) {
@@ -43,19 +43,19 @@ const loggedUserPeopleId = people.getLogged().getInt("id");
 params.add(loggedUserPeopleId);
 
 if (peopleUid) {
-  sqlQuery += ` AND (people.uid = ?::uuid) `;
+  sqlQuery += " AND (people.uid = ?::uuid) ";
   params.add(peopleUid);
 }
 
 sqlQuery += `
     AND (post.parent_id IS NULL OR post.parent_id = ?::int)
-    ORDER BY ${parent != '' ? 'post.likes DESC, post.moment DESC' : 'post.moment DESC'}
+    ORDER BY ${parent != "" ? "post.likes DESC, post.moment DESC" : "post.moment DESC"}
     LIMIT 10
     OFFSET ?::int
 `;
 
 params
-  .add(dbParent.getInt('id', 0))
+  .add(dbParent.getInt("id", 0))
   .add(offset)
 
 const dbPosts = _db.query(sqlQuery, params);

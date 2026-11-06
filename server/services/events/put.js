@@ -10,20 +10,20 @@ let isAdminOrManager = groupCode === SUPER_ADMIN || groupCode === MANAGEMENT;
 if (userId) {
   const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
   if (dbPerson) {
-    personId = dbPerson.getInt('id');
+    personId = dbPerson.getInt("id");
   }
 }
 
 if (!personId && !isAdminOrManager) {
   response.error("Utilizador não autenticado ou sem permissões.");
 } else {
-  const eventUid = _req.getString('eventUid');
-  const name = _req.getString('name');
-  const description = _req.getString('description');
-  const location = _req.getString('location');
-  const cityUid = _req.getString('city');
-  const startDate = _req.getString('startDate');
-  const endDate = _req.getString('endDate');
+  const eventUid = _req.getString("eventUid");
+  const name = _req.getString("name");
+  const description = _req.getString("description");
+  const location = _req.getString("location");
+  const cityUid = _req.getString("city");
+  const startDate = _req.getString("startDate");
+  const endDate = _req.getString("endDate");
   
   const coverImage = _req.getFile("cover_image");
   const clearCoverImage = _req.getBoolean("clear_cover_image");
@@ -35,8 +35,8 @@ if (!personId && !isAdminOrManager) {
     if (!dbEvent) {
       response.error("Evento não encontrado.");
     } else {
-      const eventId = dbEvent.getInt('id');
-      const hostId = dbEvent.getInt('host_id');
+      const eventId = dbEvent.getInt("id");
+      const hostId = dbEvent.getInt("host_id");
       
       if (!isAdminOrManager && hostId !== personId) {
         response.error("Não tem permissão para editar este evento.");
@@ -45,7 +45,7 @@ if (!personId && !isAdminOrManager) {
         if (cityUid) {
           const dbCity = _db.queryFirst("SELECT id FROM city WHERE uid = ?::uuid", cityUid);
           if (dbCity) {
-            cityId = dbCity.getInt('id');
+            cityId = dbCity.getInt("id");
           }
         }
 

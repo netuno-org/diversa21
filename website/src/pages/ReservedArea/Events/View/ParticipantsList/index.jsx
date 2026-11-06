@@ -1,8 +1,8 @@
-import { Typography, Spin, Pagination, Empty } from 'antd';
+import { Typography, Spin, Pagination, Empty } from "antd";
 
-import { UserAvatar } from '../../../../../components/EventCard';
+import { UserAvatar } from "../../../../../components/EventCard";
 
-import './index.less';
+import "./index.less";
 
 const { Text } = Typography;
 
@@ -14,7 +14,7 @@ function ParticipantsList({
   loading = false,
   onPageChange,
   onSelect,
-  emptyDescription = 'Ainda ninguém confirmou presença. Seja o primeiro!',
+  emptyDescription = "Ainda ninguém confirmou presença. Seja o primeiro!",
 }) {
   if (loading) {
     return (

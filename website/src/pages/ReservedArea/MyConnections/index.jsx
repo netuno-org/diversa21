@@ -1,24 +1,24 @@
-import React, { useMemo } from 'react'
-import { Tabs } from 'antd';
-import { useSearchParams } from 'react-router-dom';
-import FriendList from '../../../components/Friend/List';
-import FriendRequests from './FriendRequests';
+import React, { useMemo } from "react"
+import { Tabs } from "antd";
+import { useSearchParams } from "react-router-dom";
+import FriendList from "../../../components/Friend/List";
+import FriendRequests from "./FriendRequests";
 
-import './index.less';
+import "./index.less";
 
 function MyConnections() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'friends';
+  const activeTab = searchParams.get("tab") || "friends";
 
   const items = useMemo(() => [
     {
-      key: 'friends',
-      label: 'Amigos',
+      key: "friends",
+      label: "Amigos",
       children: <FriendList />,
     },
     {
-      key: 'received-requests',
-      label: 'Solicitações de amizade',
+      key: "received-requests",
+      label: "Solicitações de amizade",
       children: <FriendRequests />,
     },
   ], []);

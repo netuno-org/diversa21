@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import { Typography, Button } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Typography, Button } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 
 import usePeople from "../../../../common/usePeople.js";
 
@@ -23,7 +23,7 @@ function UserProfileEdit({ username }) {
     }
 
     _service({
-      method: 'GET',
+      method: "GET",
       url: `/people/by?username=${username}`,
       success: (response) => {
         setUser(response.json.data);

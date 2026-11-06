@@ -1,4 +1,4 @@
-import { _db, _val, _out, _req } from "@netuno/server-types";
+import { _db, _val, _out, _req, _exec } from "@netuno/server-types";
 
 import people from "#core/lib/people.js";
 import message from "#core/lib/message.js";
@@ -8,19 +8,19 @@ const messageUid = _req.getString("uid");
 
 if (!messageUid) {
   _out.json(_val.map().set("result", false).set("error", "missing_uid"));
-  _exit();
+  _exec.stop();
 }
 
 const dbMessage = message.getByUID(messageUid);
 
 if (!dbMessage) {
   _out.json(_val.map().set("result", false).set("error", "message_not_found"));
-  _exit();
+  _exec.stop();
 }
 
 if (dbMessage.getInt("originator_id") !== dbPeopleLogged.getInt("id")) {
   _out.json(_val.map().set("result", false).set("error", "unauthorized"));
-  _exit();
+  _exec.stop();
 }
 
 const dbPeopleTo = _db.get("people", dbMessage.getInt("recipient_id"));

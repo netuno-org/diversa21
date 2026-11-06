@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 
-import Profile from '../../../../components/Profile'
+import Profile from "../../../../components/Profile"
 
-function User({username}) {
+function User({ username }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ function User({username}) {
     }
 
     _service({
-      method: 'GET',
+      method: "GET",
       url: `/people/by?username=${username}`,
       success: (response) => {
         setUser(response.json.data);

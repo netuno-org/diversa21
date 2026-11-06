@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 import usePeople from "../../../common/usePeople.js";
 import { useNavigate } from "react-router-dom";
 
@@ -24,7 +24,7 @@ function CategoryTopics() {
 
   const loggedUser = usePeople();
   const navigate = useNavigate()
-  const mode = 'category'
+  const mode = "category"
 
   useEffect(() => {
     handleListCategories(searchTerm, page);
@@ -33,7 +33,7 @@ function CategoryTopics() {
   const handleListCategories = (name = searchTerm, currentPage = page) => {
     setLoading(true);
     _service({
-      method: 'GET',
+      method: "GET",
       url: "/forum/category/list",
       data: { name, page: currentPage },
       success: ({ json }) => {
@@ -53,7 +53,7 @@ function CategoryTopics() {
   const handleCreateCategory = (values) => {
     setLoading(true);
     _service({
-      method: 'POST',
+      method: "POST",
       url: "/forum/category",
       data: {
         name: values.name,
@@ -62,8 +62,8 @@ function CategoryTopics() {
       success: ({ json }) => {
         if (json) {
           globalNotification.success({
-            title: 'Categoria Criada',
-            description: 'A categoria foi criada com sucesso.',
+            title: "Categoria Criada",
+            description: "A categoria foi criada com sucesso.",
           });
           closeModal();
           setPage(1);
@@ -86,7 +86,7 @@ function CategoryTopics() {
   const handleUpdateCategory = (values) => {
     setLoading(true);
     _service({
-      method: 'PUT',
+      method: "PUT",
       url: "/forum/category",
       data: {
         uid: editingCategory.uid,
@@ -96,8 +96,8 @@ function CategoryTopics() {
       success: ({ json }) => {
         if (json) {
           globalNotification.success({
-            title: 'Categoria Atualizada',
-            description: 'A categoria foi atualizada com sucesso.',
+            title: "Categoria Atualizada",
+            description: "A categoria foi atualizada com sucesso.",
           });
           closeModal();
           handleListCategories(searchTerm, page);
@@ -119,14 +119,14 @@ function CategoryTopics() {
   const handleDeleteCategory = (uid) => {
     setLoading(true);
     _service({
-      method: 'DELETE',
+      method: "DELETE",
       url: "/forum/category",
       data: { uid },
       success: ({ json }) => {
         if (json) {
           globalNotification.success({
-            title: 'Categoria Removida',
-            description: 'A categoria foi removida com sucesso.',
+            title: "Categoria Removida",
+            description: "A categoria foi removida com sucesso.",
           });
           handleListCategories(searchTerm, page);
           return;
@@ -225,7 +225,7 @@ function CategoryTopics() {
         mode={mode}
       />
       {!loading && totalCount > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "24px", marginBottom: "24px" }}>
           <Pagination
             current={page}
             pageSize={10}

@@ -7,15 +7,15 @@ let personId = null;
 if (userId) {
   const dbPerson = _db.queryFirst("SELECT id FROM people WHERE people_user_id = ?", userId);
   if (dbPerson) {
-    personId = dbPerson.getInt('id');
+    personId = dbPerson.getInt("id");
   }
 }
 
 if (!personId) {
   response.error("Utilizador não autenticado ou sem perfil de pessoa associado.");
 } else {
-  const eventUid = _req.getString('eventUid');
-  const status = _req.getString('status');
+  const eventUid = _req.getString("eventUid");
+  const status = _req.getString("status");
 
   if (!eventUid) {
     response.error("O identificador do evento é obrigatório.");
@@ -24,7 +24,7 @@ if (!personId) {
     if (!dbEvent) {
       response.error("Evento não encontrado.");
     } else {
-      const eventId = dbEvent.getInt('id');
+      const eventId = dbEvent.getInt("id");
 
       const existing = _db.queryFirst(
         "SELECT id FROM event_participant WHERE event_id = ? AND people_id = ?",
@@ -34,7 +34,7 @@ if (!personId) {
       if (existing) {
         _db.execute(
           "UPDATE event_participant SET attendance_status = ? WHERE event_id = ? AND people_id = ?",
-          status || 'going', eventId, personId
+          status || "going", eventId, personId
         );
       } else {
         const dbMax = _db.queryFirst("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM event_participant");
@@ -43,7 +43,7 @@ if (!personId) {
         _db.execute(
           `INSERT INTO event_participant (id, uid, event_id, people_id, attendance_status, active) 
            VALUES (?, gen_random_uuid(), ?, ?, ?, true)`,
-          nextId, eventId, personId, status || 'going'
+          nextId, eventId, personId, status || "going"
         );
       }
 

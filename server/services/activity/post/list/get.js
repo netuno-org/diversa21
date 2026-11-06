@@ -5,7 +5,7 @@ import people from "#core/lib/people.js";
 
 const institutionUid = _req.getUID("institutionUid");
 const peopleUid = _req.getUID("peopleUid");
-let page = _req.getInt('page', 1);
+let page = _req.getInt("page", 1);
 
 const pageSize = 10;
 let offset = 0;

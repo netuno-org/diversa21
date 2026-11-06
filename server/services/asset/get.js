@@ -2,9 +2,9 @@ import { _req, _header, _out, _db, _storage } from "@netuno/server-types";
 
 import response from "#core/lib/response.js";
 
-const uid = _req.getString('uid');
-const type = _req.getString('type');
-const entity = _req.getString('entity');
+const uid = _req.getString("uid");
+const type = _req.getString("type");
+const entity = _req.getString("entity");
 
 const dbTable = _db.get(entity, uid);
 

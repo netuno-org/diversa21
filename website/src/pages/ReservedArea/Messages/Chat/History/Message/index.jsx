@@ -30,10 +30,10 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
     if (!parentUid) return;
     const parentEl = document.getElementById(`message-${parentUid}`);
     if (parentEl) {
-      parentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      parentEl.classList.add('messages__message--highlight');
+      parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      parentEl.classList.add("messages__message--highlight");
       setTimeout(() => {
-        parentEl.classList.remove('messages__message--highlight');
+        parentEl.classList.remove("messages__message--highlight");
       }, 6000);
     } else if (onLoadPreviousPage) {
       onLoadPreviousPage(parentUid, (found) => {
@@ -41,10 +41,10 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
           setTimeout(() => {
             const targetEl = document.getElementById(`message-${parentUid}`);
             if (targetEl) {
-              targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              targetEl.classList.add('messages__message--highlight');
+              targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+              targetEl.classList.add("messages__message--highlight");
               setTimeout(() => {
-                targetEl.classList.remove('messages__message--highlight');
+                targetEl.classList.remove("messages__message--highlight");
               }, 6000);
             }
           }, 100);
@@ -83,7 +83,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
   const renderMessageText = (text) => {
     if (!text) return "";
     const cleanedText = text.replace(/[^\S\n]{4,}/g, "   ").replace(/\n{2,}/g, "\n\n").trim();
-    return cleanedText.split('\n').map((line, index, array) => {
+    return cleanedText.split("\n").map((line, index, array) => {
       const parts = line.split(linkRegex);
       return (
         <React.Fragment key={index}>
@@ -96,7 +96,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  style={{ color: isIncoming ? '#1890ff' : '#e6f7ff', textDecoration: 'underline' }}
+                  style={{ color: isIncoming ? "#1890ff" : "#e6f7ff", textDecoration: "underline" }}
                 >
                   {part}
                 </a>
@@ -130,20 +130,20 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
 
   const menuItems = [
     ...(data.parent ? [{
-      key: 'view-original',
-      label: 'Ver original',
-      icon: <EnterOutlined style={{ transform: 'rotate(90deg)' }} />,
+      key: "view-original",
+      label: "Ver original",
+      icon: <EnterOutlined style={{ transform: "rotate(90deg)" }} />,
       onClick: () => scrollToParent(data.parent.uid)
     }] : []),
     ...(isEditAllowed ? [{
-      key: 'edit',
-      label: 'Editar',
+      key: "edit",
+      label: "Editar",
       icon: <EditOutlined />,
       onClick: () => setIsEditing(true)
     }] : []),
     {
-      key: 'delete',
-      label: 'Eliminar',
+      key: "delete",
+      label: "Eliminar",
       icon: <DeleteOutlined />,
       danger: true,
       onClick: () => setShowDeleteConfirm(true)
@@ -152,27 +152,27 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
 
   const incomingMenuItems = [
     {
-      key: 'react',
-      label: 'Reagir...',
+      key: "react",
+      label: "Reagir...",
       icon: <SmileOutlined />,
       onClick: () => setReactionPopoverOpen(true)
     },
     {
-      key: 'reply',
-      label: 'Responder',
-      icon: <EnterOutlined style={{ transform: 'scaleX(-1)' }} />,
+      key: "reply",
+      label: "Responder",
+      icon: <EnterOutlined style={{ transform: "scaleX(-1)" }} />,
       onClick: () => onReply && onReply(data)
     },
     ...(data.parent ? [{
-      key: 'view-original',
-      label: 'Ver original',
-      icon: <EnterOutlined style={{ transform: 'rotate(90deg)' }} />,
+      key: "view-original",
+      label: "Ver original",
+      icon: <EnterOutlined style={{ transform: "rotate(90deg)" }} />,
       onClick: () => scrollToParent(data.parent.uid)
     }] : [])
   ];
 
   return (
-    <li id={`message-${data.uid}`} className={`messages__message ${isIncoming ? 'messages__message--incoming' : 'messages__message--outgoing'}`}>
+    <li id={`message-${data.uid}`} className={`messages__message ${isIncoming ? "messages__message--incoming" : "messages__message--outgoing"}`}>
       {showTime && (
         <Text type="secondary" className="messages__message-time">
           {messageMoment.format("DD/MM/YYYY HH:mm")}
@@ -183,7 +183,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
         <div className="messages__message-content">
           {isEditing ? (
             <div className="messages__message-edit-wrapper">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
                 <Input.TextArea
                   ref={editTextAreaRef}
                   value={editText}
@@ -212,7 +212,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                     type="text"
                     shape="circle"
                     icon={<SmileOutlined />}
-                    style={{ fontSize: 18, color: '#8c8c8c' }}
+                    style={{ fontSize: 18, color: "#8c8c8c" }}
                   />
                 </Popover>
               </div>
@@ -243,7 +243,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
               </div>
             </div>
           ) : (
-            <div className="messages__message-bubble-wrapper" style={{ position: 'relative' }}>
+            <div className="messages__message-bubble-wrapper" style={{ position: "relative" }}>
               <Popconfirm
                 title="Eliminar mensagem?"
                 open={showDeleteConfirm}
@@ -259,7 +259,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                 {isIncoming && !data.deleted_at ? (
                   <Popover
                     content={
-                      <div style={{ margin: '-12px' }} onClick={(e) => e.stopPropagation()}>
+                      <div style={{ margin: "-12px" }} onClick={(e) => e.stopPropagation()}>
                         <EmojiPicker
                           onEmojiClick={(emojiData) => {
                             const rawReaction = data.reaction || "";
@@ -291,13 +291,13 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                   >
                     <Dropdown
                       menu={{ items: incomingMenuItems }}
-                      trigger={['click']}
+                      trigger={["click"]}
                       placement="bottomRight"
-                      style={{ minWidth: 0, width: '100%' }}
+                      style={{ minWidth: 0, width: "100%" }}
                     >
                       <div
-                        className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
-                        style={{ cursor: 'pointer', minWidth: 0, width: '100%' }}
+                        className={`messages__message-bubble ${data.deleted_at ? "messages__message-bubble--deleted" : ""}`}
+                        style={{ cursor: "pointer", minWidth: 0, width: "100%" }}
                       >
                         {!data.deleted_at && data.parent && (
                           <div className="messages__message-reply-quote">
@@ -309,7 +309,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                             </span>
                           </div>
                         )}
-                        <Text className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
+                        <Text className="messages__message-text" style={{ wordBreak: "break-all", display: "block" }}>
                           {renderMessageText(messageText)}
                         </Text>
                         {!data.deleted_at && (
@@ -326,17 +326,17 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                 ) : (
                   <Dropdown
                     menu={{ items: menuItems }}
-                    trigger={['click']}
+                    trigger={["click"]}
                     placement="bottomRight"
                     disabled={!!data.deleted_at}
-                    style={{ minWidth: 0, width: '100%' }}
+                    style={{ minWidth: 0, width: "100%" }}
                   >
                     <div
-                      className={`messages__message-bubble ${data.deleted_at ? 'messages__message-bubble--deleted' : ''}`}
-                      style={{ cursor: data.deleted_at ? 'default' : 'pointer', minWidth: 0, width: '100%' }}
+                      className={`messages__message-bubble ${data.deleted_at ? "messages__message-bubble--deleted" : ""}`}
+                      style={{ cursor: data.deleted_at ? "default" : "pointer", minWidth: 0, width: "100%" }}
                     >
                       {data.deleted_at ? (
-                        <Text italic type="secondary" className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
+                        <Text italic type="secondary" className="messages__message-text" style={{ wordBreak: "break-all", display: "block" }}>
                           Mensagem apagada
                         </Text>
                       ) : (
@@ -351,7 +351,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                               </span>
                             </div>
                           )}
-                          <Text className="messages__message-text" style={{ wordBreak: 'break-all', display: 'block' }}>
+                          <Text className="messages__message-text" style={{ wordBreak: "break-all", display: "block" }}>
                             {renderMessageText(messageText)}
                           </Text>
                           {((readMoment && showRead) || data.edited_at) && (
@@ -373,7 +373,7 @@ function Message({ friend, data, onDelete, onEdit, onReact, onReply, onLoadPrevi
                 <div
                   className="messages__message-reaction-badge"
                   style={{
-                    [isIncoming ? 'left' : 'right']: '-2px'
+                    [isIncoming ? "left" : "right"]: "-2px"
                   }}
                 >
                   <span>{data.reaction}</span>

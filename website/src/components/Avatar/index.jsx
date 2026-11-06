@@ -1,28 +1,28 @@
-import React, { useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar, Popconfirm } from 'antd';
+import React, { useState, useEffect, useRef, useImperativeHandle } from "react";
+import { Row, Col, Button, Slider, Divider, Space, Typography, Avatar as AntAvatar, Popconfirm } from "antd";
 import {
   UploadOutlined, ZoomInOutlined, ZoomOutOutlined,
   UndoOutlined, FormatPainterOutlined, DeleteOutlined
-} from '@ant-design/icons';
-import { useDropzone } from 'react-dropzone';
-import AvatarEditor from 'react-avatar-editor';
+} from "@ant-design/icons";
+import { useDropzone } from "react-dropzone";
+import AvatarEditor from "react-avatar-editor";
 
-import './index.less';
+import "./index.less";
 
 const { Text } = Typography;
 
-const DEFAULT_IMAGE = '/images/profile-default.png';
+const DEFAULT_IMAGE = "/images/profile-default.png";
 
 function Avatar({ currentImage, onRemove }, ref) {
   const [image, setImage] = useState(currentImage);
   const [scale, setScale] = useState(1.0);
   const [rotate, setRotate] = useState(0);
-  const [color, setColor] = useState('#ffffff');
+  const [color, setColor] = useState("#ffffff");
   const [removed, setRemoved] = useState(false);
 
   const refAvatarEditor = useRef(null);
 
-  const imageEditing = image && typeof image !== 'string';
+  const imageEditing = image && typeof image !== "string";
 
   useEffect(() => {
     setImage(null);
@@ -72,7 +72,7 @@ function Avatar({ currentImage, onRemove }, ref) {
             className="avatar-editor__preview"
           />
 
-          <Space orientation="vertical" size="middle" style={{ marginTop: 24, width: '100%', alignItems: 'center' }}>
+          <Space orientation="vertical" size="middle" style={{ marginTop: 24, width: "100%", alignItems: "center" }}>
             <Button
               onClick={open}
               type="primary"
@@ -98,7 +98,7 @@ function Avatar({ currentImage, onRemove }, ref) {
             )}
           </Space>
 
-          <Text style={{color: "#000"}} type="secondary" className="avatar-editor__hint">
+          <Text style={{ color: "#000" }} type="secondary" className="avatar-editor__hint">
             (Ou arrasta e larga a foto aqui)
           </Text>
         </div>

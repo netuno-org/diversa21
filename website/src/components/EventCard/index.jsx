@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { Card, Typography, Button, Avatar, Tooltip, Tag } from 'antd';
-import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, CheckOutlined } from '@ant-design/icons';
-import _service from '@netuno/service-client';
-import dayjs from 'dayjs';
-import 'dayjs/locale/pt';
+import { useState } from "react";
+import { Card, Typography, Button, Avatar, Tooltip, Tag } from "antd";
+import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, CheckOutlined } from "@ant-design/icons";
+import _service from "@netuno/service-client";
+import dayjs from "dayjs";
+import "dayjs/locale/pt";
 
-import ContentActions from '../ContentActions';
-import usePeople from '../../common/usePeople.js';
-import './index.less';
+import ContentActions from "../ContentActions";
+import usePeople from "../../common/usePeople.js";
+import "./index.less";
 
-dayjs.locale('pt');
+dayjs.locale("pt");
 
 const { Text, Title } = Typography;
 
@@ -21,7 +21,7 @@ export const getCoverUrl = (event) => {
 
   const coverImageStr = String(rawCoverValue);
 
-  if (coverImageStr.startsWith('http') || coverImageStr.startsWith('data:')) {
+  if (coverImageStr.startsWith("http") || coverImageStr.startsWith("data:")) {
     return coverImageStr;
   }
 
@@ -29,45 +29,45 @@ export const getCoverUrl = (event) => {
 };
 
 export const isPastEvent = (event) => Boolean(
-  event?.startDate && dayjs(event.startDate).isBefore(dayjs(), 'day')
+  event?.startDate && dayjs(event.startDate).isBefore(dayjs(), "day")
 );
 
 export const formatEventDate = (startString, endString) => {
-  if (!startString) return '';
+  if (!startString) return "";
   const start = dayjs(startString);
-  const isToday = start.isSame(dayjs(), 'day');
+  const isToday = start.isSame(dayjs(), "day");
 
   const formatDay = (d) => {
-    const dayStr = d.format('ddd').replace('.', '');
-    return `${dayStr.charAt(0).toUpperCase() + dayStr.slice(1)}, ${d.format('DD/MM')}`;
+    const dayStr = d.format("ddd").replace(".", "");
+    return `${dayStr.charAt(0).toUpperCase() + dayStr.slice(1)}, ${d.format("DD/MM")}`;
   };
 
-  const startTime = start.format('HH:mm');
-  const startText = isToday ? 'Hoje' : formatDay(start);
+  const startTime = start.format("HH:mm");
+  const startText = isToday ? "Hoje" : formatDay(start);
   const startFormatted = `${startText} às ${startTime}`;
 
   if (!endString) return startFormatted;
 
   const end = dayjs(endString);
-  const endTime = end.format('HH:mm');
+  const endTime = end.format("HH:mm");
 
-  if (start.isSame(end, 'day')) {
+  if (start.isSame(end, "day")) {
     return `${startFormatted} - ${endTime}`;
   }
 
   return `${startFormatted} - ${formatDay(end)} às ${endTime}`;
 };
 
-export const UserAvatar = ({ person, size, shape, className = '', onClick }) => {
+export const UserAvatar = ({ person, size, shape, className = "", onClick }) => {
   const [failed, setFailed] = useState(false);
 
   if (!person) return null;
 
-  let src = '/images/profile-default.png';
+  let src = "/images/profile-default.png";
 
   if (!failed && person.avatar) {
     const avatarStr = String(person.avatar);
-    if (avatarStr.startsWith('http') || avatarStr.startsWith('data:')) {
+    if (avatarStr.startsWith("http") || avatarStr.startsWith("data:")) {
       src = avatarStr;
     } else {
       src = _service.url(`/asset?uid=${person.uid}&type=avatar&entity=people`);
@@ -75,14 +75,14 @@ export const UserAvatar = ({ person, size, shape, className = '', onClick }) => 
   }
 
   return (
-    <Tooltip title={person.name || 'Participante'}>
+    <Tooltip title={person.name || "Participante"}>
       <Avatar
         size={size}
         shape={shape}
         src={src}
         className={`event-card__avatar ${className}`.trim()}
         onClick={onClick}
-        style={onClick ? { cursor: 'pointer' } : undefined}
+        style={onClick ? { cursor: "pointer" } : undefined}
         onError={() => {
           if (!failed) setFailed(true);
           return true;
@@ -97,15 +97,15 @@ function EventCard({
   onClick,
   onEdit,
   onDelete,
-  className = '',
+  className = "",
 }) {
   const loggedUser = usePeople();
-  const hideEventActions = ['member', 'review'].includes(loggedUser?.data?.group?.code);
+  const hideEventActions = ["member", "review"].includes(loggedUser?.data?.group?.code);
 
   if (!event) return null;
 
   const cityText = event.city?.name
-    ? `${event.city.name}${event.state?.name ? `, ${event.state.name}` : ''}`
+    ? `${event.city.name}${event.state?.name ? `, ${event.state.name}` : ""}`
     : null;
   const coverUrl = getCoverUrl(event);
   const isPast = isPastEvent(event);
@@ -115,7 +115,7 @@ function EventCard({
       bordered={false}
       hoverable={Boolean(onClick)}
       onClick={onClick ? () => onClick(event) : undefined}
-      className={`event-card${isPast ? ' event-card--past' : ''}${className ? ` ${className}` : ''}`}
+      className={`event-card${isPast ? " event-card--past" : ""}${className ? ` ${className}` : ""}`}
       cover={
         <div className="event-card__cover">
           <div className="event-card__cover-fallback">
@@ -128,7 +128,7 @@ function EventCard({
               alt={event.name}
               className="event-card__cover-image"
               onError={(e) => {
-                e.currentTarget.style.display = 'none';
+                e.currentTarget.style.display = "none";
               }}
             />
           )}
@@ -170,20 +170,20 @@ function EventCard({
           <EnvironmentOutlined />
           <Text className="event-card__info-text" ellipsis>
             {event.location}
-            {event.location && cityText && ' - '}
+            {event.location && cityText && " - "}
             {cityText}
-            {!event.location && !cityText && 'Localização não especificada'}
+            {!event.location && !cityText && "Localização não especificada"}
           </Text>
         </div>
 
-        <div className="event-card__participants" style={{ flexWrap: 'wrap' }}>
+        <div className="event-card__participants" style={{ flexWrap: "wrap" }}>
           <TeamOutlined />
           <Text className="event-card__info-text">
-            {event.participantsCount || 0} {event.participantsCount === 1 ? 'participante' : 'participantes'}
+            {event.participantsCount || 0} {event.participantsCount === 1 ? "participante" : "participantes"}
           </Text>
           {event.isGoing && (
-            <Tag color="success" style={{ borderRadius: '16px', margin: 0, border: 'none', background: '#f6ffed', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <CheckOutlined style={{ color: '#52c41a', fontSize: '12px' }} /> Presença confirmada
+            <Tag color="success" style={{ borderRadius: "16px", margin: 0, border: "none", background: "#f6ffed", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              <CheckOutlined style={{ color: "#52c41a", fontSize: "12px" }} /> Presença confirmada
             </Tag>
           )}
         </div>

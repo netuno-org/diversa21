@@ -2,7 +2,7 @@ import { _req, _db, _out } from "@netuno/server-types";
 
 import search from "#core/lib/search.js";
 
-const input = _req.getString('name') || "";
+const input = _req.getString("name") || "";
 
 const query = `
 SELECT * FROM (

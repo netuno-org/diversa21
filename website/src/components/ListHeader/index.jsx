@@ -1,5 +1,5 @@
-import { Typography, Button, AutoComplete, Input, Select } from 'antd';
-import './index.less'
+import { Typography, Button, AutoComplete, Input, Select } from "antd";
+import "./index.less"
 
 const { Title } = Typography;
 

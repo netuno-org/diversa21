@@ -1,7 +1,7 @@
-import React from 'react';
-import { Typography, Card } from 'antd';
-import FAQAccordion from '../../../components/FAQAccordion';
-import './index.less';
+import React from "react";
+import { Typography, Card } from "antd";
+import FAQAccordion from "../../../components/FAQAccordion";
+import "./index.less";
 
 const { Title, Text } = Typography;
 

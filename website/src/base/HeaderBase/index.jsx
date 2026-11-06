@@ -29,10 +29,10 @@ function HeaderBase() {
   const isMobile = screens.md === false;
 
   useEffect(() => {
-    if (location.pathname === '/profile/edit') {
-      setMenuKeysSelected(['profileEdit']);
-    } else if (location.pathname === '/notification-settings') {
-      setMenuKeysSelected(['notificationSettings']);
+    if (location.pathname === "/profile/edit") {
+      setMenuKeysSelected(["profileEdit"]);
+    } else if (location.pathname === "/notification-settings") {
+      setMenuKeysSelected(["notificationSettings"]);
     } else {
       setMenuKeysSelected([]);
     }
@@ -52,7 +52,7 @@ function HeaderBase() {
 
   return (
     <Header
-      className={classNames('header-base', {
+      className={classNames("header-base", {
         auth: isLogged,
         mobile: isMobile,
       })}
@@ -92,18 +92,18 @@ function HeaderBase() {
                 {
                   key: "profileEdit",
                   icon: <EditOutlined />,
-                  label: 'Editar Perfil'
+                  label: "Editar Perfil"
                 },
                 {
                   key: "notificationSettings",
                   icon: <SettingOutlined />,
-                  label: 'Gerenciar Notificações'
+                  label: "Gerenciar Notificações"
                 },
                 {
                   key: "logout",
                   icon: <MdLogout />,
                   danger: true,
-                  label: 'Terminar Sessão'
+                  label: "Terminar Sessão"
                 }
               ]
             }

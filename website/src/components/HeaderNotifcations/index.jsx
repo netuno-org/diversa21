@@ -1,19 +1,19 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Badge } from 'antd';
-import { BellOutlined } from '@ant-design/icons';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Badge } from "antd";
+import { BellOutlined } from "@ant-design/icons";
 import useNotificationCount from "../../common/useNotificationCount.js"; 
 
-import './index.less';
+import "./index.less";
 
 function HeaderNotifications() {
   const navigate = useNavigate();
   const { count } = useNotificationCount();
 
   return (
-    <div className="header-notifications__trigger" onClick={() => navigate('/notifications')}>
+    <div className="header-notifications__trigger" onClick={() => navigate("/notifications")}>
       <Badge count={count} size="small" offset={[-12, 2]} color="#FEAF04">
-        <BellOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
+        <BellOutlined style={{ fontSize: 18, cursor: "pointer" }} />
       </Badge>
     </div>
   );

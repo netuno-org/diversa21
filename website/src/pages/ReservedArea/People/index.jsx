@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Modal } from 'antd';
-import { UserAddOutlined } from '@ant-design/icons';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Modal } from "antd";
+import { UserAddOutlined } from "@ant-design/icons";
 
-import UserProfileDisplay from '../../../components/UserProfileDisplay';
+import UserProfileDisplay from "../../../components/UserProfileDisplay";
 import ListHeaderFilters from "../../../components/ListHeaderFilters";
-import ProfileForm from '../../../components/ProfileForm';
+import ProfileForm from "../../../components/ProfileForm";
 
-import globalNotification from '../../../common/globalNotification.js';
+import globalNotification from "../../../common/globalNotification.js";
 import usePeople from "../../../common/usePeople.js";
-import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
+import useFilteredPaginatedList from "../../../common/useFilteredPaginatedList";
 
 import "./index.less";
 
@@ -29,7 +29,7 @@ function People() {
     handleLocationClear,
     handleSearchClear,
   } = useFilteredPaginatedList({
-    serviceUrl: 'people/list',
+    serviceUrl: "people/list",
   });
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const screens = useBreakpoint();
@@ -46,12 +46,12 @@ function People() {
   const handleDeleteUser = (uid) => {
     loggedUser.remove(uid, {
       onSuccess: () => {
-        globalNotification.success('Usuário apagado com sucesso.');
+        globalNotification.success("Usuário apagado com sucesso.");
       }
     });
   };
 
-  const isSuperAdmin = loggedUser.data?.group?.code === 'super-admin';
+  const isSuperAdmin = loggedUser.data?.group?.code === "super-admin";
 
   return (
     <div className="people-list">
@@ -77,7 +77,7 @@ function People() {
       )}
       <div className="people-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'Perfis' : 'Perfil'} Encontrado{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? "Perfis" : "Perfil"} Encontrado{pagination.total !== 1 ? "s" : ""}
         </Text>
       </div>
       <div className="people-list__items">
@@ -87,7 +87,7 @@ function People() {
               <div className="people-list__card-info">
                 <Link
                   to={`/u/${person.username}`}
-                  className={`people-list__card-link ${!person.active && isSuperAdmin ? 'people-list__card-link--inactive' : ''}`}
+                  className={`people-list__card-link ${!person.active && isSuperAdmin ? "people-list__card-link--inactive" : ""}`}
                 >
                   <UserProfileDisplay user={person} avatarStyle={{ width: `${screenSize}px`, height: `${screenSize}px` }} />
                 </Link>
@@ -98,7 +98,7 @@ function People() {
       </div>
       <div className="people-list__footer">
         <Pagination
-          className={`people-list__pagination ${peopleList.length === 0 && !loading ? 'people-list__pagination--hidden' : ''}`}
+          className={`people-list__pagination ${peopleList.length === 0 && !loading ? "people-list__pagination--hidden" : ""}`}
           align='center'
           total={pagination.total}
           current={pagination.current}

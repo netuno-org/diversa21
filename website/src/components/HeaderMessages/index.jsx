@@ -1,10 +1,10 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Badge } from 'antd';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Badge } from "antd";
 import { LuMessageCircleMore } from "react-icons/lu";
 import useMessageCount from "../../common/useMessageCount.js";
 
-import './index.less';
+import "./index.less";
 
 function HeaderMessages() {
   const navigate = useNavigate();

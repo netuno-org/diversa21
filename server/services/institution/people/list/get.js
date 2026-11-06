@@ -3,8 +3,8 @@ import { _req, _db, _val, _out, _header, _exec } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
-const uid = _req.getString('uid');
-const page = _req.getInt('page', 1);
+const uid = _req.getString("uid");
+const page = _req.getInt("page", 1);
 
 const institution = _db.queryFirst(
   "SELECT id FROM institution WHERE uid = ?::uuid",

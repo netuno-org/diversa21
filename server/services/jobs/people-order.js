@@ -1,4 +1,4 @@
-import { _db } from "@netuno/server-types"
+import { _db, _out } from "@netuno/server-types"
 
 _db.execute(`
   UPDATE people

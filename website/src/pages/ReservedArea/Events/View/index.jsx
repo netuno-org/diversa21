@@ -1,24 +1,24 @@
-import { useState, Fragment } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import _service from '@netuno/service-client';
+import { useState, Fragment } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import _service from "@netuno/service-client";
 
-import { Card, Typography, Spin, Pagination, Button, Tabs, Divider, Space, Tag, Empty, notification } from 'antd';
-import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, StarOutlined, CheckOutlined } from '@ant-design/icons';
+import { Card, Typography, Spin, Pagination, Button, Tabs, Divider, Space, Tag, Empty, notification } from "antd";
+import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, StarOutlined, CheckOutlined } from "@ant-design/icons";
 
-import { UserAvatar, isPastEvent } from '../../../../components/EventCard';
-import ContentActions from '../../../../components/ContentActions';
-import usePeople from '../../../../common/usePeople.js';
+import { UserAvatar, isPastEvent } from "../../../../components/EventCard";
+import ContentActions from "../../../../components/ContentActions";
+import usePeople from "../../../../common/usePeople.js";
 
-import './index.less';
+import "./index.less";
 
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 const { Text, Title } = Typography;
 
 function EventView({ uid }) {
   const navigate = useNavigate();
   const loggedUser = usePeople();
-  const hideEventActions = ['member', 'review'].includes(loggedUser?.data?.group?.code);
+  const hideEventActions = ["member", "review"].includes(loggedUser?.data?.group?.code);
   const { state } = useLocation();
   const event = state?.event?.uid === uid ? state.event : null;
 
@@ -34,7 +34,7 @@ function EventView({ uid }) {
       <div className="event-view">
         <div className="event-view__empty">
           <Empty description="Abra o evento a partir de uma listagem de eventos.">
-            <Button type="primary" onClick={() => navigate('/events')}>
+            <Button type="primary" onClick={() => navigate("/events")}>
               Ver eventos
             </Button>
           </Empty>
@@ -50,7 +50,7 @@ function EventView({ uid }) {
     if (!rawCover) return null;
 
     const cover = String(rawCover);
-    if (cover.startsWith('http') || cover.startsWith('data:')) {
+    if (cover.startsWith("http") || cover.startsWith("data:")) {
       return cover;
     }
 
@@ -58,18 +58,18 @@ function EventView({ uid }) {
   };
 
   const formatFullDate = (startString, endString) => {
-    if (!startString) return '';
+    if (!startString) return "";
 
     const start = dayjs(startString);
-    const startText = start.format('dddd, DD [de] MMMM [de] YYYY [às] HH:mm');
+    const startText = start.format("dddd, DD [de] MMMM [de] YYYY [às] HH:mm");
 
     if (!endString) return startText;
 
     const end = dayjs(endString);
-    if (start.isSame(end, 'day')) {
-      return `${startText} - ${end.format('HH:mm')}`;
+    if (start.isSame(end, "day")) {
+      return `${startText} - ${end.format("HH:mm")}`;
     }
-    return `${startText} até ${end.format('dddd, DD [de] MMMM [de] YYYY [às] HH:mm')}`;
+    return `${startText} até ${end.format("dddd, DD [de] MMMM [de] YYYY [às] HH:mm")}`;
   };
 
   const goToProfile = (person, e) => {
@@ -92,7 +92,7 @@ function EventView({ uid }) {
         setLoadingParticipants(false);
       },
       fail: () => {
-        notification.error({ message: 'Erro ao carregar participantes.' });
+        notification.error({ message: "Erro ao carregar participantes." });
         setLoadingParticipants(false);
       },
     });
@@ -100,11 +100,11 @@ function EventView({ uid }) {
 
   const toggleGoing = () => {
     setActionLoading(true);
-    const method = isGoing ? 'DELETE' : 'POST';
+    const method = isGoing ? "DELETE" : "POST";
     _service({
-      url: 'events/attendance',
+      url: "events/attendance",
       method,
-      data: method === 'POST' ? { eventUid: event.uid, status: 'going' } : { eventUid: event.uid },
+      data: method === "POST" ? { eventUid: event.uid, status: "going" } : { eventUid: event.uid },
       success: () => {
         const leaving = isGoing;
         setParticipantsCount(leaving ? participantsCount - 1 : participantsCount + 1);
@@ -112,30 +112,30 @@ function EventView({ uid }) {
         setActionLoading(false);
         const notify = leaving ? notification.warning : notification.success;
         notify({
-          message: leaving ? 'Presença cancelada' : 'Presença confirmada',
+          message: leaving ? "Presença cancelada" : "Presença confirmada",
           description: leaving
-            ? 'A sua presença neste evento foi cancelada'
-            : 'A sua presença neste evento foi confirmada.',
+            ? "A sua presença neste evento foi cancelada"
+            : "A sua presença neste evento foi confirmada.",
         });
       },
       fail: () => {
         setActionLoading(false);
-        notification.error({ message: 'Erro ao atualizar presença.' });
+        notification.error({ message: "Erro ao atualizar presença." });
       },
     });
   };
 
   const handleDeleteEvent = () => {
     _service({
-      url: 'events',
-      method: 'DELETE',
+      url: "events",
+      method: "DELETE",
       data: { eventUid: event.uid },
       success: () => {
-        notification.success({ message: 'Evento eliminado com sucesso!' });
-        navigate('/events');
+        notification.success({ message: "Evento eliminado com sucesso!" });
+        navigate("/events");
       },
       fail: () => {
-        notification.error({ message: 'Erro ao eliminar o evento.' });
+        notification.error({ message: "Erro ao eliminar o evento." });
       },
     });
   };
@@ -151,14 +151,14 @@ function EventView({ uid }) {
             src={coverUrl}
             alt="Capa do Evento"
             className="event-view__cover-image"
-            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
           />
         )}
       </div>
 
       <Card className="event-view__card" bordered={false}>
         
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <Title level={3} className="event-view__name" style={{ margin: 0 }}>{event.name}</Title>
           {!hideEventActions && (
             <ContentActions
@@ -168,8 +168,8 @@ function EventView({ uid }) {
               canViewEditButton={event.canEdit}
               canViewReportButton={false}
               onDeletePost={handleDeleteEvent}
-              onEdit={() => notification.info({ message: 'Você pode editar os dados do evento na página de listagem dos eventos.' })}
-              deleteTitle={'"Tem a certeza que pretende eliminar o evento? Esta ação é irreversível.'}
+              onEdit={() => notification.info({ message: "Você pode editar os dados do evento na página de listagem dos eventos." })}
+              deleteTitle={"\"Tem a certeza que pretende eliminar o evento? Esta ação é irreversível."}
             />
           )}
         </div>
@@ -185,18 +185,18 @@ function EventView({ uid }) {
           </div>
 
           <div className="event-view__detail-item">
-            <CalendarOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
+            <CalendarOutlined style={{ color: "rgba(0, 0, 0, 0.45)" }} />
             <Text type="secondary">{formatFullDate(event.startDate, event.endDate)}</Text>
           </div>
 
           <div className="event-view__detail-item">
-            <EnvironmentOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
+            <EnvironmentOutlined style={{ color: "rgba(0, 0, 0, 0.45)" }} />
             <Text type="secondary">
-              {[event.city?.name, event.state?.name].filter(Boolean).join(', ') || 'Sem cidade definida'}
+              {[event.city?.name, event.state?.name].filter(Boolean).join(", ") || "Sem cidade definida"}
               {event.location && (
                 <>
-                  {' • '}
-                  {event.location.startsWith('http') ? (
+                  {" • "}
+                  {event.location.startsWith("http") ? (
                     <a href={event.location} target="_blank" rel="noreferrer">
                       {event.location}
                     </a>
@@ -212,8 +212,8 @@ function EventView({ uid }) {
         <div className="event-view__about">
           <Title style={{ margin: 0 }} level={4}>Sobre</Title>
           <p>
-            {(event.description || 'Este evento ainda não adicionou uma descrição.')
-              .split('\n')
+            {(event.description || "Este evento ainda não adicionou uma descrição.")
+              .split("\n")
               .map((line, index, array) => (
                 <Fragment key={index}>
                   {line}
@@ -223,15 +223,15 @@ function EventView({ uid }) {
           </p>
         </div>
 
-        <div className="event-view__footer" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+        <div className="event-view__footer" style={{ display: "flex", justifyContent: "flex-start" }}>
           <Button
-            className={`event-view__rsvp-btn ${isGoing ? 'event-view__rsvp-btn--going' : ''}`}
+            className={`event-view__rsvp-btn ${isGoing ? "event-view__rsvp-btn--going" : ""}`}
             loading={actionLoading}
             onClick={toggleGoing}
             disabled={isPast}
             icon={isGoing ? <CheckOutlined /> : <StarOutlined />}
           >
-            {isGoing ? 'Presença Confirmada' : 'Participar'}
+            {isGoing ? "Presença Confirmada" : "Participar"}
           </Button>
         </div>
       </Card>
@@ -242,18 +242,18 @@ function EventView({ uid }) {
           size="large"
           items={[
             {
-              key: 'participants',
+              key: "participants",
               label: (
                 <Space>
-                  <TeamOutlined style={{ fontSize: 18, color: 'rgba(0, 0, 0, 0.45)' }} />
+                  <TeamOutlined style={{ fontSize: 18, color: "rgba(0, 0, 0, 0.45)" }} />
                   <span>
-                    Participantes{' '}
-                    <Tag className="event-view__participants-tag" variant="solid" color="#8A6AA2" style={{ borderRadius: '16px' }}>
+                    Participantes{" "}
+                    <Tag className="event-view__participants-tag" variant="solid" color="#8A6AA2" style={{ borderRadius: "16px" }}>
                       {participantsCount}
                     </Tag>
                   </span>
                   {isGoing && (
-                    <Tag color="success" style={{ borderRadius: '16px', margin: 0, border: 'none', background: '#f6ffed' }}>
+                    <Tag color="success" style={{ borderRadius: "16px", margin: 0, border: "none", background: "#f6ffed" }}>
                       <CheckOutlined /> Presença confirmada
                     </Tag>
                   )}

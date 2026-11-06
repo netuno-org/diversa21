@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import { _req, _db, _val, _user, _out, _exec, _group, _header, _image, _log } from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import people from "#core/lib/people.js";
@@ -114,21 +114,21 @@ if (userEmailExists || usernameExists) {
   _header.status(409);
   _out.json(
     _val.map()
-      .set("error", `${userEmailExists ? 'email' : 'user'}-already-exists`)
+      .set("error", `${userEmailExists ? "email" : "user"}-already-exists`)
   );
   _exec.stop();
-} 
+}
 
 
 // Verify permissions
 
 if (!permissions.canManageUser(groupCode, institutionUid)) {
-    _header.status(403);
-    _out.json(
-      _val.map()
-        .set("error", "permission denied")
-    );
-    _exec.stop();
+  _header.status(403);
+  _out.json(
+    _val.map()
+      .set("error", "permission denied")
+  );
+  _exec.stop();
 }
 
 
@@ -147,8 +147,8 @@ userData
 
 // redundant checking:
 // if (permissions.canChangeUserGroup()) {
-  userData
-    .set("group_id", groupId);
+userData
+  .set("group_id", groupId);
 // }
 
 _user.update(
@@ -175,8 +175,8 @@ const peopleData = _val.map()
 
 // redundant checking:
 // if (permissions.canChangeUserInstitution()) {
-  peopleData 
-    .set("institution_id", institutionId)
+peopleData
+  .set("institution_id", institutionId)
 // }
 
 if (avatar) {
@@ -191,11 +191,11 @@ if (avatar) {
   peopleData.set("avatar", "");
 }
 
-_log.info(`>>> removeAvatar recebido: ${removeAvatar}, avatar: ${avatar ? 'sim' : 'não'}`);
+_log.info(`>>> removeAvatar recebido: ${removeAvatar}, avatar: ${avatar ? "sim" : "não"}`);
 
 if (cover_image) {
   peopleData.set(
-    "cover_image", 
+    "cover_image",
     _image
       .init(cover_image)
       .resize(1200, 400)

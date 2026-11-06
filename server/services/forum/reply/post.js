@@ -120,7 +120,7 @@ if (loggedUserId !== topicOwnerId && !notifications.isNotificationBlocked(topicO
   const notificationJson = `
   { "topicUid": "${dbReply.getUID("topic_uid")}", 
    "replyUid": "${dbReply.getUID("uid")}"
-   ${replyIsAnonymous ? ', "anonymous": true' : ""} }
+   ${replyIsAnonymous ? ", \"anonymous\": true" : ""} }
   `;
 
   notifications.sendNotification(

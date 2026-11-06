@@ -1,6 +1,8 @@
 
 // _log.info(_url.url())
 
+import { _url } from "@netuno/server-types";
+
 /**
  *  ALLOW CORS
  */

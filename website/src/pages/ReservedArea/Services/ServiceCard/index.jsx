@@ -1,9 +1,9 @@
-import React from 'react';
-import { Card, Typography, Tooltip, Tag, Button } from 'antd';
-import { EnvironmentOutlined, CalendarOutlined } from '@ant-design/icons';
-import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import React from "react";
+import { Card, Typography, Tooltip, Tag, Button } from "antd";
+import { EnvironmentOutlined, CalendarOutlined } from "@ant-design/icons";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 
-import ContentActions from '../../../../components/ContentActions';
+import ContentActions from "../../../../components/ContentActions";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -21,7 +21,7 @@ export default function ServiceCard({
     <Card className="services-list__card" hoverable onClick={() => onOpenService(service)}>
       <div className="services-list__card-content">
         
-        <div className="services-list__card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="services-list__card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <Title level={4} className="services-list__title" style={{ flex: 1 }}>
             {service.name}
           </Title>
@@ -34,7 +34,7 @@ export default function ServiceCard({
               canViewReportButton={false}
               onEdit={() => onEditClick(service)}
               onDeletePost={() => onDeleteService(service.uid)}
-              deleteTitle={'"Tem a certeza que pretende eliminar o serviço? Esta ação é irreversível.'}
+              deleteTitle={"\"Tem a certeza que pretende eliminar o serviço? Esta ação é irreversível."}
             />
           </div>
         </div>

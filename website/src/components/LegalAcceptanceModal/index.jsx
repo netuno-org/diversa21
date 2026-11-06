@@ -23,25 +23,25 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
     }
     setLoading(true);
     _service({
-      method: 'POST',
-      url: 'people/me/accept-terms',
+      method: "POST",
+      url: "people/me/accept-terms",
       success: (response) => {
         setLoading(false);
         if (response.json.result) {
           onAccepted && onAccepted(response.json.acceptedTermsAt || new Date().toISOString());
         } else {
           globalNotification.warning({
-            title: 'Aceite dos Termos',
-            description: response.json.error || 'Não foi possível confirmar o aceite.',
+            title: "Aceite dos Termos",
+            description: response.json.error || "Não foi possível confirmar o aceite.",
           });
         }
       },
       fail: (e) => {
         setLoading(false);
-        console.error('Aceite dos Termos', e);
+        console.error("Aceite dos Termos", e);
         globalNotification.serviceFail({
-          title: 'Aceite dos Termos',
-          description: 'Ocorreu um erro ao confirmar o aceite. Tente novamente mais tarde.',
+          title: "Aceite dos Termos",
+          description: "Ocorreu um erro ao confirmar o aceite. Tente novamente mais tarde.",
         });
       }
     });
@@ -49,8 +49,8 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
 
   const isReading = !!readingContent;
   
-  const modalTitle = readingContent === 'terms' ? "Termos e Condições"
-                   : readingContent === 'privacy' ? "Política de Privacidade"
+  const modalTitle = readingContent === "terms" ? "Termos e Condições"
+                   : readingContent === "privacy" ? "Política de Privacidade"
                    : "Consentimento";
 
   const modalFooter = isReading ? [
@@ -79,7 +79,7 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
       width={isReading ? 700 : 520}
       styles={{
         mask: {
-          backgroundColor: '#ffffff',
+          backgroundColor: "#ffffff",
           opacity: 1,
         }
       }}
@@ -87,20 +87,20 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
       className="legal-acceptance-modal"
     >
       
-      {readingContent === 'terms' && (
-        <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '8px' }}>
+      {readingContent === "terms" && (
+        <div style={{ maxHeight: "60vh", overflowY: "auto", paddingRight: "8px" }}>
           <TermsContent />
         </div>
       )}
 
-      {readingContent === 'privacy' && (
-        <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '8px' }}>
+      {readingContent === "privacy" && (
+        <div style={{ maxHeight: "60vh", overflowY: "auto", paddingRight: "8px" }}>
           <PrivacyContent />
         </div>
       )}
 
       {!readingContent && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }} className="legal-acceptance-modal__content">
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }} className="legal-acceptance-modal__content">
           <Paragraph style={{ marginBottom: 0 }}>
             Para continuar a usar a plataforma, é necessário aceitar:
           </Paragraph>
@@ -108,13 +108,13 @@ function LegalAcceptanceModal({ visible, onAccepted }) {
             checked={agreedTerms}
             onChange={(event) => setAgreedTerms(event.target.checked)}
           >
-            Li e aceito os <a onClick={() => setReadingContent('terms')}>Termos e Condições</a>.
+            Li e aceito os <a onClick={() => setReadingContent("terms")}>Termos e Condições</a>.
           </Checkbox>
           <Checkbox
             checked={agreedPrivacy}
             onChange={(event) => setAgreedPrivacy(event.target.checked)}
           >
-            Li e aceito a <a onClick={() => setReadingContent('privacy')}>Política de Privacidade</a>.
+            Li e aceito a <a onClick={() => setReadingContent("privacy")}>Política de Privacidade</a>.
           </Checkbox>
         </div>
       )}

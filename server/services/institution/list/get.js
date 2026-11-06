@@ -3,11 +3,11 @@ import { mapInstitution } from "#core/lib/institution.js";
 import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
 
-let page = _req.getInt('page', 1);
-let name = _req.getString('name');
-let countryUid = _req.getString('countryUid');
-let stateUid = _req.getString('stateUid');
-let cityUid = _req.getString('cityUid');
+let page = _req.getInt("page", 1);
+let name = _req.getString("name");
+let countryUid = _req.getString("countryUid");
+let stateUid = _req.getString("stateUid");
+let cityUid = _req.getString("cityUid");
 
 const pageSize = 10;
 const offset = (page - 1) * pageSize;

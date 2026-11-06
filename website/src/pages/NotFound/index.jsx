@@ -1,9 +1,9 @@
-import React from 'react';
-import { Result, Button } from 'antd';
+import React from "react";
+import { Result, Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
-import './index.less';
+import "./index.less";
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function NotFound() {
           <img
             src="/images/logo.png"
             alt="Página não encontrada"
-            style={{ width: 250, margin: '0 auto' }}
+            style={{ width: 250, margin: "0 auto" }}
           />
         }
         extra={

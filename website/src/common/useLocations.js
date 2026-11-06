@@ -1,14 +1,15 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { message } from 'antd';
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { message } from "antd";
 
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 
-import normalizeSearch from './normalizeSearch.js';
+import normalizeSearch from "./normalizeSearch.js";
+import globalNotification from "./globalNotification.js";
 
 const CONFIGS = {
-  country: { url: 'location/country', label: 'países' },
-  state: { url: 'location/state', label: 'estados' },
-  city: { url: 'location/city', label: 'cidades' },
+  country: { url: "location/country", label: "países" },
+  state: { url: "location/state", label: "estados" },
+  city: { url: "location/city", label: "cidades" },
 };
 
 function useLocations() {
@@ -21,7 +22,7 @@ function useLocations() {
     city: false,
   });
 
-  const [filters, setFilters] = useState({ term: '', location: null });
+  const [filters, setFilters] = useState({ term: "", location: null });
 
   const loadData = useCallback((type, setter) => {
     const { url, label } = CONFIGS[type];
@@ -30,7 +31,7 @@ function useLocations() {
 
     _service({
       url,
-      method: 'GET',
+      method: "GET",
       success: ({ json }) => {
         setter(Array.isArray(json?.data) ? json.data : []);
         setLoading(l => ({ ...l, [type]: false }));
@@ -45,9 +46,9 @@ function useLocations() {
     });
   }, []);
 
-  const loadCountries = useCallback(() => loadData('country', setCountries), [loadData]);
-  const loadStates = useCallback(() => loadData('state', setStates), [loadData]);
-  const loadCities = useCallback(() => loadData('city', setCities), [loadData]);
+  const loadCountries = useCallback(() => loadData("country", setCountries), [loadData]);
+  const loadStates = useCallback(() => loadData("state", setStates), [loadData]);
+  const loadCities = useCallback(() => loadData("city", setCities), [loadData]);
 
   const loadAll = useCallback(() => {
     loadCountries();
@@ -56,14 +57,14 @@ function useLocations() {
   }, [loadCountries, loadStates, loadCities]);
 
   const reload = useCallback((type) => {
-    if (type === 'country') {
+    if (type === "country") {
       loadCountries();
       loadStates();
       loadCities();
-    } else if (type === 'state') {
+    } else if (type === "state") {
       loadStates();
       loadCities();
-    } else if (type === 'city') {
+    } else if (type === "city") {
       loadCities();
     } else {
       loadAll();
@@ -77,11 +78,11 @@ function useLocations() {
   const locationParts = useMemo(() => {
     if (!filters.location) return { country: null, state: null, city: null };
 
-    const parts = (filters.location.label || '').split(' > ').map(p => p.trim());
+    const parts = (filters.location.label || "").split(" > ").map(p => p.trim());
 
-    if (filters.location.type === 'country') return { country: parts[0], state: null, city: null };
-    if (filters.location.type === 'state') return { country: parts[0], state: parts[1], city: null };
-    if (filters.location.type === 'city') return { country: parts[0], state: parts[1], city: parts[2] };
+    if (filters.location.type === "country") return { country: parts[0], state: null, city: null };
+    if (filters.location.type === "state") return { country: parts[0], state: parts[1], city: null };
+    if (filters.location.type === "city") return { country: parts[0], state: parts[1], city: parts[2] };
 
     return { country: null, state: null, city: null };
   }, [filters.location]);

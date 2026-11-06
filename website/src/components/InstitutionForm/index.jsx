@@ -1,15 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-import { Typography, Form, Input, Button, Card, Spin, Select, Row, Col, Switch, Result, Popconfirm } from 'antd';
+import { useState, useRef, useEffect } from "react";
+import { Typography, Form, Input, Button, Card, Spin, Select, Row, Col, Switch, Result, Popconfirm } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 import isNetworkError from "is-network-error";
 
-import globalNotification from '../../common/globalNotification.js';
-import usePeople from '../../common/usePeople.js';
-import Avatar from '../Avatar';
-import CoverImage from '../CoverImage';
+import globalNotification from "../../common/globalNotification.js";
+import usePeople from "../../common/usePeople.js";
+import Avatar from "../Avatar";
+import CoverImage from "../CoverImage";
 import "./index.less";
 
 const { Title } = Typography;
@@ -57,7 +57,7 @@ function InstitutionForm({
       const identifierParam = slug ? `slug=${slug}` : `uid=${uid}`;
       _service({
         url: `/institution?${identifierParam}`,
-        method: 'GET',
+        method: "GET",
         success: ({ json }) => {
           if (json.data) {
             const data = json.data;
@@ -131,9 +131,9 @@ function InstitutionForm({
     };
 
     Object.keys(allValues).forEach(key => {
-      if (key !== 'city') {
+      if (key !== "city") {
         let val = allValues[key];
-        if (typeof val === 'boolean') {
+        if (typeof val === "boolean") {
           val = String(val);
         }
         formData.append(key, val !== undefined && val !== null ? val : "");
@@ -143,7 +143,7 @@ function InstitutionForm({
     const cityFieldValue = values.city;
     let cityUid = null;
     if (cityFieldValue) {
-      cityUid = typeof cityFieldValue === 'object' ? cityFieldValue.value : cityFieldValue;
+      cityUid = typeof cityFieldValue === "object" ? cityFieldValue.value : cityFieldValue;
     } else if (selectedCity?.uid) {
       cityUid = selectedCity.uid;
     } else if (institution?.city?.uid) {
@@ -151,37 +151,37 @@ function InstitutionForm({
     }
 
     if (cityUid) {
-      formData.append('city', cityUid);
+      formData.append("city", cityUid);
     }
 
     const avatar = profileAvatar?.current?.getImage();
     const cover = profileCover?.current?.getImage();
 
     if (avatar) {
-      formData.append('avatar', avatar);
+      formData.append("avatar", avatar);
     }
-    formData.append('remove_avatar', profileAvatar?.current?.isRemoved() ? "true" : "false");
+    formData.append("remove_avatar", profileAvatar?.current?.isRemoved() ? "true" : "false");
 
     if (cover) {
-      formData.append('cover_image', cover);
+      formData.append("cover_image", cover);
     }
-    formData.append('remove_cover_image', profileCover?.current?.isRemoved() ? "true" : "false");
+    formData.append("remove_cover_image", profileCover?.current?.isRemoved() ? "true" : "false");
 
     _service({
-      method: isEditMode ? 'PUT' : 'POST',
-      url: isEditMode ? `/institution?${slug ? `slug=${slug}` : `uid=${uid}`}` : '/institution',
+      method: isEditMode ? "PUT" : "POST",
+      url: isEditMode ? `/institution?${slug ? `slug=${slug}` : `uid=${uid}`}` : "/institution",
       data: formData,
       success: (res) => {
         if (res.json.result) {
           globalNotification.success({
-            title: isEditMode ? 'Edição da Instituição' : 'Instituição Criada',
-            description: isEditMode ? 'Os dados da instituição foram alterados com sucesso.' : 'A instituição foi criada com sucesso.',
+            title: isEditMode ? "Edição da Instituição" : "Instituição Criada",
+            description: isEditMode ? "Os dados da instituição foram alterados com sucesso." : "A instituição foi criada com sucesso.",
           });
           if (onSuccess) onSuccess(slug || uid, res.json.data);
         } else {
           globalNotification.warning({
-            title: 'Aviso',
-            description: res.json.error || 'Ocorreu um problema ao guardar os dados da instituição.',
+            title: "Aviso",
+            description: res.json.error || "Ocorreu um problema ao guardar os dados da instituição.",
           });
           setSubmitting(false);
         }
@@ -190,13 +190,13 @@ function InstitutionForm({
         setSubmitting(false);
         if (e.error && isNetworkError(e.error)) {
           return globalNotification.error({
-            title: 'Conexão',
-            description: 'Há problemas de conexão com o servidor, tente novamente mais tarde.',
+            title: "Conexão",
+            description: "Há problemas de conexão com o servidor, tente novamente mais tarde.",
           });
         }
         globalNotification.error({
-          title: 'Erro no Servidor',
-          description: 'Ocorreu um erro ao guardar a instituição, por favor contacte-nos através do suporte.',
+          title: "Erro no Servidor",
+          description: "Ocorreu um erro ao guardar a instituição, por favor contacte-nos através do suporte.",
         });
       }
     });
@@ -225,7 +225,7 @@ function InstitutionForm({
               <img
                 src="/images/logo.png"
                 alt="Não Autorizado"
-                style={{ width: 250, margin: '0 auto' }}
+                style={{ width: 250, margin: "0 auto" }}
               />
             }
             extra={
@@ -234,10 +234,10 @@ function InstitutionForm({
                 size="large"
                 icon={<ArrowLeftOutlined />}
                 onClick={() =>
-                  navigate(isEditMode && slug ? `/institutions/${slug}` : '/institutions')
+                  navigate(isEditMode && slug ? `/institutions/${slug}` : "/institutions")
                 }
               >
-                {isEditMode ? 'Voltar à Instituição' : 'Voltar à Listagem'}
+                {isEditMode ? "Voltar à Instituição" : "Voltar à Listagem"}
               </Button>
             }
           />
@@ -249,7 +249,7 @@ function InstitutionForm({
   return (
     <div className="institution-form">
       <div className="institution-form__body">
-        <Title level={2}>{title || (isEditMode ? 'Editar Instituição' : 'Nova Instituição')}</Title>
+        <Title level={2}>{title || (isEditMode ? "Editar Instituição" : "Nova Instituição")}</Title>
         <Form form={form} layout="vertical" onFinish={onFinish}>
           {loading ? (
             <div className="institution-form__loading"><Spin size="large" /></div>
@@ -268,7 +268,7 @@ function InstitutionForm({
               <Card title="Informações Gerais" className="institution-form__card">
                 <Form.Item name="name" label="Nome" rules={[{ required: true }]}><Input disabled={submitting} /></Form.Item>
                 <Form.Item name="description" label="Descrição" style={{ marginBottom: 8 }}>
-                  <TextArea rows={4} disabled={submitting} maxLength={2000} style={{ resize: 'none' }} />
+                  <TextArea rows={4} disabled={submitting} maxLength={2000} style={{ resize: "none" }} />
                 </Form.Item>
                 <div className="institution-form__description-count">
                   <span>{descriptionValue.length}/2000</span>
@@ -280,8 +280,8 @@ function InstitutionForm({
                       name="email" 
                       label="E-mail"
                       rules={[
-                        { required: true, message: 'O e-mail é obrigatório.' },
-                        { type: 'email', message: 'Insira um e-mail válido.' }
+                        { required: true, message: "O e-mail é obrigatório." },
+                        { type: "email", message: "Insira um e-mail válido." }
                       ]}
                     >
                       <Input disabled={submitting} />
@@ -291,7 +291,7 @@ function InstitutionForm({
                     <Form.Item 
                       name="telephone" 
                       label="Telefone"
-                      rules={[{ required: true, message: 'O telefone é obrigatório.' }]}
+                      rules={[{ required: true, message: "O telefone é obrigatório." }]}
                     >
                       <Input disabled={submitting} />
                     </Form.Item>
@@ -313,7 +313,7 @@ function InstitutionForm({
                 <Form.Item 
                   name="address" 
                   label="Endereço"
-                  rules={[{ required: true, message: 'O endereço é obrigatório.' }]}
+                  rules={[{ required: true, message: "O endereço é obrigatório." }]}
                 >
                   <Input disabled={submitting} />
                 </Form.Item> 
@@ -322,7 +322,7 @@ function InstitutionForm({
                     <Form.Item 
                       name="post_code" 
                       label="Código Postal"
-                      rules={[{ required: true, message: 'O código postal é obrigatório.' }]}
+                      rules={[{ required: true, message: "O código postal é obrigatório." }]}
                     >
                       <Input disabled={submitting} />
                     </Form.Item>
@@ -387,7 +387,7 @@ function InstitutionForm({
                     block
                     className="institution-form__btn institution-form__btn--submit"
                   >
-                    {submitText || (isEditMode ? 'Atualizar Instituição' : 'Criar Instituição')}
+                    {submitText || (isEditMode ? "Atualizar Instituição" : "Criar Instituição")}
                   </Button>
                 </Form.Item>
               </div>

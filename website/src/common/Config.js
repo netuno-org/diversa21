@@ -1,5 +1,5 @@
-import _service from '@netuno/service-client';
-import {notification} from 'antd';
+import _service from "@netuno/service-client";
+import { notification } from "antd";
 
 class Config {
   static init() {
@@ -8,7 +8,7 @@ class Config {
       prefix: config.api.endpoint
     });
     notification.config({
-      placement: 'topRight',
+      placement: "topRight",
       top: 100,
       duration: 3,
       rtl: false,

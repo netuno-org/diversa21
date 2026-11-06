@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { Typography, Tabs } from "antd";
 import { BiSolidLocationPlus } from "react-icons/bi";
 
-import useLocations from '../../../../common/useLocations.js';
-import normalizeSearch from '../../../../common/normalizeSearch.js';
-import usePeople from '../../../../common/usePeople.js';
-import ListHeaderFilters from '../../../../components/ListHeaderFilters/index.jsx';
+import useLocations from "../../../../common/useLocations.js";
+import normalizeSearch from "../../../../common/normalizeSearch.js";
+import usePeople from "../../../../common/usePeople.js";
+import ListHeaderFilters from "../../../../components/ListHeaderFilters/index.jsx";
 
-import LocationTable from './../Table/index.jsx';
-import LocationModal from './../Modal/index.jsx';
+import LocationTable from "./../Table/index.jsx";
+import LocationModal from "./../Modal/index.jsx";
 
-import './index.less';
+import "./index.less";
 
 const { Text } = Typography;
 
@@ -25,29 +25,29 @@ function LocationList() {
   const loggedUser = usePeople();
 
   // Component state management
-  const [activeTab, setActiveTab] = useState('country');
+  const [activeTab, setActiveTab] = useState("country");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
   const jumpToMatchTable = (term) => {
-    if (term && term.trim() !== '') {
+    if (term && term.trim() !== "") {
       const q = normalizeSearch(term);
 
       // Do nothing if a match is already present in the currently active tab
-      if ((activeTab === 'country' && allCountries.some(c => normalizeSearch(c.name).includes(q) || normalizeSearch(c.code).includes(q)))
-        || (activeTab === 'state' && allStates.some(s => normalizeSearch(s.name).includes(q) || normalizeSearch(s.code).includes(q)))
-        || (activeTab === 'city' && filteredCities.some(c => normalizeSearch(c.name).includes(q)))) {
+      if ((activeTab === "country" && allCountries.some(c => normalizeSearch(c.name).includes(q) || normalizeSearch(c.code).includes(q)))
+        || (activeTab === "state" && allStates.some(s => normalizeSearch(s.name).includes(q) || normalizeSearch(s.code).includes(q)))
+        || (activeTab === "city" && filteredCities.some(c => normalizeSearch(c.name).includes(q)))) {
         return;
       }
 
       // Switch to the highest-level tab that contains a match
       if (allCountries.some(c => normalizeSearch(c.name).includes(q) || normalizeSearch(c.code).includes(q))) {
-        setActiveTab('country');
+        setActiveTab("country");
       } else if (allStates.some(s => normalizeSearch(s.name).includes(q) || normalizeSearch(s.code).includes(q))) {
-        setActiveTab('state');
+        setActiveTab("state");
       } else if (filteredCities.some(c => normalizeSearch(c.name).includes(q))) {
-        setActiveTab('city');
+        setActiveTab("city");
       }
     }
   }
@@ -61,7 +61,7 @@ function LocationList() {
 
   // Clear text search
   const handleSearchClear = () => {
-    setFilters(prev => ({ ...prev, term: '' }));
+    setFilters(prev => ({ ...prev, term: "" }));
     setPagination(prev => ({ ...prev, current: 1 }));
   };
 
@@ -83,8 +83,8 @@ function LocationList() {
   };
 
   // Determine which dataset to pass to the table based on the active tab
-  const currentData = activeTab === 'country' ? filteredCountries
-    : activeTab === 'state' ? filteredStates
+  const currentData = activeTab === "country" ? filteredCountries
+    : activeTab === "state" ? filteredStates
       : filteredCities;
 
   return (
@@ -95,7 +95,7 @@ function LocationList() {
           description={"Gerencie países, estados e cidades usados na plataforma."}
           createButton={loggedUser.canManageLocations() && {
             icon: <BiSolidLocationPlus />,
-            text: 'Novo registro',
+            text: "Novo registro",
             onClick: () => {
               setEditingItem(null);
               setIsModalVisible(true);
@@ -110,9 +110,9 @@ function LocationList() {
 
       <div className="locations-list__results">
         <Text type='secondary'>
-          {activeTab === 'country' && (currentData.length === 1 ? '1 País' : `${currentData.length} Países`)}
-          {activeTab === 'state' && (currentData.length === 1 ? '1 Estado' : `${currentData.length} Estados`)}
-          {activeTab === 'city' && (currentData.length === 1 ? '1 Cidade' : `${currentData.length} Cidades`)}
+          {activeTab === "country" && (currentData.length === 1 ? "1 País" : `${currentData.length} Países`)}
+          {activeTab === "state" && (currentData.length === 1 ? "1 Estado" : `${currentData.length} Estados`)}
+          {activeTab === "city" && (currentData.length === 1 ? "1 Cidade" : `${currentData.length} Cidades`)}
         </Text>
       </div>
 
@@ -124,9 +124,9 @@ function LocationList() {
             setPagination(prev => ({ ...prev, current: 1 }));
           }}
           items={[
-            { key: 'country', label: 'Países' },
-            { key: 'state', label: 'Estados' },
-            { key: 'city', label: 'Cidades' },
+            { key: "country", label: "Países" },
+            { key: "state", label: "Estados" },
+            { key: "city", label: "Cidades" },
           ].map(tab => ({
             ...tab,
             children: (

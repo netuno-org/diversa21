@@ -5,7 +5,7 @@ import _service from "@netuno/service-client";
 
 import TimeAgo from "../TimeAgo";
 
-import { Spin, Modal, Form, Input, Typography, Button, Card, Empty, Avatar, Popover, Grid, Switch } from 'antd'
+import { Spin, Modal, Form, Input, Typography, Button, Card, Empty, Avatar, Popover, Grid, Switch } from "antd"
 import {
   FolderOpenOutlined,
   UserOutlined,
@@ -20,7 +20,7 @@ import EmojiPicker from "emoji-picker-react";
 import ptEmojis from "emoji-picker-react/dist/data/emojis-pt";
 import ContentActions from "../ContentActions";
 
-import './index.less'
+import "./index.less"
 
 const { Paragraph, Text, Title } = Typography;
 const { TextArea } = Input;
@@ -55,11 +55,11 @@ function SupportCommunityDisplay({
   const screens = Grid.useBreakpoint();
   const isMobile = screens.lg === false;
 
-  const formMode = editingTopic ? 'topic' : editingReply ? 'reply' : mode;
-  const titleMaxLength = formMode === 'category' ? 50 : 250;
-  const descriptionMaxLength = formMode === 'topic' ? 5000 : formMode === 'reply' ? 2500 : 500;
+  const formMode = editingTopic ? "topic" : editingReply ? "reply" : mode;
+  const titleMaxLength = formMode === "category" ? 50 : 250;
+  const descriptionMaxLength = formMode === "topic" ? 5000 : formMode === "reply" ? 2500 : 500;
 
-  let deleteTitle = ''
+  let deleteTitle = ""
 
   useEffect(() => {
     if (!showModal) {
@@ -112,7 +112,7 @@ function SupportCommunityDisplay({
     }
 
     setDescriptionValue(updatedText);
-    const fieldName = formMode === 'reply' || formMode === 'topic' ? 'content' : 'description';
+    const fieldName = formMode === "reply" || formMode === "topic" ? "content" : "description";
     form.setFieldsValue({ [fieldName]: updatedText });
 
     setTimeout(() => {
@@ -124,41 +124,41 @@ function SupportCommunityDisplay({
   };
 
   const getCountLabel = () => {
-    if (mode === 'reply') {
+    if (mode === "reply") {
       return listItems.length !== 1 ? "Respostas Encontradas" : "Resposta Encontrada";
-    } else if (mode === 'topic') {
+    } else if (mode === "topic") {
       return listItems.length !== 1 ? "Tópicos Encontrados" : "Tópico Encontrado";
     }
     return listItems.length !== 1 ? "Categorias Encontradas" : "Categoria Encontrada";
   };
 
   const getEmptyText = () => {
-    if (mode === 'reply') {
+    if (mode === "reply") {
       return "Nenhuma resposta encontrada.";
-    } else if (mode === 'topic') {
+    } else if (mode === "topic") {
       return "Nenhum tópico encontrado.";
     }
     return "Nenhuma categoria encontrada.";
   };
 
   const getItemTitle = (item) => {
-    if (mode === 'reply') {
+    if (mode === "reply") {
       return item.people?.name;
-    } else if (mode === 'topic') {
+    } else if (mode === "topic") {
       return item.title;
     }
     return item.name;
   };
 
   const getItemDescription = (item) => {
-    if (mode === 'reply' || mode === 'topic') {
+    if (mode === "reply" || mode === "topic") {
       return item.content;
     }
     return item.description;
   };
 
   const canManageItem = (item) => {
-    if (mode === 'topic' || mode === 'reply') {
+    if (mode === "topic" || mode === "reply") {
       return loggedUser.canManagePosts()
         || item.isOwner === true
         || item.people?.uid === loggedUser.data?.uid;
@@ -167,31 +167,31 @@ function SupportCommunityDisplay({
   };
 
   const isOwnItem = (item) => {
-    if (mode === 'topic' || mode === 'reply') {
+    if (mode === "topic" || mode === "reply") {
       return item.isOwner === true || item.people?.uid === loggedUser.data?.uid;
     }
     return false;
   };
 
   const getModalTitle = () => {
-    if (formMode === 'reply') {
+    if (formMode === "reply") {
       return editingReply ? "Editar Resposta" : "Nova Resposta";
-    } else if (formMode === 'topic') {
+    } else if (formMode === "topic") {
       return editingTopic ? "Editar Tópico" : "Novo Tópico";
     }
     return editingCategory ? "Editar Categoria" : "Nova Categoria";
   };
 
   const getSubmitLabel = () => {
-    if (formMode === 'reply') {
+    if (formMode === "reply") {
       return editingReply ? "Editar" : "Responder";
-    } else if (formMode === 'topic') {
+    } else if (formMode === "topic") {
       return editingTopic ? "Editar" : "Criar";
     }
     return editingCategory ? "Editar" : "Criar";
   };
 
-  if(mode === 'reply' ? deleteTitle = 'a resposta' : mode === 'topic' ? deleteTitle = 'o tópico' : deleteTitle = 'a categoria')
+  if(mode === "reply" ? deleteTitle = "a resposta" : mode === "topic" ? deleteTitle = "o tópico" : deleteTitle = "a categoria")
 
   return (
     <div className="support-community"
@@ -204,7 +204,7 @@ function SupportCommunityDisplay({
       )}
 
       {/** Result count (hidden on the replies list) **/}
-      {!loading && listItems.length > 0 && mode !== 'reply' && (
+      {!loading && listItems.length > 0 && mode !== "reply" && (
         <div className="support-community__count">
           <Text type="secondary">
             {listItems.length} {getCountLabel()}
@@ -215,15 +215,15 @@ function SupportCommunityDisplay({
       {/** Item cards list **/}
       <div className="support-community__items">
         {!loading && listItems.map((item) => {
-          const activityAt = mode === 'category' ? item.lastActivityAt : item.moment;
-          const avatarSrc = (mode === 'topic' || mode === 'reply') && item.people?.avatar && item.people?.uid
+          const activityAt = mode === "category" ? item.lastActivityAt : item.moment;
+          const avatarSrc = (mode === "topic" || mode === "reply") && item.people?.avatar && item.people?.uid
             ? _service.url(`/asset?uid=${item.people.uid}&type=avatar&entity=people`)
             : avatarUrl;
           return (
             <Card
               key={item.uid}
               className="support-community__card"
-              hoverable={mode !== 'reply'}
+              hoverable={mode !== "reply"}
               onClick={() => handleCardClick?.(item.uid)}
             >
               <div className="support-community__card-body">
@@ -232,7 +232,7 @@ function SupportCommunityDisplay({
                   <div className="support-community__title-row">
 
                     {/** Category folder icon or author avatar **/}
-                    {mode === 'category' ? (
+                    {mode === "category" ? (
                       <div className="support-community__icon-material">
                         <FolderOpenOutlined />
                       </div>
@@ -256,18 +256,18 @@ function SupportCommunityDisplay({
 
                     {/** Category title, or author name + timestamp **/}
                     <div className="support-community__heading">
-                      {mode === 'category' && (
+                      {mode === "category" && (
                         <p className="support-community__title">
                           {getItemTitle(item)}
                         </p>
                       )}
-                      {(mode === 'topic' || mode === 'reply') && (
+                      {(mode === "topic" || mode === "reply") && (
                         <div className="support-community__meta">
                           {item.anonymous === true ? (
                             <span>Anônimo</span>
                           ) : item.people?.name && (
                             <span>
-                              {mode === 'reply' ? (
+                              {mode === "reply" ? (
                                 <Link
                                   className="support-community__title-link"
                                   to={`/u/${item.people?.user}`}
@@ -280,9 +280,9 @@ function SupportCommunityDisplay({
                               )}
                             </span>
                           )}
-                          {(mode === 'topic' ? item.moment : activityAt) && (
+                          {(mode === "topic" ? item.moment : activityAt) && (
                             <span className="support-community__meta-item">
-                              <TimeAgo sentAt={mode === 'topic' ? item.moment : activityAt} />
+                              <TimeAgo sentAt={mode === "topic" ? item.moment : activityAt} />
                             </span>
                           )}
                         </div>
@@ -290,7 +290,7 @@ function SupportCommunityDisplay({
                     </div>
 
                     {/** Shared actions menu for reply/topic/category **/}
-                    {(mode !== 'category' || canManageItem(item)) && (
+                    {(mode !== "category" || canManageItem(item)) && (
                       <div
                         className="support-community__actions"
                         onClick={(e) => e.stopPropagation()}
@@ -299,7 +299,7 @@ function SupportCommunityDisplay({
                           entityType={mode === "reply" ? "forum_reply" : "forum_topic"}
                           entityUid={item.uid}
                           canViewDeletePostButton={canManageItem(item)}
-                          canViewReportButton={mode === 'category' ? false : !isOwnItem(item)}
+                          canViewReportButton={mode === "category" ? false : !isOwnItem(item)}
                           onDeletePost={() => handleDelete(item.uid)}
                           onEdit={() => openEditModal(item)}
                           deleteTitle={`Tem a certeza que pretende eliminar ${deleteTitle}? Esta ação é irreversível.`}
@@ -309,7 +309,7 @@ function SupportCommunityDisplay({
                   </div>
 
                   {/** topic title **/}
-                  {mode === 'topic' &&
+                  {mode === "topic" &&
                     <Paragraph
                       ellipsis={{ rows: 2 }}
                       className="support-community__title"
@@ -319,13 +319,13 @@ function SupportCommunityDisplay({
                   }
 
                   {/** reply content and like **/}
-                  {mode === 'reply' ? (
+                  {mode === "reply" ? (
                     <>
                       <div className="support-community__description">
                         {item.content}
                       </div>
                       <Button
-                        style={{ alignSelf: 'start' }}
+                        style={{ alignSelf: "start" }}
                         type="link"
                         className="support-community__like-btn"
                         onClick={(e) => { handleLike(item) }}
@@ -348,7 +348,7 @@ function SupportCommunityDisplay({
                       </Paragraph>
 
                       {/** topic replies count and last activity **/}
-                      {mode === 'topic' && item.repliesCount > 0 && (
+                      {mode === "topic" && item.repliesCount > 0 && (
                         <div className="support-community__meta support-community__meta--secondary">
                           <span className="support-community__meta-item support-community__meta-item--count">
                             <VscCommentDiscussionQuote />
@@ -364,7 +364,7 @@ function SupportCommunityDisplay({
                       )}
 
                       {/** category topics count and last activity **/}
-                      {mode === 'category' && (
+                      {mode === "category" && (
                         <div className="support-community__meta support-community__meta--secondary">
                           <span className="support-community__meta-item support-community__meta-item--count">
                             <TagsOutlined />
@@ -410,15 +410,15 @@ function SupportCommunityDisplay({
           <Form form={form} layout="vertical" onFinish={onFinish}>
 
             {/** title / name field **/}
-            {formMode !== 'reply' && (
+            {formMode !== "reply" && (
               <Form.Item
-                name={formMode === 'topic' ? 'title' : 'name'}
-                label={formMode === 'topic' ? 'Título' : 'Nome'}
+                name={formMode === "topic" ? "title" : "name"}
+                label={formMode === "topic" ? "Título" : "Nome"}
                 rules={[
                   { required: true, message: "O título é Obrigatório!" },
                   {
                     max: titleMaxLength,
-                    message: formMode === 'topic'
+                    message: formMode === "topic"
                       ? "O título deve ter no máximo 250 caracteres."
                       : "O nome deve ter no máximo 50 caracteres.",
                   },
@@ -426,7 +426,7 @@ function SupportCommunityDisplay({
               >
                 <Input
                   className="support-community__title-input"
-                  placeholder={formMode === 'topic' ? 'Tópico...' : 'Categoria...'}
+                  placeholder={formMode === "topic" ? "Tópico..." : "Categoria..."}
                   maxLength={titleMaxLength}
                   showCount
                 />
@@ -435,37 +435,37 @@ function SupportCommunityDisplay({
 
             {/** description / content field **/}
             <Form.Item
-              name={formMode === 'reply' || formMode === 'topic' ? 'content' : 'description'}
-              label={formMode === 'reply' ? "Resposta" : "Descrição"}
-              rules={formMode === 'reply' || formMode === 'topic' ? [
-                { required: true, message: formMode === 'reply' ? "A resposta é Obrigatória!" : "A descrição é Obrigatória!" },
-                { max: descriptionMaxLength, message: formMode === 'reply' ? "A resposta deve ter no máximo 2500 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
+              name={formMode === "reply" || formMode === "topic" ? "content" : "description"}
+              label={formMode === "reply" ? "Resposta" : "Descrição"}
+              rules={formMode === "reply" || formMode === "topic" ? [
+                { required: true, message: formMode === "reply" ? "A resposta é Obrigatória!" : "A descrição é Obrigatória!" },
+                { max: descriptionMaxLength, message: formMode === "reply" ? "A resposta deve ter no máximo 2500 caracteres." : "A descrição deve ter no máximo 5000 caracteres." },
               ] : [
                 { required: true, message: "A descrição é obrigatória!" },
                 { min: 30, message: "A descrição deve ter no mínimo 30 caracteres." },
                 { max: descriptionMaxLength, message: "A descrição deve ter no máximo 500 caracteres." },
               ]}
             >
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: "relative" }}>
                 <TextArea
                   ref={textAreaRef}
                   value={descriptionValue}
                   onChange={(e) => {
                     const val = e.target.value;
                     setDescriptionValue(val);
-                    const fieldName = formMode === 'reply' || formMode === 'topic' ? 'content' : 'description';
+                    const fieldName = formMode === "reply" || formMode === "topic" ? "content" : "description";
                     form.setFieldsValue({ [fieldName]: val });
                   }}
-                  placeholder={'Escreva o conteúdo...'}
+                  placeholder={"Escreva o conteúdo..."}
                   rows={5}
                   maxLength={descriptionMaxLength}
                   showCount
-                  style={{ resize: "none", paddingBottom: '36px' }}
+                  style={{ resize: "none", paddingBottom: "36px" }}
                 />
 
                 {/** Emoji picker (desktop only) **/}
                 {!isMobile && (
-                  <div style={{ position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 }}>
+                  <div style={{ position: "absolute", left: "8px", bottom: "8px", zIndex: 10 }}>
                     <Popover
                       content={
                         <EmojiPicker
@@ -485,7 +485,7 @@ function SupportCommunityDisplay({
                         type="text"
                         shape="circle"
                         icon={<SmileOutlined />}
-                        style={{ fontSize: 18, color: '#8c8c8c' }}
+                        style={{ fontSize: 18, color: "#8c8c8c" }}
                       />
                     </Popover>
                   </div>
@@ -494,16 +494,16 @@ function SupportCommunityDisplay({
             </Form.Item>
 
             {/** Submit and anonymous button **/}
-            <Form.Item style={{ marginBottom: 0, marginTop: '30px', textAlign: "right" }}>
+            <Form.Item style={{ marginBottom: 0, marginTop: "30px", textAlign: "right" }}>
               <div style={{
-                display: 'flex',
-                justifyContent: (mode === 'category' || editingTopic || editingReply) ? 'flex-end' : 'space-between',
+                display: "flex",
+                justifyContent: (mode === "category" || editingTopic || editingReply) ? "flex-end" : "space-between",
               }}>
-                {(mode === 'reply' || mode === 'topic') && !editingTopic && !editingReply &&
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', textAlign: 'start', gap: '5px' }}>
+                {(mode === "reply" || mode === "topic") && !editingTopic && !editingReply &&
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "start", textAlign: "start", gap: "5px" }}>
                     <div className="support-community__switch-title">Deseja ocultar seus dados na publicação?</div>
                     <Switch
-                      style={{ width: '110px' }}
+                      style={{ width: "110px" }}
                       checked={anonymous}
                       onChange={onAnonymousChange}
                       checkedChildren="Ativado"
@@ -513,7 +513,7 @@ function SupportCommunityDisplay({
                   </div>
                 }
               </div>
-              <Button style={{ marginTop: '80px' }} type="primary" htmlType="submit">
+              <Button style={{ marginTop: "80px" }} type="primary" htmlType="submit">
                 {getSubmitLabel()}
               </Button>
             </Form.Item>

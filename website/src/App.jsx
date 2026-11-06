@@ -1,41 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { Routes as Switch, Route, useNavigate, Navigate, useLocation } from "react-router-dom";
 
-import {ConfigProvider, Layout, notification} from 'antd';
-import antLocale_ptBR from 'antd/lib/locale/pt_BR';
-import dayjs from 'dayjs';
-import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
+import { ConfigProvider, Layout, notification } from "antd";
+import antLocale_ptBR from "antd/lib/locale/pt_BR";
+import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
-import classNames from 'classnames';
+import classNames from "classnames";
 
-import _auth from '@netuno/auth-client';
+import _auth from "@netuno/auth-client";
 
-import { Provider } from 'react-redux';
-import { store } from './redux/store';
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
-import HeaderBase from './base/HeaderBase';
+import HeaderBase from "./base/HeaderBase";
 import SiderMenu from "./base/SiderMenu";
 import FooterBase from "./base/FooterBase";
 
 import globalNotification from "./common/globalNotification.js";
 
-import LoginPage from './pages/Login';
-import LoginCallback from './pages/LoginCallback';
-import Recovery from './pages/Recovery';
-import NotFound from './pages/NotFound';
+import LoginPage from "./pages/Login";
+import LoginCallback from "./pages/LoginCallback";
+import Recovery from "./pages/Recovery";
+import NotFound from "./pages/NotFound";
 import ReservedArea from "./pages/ReservedArea";
-import TermsPage from './pages/Terms';
-import PrivacyPage from './pages/Privacy';
+import TermsPage from "./pages/Terms";
+import PrivacyPage from "./pages/Privacy";
 
-import 'dayjs/locale/pt-br';
+import "dayjs/locale/pt-br";
 
-import './common/Config';
-import './styles/App.less';
+import "./common/Config";
+import "./styles/App.less";
 
-dayjs.locale('pt-br');
+dayjs.locale("pt-br");
 dayjs.extend(LocalizedFormat);
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -63,9 +63,9 @@ export default function App() {
 
   useEffect(() => {
     _auth.config({
-      storage: 'local',
+      storage: "local",
       onLogout: () => {
-        navigate('/login');
+        navigate("/login");
       }
     });
   }, [navigate]);
@@ -78,38 +78,38 @@ export default function App() {
     setCollapsed(!collapsed);
   }
 
-  const isPublicStandalonePage = ['/login', '/recovery'].includes(location.pathname) || location.pathname.startsWith('/login/');
+  const isPublicStandalonePage = ["/login", "/recovery"].includes(location.pathname) || location.pathname.startsWith("/login/");
   
   return (
     <ConfigProvider
       locale={antLocale_ptBR}
       theme={{
         token: {
-          colorPrimary: '#6009B6',
-          colorLink: '#6009B6',
+          colorPrimary: "#6009B6",
+          colorLink: "#6009B6",
           fontSize: 16,
           borderRadius: 20,
-          primaryColor: '#6009B6',
-          colorBgBase: '#eff8ff',
-          colorBgLayout: '#ffffff',
-          colorBgMask: 'rgba(96, 9, 182, 0.50)',
+          primaryColor: "#6009B6",
+          colorBgBase: "#eff8ff",
+          colorBgLayout: "#ffffff",
+          colorBgMask: "rgba(96, 9, 182, 0.50)",
         },
         components: {
           Layout: {
-            headerBg: '#f0f2f5',
-            triggerBg: '#f0f2f5',
+            headerBg: "#f0f2f5",
+            triggerBg: "#f0f2f5",
             triggerColor: null,
-            siderBg: '#f0f2f5',
-            footerBg: '#FEAF04',
+            siderBg: "#f0f2f5",
+            footerBg: "#FEAF04",
           },
           Menu: {
-            colorBgElevated: '#f0f2f5',
-            itemBg: '#f0f2f5',
-            itemColor: '#6009B6',
-            itemSelectedColor: '#FEAF04',
-            itemSelectedBg: '#6009B6',
-            itemHoverColor: '#6009B6',
-            itemHoverBg: '#FEAF04',
+            colorBgElevated: "#f0f2f5",
+            itemBg: "#f0f2f5",
+            itemColor: "#6009B6",
+            itemSelectedColor: "#FEAF04",
+            itemSelectedBg: "#6009B6",
+            itemHoverColor: "#6009B6",
+            itemHoverBg: "#FEAF04",
             subMenuItemBorderRadius: 0,
             borderRadius: 0,
             borderRadiusLG: 0,
@@ -119,7 +119,7 @@ export default function App() {
     >
       {contextHolder}
       <Provider store={store}>
-        <Layout className={'page ' + classNames({ 'auth ': _auth.isLogged() }) + classNames({ 'collapsed ': collapsed })}>
+        <Layout className={"page " + classNames({ "auth ": _auth.isLogged() }) + classNames({ "collapsed ": collapsed })}>
           
           {!isPublicStandalonePage && (
             <SiderMenu collapsed={collapsed} onCollapse={onCollapse} />
@@ -127,7 +127,7 @@ export default function App() {
 
           <Layout>
             <HeaderBase collapsed={collapsed} />
-            <Content className={classNames({ 'auth ': _auth.isLogged() })}>
+            <Content className={classNames({ "auth ": _auth.isLogged() })}>
               <Switch>
                 {/** PUBLIC **/}
                 <Route exact path="/" element={<NavWithAuthCheck/>}/>

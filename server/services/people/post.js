@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _header, _out, _group, _template, _storage, _smtp} from "@netuno/server-types"
+import { _req, _db, _val, _user, _header, _out, _group, _template, _storage, _smtp, _exec, _log } from "@netuno/server-types"
 
 import permissions from "#core/lib/permissions.js";
 import response from "#core/lib/response.js";
@@ -21,7 +21,7 @@ const institutionUid = _req.getUID("institution");
 const groupCode = _req.getString("group");
 const description = _req.getString("description");
 
-const groups = [ MEMBER, REVIEW, MANAGEMENT, SUPER_ADMIN ];
+const groups = [MEMBER, REVIEW, MANAGEMENT, SUPER_ADMIN];
 
 if (!groups.includes(groupCode)) {
   response.stopWithGroupNotFound();
@@ -59,21 +59,21 @@ if (userEmailExists || usernameExists) {
   _header.status(409);
   _out.json(
     _val.map()
-      .set("error", `${userEmailExists ? 'email' : 'user'}-already-exists`)
+      .set("error", `${userEmailExists ? "email" : "user"}-already-exists`)
   );
   _exec.stop();
-} 
+}
 
 
 // Verify permissions
 
 if (!permissions.canCreateAnyUser() && !permissions.canCreateMember(groupCode, institutionUid)) {
-    _header.status(403);
-    _out.json(
-      _val.map()
-        .set("error", "permission denied")
-    );
-    _exec.stop();
+  _header.status(403);
+  _out.json(
+    _val.map()
+      .set("error", "permission denied")
+  );
+  _exec.stop();
 }
 
 
@@ -102,7 +102,7 @@ const order = people.createOrder();
 if (userId) {
   try {
     _db.insertIfNotExists(
-      'people',
+      "people",
       _val.map()
         .set("name", name)
         .set("description", description)
@@ -116,7 +116,7 @@ if (userId) {
 
     const smtp = _smtp.init();
     smtp.to = email;
-    smtp.subject = `Acesso ao Diversa21.org`;
+    smtp.subject = "Acesso ao Diversa21.org";
     smtp.text = `
     Olá ${name},
     
@@ -144,11 +144,11 @@ if (userId) {
     smtp.send();
   } catch (e) {
     _log.warn("error: user not created", e);
-    _user.remove(userId); 
+    _user.remove(userId);
     _header.status(400);
     _out.json(
       _val.map()
-        .set("error", `user not created`)
+        .set("error", "user not created")
     );
     _exec.stop();
   }

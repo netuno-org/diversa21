@@ -1,11 +1,11 @@
-import React from 'react';
-import { Button, Popconfirm } from 'antd';
+import React from "react";
+import { Button, Popconfirm } from "antd";
 import {
   ClockCircleOutlined,
   CheckOutlined,
   CloseOutlined,
   MessageOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 import { FaUserPlus } from "react-icons/fa";
 import { LuUserCheck } from "react-icons/lu";
 

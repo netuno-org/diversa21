@@ -1,9 +1,10 @@
 import request from "supertest";
 
-import login from '../../util/login.js';
-import cleanObject from '../../util/clean.js';
-import { cityUid, institutionUid } from '../../util/uids.js';
+import login from "../../util/login.js";
+import cleanObject from "../../util/clean.js";
+import { cityUid, institutionUid } from "../../util/uids.js";
 import config from "../../config.js";
+import { test, expect } from "@jest/globals";
 
 test("modify my own user details", async () => {
   const accessToken = await login.asTest();
@@ -13,7 +14,7 @@ test("modify my own user details", async () => {
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  const KEYS_TO_REMOVE = [ "avatar", "active", "city", "state", "country", "institution", "group" ];
+  const KEYS_TO_REMOVE = ["avatar", "active", "city", "state", "country", "institution", "group"];
 
   const oldData = cleanObject(oldDataResponse.body.data, KEYS_TO_REMOVE);
   oldData.city = oldDataResponse.body.data.city.uid;

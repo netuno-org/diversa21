@@ -1,12 +1,13 @@
 import request from "supertest";
 
-import { userUid } from '../../util/uids.js';
-import { username } from '../../util/usernames.js';
-import login from '../../util/login.js';
+import { userUid } from "../../util/uids.js";
+import { username } from "../../util/usernames.js";
+import login from "../../util/login.js";
 import config from "../../config.js";
+import { beforeEach, afterEach, test, expect } from "@jest/globals";
 
 beforeEach(async () => {
-  const accessToken = await login.asTest(); 
+  const accessToken = await login.asTest();
 
   await request(config.NETUNO_URL)
     .post(`/friend?uid=${userUid.ben}`)
@@ -52,7 +53,7 @@ test("users should be able to get notifications when someone asked to be a frien
 });
 
 test("notifications of friendship request should be deleted after the request is canceled", async () => {
-  let accessToken = await login.asTest(); 
+  let accessToken = await login.asTest();
 
   await request(config.NETUNO_URL)
     .delete(`/friend?uid=${userUid.ben}`)
@@ -105,7 +106,7 @@ test("users should be able to get notifications when someone accepted their frie
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  accessToken = await login.asTest(); 
+  accessToken = await login.asTest();
 
   const response = await request(config.NETUNO_URL)
     .get("/notification/list")
@@ -140,7 +141,7 @@ test("notifications of friendship request accepted should be deleted after the f
     .set("Authorization", `Bearer ${accessToken}`)
     .expect(200);
 
-  accessToken = await login.asTest(); 
+  accessToken = await login.asTest();
 
   const response = await request(config.NETUNO_URL)
     .get("/notification/list")

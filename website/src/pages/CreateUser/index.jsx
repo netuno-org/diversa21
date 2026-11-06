@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import ProfileForm from '../../components/ProfileForm';
+import ProfileForm from "../../components/ProfileForm";
 
 export default function CreateUser() {
 

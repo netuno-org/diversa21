@@ -1,6 +1,8 @@
+import { _db } from "@netuno/server-types";
+
 function dropColumnIfExists(table, column) {
   if (_db.checkExists().column(table, column)) {
-      _db.column().drop(table, column);
+    _db.column().drop(table, column);
   }
 }
 

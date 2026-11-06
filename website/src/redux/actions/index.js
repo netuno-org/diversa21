@@ -1,7 +1,7 @@
 import {
   PEOPLE_LOAD
-} from './actionTypes';
-import { PROFILE_LOAD, WS_LOAD } from './actionTypes';
+} from "./actionTypes";
+import { PROFILE_LOAD, WS_LOAD } from "./actionTypes";
 
 export const peopleLoadAction = (data) => ({
   type: PEOPLE_LOAD,

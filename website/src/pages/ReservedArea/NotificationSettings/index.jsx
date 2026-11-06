@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import { Switch, Typography, Spin, Empty } from 'antd';
+import { useEffect, useState } from "react";
+import { Switch, Typography, Spin, Empty } from "antd";
 import {
   UserAddOutlined,
   FileTextOutlined,
   CommentOutlined,
   HeartOutlined,
   MessageOutlined,
-} from '@ant-design/icons';
-import _service from '@netuno/service-client';
+} from "@ant-design/icons";
+import _service from "@netuno/service-client";
 
-import ListHeaderFilters from '../../../components/ListHeaderFilters/index.jsx';
+import ListHeaderFilters from "../../../components/ListHeaderFilters/index.jsx";
 import globalNotification from "../../../common/globalNotification.js";
 
-import './index.less';
+import "./index.less";
 
 const { Text, Title } = Typography;
 
@@ -23,62 +23,62 @@ function NotificationSettings() {
 
   const sections = [
     {
-      key: 'requests',
-      title: 'Pedidos',
+      key: "requests",
+      title: "Pedidos",
       icon: <UserAddOutlined />,
-      codes: ['friend-request', 'friend-request-accepted'],
+      codes: ["friend-request", "friend-request-accepted"],
     },
     {
-      key: 'posts',
-      title: 'Postagens',
+      key: "posts",
+      title: "Postagens",
       icon: <FileTextOutlined />,
-      codes: ['friend-post', 'institution-post'],
+      codes: ["friend-post", "institution-post"],
     },
     {
-      key: 'comments',
-      title: 'Comentários',
+      key: "comments",
+      title: "Comentários",
       icon: <CommentOutlined />,
-      codes: ['institution-comment', 'friend-comment', 'my-post-comment', 'forum-reply'],
+      codes: ["institution-comment", "friend-comment", "my-post-comment", "forum-reply"],
     },
     {
-      key: 'likes',
-      title: 'Curtidas',
+      key: "likes",
+      title: "Curtidas",
       icon: <HeartOutlined />,
-      codes: ['institution-like', 'friend-like', 'my-post-like', 'forum-reply-like'],
+      codes: ["institution-like", "friend-like", "my-post-like", "forum-reply-like"],
     },
     {
-      key: 'messages',
-      title: 'Mensagens',
+      key: "messages",
+      title: "Mensagens",
       icon: <MessageOutlined />,
-      codes: ['message'],
+      codes: ["message"],
     },
   ];
 
   const labelMap = {
-    'institution-post': 'Postagem de alguém da instituição',
-    'friend-post': 'Postagem de amigo',
-    'institution-comment': 'Comentário de alguém da instituição',
-    'institution-like': 'Curtida de alguém da instituição',
-    'friend-like': 'Curtida de amigo',
-    'my-post-like': 'Curtida em seu post',
-    'forum-reply': 'Resposta em seu tópico',
-    'forum-reply-like': 'Curtida em sua resposta de tópico',
+    "institution-post": "Postagem de alguém da instituição",
+    "friend-post": "Postagem de amigo",
+    "institution-comment": "Comentário de alguém da instituição",
+    "institution-like": "Curtida de alguém da instituição",
+    "friend-like": "Curtida de amigo",
+    "my-post-like": "Curtida em seu post",
+    "forum-reply": "Resposta em seu tópico",
+    "forum-reply-like": "Curtida em sua resposta de tópico",
   };
 
   const descMap = {
-    'friend-request': 'Recebe uma notificação quando alguém envia um pedido de amizade para você.',
-    'friend-request-accepted': 'Recebe quando um pedido de amizade que você enviou foi aceito.',
-    'friend-post': 'Recebe quando um dos seus amigos publica uma nova postagem.',
-    'institution-post': 'Recebe quando alguém da sua instituição publica uma nova postagem.',
-    'friend-comment': 'Recebe quando alguém comenta em publicações de amigos que você acompanha.',
-    'institution-comment': 'Recebe quando alguém da sua instituição comenta em publicações relevantes.',
-    'my-post-comment': 'Recebe quando alguém comenta em uma das suas postagens.',
-    'friend-like': 'Recebe quando um amigo curte uma publicação que você acompanha.',
-    'institution-like': 'Recebe quando alguém da sua instituição curte uma publicação que você acompanha.',
-    'my-post-like': 'Recebe quando alguém curte uma das suas postagens.',
-    'message': 'Recebe quando alguém envia uma mensagem privada para você.',
-    'forum-reply': 'Recebe quando alguém responde um tópico criado por você.',
-    'forum-reply-like': 'Recebe quando alguém curte uma resposta sua em um tópico.',
+    "friend-request": "Recebe uma notificação quando alguém envia um pedido de amizade para você.",
+    "friend-request-accepted": "Recebe quando um pedido de amizade que você enviou foi aceito.",
+    "friend-post": "Recebe quando um dos seus amigos publica uma nova postagem.",
+    "institution-post": "Recebe quando alguém da sua instituição publica uma nova postagem.",
+    "friend-comment": "Recebe quando alguém comenta em publicações de amigos que você acompanha.",
+    "institution-comment": "Recebe quando alguém da sua instituição comenta em publicações relevantes.",
+    "my-post-comment": "Recebe quando alguém comenta em uma das suas postagens.",
+    "friend-like": "Recebe quando um amigo curte uma publicação que você acompanha.",
+    "institution-like": "Recebe quando alguém da sua instituição curte uma publicação que você acompanha.",
+    "my-post-like": "Recebe quando alguém curte uma das suas postagens.",
+    "message": "Recebe quando alguém envia uma mensagem privada para você.",
+    "forum-reply": "Recebe quando alguém responde um tópico criado por você.",
+    "forum-reply-like": "Recebe quando alguém curte uma resposta sua em um tópico.",
   };
 
   const groupedSections = sections.map((section) => ({
@@ -93,17 +93,17 @@ function NotificationSettings() {
   const loadTypes = () => {
     setLoading(true);
     _service({
-      url: 'notification/opt_out',
-      method: 'GET',
+      url: "notification/opt_out",
+      method: "GET",
       success: ({ json }) => {
         setTypes(json.data || []);
         setLoading(false);
       },
       fail: (e) => {
         globalNotification.error({
-          title: 'Falha ao carregar tipos de notificação.'
+          title: "Falha ao carregar tipos de notificação."
         });
-        console.error('Service Error', e);
+        console.error("Service Error", e);
         setLoading(false);
       }
     });
@@ -113,8 +113,8 @@ function NotificationSettings() {
     setLoadingCode(code);
 
     _service({
-      url: 'notification/opt_out',
-      method: currentlyBlocked ? 'DELETE' : 'POST',
+      url: "notification/opt_out",
+      method: currentlyBlocked ? "DELETE" : "POST",
       data: { type: code },
       success: () => {
         setTypes(types.map(t =>
@@ -124,9 +124,9 @@ function NotificationSettings() {
       },
       fail: (e) => {
         globalNotification.error({
-          title: 'Falha ao atualizar preferência de notificação.'
+          title: "Falha ao atualizar preferência de notificação."
         });
-        console.error('Service Error', e);
+        console.error("Service Error", e);
         setLoadingCode(null);
       }
     });

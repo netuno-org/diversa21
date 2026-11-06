@@ -1,6 +1,6 @@
 import usePeople from "../../../../common/usePeople.js";
 
-import Profile from '../../../../components/Profile'
+import Profile from "../../../../components/Profile"
 
 function ProfileView() {
   const people = usePeople();

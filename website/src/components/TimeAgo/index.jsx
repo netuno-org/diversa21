@@ -3,15 +3,15 @@ import dayjs from "dayjs";
 
 import Config from "../../common/Config.js";
 
-import './index.less'
+import "./index.less"
 
 const formatRelativeTime = (moment)=> {
   if (!moment) {
-    return '';
+    return "";
   }
 
   if (!moment.isValid()) {
-    return '';
+    return "";
   }
 
   const minutes = dayjs().diff(moment, "minute");
@@ -35,15 +35,15 @@ const formatRelativeTime = (moment)=> {
   return moment.format("DD/MM/YY");
 }
 
-function TimeAgo({ sentAt, className = '' }) {
-  const [timeLabel, setTimeLabel] = useState('');
+function TimeAgo({ sentAt, className = "" }) {
+  const [timeLabel, setTimeLabel] = useState("");
 
   useEffect(() => {
     const onTick = () => {
-      let moment = '';
-      if (sentAt && sentAt !== '') {
+      let moment = "";
+      if (sentAt && sentAt !== "") {
         const serverTimezone = Config.timezone();
-        if (serverTimezone.toUpperCase() === 'UTC') {
+        if (serverTimezone.toUpperCase() === "UTC") {
           moment = dayjs.utc(sentAt).tz(dayjs.tz.guess());
         } else {
           moment = dayjs.tz(sentAt, serverTimezone).tz(dayjs.tz.guess());
@@ -60,7 +60,7 @@ function TimeAgo({ sentAt, className = '' }) {
   }, [sentAt]);
 
   return (
-    <span className={['time-ago', className].join(' ')}>
+    <span className={["time-ago", className].join(" ")}>
       {timeLabel}
     </span>
   );

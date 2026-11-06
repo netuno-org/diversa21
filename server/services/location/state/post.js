@@ -1,4 +1,4 @@
-import { _req, _db, _val, _user, _header, _out } from "@netuno/server-types"
+import { _req, _db, _val, _user, _header, _out, _exec, _log } from "@netuno/server-types"
 import permissions from "#core/lib/permissions.js";
 
 const name = _req.getString("name");

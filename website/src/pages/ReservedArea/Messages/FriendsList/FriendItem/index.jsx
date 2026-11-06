@@ -1,5 +1,5 @@
 import React from "react";
-import TimeAgo from '../../../../../components/TimeAgo'
+import TimeAgo from "../../../../../components/TimeAgo"
 
 import { Avatar, Typography, Badge, Col } from "antd";
 import _service from "@netuno/service-client";
@@ -21,12 +21,12 @@ function FriendItem({
 }) {
   const avatarSrc = avatar
     ? _service.url(`/asset?uid=${uid}&type=avatar&entity=people&${new Date().getTime()}`)
-    : '/images/profile-default.png';
+    : "/images/profile-default.png";
 
   return (
     <li
       onClick={onClick}
-      className={`messages__friend-item ${isActive ? 'messages__friend-item--active' : ''}`}
+      className={`messages__friend-item ${isActive ? "messages__friend-item--active" : ""}`}
     >
       <div className="messages__friend-item-avatar-wrapper">
         {
@@ -34,7 +34,7 @@ function FriendItem({
           <div
             className="messages__friend-item-status"
             style={{
-              backgroundColor: '#49aa19',
+              backgroundColor: "#49aa19",
             }}
           />
         }

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Spin, Pagination, Empty, Typography, Grid, Tag, Button, Modal } from 'antd';
-import { UserAddOutlined, EditOutlined } from '@ant-design/icons';
+import { Card, Spin, Pagination, Empty, Typography, Grid, Tag, Button, Modal } from "antd";
+import { UserAddOutlined, EditOutlined } from "@ant-design/icons";
 
 import InstitutionDisplay from "../../../../components/InstitutionDisplay";
 import InstitutionForm from "../../../../components/InstitutionForm";
 import usePeople from "../../../../common/usePeople.js";
-import useFilteredPaginatedList from '../../../../common/useFilteredPaginatedList.js';
+import useFilteredPaginatedList from "../../../../common/useFilteredPaginatedList.js";
 import ListHeaderFilters from "../../../../components/ListHeaderFilters";
 
 import "./index.less";
@@ -27,7 +27,7 @@ function ListInstitution() {
     handleLocationClear,
     handleSearchClear,
   } = useFilteredPaginatedList({
-    serviceUrl: 'institution/list',
+    serviceUrl: "institution/list",
   });
   const navigate = useNavigate();
   const [createModalVisible, setCreateModalVisible] = useState(false);
@@ -47,7 +47,7 @@ function ListInstitution() {
       <div className="institutions-list__header">
         <ListHeaderFilters
           title="Instituições"
-          description={'Conheça as organizações da rede. Explore os perfis e os membros de cada instituição.'}
+          description={"Conheça as organizações da rede. Explore os perfis e os membros de cada instituição."}
           createButton={loggedUser.canCreateInstitutions() && {
             icon: <UserAddOutlined />,
             text: "Criar Instituição",
@@ -68,7 +68,7 @@ function ListInstitution() {
 
       <div className="institutions-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'Instituições' : 'Instituição'} Encontrada{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? "Instituições" : "Instituição"} Encontrada{pagination.total !== 1 ? "s" : ""}
         </Text>
       </div>
 
@@ -79,7 +79,7 @@ function ListInstitution() {
               <div className="institutions-list__card-info">
                 <Link
                   to={`/institutions/${institution.slug}`}
-                  className={`institutions-list__card-link ${(!institution.active || institution.active === "false") ? 'institutions-list__card-link--inactive' : ''}`}
+                  className={`institutions-list__card-link ${(!institution.active || institution.active === "false") ? "institutions-list__card-link--inactive" : ""}`}
                 >
                   <InstitutionDisplay
                     institution={institution}
@@ -91,7 +91,7 @@ function ListInstitution() {
               {(loggedUser.canManageInstitution(institution.uid) || loggedUser.canCreateInstitutions()) && (
                 <div className="institutions-list__card-actions">
                   {(institution.active === false || institution.active === "false") && (
-                    <Tag variant="filled" color="error" className="institutions-list__card-status-tag" style={{ borderRadius: '32px' }}>
+                    <Tag variant="filled" color="error" className="institutions-list__card-status-tag" style={{ borderRadius: "32px" }}>
                       Inativa
                     </Tag>
                   )}
@@ -111,7 +111,7 @@ function ListInstitution() {
 
       <div className="institutions-list__footer">
         <Pagination
-          className={`institutions-list__pagination ${institutionList.length === 0 && !loading ? 'institutions-list__pagination--hidden' : ''}`}
+          className={`institutions-list__pagination ${institutionList.length === 0 && !loading ? "institutions-list__pagination--hidden" : ""}`}
           align='center'
           total={pagination.total}
           current={pagination.current}

@@ -57,7 +57,7 @@ if (!notifications.isNotificationBlocked(friendId, acceptedNotificationTypeId)) 
     notificationMessages.FRIEND_REQUEST_ACCEPTED,
     loggedUserId,
     friendId,
-    '',
+    "",
     acceptedNotificationTypeId
   );
 

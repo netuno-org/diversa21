@@ -1,15 +1,15 @@
-import { _db } from "@netuno/server-types";
+import { _db, _val } from "@netuno/server-types";
 import people from "#core/lib/people.js";
 import response from "#core/lib/response.js";
 
 const dbPeopleLogged = people.getLogged();
 
 if (!dbPeopleLogged) {
-    response.errorUnauthorized();
+  response.errorUnauthorized();
 } else {
-    const loggedUserUid = dbPeopleLogged.getUID("uid");
+  const loggedUserUid = dbPeopleLogged.getUID("uid");
 
-    const dbCounts = _db.query(`
+  const dbCounts = _db.query(`
         SELECT COUNT(notification.id) AS count
         FROM notification
         INNER JOIN people recipient ON notification.recipient_id = recipient.id
@@ -19,9 +19,9 @@ if (!dbPeopleLogged) {
           AND notification_type.code != 'message'
     `, loggedUserUid);
 
-    const count = dbCounts.length > 0 ? dbCounts[0].getInt("count") : 0;
+  const count = dbCounts.length > 0 ? dbCounts[0].getInt("count") : 0;
 
-    response.successWithData(
-        _val.map().set("count", count)
-    );
+  response.successWithData(
+    _val.map().set("count", count)
+  );
 }

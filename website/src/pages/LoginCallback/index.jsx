@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { Spin, Typography, notification } from 'antd';
-import _auth from '@netuno/auth-client';
-import _service from '@netuno/service-client';
+import { Spin, Typography, notification } from "antd";
+import _auth from "@netuno/auth-client";
+import _service from "@netuno/service-client";
 
-import './index.less';
+import "./index.less";
 
 const { Title } = Typography;
 
@@ -15,10 +15,10 @@ export default function LoginCallback(props) {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+    const code = urlParams.get("code");
     _service({
-      method: 'POST',
-      url: `_auth_provider/login`,
+      method: "POST",
+      url: "_auth_provider/login",
       data: {
         code
       },
@@ -40,8 +40,8 @@ export default function LoginCallback(props) {
       fail: (error) => {
         console.error(error);
         api.error({
-          message: 'Erro no Callback da Autenticação',
-          description: 'Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.',
+          message: "Erro no Callback da Autenticação",
+          description: "Ocorreu um erro na edição do seu perfil, por favor contacte-nos através do chat de suporte.",
         });
       }
     });

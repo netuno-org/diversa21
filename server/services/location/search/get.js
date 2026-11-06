@@ -2,7 +2,7 @@ import { _req, _db, _out } from "@netuno/server-types";
 
 import search from "#core/lib/search.js";
 
-const query = _req.getString('query') || "";
+const query = _req.getString("query") || "";
 
 const multiQuery = `
 SELECT * FROM (
@@ -39,7 +39,7 @@ const data = _db.query(
   "%" + query + "%"
 );
 
-for (element of data) {
+for (const element of data) {
   const separators = element.getString("label").match(/>/g) || [];
   const numOfSeparators = separators.length;
   if (numOfSeparators == 0) {

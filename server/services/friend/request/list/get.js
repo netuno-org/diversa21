@@ -2,8 +2,8 @@ import { _req, _db, _val, _out, _header, _exec, _group } from "@netuno/server-ty
 import response from "#core/lib/response.js";
 import people from "#core/lib/people.js";
 
-let page = _req.getInt('page', 1);
-const name = _req.getString('name');
+let page = _req.getInt("page", 1);
+const name = _req.getString("name");
 const pageSize = 10;
 
 let offset = 0;

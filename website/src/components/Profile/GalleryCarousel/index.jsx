@@ -1,17 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Typography, Button, Spin, Popconfirm } from 'antd';
+import React, { useRef, useState, useEffect } from "react";
+import { Typography, Button, Spin, Popconfirm } from "antd";
 import {
   LeftOutlined,
   RightOutlined,
   CloseOutlined,
   PlusOutlined,
   ArrowRightOutlined,
-} from '@ant-design/icons';
-import { MdOutlineInsertPhoto } from 'react-icons/md';
-import _service from '@netuno/service-client';
+} from "@ant-design/icons";
+import { MdOutlineInsertPhoto } from "react-icons/md";
+import _service from "@netuno/service-client";
 
-import GalleryUploadModal from '../GalleryUploadModal';
-import './index.less';
+import GalleryUploadModal from "../GalleryUploadModal";
+import "./index.less";
 
 const { Title, Text } = Typography;
 
@@ -44,15 +44,15 @@ function GalleryCarousel({ gallery, isOwnProfile, title = "Fotos", onViewMore })
 
   useEffect(() => {
     checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
+    window.addEventListener("resize", checkScroll);
+    return () => window.removeEventListener("resize", checkScroll);
   }, [photos]);
 
   const handleScroll = (direction) => {
     const el = scrollContainerRef.current;
     if (!el) return;
-    const scrollAmount = direction === 'left' ? -200 : 200;
-    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    const scrollAmount = direction === "left" ? -200 : 200;
+    el.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
   if (!isOwnProfile && photos.length === 0 && !loading) {
@@ -106,14 +106,14 @@ function GalleryCarousel({ gallery, isOwnProfile, title = "Fotos", onViewMore })
                 size="small"
                 icon={<LeftOutlined />}
                 disabled={!canScrollLeft}
-                onClick={() => handleScroll('left')}
+                onClick={() => handleScroll("left")}
               />
               <Button
                 shape="circle"
                 size="small"
                 icon={<RightOutlined />}
                 disabled={!canScrollRight}
-                onClick={() => handleScroll('right')}
+                onClick={() => handleScroll("right")}
               />
             </div>
           )}

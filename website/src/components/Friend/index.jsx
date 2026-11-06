@@ -1,6 +1,6 @@
-import React from 'react';
-import FriendList from './List';
-import './index.less';
+import React from "react";
+import FriendList from "./List";
+import "./index.less";
 
 function Friend({ userUid }) {
   return (

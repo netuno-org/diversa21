@@ -1,10 +1,11 @@
 import request from "supertest";
 
 import { MEMBER } from "#core/lib/groups.js";
-import login from '../util/login.js';
-import { userUid, cityUid, institutionUid } from '../util/uids.js';
-import cleanObject from '../util/clean.js';
+import login from "../util/login.js";
+import { userUid, cityUid, institutionUid } from "../util/uids.js";
+import cleanObject from "../util/clean.js";
 import config from "../config.js";
+import { test, expect } from "@jest/globals";
 
 test("super admin should be able to modify a user", async () => {
   const accessToken = await login.asSuperAdmin();
@@ -67,7 +68,7 @@ test("shouldn't be able to modify a user without logging in", async () => {
   await request(config.NETUNO_URL)
     .put(`/people?uid=${userUid.test}`)
     .set("Content-Type", "application/json")
-    .send({ 
+    .send({
       name: "Hacker",
       username: "hacker_man",
       email: "hacker@teste.com",

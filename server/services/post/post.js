@@ -1,36 +1,36 @@
-import {_req, _db, _val, _user, _out} from "@netuno/server-types"
+import { _req, _db, _val, _user, _out } from "@netuno/server-types"
 
 import people from "#core/lib/people.js";
 import notifications, { notificationTypes, notificationMessages } from "#core/lib/notifications.js";
 import response from "#core/lib/response.js";
 
-const content = _req.getString('content')
-const parent = _req.getString('parent')
+const content = _req.getString("content")
+const parent = _req.getString("parent")
 
 if (content.length > 2000) {
   response.stopWithTextTooLarge();
 }
 
 const loggedUser = people.getLogged();
-const loggedUserId = loggedUser.getInt('id');
+const loggedUserId = loggedUser.getInt("id");
 const loggedUserUid = loggedUser.getUID("uid");
 const loggedUsername = people.getData(loggedUserUid).getString("username");
 
 let dbParentPost = _val.map();
 
 if (parent) {
-  dbParentPost = _db.get(`post`, parent);
+  dbParentPost = _db.get("post", parent);
 }
 
 const postId = _db.insert(
-  `post`,
+  "post",
   _val.map()
-    .set('content', content)
-    .set('moment', _db.timestamp())
-    .set('people_id', loggedUserId)
-    .set('parent_id', dbParentPost.getInt('id', 0)) 
-    .set('comments', 0)
-    .set('likes', 0)
+    .set("content", content)
+    .set("moment", _db.timestamp())
+    .set("people_id", loggedUserId)
+    .set("parent_id", dbParentPost.getInt("id", 0)) 
+    .set("comments", 0)
+    .set("likes", 0)
 );
 
 const dbPost = _db.queryFirst(`

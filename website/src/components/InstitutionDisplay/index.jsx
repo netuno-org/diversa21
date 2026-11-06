@@ -1,9 +1,9 @@
-import { Avatar, Typography } from 'antd';
-import { EnvironmentOutlined } from '@ant-design/icons';
+import { Avatar, Typography } from "antd";
+import { EnvironmentOutlined } from "@ant-design/icons";
 
-import _service from '@netuno/service-client';
+import _service from "@netuno/service-client";
 
-import './index.less';
+import "./index.less";
 
 const { Paragraph } = Typography;
 
@@ -18,13 +18,13 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
     institution.city?.name,
     institution.state?.name,
     institution.country?.name
-  ].filter(Boolean).join(', ');
+  ].filter(Boolean).join(", ");
 
   return (
     <div className="institution-display">
       <Avatar
-        className={!avatarUrl ? 'institution-display__avatar--empty' : undefined}
-        style={{ backgroundColor: avatarUrl ? '#fff' : undefined, ...avatarStyle }}
+        className={!avatarUrl ? "institution-display__avatar--empty" : undefined}
+        style={{ backgroundColor: avatarUrl ? "#fff" : undefined, ...avatarStyle }}
         src={avatarUrl}
         shape="square"
       >
@@ -46,7 +46,7 @@ function InstitutionDisplay({ institution, avatarStyle, children }) {
           <Paragraph
             type="secondary"
             ellipsis={{ rows: 1, tooltip: true }}
-            style={{ marginBottom: 0, marginTop: 10, color: '#000' }}
+            style={{ marginBottom: 0, marginTop: 10, color: "#000" }}
           >
             {institution.description}
           </Paragraph>

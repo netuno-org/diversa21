@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
-import _service from '@netuno/service-client';
+import { useCallback, useEffect, useState } from "react";
+import _service from "@netuno/service-client";
 
 const defaultPagination = {
   current: 1,
   size: 10,
   total: 0,
-  term: '',
+  term: "",
   location: null,
 };
 
@@ -16,7 +16,7 @@ function useFilteredPaginatedList({ serviceUrl, requestData }) {
 
   const fetchList = useCallback(
     ({
-      term = '',
+      term = "",
       location = null,
       page = 1,
     } = {}) => {
@@ -109,7 +109,7 @@ function useFilteredPaginatedList({ serviceUrl, requestData }) {
     setPagination((currentPagination) => ({
       ...currentPagination,
       current: 1,
-      term: '',
+      term: "",
     }));
   };
 

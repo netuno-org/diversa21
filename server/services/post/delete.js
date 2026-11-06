@@ -1,4 +1,4 @@
-import {_req, _db, _val, _user, _header, _exec, _out} from "@netuno/server-types"
+import { _req, _db, _val, _user, _header, _exec, _out } from "@netuno/server-types"
 
 import response from "#core/lib/response.js";
 import permissions from "#core/lib/permissions.js";
@@ -29,7 +29,7 @@ if (dbPost.getInt("people_user_id") !== _user.id && !permissions.canManagePosts(
 const postId = dbPost.getInt("id");
 const parentId = dbPost.getInt("parent_id");
 
-const dbParentPost = parentId > 0 ? _db.get('post', parentId) : null;
+const dbParentPost = parentId > 0 ? _db.get("post", parentId) : null;
 
 const result = _db.execute(`
     WITH RECURSIVE post_tree AS (
@@ -64,7 +64,7 @@ if (!result) {
   _header.status(400);
   _out.json(
     _val.map()
-      .set("error", `post not deleted`)
+      .set("error", "post not deleted")
   );
   _exec.stop();
 }

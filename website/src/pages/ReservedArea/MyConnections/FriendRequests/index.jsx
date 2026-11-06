@@ -1,14 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Spin, Empty, Card, Pagination, Typography, Button, Space, Popconfirm } from 'antd';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Spin, Empty, Card, Pagination, Typography, Button, Space, Popconfirm } from "antd";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 
-import useFilteredPaginatedList from '../../../../common/useFilteredPaginatedList';
-import useFriendActions from '../../../../common/useFriendActions';
-import UserProfileDisplay from '../../../../components/UserProfileDisplay';
+import useFilteredPaginatedList from "../../../../common/useFilteredPaginatedList";
+import useFriendActions from "../../../../common/useFriendActions";
+import UserProfileDisplay from "../../../../components/UserProfileDisplay";
 
-import '../../../../components/Friend/List/index.less';
-import './index.less';
+import "../../../../components/Friend/List/index.less";
+import "./index.less";
 
 const { Text } = Typography;
 
@@ -20,7 +20,7 @@ function FriendRequests() {
     fetchList,
     handlePaginationChange,
   } = useFilteredPaginatedList({
-    serviceUrl: 'friend/request/list',
+    serviceUrl: "friend/request/list",
   });
 
   const { run, isProcessing } = useFriendActions();
@@ -33,11 +33,11 @@ function FriendRequests() {
   };
 
   const handleAccept = (uid) => {
-    run('accept', uid, { onSuccess: refetch });
+    run("accept", uid, { onSuccess: refetch });
   };
 
   const handleReject = (uid) => {
-    run('reject', uid, { onSuccess: refetch });
+    run("reject", uid, { onSuccess: refetch });
   };
 
   if (loading && receivedRequests.length === 0) {
@@ -49,7 +49,7 @@ function FriendRequests() {
   }
 
   const countLabel = pagination.total === 1
-    ? '1 Solicitação Encontrada'
+    ? "1 Solicitação Encontrada"
     : `${pagination.total} Solicitações Encontradas`;
 
   return (
@@ -64,7 +64,7 @@ function FriendRequests() {
               <Link to={`/u/${request.username}`} className="friend-list__link">
                 <UserProfileDisplay
                   user={request}
-                  avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }}
+                  avatarStyle={{ width: "60px", height: "60px", borderRadius: "8px" }}
                 />
               </Link>
               <Space className="friend-list__card-actions">
@@ -72,7 +72,7 @@ function FriendRequests() {
                   type="primary"
                   icon={<CheckOutlined />}
                   onClick={() => handleAccept(request.uid)}
-                  loading={isProcessing(request.uid, 'accept')}
+                  loading={isProcessing(request.uid, "accept")}
                   disabled={isProcessing(request.uid)}
                 >
                   Aceitar
@@ -87,7 +87,7 @@ function FriendRequests() {
                   <Button
                     className="profile__secondary-btn"
                     type="primary"
-                    loading={isProcessing(request.uid, 'reject')}
+                    loading={isProcessing(request.uid, "reject")}
                     icon={<CloseOutlined />}
                     disabled={isProcessing(request.uid)}
                   >

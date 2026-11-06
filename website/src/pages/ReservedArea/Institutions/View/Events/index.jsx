@@ -1,24 +1,24 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Spin, Pagination, Empty, notification } from 'antd';
-import _service from '@netuno/service-client';
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Spin, Pagination, Empty, notification } from "antd";
+import _service from "@netuno/service-client";
 
-import useFilteredPaginatedList from '../../../../../common/useFilteredPaginatedList.js';
-import EventCard from '../../../../../components/EventCard';
+import useFilteredPaginatedList from "../../../../../common/useFilteredPaginatedList.js";
+import EventCard from "../../../../../components/EventCard";
 
-import './index.less';
+import "./index.less";
 
 function InstitutionEvents({ institutionUid }) {
   const navigate = useNavigate();
   const [actionLoadingUid, setActionLoadingUid] = useState(null);
 
   const requestData = useMemo(
-    () => ({ institutionUid, tab: 'all' }),
+    () => ({ institutionUid, tab: "all" }),
     [institutionUid]
   );
 
   const { items: events, loading, pagination, handlePaginationChange, fetchList } = useFilteredPaginatedList({
-    serviceUrl: 'events/list',
+    serviceUrl: "events/list",
     requestData,
   });
 
@@ -28,26 +28,26 @@ function InstitutionEvents({ institutionUid }) {
       e.preventDefault();
     }
     setActionLoadingUid(event.uid);
-    const method = event.isGoing ? 'DELETE' : 'POST';
+    const method = event.isGoing ? "DELETE" : "POST";
     _service({
-      url: 'events/attendance',
+      url: "events/attendance",
       method,
-      data: method === 'POST' ? { eventUid: event.uid, status: 'going' } : { eventUid: event.uid },
+      data: method === "POST" ? { eventUid: event.uid, status: "going" } : { eventUid: event.uid },
       success: () => {
         setActionLoadingUid(null);
         const leaving = event.isGoing;
         const notify = leaving ? notification.warning : notification.success;
         notify({
-          message: leaving ? 'Presença cancelada' : 'Presença confirmada',
+          message: leaving ? "Presença cancelada" : "Presença confirmada",
           description: leaving
-            ? 'A sua presença neste evento foi cancelada'
-            : 'A sua presença neste evento foi confirmada.',
+            ? "A sua presença neste evento foi cancelada"
+            : "A sua presença neste evento foi confirmada.",
         });
         fetchList({ term: pagination.term, location: pagination.location, page: pagination.current });
       },
       fail: () => {
         setActionLoadingUid(null);
-        notification.error({ message: 'Erro ao atualizar presença.' });
+        notification.error({ message: "Erro ao atualizar presença." });
       },
     });
   };

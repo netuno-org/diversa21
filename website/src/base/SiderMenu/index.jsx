@@ -49,7 +49,7 @@ const menuItems = [
     link: "/institutions"
   },
   {
-    type: 'divider'
+    type: "divider"
   },
   {
     key: "profile-view",
@@ -70,7 +70,7 @@ const menuItems = [
     link: "/friends"
   },
   {
-    type: 'divider'
+    type: "divider"
   },
   {
     key: "messages",
@@ -85,7 +85,7 @@ const menuItems = [
     link: "/notifications"
   },
   {
-        type: 'divider'
+        type: "divider"
   },
   {
     key: "reports",
@@ -176,7 +176,7 @@ function SiderMenu() {
           onClose={() => setDrawerOpen(false)}
           open={drawerOpen}
           size={260}
-          styles={{ body: { padding: 0 }, header: { display: 'none' } }}
+          styles={{ body: { padding: 0 }, header: { display: "none" } }}
         >
           <div className="logo-container logo-container--drawer">
             <Button

@@ -1,7 +1,7 @@
 import request from "supertest";
 
 import config from "../config.js";
-import { username } from './usernames.js';
+import { username } from "./usernames.js";
 
 const loginAs = async (name) => {
   const loginResponse = await request(config.NETUNO_URL)

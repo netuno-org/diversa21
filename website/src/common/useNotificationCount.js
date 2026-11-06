@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import _ws from '@netuno/ws-client';
-import useWS from './useWS';
+import { useState, useEffect } from "react";
+import _ws from "@netuno/ws-client";
+import useWS from "./useWS";
 
 let notificationCountLoaded = false;
 
@@ -48,7 +48,7 @@ export default function useNotificationCount() {
       service: "notification/new",
       success: (data) => {
         const newNotif = data.content;
-        if (newNotif?.type !== 'message') {
+        if (newNotif?.type !== "message") {
           setCount(prev => prev + 1);
         }
       }
@@ -59,7 +59,7 @@ export default function useNotificationCount() {
       service: "notification/read",
       success: (data) => {
         const content = data.content;
-        if (!content || content.type === 'message') return;
+        if (!content || content.type === "message") return;
 
         if (content.all) {
           setCount(0);
@@ -72,20 +72,20 @@ export default function useNotificationCount() {
     const handleFriendActionSuccess = (event) => {
       const detail = event?.detail || {};
       const { action, uid } = detail;
-      if (!uid || !['accept', 'reject', 'cancel'].includes(action)) {
+      if (!uid || !["accept", "reject", "cancel"].includes(action)) {
         return;
       }
       setCount(prev => Math.max(0, prev - 1));
     };
 
-    window.addEventListener('friend-action-success', handleFriendActionSuccess);
+    window.addEventListener("friend-action-success", handleFriendActionSuccess);
 
     return () => {
       notificationCountLoaded = false;
       _ws.removeListener(listenerInitCount);
       _ws.removeListener(listenerNewNotification);
       _ws.removeListener(listenerNotificationRead);
-      window.removeEventListener('friend-action-success', handleFriendActionSuccess);
+      window.removeEventListener("friend-action-success", handleFriendActionSuccess);
     };
   }, [connected]);
 

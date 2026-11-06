@@ -141,7 +141,7 @@ function FriendsList({ onFriendSelected, friend }) {
   }, [ws.data]);
 
   const handleSearch = (value) => {
-    if (value.trim() || value === '') {
+    if (value.trim() || value === "") {
       setLoading(true)
       _ws.sendService({
         service: "friend/list",

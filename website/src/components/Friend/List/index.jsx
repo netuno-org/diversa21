@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
-import { Card, Empty, Spin, Pagination, Typography } from 'antd';
-import { Link } from 'react-router-dom';
-import UserProfileDisplay from '../../UserProfileDisplay';
-import ListHeaderFilters from '../../ListHeaderFilters';
-import useFilteredPaginatedList from '../../../common/useFilteredPaginatedList';
+import React, { useMemo } from "react";
+import { Card, Empty, Spin, Pagination, Typography } from "antd";
+import { Link } from "react-router-dom";
+import UserProfileDisplay from "../../UserProfileDisplay";
+import ListHeaderFilters from "../../ListHeaderFilters";
+import useFilteredPaginatedList from "../../../common/useFilteredPaginatedList";
 
-import './index.less';
+import "./index.less";
 
 const { Text } = Typography;
 
@@ -31,7 +31,7 @@ function FriendList({ userUid, title }) {
     handleLocationClear,
     handleSearchClear,
   } = useFilteredPaginatedList({
-    serviceUrl: 'friend/list',
+    serviceUrl: "friend/list",
     requestData,
   });
 
@@ -56,18 +56,18 @@ function FriendList({ userUid, title }) {
       </div>
       <div className="friend-list__count">
         <Text type="secondary">
-          {pagination.total} {pagination.total !== 1 ? 'Amigos' : 'Amigo'} Encontrado{pagination.total !== 1 ? 's' : ''}
+          {pagination.total} {pagination.total !== 1 ? "Amigos" : "Amigo"} Encontrado{pagination.total !== 1 ? "s" : ""}
         </Text>
       </div>
       <div className="friend-list__items">
         {friendsList.map((friend) => (
           <Card 
             key={friend.uid} 
-            className={`friend-list__card ${friend.active === false ? 'friend-list__card--inactive' : ''}`} 
+            className={`friend-list__card ${friend.active === false ? "friend-list__card--inactive" : ""}`} 
             hoverable={friend.active !== false}
           >
             <Link to={`/u/${friend.username}`} className="friend-list__link">
-              <UserProfileDisplay user={friend} avatarStyle={{ width: '60px', height: '60px', borderRadius: '8px' }} />
+              <UserProfileDisplay user={friend} avatarStyle={{ width: "60px", height: "60px", borderRadius: "8px" }} />
             </Link>
           </Card>
         ))}
@@ -78,7 +78,7 @@ function FriendList({ userUid, title }) {
       {friendsList.length > 0 && (
         <div className="friend-list__pagination">
           <Pagination
-            className={`friends-list__pagination ${friendsList.length === 0 && !loading ? 'friends-list__pagination--hidden' : ''}`}
+            className={`friends-list__pagination ${friendsList.length === 0 && !loading ? "friends-list__pagination--hidden" : ""}`}
             align='center'
             total={pagination.total}
             current={pagination.current}

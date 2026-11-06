@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import _service from "@netuno/service-client";
 import { Space, Tag, Card, Avatar, Button, Popconfirm, Modal } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -73,10 +73,10 @@ function Post({
     if (isAlreadyIsolated || editMode) {
       return;
     }
-    if (e.target.closest('.ant-modal-root')
-      || e.target.closest('.post-actions-wrapper')
-      || e.target.closest('.user-info-actions')
-      || e.target.closest('a')) {
+    if (e.target.closest(".ant-modal-root")
+      || e.target.closest(".post-actions-wrapper")
+      || e.target.closest(".user-info-actions")
+      || e.target.closest("a")) {
       return;
     }
     navigate(`/p/${uid}`);
@@ -120,8 +120,8 @@ function Post({
     setLoadingLike(true);
     if (!isLiked) {
       _service({
-        url: 'post/like',
-        method: 'POST',
+        url: "post/like",
+        method: "POST",
         data: { uid },
         success: () => {
           setIsLiked(true);
@@ -136,8 +136,8 @@ function Post({
       });
     } else {
       _service({
-        url: 'post/like',
-        method: 'DELETE',
+        url: "post/like",
+        method: "DELETE",
         data: { uid },
         success: () => {
           setIsLiked(false);
@@ -155,7 +155,7 @@ function Post({
 
   const linkRegex = /(https?:\/\/[^\s]+)/g;
 
-  const displayContent = content.split('\n').map((line, index, array) => {
+  const displayContent = content.split("\n").map((line, index, array) => {
     const parts = line.split(linkRegex);
     return (
       <React.Fragment key={index}>
@@ -168,7 +168,7 @@ function Post({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                style={{ color: '#1890ff', textDecoration: 'underline' }}
+                style={{ color: "#1890ff", textDecoration: "underline" }}
               >
                 {part}
               </a>
@@ -181,20 +181,20 @@ function Post({
     );
   });
 
-  const activityLabel = type === 'comment' && parentPeopleUser
+  const activityLabel = type === "comment" && parentPeopleUser
     ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> comentou num post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
-    : type === 'like' && parentPeopleUser
+    : type === "like" && parentPeopleUser
       ? <span className="activity-context-label"><Link to={`/u/${people.user}`}>@{people.user}</Link> curtiu de um post de <Link to={`/u/${parentPeopleUser}`}>@{parentPeopleUser}</Link></span>
       : null;
 
   return (
     <Card
       className={`post-container 
-        ${isHighlighted ? 'post-container--highlight' : ''} 
-        ${!isAlreadyIsolated ? 'post-container--clickable' : ''}`}
+        ${isHighlighted ? "post-container--highlight" : ""} 
+        ${!isAlreadyIsolated ? "post-container--clickable" : ""}`}
       ref={postCardRef}
       onClick={handleCardClick}
-      style={{ cursor: !isAlreadyIsolated ? 'pointer' : 'default' }}
+      style={{ cursor: !isAlreadyIsolated ? "pointer" : "default" }}
     >
       {activityLabel && (
         <div className="activity-context-bar">
@@ -246,7 +246,7 @@ function Post({
             editMode={editMode}
             onDeletePost={onDeletePost}
             onEdit={() => setEditMode(true)}
-            deleteTitle={'"Tem a certeza que pretende eliminar o post? Esta ação é irreversível.'}
+            deleteTitle={"\"Tem a certeza que pretende eliminar o post? Esta ação é irreversível."}
           />
         </div>
       </div>
@@ -291,7 +291,7 @@ function Post({
                 ) : (
                   <Space size="small">
                     Ver Comentários
-                    <Tag color="#6009B6" variant="solid" style={{ margin: 0, borderRadius: '32px' }}>
+                    <Tag color="#6009B6" variant="solid" style={{ margin: 0, borderRadius: "32px" }}>
                       {countComments}
                     </Tag>
                   </Space>
@@ -312,7 +312,7 @@ function Post({
             destroyOnHidden
             centered
           >
-            <div style={{ marginTop: '16px' }}>
+            <div style={{ marginTop: "16px" }}>
               <Editor
                 type="comment"
                 onCancel={() => setShowEditor(false)}

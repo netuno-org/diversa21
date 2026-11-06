@@ -15,7 +15,7 @@ function Posts() {
   const { uid } = useParams();
   const [searchParams] = useSearchParams();
   
-  const rawC = searchParams.get('c');
+  const rawC = searchParams.get("c");
   const commentUid = rawC === "undefined" ? null : rawC;
   const isolatedUid = uid === "undefined" ? null : uid;
 
@@ -26,7 +26,7 @@ function Posts() {
   };
 
   const handleClearIsolation = () => {
-    navigate('/posts');
+    navigate("/posts");
   };
 
   return (
@@ -37,7 +37,7 @@ function Posts() {
             type="link"
             icon={<ArrowLeftOutlined />}
             onClick={handleClearIsolation}
-            style={{ padding: 0, fontSize: '16px', color: '#8A6AA2' }}
+            style={{ padding: 0, fontSize: "16px", color: "#8A6AA2" }}
           >
             Ver todas as publicações
           </Button>
@@ -50,7 +50,7 @@ function Posts() {
         ref={refPostList}
         isolatedUid={isolatedUid}
         isolatedCommentUid={commentUid}
-        key={isolatedUid || 'all'}
+        key={isolatedUid || "all"}
       />
     </div>
   );

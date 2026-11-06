@@ -5,16 +5,16 @@ import {
   INSTITUTIONS_SET_LOADING,
   INSTITUTIONS_SET_ERROR,
   INSTITUTIONS_CLEAR_CURRENT
-} from '../actions/institutionsActionTypes';
+} from "../actions/institutionsActionTypes";
 
 const initialState = {
   list: [],
   current: null,
   filters: {
-    search: '',
-    country: '',
-    state: '',
-    city: ''
+    search: "",
+    country: "",
+    state: "",
+    city: ""
   },
   pagination: {
     current: 1,
