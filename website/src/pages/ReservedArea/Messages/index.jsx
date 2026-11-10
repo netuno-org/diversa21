@@ -175,7 +175,7 @@ function Messages() {
                 activeTab={activeTab}
                 onChange={onChange}
                 items={tabItems}
-                className="friends-page__tabs"
+                className="messages__tabs"
               />
             </Col>
             <Col xs={24} md={16} className="messages__chat-area">
