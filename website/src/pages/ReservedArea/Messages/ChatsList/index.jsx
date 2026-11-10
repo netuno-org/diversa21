@@ -5,7 +5,7 @@ import _ws from "@netuno/ws-client";
 import useWS from "../../../../common/useWS.js";
 import globalNotification from "../../../../common/globalNotification.js";
 import _service from "@netuno/service-client";
-import FriendItem from "../FriendsList/FriendItem";
+import FriendItem from "../../../../components/FriendItem/index.jsx";
 
 function FriendsList({ selectedFriend, onFriendSelected }) {
   const [loading, setLoading] = useState(true);

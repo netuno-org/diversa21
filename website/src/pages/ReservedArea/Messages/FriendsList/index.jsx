@@ -5,7 +5,7 @@ import _ws from "@netuno/ws-client";
 import useWS from "../../../../common/useWS.js";
 import globalNotification from "../../../../common/globalNotification.js";
 
-import FriendItem from "./FriendItem";
+import FriendItem from "../../../../components/FriendItem/index.jsx";
 
 import "./index.less";
 
