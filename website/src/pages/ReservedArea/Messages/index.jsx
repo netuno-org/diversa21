@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { Typography, Card, Row, Col, Tabs } from "antd";
 import { useLocation } from "react-router-dom";
-import { Row, Col, Card, Modal, Select, Spin, Typography, Avatar, Space, Empty } from "antd";
 import { LuMessageSquarePlus } from "react-icons/lu";
 
 import _service from "@netuno/service-client";
@@ -10,6 +10,7 @@ import { setOpenChatFriendUid } from "../../../common/useNotifications.js";
 
 import Chat from "./Chat";
 import FriendsList from "./FriendsList/index.jsx";
+import ChatsList from "./ChatsList";
 import ListHeaderFilters from "../../../components/ListHeaderFilters/index.jsx";
 
 import "./index.less";
@@ -18,13 +19,19 @@ const { Text } = Typography;
 
 function Messages() {
   const [chatFriend, setChatFriend] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [isModalVisible, setIsModalVisible] = useState(false);
   const [peopleList, setPeopleList] = useState([]);
   const [fetchingPeople, setFetchingPeople] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("conversations");
 
   const loggedUser = usePeople();
   const location = useLocation();
+
+  const onChange = (key) => {
+    setActiveTab(key);
+    // loadChats();
+  }
 
   useEffect(() => {
     if (location.state?.autoOpenFriend) {
@@ -38,52 +45,52 @@ function Messages() {
     return () => setOpenChatFriendUid(null);
   }, [chatFriend?.uid]);
 
-  const fetchPeopleForModal = (term = "") => {
-    setFetchingPeople(true);
+  // const fetchPeopleForModal = (term = "") => {
+  //   setFetchingPeople(true);
+  //
+  //   _service({
+  //     url: "friend/list",
+  //     data: {
+  //       name: term,
+  //       page: 1,
+  //     },
+  //     success: ({ json }) => {
+  //       const items = json.data?.items || [];
+  //       const loggedUserUid = loggedUser.data?.uid;
+  //
+  //       const filteredPeople = items.filter(
+  //         (person) => !loggedUserUid || person.uid !== loggedUserUid
+  //       );
+  //
+  //       const options = filteredPeople.map((person) => ({
+  //         label: person.name,
+  //         value: person.uid,
+  //         personData: person,
+  //       }));
+  //
+  //       setPeopleList(options);
+  //       setFetchingPeople(false);
+  //     },
+  //     fail: () => {
+  //       setPeopleList([]);
+  //       setFetchingPeople(false);
+  //     }
+  //   });
+  // };
 
-    _service({
-      url: "friend/list",
-      data: {
-        name: term,
-        page: 1,
-      },
-      success: ({ json }) => {
-        const items = json.data?.items || [];
-        const loggedUserUid = loggedUser.data?.uid;
+  // useEffect(() => {
+  //   if (isModalVisible) {
+  //     fetchPeopleForModal("");
+  //   } else {
+  //     setPeopleList([]);
+  //     setSearchTerm("");
+  //   }
+  // }, [isModalVisible]);
 
-        const filteredPeople = items.filter(
-          (person) => !loggedUserUid || person.uid !== loggedUserUid
-        );
-
-        const options = filteredPeople.map((person) => ({
-          label: person.name,
-          value: person.uid,
-          personData: person,
-        }));
-
-        setPeopleList(options);
-        setFetchingPeople(false);
-      },
-      fail: () => {
-        setPeopleList([]);
-        setFetchingPeople(false);
-      }
-    });
-  };
-
-  useEffect(() => {
-    if (isModalVisible) {
-      fetchPeopleForModal("");
-    } else {
-      setPeopleList([]);
-      setSearchTerm("");
-    }
-  }, [isModalVisible]);
-
-  const handleModalSearch = (value) => {
-    setSearchTerm(value);
-    fetchPeopleForModal(value);
-  };
+  // const handleModalSearch = (value) => {
+  //   setSearchTerm(value);
+  //   fetchPeopleForModal(value);
+  // };
 
   const onFriendSelected = (friend) => {
     setChatFriend(friend);
@@ -91,8 +98,71 @@ function Messages() {
 
   const handleStartNewChat = (value, option) => {
     setChatFriend(option.personData);
-    setIsModalVisible(false);
+    // setIsModalVisible(false);
   };
+
+  const tabItems = [
+    {
+      key: "conversations",
+      label: "Conversas",
+      children: (
+        <ChatsList selectedFriend={chatFriend} onFriendSelected={onFriendSelected} />
+      )
+    },
+    {
+      key: "friends",
+      label: "Amigos",
+      children: (
+        <FriendsList friend={chatFriend} onFriendSelected={onFriendSelected} />
+        // <Modal
+        //   title="Nova Conversa"
+        //   open={isModalVisible}
+        //   onCancel={() => setIsModalVisible(false)}
+        //   footer={null}
+        //   destroyOnHidden
+        // >
+        //   <div style={{ padding: "16px 0" }}>
+        //     <Text type="secondary" style={{ display: "block", marginBottom: 16 }}>
+        //       Pesquise e selecione uma pessoa para iniciar uma troca de mensagens.
+        //     </Text>
+        //     <Select
+        //       showSearch={{ filterOption: false, onSearch: handleModalSearch }}
+        //       style={{ width: "100%" }}
+        //       placeholder="Pesquisar por nome..."
+        //       value={null}
+        //       onChange={handleStartNewChat}
+        //       notFoundContent={
+        //         fetchingPeople ? (
+        //           <div style={{ textAlign: "center", padding: 16 }}><Spin size="small" /></div>
+        //         ) : (
+        //           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhuma pessoa encontrada." />
+        //         )
+        //       }
+        //       options={peopleList}
+        //       size="large"
+        //       optionRender={(option) => (
+        //         <Space>
+        //           <Avatar
+        //             src={
+        //               option.data.personData.avatar
+        //                 ? _service.url(`/asset?uid=${option.data.personData.uid}&type=avatar&entity=people&${new Date().getTime()}`)
+        //                 : "/images/profile-default.png"
+        //             }
+        //             size="small"
+        //             shape="square"
+        //           />
+        //           <Text>{option.data.label}</Text>
+        //           {option.data.personData.username && (
+        //             <Text type="secondary" style={{ fontSize: 12 }}>@{option.data.personData.username}</Text>
+        //           )}
+        //         </Space>
+        //       )}
+        //     />
+        //   </div>
+        // </Modal>
+      )
+    },
+  ];
 
   return (
     <section className={`messages ${chatFriend ? "messages--chat-active" : ""}`}>
@@ -100,7 +170,13 @@ function Messages() {
         <Card className="messages__card" variant="borderless">
           <Row className="messages__row">
             <Col xs={24} md={8} className="messages__sidebar">
-              <FriendsList friend={chatFriend} onFriendSelected={onFriendSelected} />
+              <Tabs
+                activeKey={activeTab}
+                activeTab={activeTab}
+                onChange={onChange}
+                items={tabItems}
+                className="friends-page__tabs"
+              />
             </Col>
             <Col xs={24} md={16} className="messages__chat-area">
               <Chat
@@ -111,53 +187,7 @@ function Messages() {
           </Row>
         </Card>
       </div>
-      <Modal
-        title="Nova Conversa"
-        open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={null}
-        destroyOnHidden
-      >
-        <div style={{ padding: "16px 0" }}>
-          <Text type="secondary" style={{ display: "block", marginBottom: 16 }}>
-            Pesquise e selecione uma pessoa para iniciar uma troca de mensagens.
-          </Text>
-          <Select
-            showSearch={{ filterOption: false, onSearch: handleModalSearch }}
-            style={{ width: "100%" }}
-            placeholder="Pesquisar por nome..."
-            value={null}
-            onChange={handleStartNewChat}
-            notFoundContent={
-              fetchingPeople ? (
-                <div style={{ textAlign: "center", padding: 16 }}><Spin size="small" /></div>
-              ) : (
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Nenhuma pessoa encontrada." />
-              )
-            }
-            options={peopleList}
-            size="large"
-            optionRender={(option) => (
-              <Space>
-                <Avatar
-                  src={
-                    option.data.personData.avatar
-                      ? _service.url(`/asset?uid=${option.data.personData.uid}&type=avatar&entity=people&${new Date().getTime()}`)
-                      : "/images/profile-default.png"
-                  }
-                  size="small"
-                  shape="square"
-                />
-                <Text>{option.data.label}</Text>
-                {option.data.personData.username && (
-                  <Text type="secondary" style={{ fontSize: 12 }}>@{option.data.personData.username}</Text>
-                )}
-              </Space>
-            )}
-          />
-        </div>
-      </Modal>
-    </section>
+    </section >
   );
 }
 
