@@ -1,8 +1,9 @@
 import React from "react";
-import TimeAgo from "../../../../../components/TimeAgo"
 
 import { Avatar, Typography, Badge, Col } from "antd";
 import _service from "@netuno/service-client";
+
+import TimeAgo from "../TimeAgo";
 
 import "./index.less";
 

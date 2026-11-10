@@ -7,6 +7,8 @@ import globalNotification from "../../../../common/globalNotification.js";
 import _service from "@netuno/service-client";
 import FriendItem from "../../../../components/FriendItem/index.jsx";
 
+import "./index.less";
+
 function FriendsList({ selectedFriend, onFriendSelected }) {
   const [loading, setLoading] = useState(true);
   const [conversations, setConverstations] = useState(null);
@@ -139,7 +141,7 @@ function FriendsList({ selectedFriend, onFriendSelected }) {
 
 
   return (
-    <div className="messages__friends-list">
+    <div className="messages__chats-list">
       {loading && (
         <div style={{ textAlign: "center", padding: "20px" }}>
           <Spin />
@@ -154,7 +156,7 @@ function FriendsList({ selectedFriend, onFriendSelected }) {
       }
       {
         conversations && conversations.length > 0 && (
-          <ul>
+          <ul className="messages__chats-ul">
             {conversations.map((item) => (
               <FriendItem
                 key={item.uid}
