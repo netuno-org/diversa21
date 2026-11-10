@@ -13,8 +13,11 @@ function FriendsList({ selectedFriend, onFriendSelected }) {
   const [loading, setLoading] = useState(true);
   const [conversations, setConverstations] = useState(null);
   const [friends, setFriends] = useState(null);
+  const selectedFriendUidRef = useRef(null);
   const conversationsRef = useRef(null);
   const ws = useWS();
+
+  selectedFriendUidRef.current = selectedFriend?.uid ?? null;
 
   useEffect(() => {
     conversationsRef.current = conversations;
@@ -163,6 +166,7 @@ function FriendsList({ selectedFriend, onFriendSelected }) {
                 {...item}
                 loadChats={loadChats}
                 className={selectedFriend && selectedFriend.uid === item.uid ? "active" : ""}
+                isActive={selectedFriendUidRef.current === item.uid}
                 onClick={() => onFriendSelected && onFriendSelected(item)}
               />
             ))}
