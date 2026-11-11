@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm, Pagination } from "antd";
+import { Card, Typography, Avatar, Button, Tabs, Badge, Space, Tag, Empty, Spin, Popconfirm, Pagination, Col, Row } from "antd";
 import { SafetyOutlined, NotificationOutlined, FileTextOutlined, CommentOutlined, UserAddOutlined, TeamOutlined, HeartOutlined, CheckOutlined, CloseOutlined, UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import _service from "@netuno/service-client";
@@ -197,25 +197,6 @@ function Notifications() {
                         <TimeAgo sentAt={item.sent_at} className="notifications-page__item-time" />
                       )}
                     </div>
-                    <div>
-                      <Popconfirm
-                        title="Eliminar notificação"
-                        description="Tens a certeza que pretendes eliminar?"
-                        okText="Sim"
-                        cancelText="Não"
-                        onConfirm={(e) => handleDelete(e, item.uid)}
-                        onPopupClick={(e) => e.stopPropagation()}
-                      >
-                        <Button
-                          type="text"
-                          size="small"
-                          danger
-                          icon={<DeleteOutlined />}
-                          className="notifications-item__delete-btn"
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                      </Popconfirm>
-                    </div>
                     <div className="notifications-page__item-description">
                       <Text type="secondary">{item.desc}</Text>
                     </div>
@@ -266,6 +247,23 @@ function Notifications() {
                   </div>
                 </div>
                 <div className="notifications-page__item-extra" onClick={(e) => e.stopPropagation()}>
+                  <Popconfirm
+                    title="Eliminar notificação"
+                    description="Tens a certeza que pretendes eliminar?"
+                    okText="Sim"
+                    cancelText="Não"
+                    onConfirm={(e) => handleDelete(e, item.uid)}
+                    onPopupClick={(e) => e.stopPropagation()}
+                  >
+                    <Button
+                      type="text"
+                      size="small"
+                      danger
+                      icon={<DeleteOutlined />}
+                      className="notifications-item__delete-btn"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </Popconfirm>
                   {!item.read && <Badge color="#52c41a" />}
                 </div>
               </div>
