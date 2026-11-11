@@ -8,28 +8,45 @@ const dbParticipants = _db.query(`
 SELECT 
     p.uid, 
     p.name, 
+    nu.user username,
     p.avatar,
-    c.latest_message_moment, 
+    c.last_message_at,
+    c.last_message_uid,
+    c.last_message,
     c.unread_messages_count,
     (SELECT COUNT(id) FROM people_ws_session WHERE people_id = p.id) AS active_ws_sessions
 FROM people AS p
+INNER JOIN netuno_user nu ON p.people_user_id = nu.id
 INNER JOIN (
     SELECT 
         raw_msg.peer_people_id,
-        MAX(raw_msg.sent_at) AS latest_message_moment,
+        MAX(raw_msg.sent_at) AS last_message_at,
+        (ARRAY_AGG(raw_msg.uid ORDER BY raw_msg.sent_at DESC, raw_msg.id DESC))[1] AS last_message_uid,
+        (ARRAY_AGG(
+            CASE
+                WHEN raw_msg.deleted_at IS NOT NULL OR raw_msg.active = false THEN 'Mensagem apagada'
+                ELSE raw_msg.message
+            END
+            ORDER BY raw_msg.sent_at DESC, raw_msg.id DESC
+        ))[1] AS last_message,
         COUNT(CASE WHEN raw_msg.recipient_id = ? AND raw_msg.read_at IS NULL THEN 1 END) AS unread_messages_count
     FROM (
         SELECT 
+            id,
+            uid,
             recipient_id,
             read_at,
             sent_at,
+            message,
+            active,
+            deleted_at,
             CASE WHEN originator_id = ? THEN recipient_id ELSE originator_id END AS peer_people_id
         FROM message
         WHERE recipient_id = ? OR originator_id = ?
     ) AS raw_msg
     GROUP BY raw_msg.peer_people_id
 ) AS c ON p.id = c.peer_people_id
-ORDER BY c.latest_message_moment DESC NULLS LAST;
+ORDER BY c.last_message_at DESC NULLS LAST;
 
 `,
   dbPeople.getInt("id"),
@@ -44,9 +61,12 @@ for (const dbParticipant of dbParticipants) {
     _val.map()
       .set("uid", dbParticipant.getString("uid"))
       .set("name", dbParticipant.getString("name"))
+      .set("username", dbParticipant.getString("username"))
       .set("avatar", dbParticipant.getString("avatar") !== "")
       .set("online", dbParticipant.getInt("active_ws_sessions") > 0)
-      .set("latest_message", dbParticipant.getSQLTimestamp("latest_message_moment"))
+      .set("last_message_at", dbParticipant.getSQLTimestamp("last_message_at"))
+      .set("last_message_uid", dbParticipant.getString("last_message_uid"))
+      .set("last_message", dbParticipant.getString("last_message"))
       .set("unread_messages", dbParticipant.getInt("unread_messages_count", 0))
   );
 }

@@ -108,12 +108,54 @@ function FriendsList({ selectedFriend, onFriendSelected }) {
                 return {
                   ...item,
                   unread_messages: (item.unread_messages || 0) + 1,
-                  latest_message: content?.sent_at || item.latest_message,
+                  last_message_at: content?.sent_at || item.last_message_at,
+                  last_message_uid: content?.uid || item.last_message_uid,
+                  last_message: content?.deleted_at
+                    ? "Mensagem apagada"
+                    : (content?.message ?? item.last_message),
                 };
               }
               return item;
             })
-            .sort((a, b) => new Date(b.latest_message) - new Date(a.latest_message))
+            .sort((a, b) => new Date(b.last_message_at) - new Date(a.last_message_at))
+        );
+      },
+    });
+
+    const listenerEditMessage = _ws.addListener({
+      method: "PUT",
+      service: "message/edit",
+      success: ({ content }) => {
+        setConverstations((prev) =>
+          prev ? prev.map((item) => {
+            if (item.last_message_uid === content?.uid) {
+              return {
+                ...item,
+                last_message: content?.deleted_at
+                  ? "Mensagem apagada"
+                  : (content?.message ?? item.last_message),
+              };
+            }
+            return item;
+          }) : prev
+        );
+      },
+    });
+
+    const listenerDeleteMessage = _ws.addListener({
+      method: "DELETE",
+      service: "message/delete",
+      success: ({ data }) => {
+        setConverstations((prev) =>
+          prev ? prev.map((item) => {
+            if (item.uid === data.with && item.last_message_uid === data.uid) {
+              return {
+                ...item,
+                last_message: "Mensagem apagada",
+              };
+            }
+            return item;
+          }) : prev
         );
       },
     });
@@ -138,6 +180,8 @@ function FriendsList({ selectedFriend, onFriendSelected }) {
       _ws.removeListener(listenerList);
       _ws.removeListener(listenerStatusChanged);
       _ws.removeListener(listenerNewMessage);
+      _ws.removeListener(listenerEditMessage);
+      _ws.removeListener(listenerDeleteMessage);
       _ws.removeListener(listenerMessageReadMark);
     };
   }, [ws.data, loadChats]);
@@ -163,8 +207,14 @@ function FriendsList({ selectedFriend, onFriendSelected }) {
             {conversations.map((item) => (
               <FriendItem
                 key={item.uid}
-                {...item}
+                uid={item.uid}
+                name={item.name}
+                avatar={item.avatar}
+                status={item.online}
                 loadChats={loadChats}
+                unreadMessages={item.unread_messages}
+                lastMessage={item.last_message}
+                lastMessageAt={item.last_message_at}
                 className={selectedFriend && selectedFriend.uid === item.uid ? "active" : ""}
                 isActive={selectedFriendUidRef.current === item.uid}
                 onClick={() => onFriendSelected && onFriendSelected(item)}
