@@ -11,13 +11,13 @@ function useWS() {
   const [data, setData] = useState(baseData);
   const [connecting, setConnecting] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     setData(baseData);
   }, [baseData]);
-  
+
   const load = (onFinish) => {
     _ws.config({
-      url: Config.websocketURL() + "?auth="+ _auth.accessToken(),
+      url: Config.websocketURL() + "?auth=" + _auth.accessToken(),
       servicesPrefix: Config.websocketServicesPrefix(),
       method: "GET",
       autoReconnect: true,
@@ -37,15 +37,18 @@ function useWS() {
         dispatch(wsLoadAction({ connected: false }));
         onFinish && onFinish(false);
       },
+      // message: (data, event) => {
+      //   console.log("ws message", { data, event });
+      // }
     });
     _ws.connect();
     setConnecting(true);
   };
   return {
-    isConnecting: ()=> connecting,
+    isConnecting: () => connecting,
     data,
     load,
-    close: ()=> _ws.close()
+    close: () => _ws.close()
   }
 }
 

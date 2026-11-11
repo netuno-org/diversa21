@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { Typography, Card, Row, Col, Tabs } from "antd";
 import { useLocation } from "react-router-dom";
@@ -14,6 +14,7 @@ import ChatsList from "./ChatsList";
 import ListHeaderFilters from "../../../components/ListHeaderFilters/index.jsx";
 
 import "./index.less";
+import _ws from "@netuno/ws-client";
 
 const { Text } = Typography;
 
@@ -28,9 +29,15 @@ function Messages() {
   const loggedUser = usePeople();
   const location = useLocation();
 
+  const loadChats = useCallback(() => {
+    _ws.sendService({
+      service: "message/chat/list",
+    });
+  }, []);
+
   const onChange = (key) => {
     setActiveTab(key);
-    // loadChats();
+    loadChats();
   }
 
   useEffect(() => {
@@ -106,7 +113,11 @@ function Messages() {
       key: "conversations",
       label: "Conversas",
       children: (
-        <ChatsList selectedFriend={chatFriend} onFriendSelected={onFriendSelected} />
+        <ChatsList
+          selectedFriend={chatFriend}
+          onFriendSelected={onFriendSelected}
+          loadChats={loadChats}
+        />
       )
     },
     {
