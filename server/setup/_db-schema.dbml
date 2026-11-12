@@ -7,9 +7,9 @@ Table city {
 
 Table country {
   id int [pk, increment]
-  code varchar(250) [not null, unique, note: 'Codigo']
+  code varchar(250) [not null, unique, note: 'Código']
   name varchar(250) [not null, unique, note: 'Nome']
-  Note: 'Pais'
+  Note: 'País'
 }
 
 Table event {
@@ -39,10 +39,10 @@ Table event_participant {
 
 Table forum_topic {
   id int [pk, increment]
-  anonymous boolean [note: 'Amônimo']
+  anonymous boolean [note: 'Anônimo']
   content text [not null, note: 'Conteúdo']
   forum_category_id int [not null, ref: > forum_category.id, note: 'Categoria']
-  last_activity_at timestamp [note: 'Útilma Atividade Em']
+  last_activity_at timestamp [note: 'Última Atividade Em']
   moment timestamp [note: 'Momento']
   people_id int [not null, ref: > people.id, note: 'Pessoa']
   replies int [note: 'Respostas']
@@ -259,8 +259,8 @@ Table service_favorite {
 
 Table state {
   id int [pk, increment]
-  code varchar(250) [not null, unique, note: 'Codigo']
-  country_id int [not null, ref: > country.id, note: 'Pais']
+  code varchar(250) [not null, unique, note: 'Código']
+  country_id int [not null, ref: > country.id, note: 'País']
   name varchar(250) [not null, unique, note: 'Nome']
   Note: 'Estado'
 }
@@ -268,10 +268,10 @@ Table state {
 Table forum_category {
   id int [pk, increment]
   description varchar(150) [not null, note: 'Descrição']
-  last_activity_at timestamp [note: 'Útilma Atividade Em']
+  last_activity_at timestamp [note: 'Última Atividade Em']
   moment timestamp [note: 'Momento']
   name varchar(250) [not null, unique, note: 'Nome']
-  topics int [note: 'Topicos']
+  topics int [note: 'Tópicos']
   Note: 'Categoria'
 }
 

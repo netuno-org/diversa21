@@ -28,7 +28,7 @@ _form.sync(
 		.set("report", false)
 		.set("report_behaviour", 0)
 		.set("show_id", true)
-		.set("title", "Pais")
+		.set("title", "Pa\u00EDs")
 		.set("uid", "dd154e3e-ebcc-4294-b5a6-9b4e3a6399c7")
 );
 _form.syncField(
@@ -47,7 +47,7 @@ _form.syncField(
 		.set("rowspan", 0)
 		.set("tdheight", 0)
 		.set("tdwidth", 0)
-		.set("title", "Codigo")
+		.set("title", "C\u00F3digo")
 		.set("type", "text")
 		.set("uid", "c1e2b607-9c46-4595-9202-51f9fa2b43d0")
 		.set("unique", true)
