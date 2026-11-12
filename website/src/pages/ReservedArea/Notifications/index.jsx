@@ -247,6 +247,7 @@ function Notifications() {
                   </div>
                 </div>
                 <div className="notifications-page__item-extra" onClick={(e) => e.stopPropagation()}>
+                  {!item.read && <Badge color="#52c41a" />}
                   <Popconfirm
                     title="Eliminar notificação"
                     description="Tens a certeza que pretendes eliminar?"
@@ -264,7 +265,6 @@ function Notifications() {
                       onClick={(e) => e.stopPropagation()}
                     />
                   </Popconfirm>
-                  {!item.read && <Badge color="#52c41a" />}
                 </div>
               </div>
             ))
