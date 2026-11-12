@@ -46,7 +46,7 @@ bun install
 
     * `cp config/sample.json config/_production.json` (para o ambiente de produção)
 
-    Ajuste o arquivo `_development.json` ou `_production_.json` de acordo com o seu ambiente.
+    Ajuste o arquivo `_development.json` ou `_production.json` de acordo com o seu ambiente.
 
 2. Vai ter de configurar obrigatoriamente uma ligação SMTP para a funcionalidade de recuperação de palavra-passe funcionar corretamente, [saiba como fazê-lo aqui.](https://doc.netuno.org/pt/docs/academy/server/services/sending-emails)
 
@@ -54,7 +54,7 @@ bun install
 
 4. Onde se encontra a configuração `auth.jwt.secret` com o valor `ThisSecretMustContains32Chars!!!`, coloque um código secreto e aleatório por ser o que assegura a segurança das credênciais dos usuários, a chave secreta tem que ter 32 caracteres. [Geração de códigos seguros recomendado.](https://passwordsgenerator.net/)
 
-5. Valide e configure o prefixo do endereço dos serviços no Netuno utilizado pelo website, em `settings.api.endpoint` com o valor `http://localhost:9000/services/` que é o valor padrão para o desenvolvimento local.
+5. Valide e configure o prefixo do endereço dos serviços no Netuno utilizado pelo website, em `settings.website.api.endpoint` com o valor `http://localhost:9000/services/` que é o valor padrão para o desenvolvimento local.
 
 6. Para compilar o website e publicar online, é preciso criar a versão de produção otimizada:
     - Linux e Mac: Execute `bash build.sh` na pasta do `website`.
@@ -68,7 +68,7 @@ No diretório da raiz do Netuno execute
 ./netuno server app=diversa21
 ```
 
-Fará com que o servidor de backend e fronted iniciem.
+Fará com que o servidor de backend inicie.
 
 Para iniciar o `website` execute na pasta `netuno/apps/diversa21/website`:
 
