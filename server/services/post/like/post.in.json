@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "post"
+  ],
+  "summary": "Like Post",
+  "description": "Add a like to a post by its UID.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

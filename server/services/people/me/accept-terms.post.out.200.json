@@ -1,11 +1,11 @@
 {
-  "_schema": "response/basic",
+  "type": "object",
   "properties": {
     "result": {
       "type": "boolean"
     },
     "acceptedTermsAt": {
-      "type": "string-not-empty"
+      "type": "string"
     }
   },
   "required": [

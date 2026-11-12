@@ -1,0 +1,9 @@
+{
+  "tags": [
+    "notification"
+  ],
+  "summary": "Clear message notifications",
+  "description": "Clear all unread message notifications of the logged-in user.",
+  "type": "object",
+  "properties": {}
+}

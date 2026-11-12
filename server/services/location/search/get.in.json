@@ -1,15 +1,16 @@
 {
-    "tags":[
-      "city"
-    ],
-    "summary": "Fetch City, State and Country From Search",
-    "description": "Retrieve cities, states and countries from a search.",
-    "properties": {
-      "query": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "query"
-    ]
+  "type": "object",
+  "tags": [
+    "location"
+  ],
+  "summary": "Fetch City, State and Country From Search",
+  "description": "Retrieve cities, states and countries from a search.",
+  "properties": {
+    "query": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "query"
+  ]
 }

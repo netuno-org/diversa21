@@ -1,5 +1,5 @@
 {
-  "tags":[
+  "tags": [
     "people"
   ],
   "summary": "Register user",
@@ -13,13 +13,15 @@
       "type": "string-not-empty"
     },
     "email": {
-      "type": "string-not-empty"
+      "type": "string-not-empty",
+      "format": "email"
     },
     "password": {
       "type": "string-not-empty"
     },
     "birthDate": {
-      "type": "string-not-empty"
+      "type": "string-not-empty",
+      "format": "date"
     },
     "city": {
       "type": "uid"
@@ -27,8 +29,11 @@
     "institution": {
       "type": "uid"
     },
-    "description": {
+    "group": {
       "type": "string-not-empty"
+    },
+    "description": {
+      "type": "string"
     }
   },
   "required": [
@@ -39,6 +44,6 @@
     "birthDate",
     "city",
     "institution",
-    "description"
+    "group"
   ]
 }

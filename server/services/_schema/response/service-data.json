@@ -1,0 +1,66 @@
+{
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    },
+    "description": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "instagram": {
+      "type": "string"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "isFavorite": {
+      "type": "boolean"
+    },
+    "category": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        }
+      },
+      "required": [
+        "uid",
+        "name"
+      ]
+    },
+    "city": {
+      "_schema": "response/location-unit"
+    },
+    "state": {
+      "_schema": "response/location-unit"
+    },
+    "country": {
+      "_schema": "response/location-unit"
+    }
+  },
+  "required": [
+    "uid",
+    "name",
+    "active",
+    "isFavorite",
+    "category",
+    "city",
+    "state",
+    "country"
+  ]
+}

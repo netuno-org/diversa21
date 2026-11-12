@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "message"
+  ],
+  "summary": "Delete Chat",
+  "description": "Permanently delete all messages exchanged with a specific user.",
+  "type": "object",
+  "properties": {
+    "partner_uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "partner_uid"
+  ]
+}

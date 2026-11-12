@@ -45,6 +45,12 @@
     "cover_image": {
       "type": "file"
     },
+    "remove_avatar": {
+      "type": "boolean"
+    },
+    "remove_cover_image": {
+      "type": "boolean"
+    },
     "active": {
       "type": "string"
     }
@@ -58,7 +64,7 @@
     "post_code",
     "city"
   ],
-  "oneOf": [ 
+  "oneOf": [
     { "required": ["uid"] },
     { "required": ["slug"] }
   ]

@@ -1,11 +1,14 @@
 {
+  "type": "object",
   "tags": [
     "service"
   ],
   "summary": "Delete service",
   "description": "Delete an existing service/ad. Restricted to super-admin and management users.",
   "properties": {
-    "uid": { "type": "string-not-empty" }
+    "uid": {
+      "type": "uid"
+    }
   },
   "required": [
     "uid"

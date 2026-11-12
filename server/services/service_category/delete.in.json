@@ -1,12 +1,16 @@
 {
   "tags": [
-    "service_category"
+    "service-category"
   ],
   "summary": "Delete a service category",
+  "description": "Delete a service category. Restricted to super-admin and management users.",
+  "type": "object",
   "properties": {
     "uid": {
-      "type": "uid",
-      "required": true
+      "type": "uid"
     }
-  }
+  },
+  "required": [
+    "uid"
+  ]
 }

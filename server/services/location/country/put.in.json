@@ -1,9 +1,10 @@
 {
+  "type": "object",
   "tags": [
     "country"
   ],
-  "summary": "Create or Update a Country",
-  "description": "Inserts a new country or updates an existing one if the UID is provided.",
+  "summary": "Update a Country",
+  "description": "Update the name and code of an existing country.",
   "properties": {
     "uid": {
       "type": "uid"

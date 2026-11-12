@@ -14,10 +14,16 @@
       "type": "object",
       "properties": {
         "uid": {
-          "type": "string-not-empty"
+          "type": "uid"
+        },
+        "name": {
+          "type": "string"
         },
         "username": {
           "type": "string-not-empty"
+        },
+        "avatar": {
+          "type": "string"
         }
       },
       "required": [
@@ -29,7 +35,7 @@
       "type": "object",
       "properties": {
         "uid": {
-          "type": "string-not-empty"
+          "type": "uid"
         },
         "username": {
           "type": "string-not-empty"
@@ -50,7 +56,10 @@
       "type": "string-not-empty"
     },
     "read_at": {
-      "type": "string"
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "sent_at": {
       "type": "string-not-empty"

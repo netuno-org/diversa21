@@ -1,0 +1,46 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "uid": {
+        "type": "uid"
+      },
+      "name": {
+        "type": "string-not-empty"
+      },
+      "username": {
+        "type": "string-not-empty"
+      },
+      "avatar": {
+        "type": "boolean"
+      },
+      "online": {
+        "type": "boolean"
+      },
+      "last_message_at": {
+        "type": "string"
+      },
+      "last_message_uid": {
+        "type": "uid"
+      },
+      "last_message": {
+        "type": "string"
+      },
+      "unread_messages": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "uid",
+      "name",
+      "username",
+      "avatar",
+      "online",
+      "last_message_at",
+      "last_message_uid",
+      "last_message",
+      "unread_messages"
+    ]
+  }
+}

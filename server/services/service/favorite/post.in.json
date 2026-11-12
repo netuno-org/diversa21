@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "service"
+  ],
+  "summary": "Favorite service",
+  "description": "Add a service/ad to the logged user's favorites.",
+  "type": "object",
+  "properties": {
+    "serviceUid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "serviceUid"
+  ]
+}

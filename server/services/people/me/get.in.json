@@ -1,6 +1,9 @@
 {
-  "tags":[
+  "type": "object",
+  "tags": [
     "people"
   ],
-  "summary": "Account Information"
+  "summary": "Account Information",
+  "description": "Retrieve the profile of the logged-in user.",
+  "properties": {}
 }

@@ -1,8 +1,36 @@
 {
-  "name": "string",
-  "cityUid": "uuid",
-  "uid": "uuid",
-  "tab": "string",
-  "institutionUid": "uuid",
-  "page": "integer"
+  "type": "object",
+  "tags": [
+    "event"
+  ],
+  "summary": "List events",
+  "description": "Retrieve paginated events filtered by tab, search term, location, institution and attendance.",
+  "properties": {
+    "tab": {
+      "type": "string",
+      "enum": [
+        "general",
+        "history",
+        "going",
+        "all"
+      ]
+    },
+    "term": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "institutionUid": {
+      "type": "uid"
+    },
+    "goingOnly": {
+      "type": "string",
+      "pattern": "^(true|false)$"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  }
 }

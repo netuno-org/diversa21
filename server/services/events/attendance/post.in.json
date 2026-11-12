@@ -1,0 +1,19 @@
+{
+  "tags": [
+    "event"
+  ],
+  "summary": "Confirm attendance",
+  "description": "Set the logged user's attendance status for an event.",
+  "type": "object",
+  "properties": {
+    "eventUid": {
+      "type": "uid"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "eventUid"
+  ]
+}

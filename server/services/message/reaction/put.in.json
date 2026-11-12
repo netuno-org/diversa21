@@ -1,18 +1,20 @@
 {
-  "title": "Reagir a Mensagem",
-  "description": "Adiciona ou remove reações (emojis) a uma mensagem privada.",
-  "request": [
-    {
-      "name": "uid",
-      "type": "string",
-      "mandatory": true,
-      "description": "UID da mensagem a reagir."
+  "tags": [
+    "message"
+  ],
+  "summary": "React to Message",
+  "description": "Add or remove a reaction (single emoji) on a private message.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
     },
-    {
-      "name": "reaction",
+    "reaction": {
       "type": "string",
-      "mandatory": false,
-      "description": "String com 1 emoji."
+      "description": "A single emoji, or an empty string to remove the reaction."
     }
+  },
+  "required": [
+    "uid"
   ]
 }

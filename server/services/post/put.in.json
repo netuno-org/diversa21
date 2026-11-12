@@ -1,0 +1,20 @@
+{
+  "tags": [
+    "post"
+  ],
+  "summary": "Update Post",
+  "description": "Update the content of an existing post. Restricted to its author, management or super-admin.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "content": {
+      "type": "string-not-empty"
+    }
+  },
+  "required": [
+    "uid",
+    "content"
+  ]
+}

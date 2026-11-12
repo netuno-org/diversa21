@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid",
+        "name",
+        "description"
+      ]
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

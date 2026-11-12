@@ -1,7 +1,9 @@
 {
+  "type": "object",
   "tags": [
     "notification"
   ],
   "summary": "List notification opt-outs",
-  "description": "List all notification types and whether they are blocked by the logged-in user."
+  "description": "List all notification types and whether they are blocked by the logged-in user.",
+  "properties": {}
 }

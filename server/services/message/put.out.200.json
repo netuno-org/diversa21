@@ -3,6 +3,9 @@
   "properties": {
     "result": {
       "type": "boolean"
+    },
+    "error": {
+      "type": "string"
     }
   },
   "required": [

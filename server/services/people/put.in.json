@@ -1,13 +1,13 @@
 {
-  "tags":[
+  "tags": [
     "people"
   ],
-  "summary": "Update Account",
-  "description": "Change the information of the logged user.",
+  "summary": "Update user",
+  "description": "Change the account information of a user. Restricted by permissions.",
   "type": "object",
   "properties": {
     "uid": {
-      "type": "uuid"
+      "type": "uid"
     },
     "name": {
       "type": "string-not-empty"
@@ -16,13 +16,12 @@
       "type": "string-not-empty"
     },
     "email": {
-      "type": "string-not-empty"
-    },
-    "password": {
-      "type": "string"
+      "type": "string-not-empty",
+      "format": "email"
     },
     "birthDate": {
-      "type": "string-not-empty"
+      "type": "string-not-empty",
+      "format": "date"
     },
     "city": {
       "type": "uid"
@@ -34,9 +33,24 @@
       "type": "uid"
     },
     "description": {
-      "type": "string-not-empty"
+      "type": "string"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "avatar": {
+      "type": "file"
+    },
+    "cover_image": {
+      "type": "file"
+    },
+    "remove_avatar": {
+      "type": "boolean"
+    },
+    "remove_cover_image": {
+      "type": "boolean"
     }
- },
+  },
   "required": [
     "uid",
     "name",
@@ -44,6 +58,7 @@
     "email",
     "birthDate",
     "city",
+    "group",
     "institution"
   ]
 }

@@ -1,8 +1,13 @@
 {
+  "tags": [
+    "service-category"
+  ],
+  "summary": "Update service category",
+  "description": "Update an existing service category. Restricted to super-admin and management users.",
   "type": "object",
   "properties": {
     "uid": {
-      "type": "string-not-empty"
+      "type": "uid"
     },
     "name": {
       "type": "string-not-empty",
@@ -12,5 +17,9 @@
       "type": "string",
       "maxLength": 250
     }
-  }
+  },
+  "required": [
+    "uid",
+    "name"
+  ]
 }

@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "_schema": "response/event-data"
+          }
+        },
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "pageSize": {
+              "type": "integer"
+            },
+            "page": {
+              "type": "integer"
+            },
+            "total": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "pageSize",
+            "page",
+            "total"
+          ]
+        }
+      },
+      "required": [
+        "items",
+        "pagination"
+      ]
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
+}

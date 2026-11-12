@@ -5,9 +5,15 @@
       "type": "boolean"
     },
     "data": {
-      "total": {
-        "type": "integer"
-      }
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "count"
+      ]
     }
   },
   "required": [

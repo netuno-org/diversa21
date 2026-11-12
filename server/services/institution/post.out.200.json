@@ -1,7 +1,27 @@
 {
-  "result": true,
-  "data": {
-    "uid": "string-not-empty",
-    "slug": "string"
-  }
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "slug": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid",
+        "slug"
+      ]
+    }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
 }

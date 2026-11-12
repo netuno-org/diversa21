@@ -3,11 +3,11 @@
     "message"
   ],
   "summary": "Delete Message",
-  "description": "Permanently delete a specific message.",
+  "description": "Soft-delete a message sent by the logged-in user.",
   "type": "object",
   "properties": {
     "uid": {
-      "type": "string"
+      "type": "uid"
     }
   },
   "required": [

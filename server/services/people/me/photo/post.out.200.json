@@ -1,19 +1,31 @@
 {
-  "result": {
-    "type": "boolean"
-  },
-  "data": {
-    "type": "object",
-    "properties": {
-      "uid": {
-        "type": "uid"
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "photo": {
+          "type": "string"
+        },
+        "moment": {
+          "type": "string"
+        }
       },
-      "photo": {
-        "type": "string"
-      },
-      "moment": {
-        "type": "string"
-      }
+      "required": [
+        "uid",
+        "photo",
+        "moment"
+      ]
     }
-  }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
 }

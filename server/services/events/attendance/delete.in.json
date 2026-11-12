@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "event"
+  ],
+  "summary": "Cancel attendance",
+  "description": "Remove the logged user's attendance from an event.",
+  "type": "object",
+  "properties": {
+    "eventUid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "eventUid"
+  ]
+}

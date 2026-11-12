@@ -1,0 +1,24 @@
+{
+  "tags": [
+    "event"
+  ],
+  "summary": "List event participants",
+  "description": "Retrieve paginated participants of an event.",
+  "type": "object",
+  "properties": {
+    "eventUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    },
+    "pageSize": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  },
+  "required": [
+    "eventUid"
+  ]
+}

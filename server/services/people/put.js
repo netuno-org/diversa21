@@ -191,7 +191,7 @@ if (avatar) {
   peopleData.set("avatar", "");
 }
 
-_log.info(`>>> removeAvatar recebido: ${removeAvatar}, avatar: ${avatar ? "sim" : "não"}`);
+// _log.info(`>>> removeAvatar recebido: ${removeAvatar}, avatar: ${avatar ? "sim" : "não"}`);
 
 if (cover_image) {
   peopleData.set(

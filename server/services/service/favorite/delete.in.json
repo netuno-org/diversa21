@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "service"
+  ],
+  "summary": "Unfavorite service",
+  "description": "Remove a service/ad from the logged user's favorites.",
+  "type": "object",
+  "properties": {
+    "serviceUid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "serviceUid"
+  ]
+}

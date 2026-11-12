@@ -12,11 +12,23 @@
           "uid": {
             "type": "uid"
           },
+          "slug": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "uid",
+          "slug",
+          "name"
+        ]
       }
     }
-  }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
 }

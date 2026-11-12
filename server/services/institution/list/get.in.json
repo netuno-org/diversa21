@@ -1,7 +1,26 @@
 {
-    "tags":[
-      "institution"
-    ],
-    "summary": "Fetch All Institutions Data",
-    "description": "Retrieve information from all institutions."
+  "tags": [
+    "institution"
+  ],
+  "summary": "Fetch All Institutions Data",
+  "description": "Retrieve a paginated list of institutions filtered by name, city, state and/or country.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "cityUid": {
+      "type": "uid"
+    },
+    "stateUid": {
+      "type": "uid"
+    },
+    "countryUid": {
+      "type": "uid"
+    },
+    "page": {
+      "type": "string",
+      "pattern": "^\\d+$"
+    }
+  }
 }

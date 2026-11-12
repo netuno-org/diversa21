@@ -1,22 +1,46 @@
 {
-  "result": {
-    "type": "boolean"
-  },
-  "data": {
-    "type": "array",
-    "items": {
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
       "type": "object",
       "properties": {
-        "uid": {
-          "type": "uid"
+        "maxGalleryPhotos": {
+          "type": "integer"
         },
-        "photo": {
-          "type": "string"
-        },
-        "moment": {
-          "type": "string"
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uid": {
+                "type": "uid"
+              },
+              "photo": {
+                "type": "string"
+              },
+              "moment": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "uid",
+              "photo",
+              "moment"
+            ]
+          }
         }
-      }
+      },
+      "required": [
+        "maxGalleryPhotos",
+        "items"
+      ]
     }
-  }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "event"
+  ],
+  "summary": "Delete event",
+  "description": "Deactivate an event. Restricted to its host, management or super-admin.",
+  "type": "object",
+  "properties": {
+    "eventUid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "eventUid"
+  ]
+}

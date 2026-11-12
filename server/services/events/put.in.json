@@ -1,0 +1,41 @@
+{
+  "tags": [
+    "event"
+  ],
+  "summary": "Update event",
+  "description": "Update an existing event. Restricted to its host, management or super-admin.",
+  "type": "object",
+  "properties": {
+    "eventUid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    },
+    "description": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "city": {
+      "type": "uid"
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": "string"
+    },
+    "cover_image": {
+      "type": "file"
+    },
+    "clear_cover_image": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "eventUid",
+    "name"
+  ]
+}

@@ -1,9 +1,9 @@
 {
-  "tags":[
+  "tags": [
     "people"
   ],
   "summary": "Update Account",
-  "description": "Change the information of the logged user.",
+  "description": "Change the information of the logged-in user.",
   "type": "object",
   "properties": {
     "name": {
@@ -13,13 +13,15 @@
       "type": "string-not-empty"
     },
     "email": {
-      "type": "string-not-empty"
+      "type": "string-not-empty",
+      "format": "email"
     },
     "password": {
       "type": "string"
     },
     "birthDate": {
-      "type": "string-not-empty"
+      "type": "string-not-empty",
+      "format": "date"
     },
     "city": {
       "type": "uid"
@@ -28,7 +30,19 @@
       "type": "uid"
     },
     "description": {
-      "type": "string-not-empty"
+      "type": "string"
+    },
+    "avatar": {
+      "type": "file"
+    },
+    "cover_image": {
+      "type": "file"
+    },
+    "remove_avatar": {
+      "type": "boolean"
+    },
+    "remove_cover_image": {
+      "type": "boolean"
     }
   },
   "required": [

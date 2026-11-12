@@ -1,48 +1,55 @@
 {
-  "result": {
-    "type": "boolean"
-  },
-  "data": {
-    "type": "object",
-    "properties": {
-      "items": {
-        "type": "array",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
         "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uid": { "type": "uid" },
+              "entityType": { "type": "string" },
+              "entityTypeTitle": { "type": "string" },
+              "statusCode": { "type": "string" },
+              "statusTitle": { "type": "string" },
+              "totalItems": { "type": "integer" },
+              "createdAt": { "type": "string" },
+              "lastReportedAt": { "type": "string" },
+              "resolvedAt": { "type": "string" },
+              "resolutionNotes": { "type": "string" },
+              "resolvedBy": { "type": "object" },
+              "content": { "type": "object" }
+            }
+          }
+        },
+        "statusCounts": {
           "type": "object",
           "properties": {
-            "uid": { "type": "uid" },
-            "entityType": { "type": "string" },
-            "entityTypeTitle": { "type": "string" },
-            "statusCode": { "type": "string" },
-            "statusTitle": { "type": "string" },
-            "totalItems": { "type": "integer" },
-            "createdAt": { "type": "string" },
-            "lastReportedAt": { "type": "string" },
-            "resolvedAt": { "type": "string" },
-            "resolutionNotes": { "type": "string" },
-            "resolvedBy": { "type": "object" },
-            "content": { "type": "object" }
+            "all": { "type": "integer" },
+            "pending": { "type": "integer" },
+            "in_review": { "type": "integer" },
+            "resolved": { "type": "integer" },
+            "rejected": { "type": "integer" }
           }
-        }
-      },
-      "statusCounts": {
-        "type": "object",
-        "properties": {
-          "all": { "type": "integer" },
-          "pending": { "type": "integer" },
-          "in_review": { "type": "integer" },
-          "resolved": { "type": "integer" },
-          "rejected": { "type": "integer" }
-        }
-      },
-      "pagination": {
-        "type": "object",
-        "properties": {
-          "page": { "type": "integer" },
-          "pageSize": { "type": "integer" },
-          "totalCount": { "type": "integer" }
+        },
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "page": { "type": "integer" },
+            "pageSize": { "type": "integer" },
+            "totalCount": { "type": "integer" }
+          }
         }
       }
     }
-  }
+  },
+  "required": [
+    "result",
+    "data"
+  ]
 }

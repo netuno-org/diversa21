@@ -1,0 +1,114 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "uid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    },
+    "description": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "cover_image": {
+      "type": "string"
+    },
+    "hasCoverImage": {
+      "type": "boolean"
+    },
+    "startDate": {
+      "type": "string"
+    },
+    "endDate": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "isGoing": {
+      "type": "boolean"
+    },
+    "canEdit": {
+      "type": "boolean"
+    },
+    "participantsCount": {
+      "type": "integer"
+    },
+    "participantsPreview": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "uid"
+          },
+          "name": {
+            "type": "string-not-empty"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string-not-empty"
+          }
+        },
+        "required": [
+          "uid",
+          "name"
+        ]
+      }
+    },
+    "city": {
+      "_schema": "response/location-unit"
+    },
+    "state": {
+      "_schema": "response/location-unit"
+    },
+    "country": {
+      "_schema": "response/location-unit"
+    },
+    "host": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "uid"
+        },
+        "name": {
+          "type": "string-not-empty"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string-not-empty"
+        }
+      },
+      "required": [
+        "uid",
+        "name"
+      ]
+    }
+  },
+  "required": [
+    "uid",
+    "name",
+    "description",
+    "location",
+    "hasCoverImage",
+    "startDate",
+    "isGoing",
+    "canEdit",
+    "participantsCount",
+    "participantsPreview",
+    "city",
+    "state",
+    "country",
+    "host"
+  ]
+}

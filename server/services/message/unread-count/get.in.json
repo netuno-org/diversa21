@@ -3,7 +3,7 @@
     "message"
   ],
   "summary": "Unread Messages",
-  "description": "Fetch number of unread messages.",
+  "description": "Fetch the number of users with unread messages for the logged-in user.",
   "type": "object",
   "properties": {}
 }

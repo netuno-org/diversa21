@@ -1,9 +1,10 @@
 {
+  "type": "object",
   "tags": [
     "state"
   ],
-  "summary": "Create or Update a State",
-  "description": "Inserts a new state or updates an existing one if the UID is provided.",
+  "summary": "Update a State",
+  "description": "Update the name, code and country of an existing state.",
   "properties": {
     "uid": {
       "type": "uid"

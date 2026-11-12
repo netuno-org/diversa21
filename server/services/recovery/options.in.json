@@ -1,0 +1,9 @@
+{
+  "tags": [
+    "recovery"
+  ],
+  "summary": "Recovery Options",
+  "description": "Check that the recovery service is available.",
+  "type": "object",
+  "properties": {}
+}

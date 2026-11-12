@@ -1,0 +1,20 @@
+{
+  "tags": [
+    "people"
+  ],
+  "summary": "Delete user",
+  "description": "Delete a user account by UID or username. Restricted by permissions.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "username": {
+      "type": "string"
+    }
+  },
+  "oneOf": [
+    { "required": ["uid"] },
+    { "required": ["username"] }
+  ]
+}

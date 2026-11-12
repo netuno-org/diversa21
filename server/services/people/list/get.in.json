@@ -1,25 +1,26 @@
 {
-  "tags":[
+  "tags": [
     "people"
   ],
   "summary": "List users",
-  "description": "Retrieve a list of users by name, city, state and/or country.",
+  "description": "Retrieve a paginated list of users filtered by name, city, state and/or country.",
   "type": "object",
   "properties": {
     "name": {
       "type": "string"
     },
-    "city": {
-      "type": "string"
+    "cityUid": {
+      "type": "uid"
     },
-    "state": {
-      "type": "string"
+    "stateUid": {
+      "type": "uid"
     },
-    "country": {
-      "type": "string"
+    "countryUid": {
+      "type": "uid"
     },
     "page": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^\\d+$"
     }
   }
 }

@@ -3,14 +3,14 @@
     "message"
   ],
   "summary": "Edit Message",
-  "description": "Edit the text content of a message.",
+  "description": "Edit the text content of a message sent by the logged-in user.",
   "type": "object",
   "properties": {
     "uid": {
-      "type": "string"
+      "type": "uid"
     },
     "message": {
-      "type": "string"
+      "type": "string-not-empty"
     }
   },
   "required": [

@@ -1,1 +1,9 @@
-{}
+{
+  "tags": [
+    "notification"
+  ],
+  "summary": "Unread notifications count",
+  "description": "Fetch the number of unread non-message notifications of the logged-in user.",
+  "type": "object",
+  "properties": {}
+}

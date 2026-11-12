@@ -1,16 +1,18 @@
 {
+  "type": "object",
   "tags": [
     "friend"
   ],
   "summary": "List friends",
-  "description": "Retrieve paginated list of friends for the logged-in user.",
+  "description": "Retrieve a paginated list of friends for the logged-in user.",
   "properties": {
     "page": {
       "type": "string",
       "pattern": "^\\d+$"
     },
     "uid": {
-      "type": "uid"
+      "type": "uid",
+      "description": "Profile UID whose friends should be listed. Defaults to the logged user."
     },
     "name": {
       "type": "string"
@@ -23,6 +25,10 @@
     },
     "countryUid": {
       "type": "uid"
+    },
+    "forMessages": {
+      "type": "boolean",
+      "description": "Order by latest message instead of name."
     }
   }
 }

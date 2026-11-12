@@ -1,0 +1,9 @@
+{
+  "tags": [
+    "message"
+  ],
+  "summary": "List Chats",
+  "description": "List the active conversations of the logged-in user with their latest message and unread count.",
+  "type": "object",
+  "properties": {}
+}

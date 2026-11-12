@@ -4,10 +4,17 @@
   ],
   "summary": "List user notifications",
   "description": "Retrieve paginated notifications for the logged-in user.",
+  "type": "object",
   "properties": {
     "page": {
       "type": "string",
+      "pattern": "^\\d+$",
       "description": "Page number (default: 1)"
+    },
+    "pageSize": {
+      "type": "string",
+      "pattern": "^\\d+$",
+      "description": "Items per page (default: 5)"
     }
   }
 }

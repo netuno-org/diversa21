@@ -1,6 +1,9 @@
 {
   "type": "object",
   "properties": {
+    "uid": {
+      "type": "uid"
+    },
     "content": {
       "type": "string-not-empty"
     },
@@ -10,19 +13,31 @@
     "people": {
       "type": "object",
       "properties": {
-        "avatar": {
-          "type": "boolean"
+        "uid": {
+          "type": "uid"
         },
         "name": {
           "type": "string-not-empty"
         },
-        "uid": {
-          "type": "uid"
+        "user": {
+          "type": "string-not-empty"
+        },
+        "avatar": {
+          "type": "boolean"
         }
-      }
-    },
-    "uid": {
-      "type": "uid"
+      },
+      "required": [
+        "uid",
+        "name",
+        "user",
+        "avatar"
+      ]
     }
-  }
+  },
+  "required": [
+    "uid",
+    "content",
+    "moment",
+    "people"
+  ]
 }

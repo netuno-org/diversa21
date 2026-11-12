@@ -1,22 +1,24 @@
 {
-	"tags": [
-		"city"
-	],
-	"summary": "Create or Update a City",
-	"description": "Inserts a new city or updates an existing one if the UID is provided.",
-	"properties": {
-		"uid": {
-			"type": "uid"
-		},
-		"name": {
-			"type": "string-not-empty"
-		},
-		"stateUid": {
-			"type": "uid"
-		}
-	},
-	"required": [
-		"name",
-		"stateUid"
-	]
+  "type": "object",
+  "tags": [
+    "city"
+  ],
+  "summary": "Update a City",
+  "description": "Update the name and state of an existing city.",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "string-not-empty"
+    },
+    "stateUid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid",
+    "name",
+    "stateUid"
+  ]
 }

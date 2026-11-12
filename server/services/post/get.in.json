@@ -1,0 +1,16 @@
+{
+  "tags": [
+    "post"
+  ],
+  "summary": "Get Post",
+  "description": "Retrieve a post by its UID.",
+  "type": "object",
+  "properties": {
+    "uid": {
+      "type": "uid"
+    }
+  },
+  "required": [
+    "uid"
+  ]
+}

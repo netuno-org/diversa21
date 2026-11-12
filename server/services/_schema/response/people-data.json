@@ -11,11 +11,17 @@
       "type": "string-not-empty",
       "pattern": "^[a-z]+[a-z0-9]{1,24}$"
     },
+    "description": {
+      "type": "string"
+    },
     "email": {
       "type": "string-not-empty",
       "format": "email"
     },
     "avatar": {
+      "type": "boolean"
+    },
+    "cover_image": {
       "type": "boolean"
     },
     "birthDate": {
@@ -40,7 +46,11 @@
         "code": {
           "type": "string-not-empty"
         }
-      }
+      },
+      "required": [
+        "name",
+        "code"
+      ]
     },
     "institution": {
       "type": "object",
@@ -50,21 +60,57 @@
         },
         "uid": {
           "type": "uid"
+        },
+        "slug": {
+          "type": "string"
         }
-      }
+      },
+      "required": [
+        "name",
+        "uid"
+      ]
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "acceptedTermsAt": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unread_messages": {
+      "type": "integer",
+      "description": "Only present on friend listings."
+    },
+    "online": {
+      "type": "boolean",
+      "description": "Only present on friend listings."
+    },
+    "last_message": {
+      "type": "string",
+      "description": "Only present on friend listings."
+    },
+    "last_message_at": {
+      "type": "string",
+      "description": "Only present on friend listings."
     }
   },
   "required": [
     "uid",
     "name",
     "username",
+    "description",
     "email",
     "avatar",
+    "cover_image",
     "birthDate",
     "city",
     "state",
     "country",
     "group",
-    "institution"
+    "institution",
+    "active",
+    "acceptedTermsAt"
   ]
 }
