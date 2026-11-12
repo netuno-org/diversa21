@@ -4,7 +4,7 @@ import people from "#core/lib/people.js";
 
 const dbPeople = people.getLogged();
 
-const dbParticipants = _db.query(`
+const dbChats = _db.query(`
 SELECT 
     p.uid, 
     p.name, 
@@ -54,21 +54,21 @@ ORDER BY c.last_message_at DESC NULLS LAST;
   dbPeople.getInt("id"),
   dbPeople.getInt("id"));
 
-const participants = _val.list();
+const chats = _val.list();
 
-for (const dbParticipant of dbParticipants) {
-  participants.add(
+for (const dbChat of dbChats) {
+  chats.add(
     _val.map()
-      .set("uid", dbParticipant.getString("uid"))
-      .set("name", dbParticipant.getString("name"))
-      .set("username", dbParticipant.getString("username"))
-      .set("avatar", dbParticipant.getString("avatar") !== "")
-      .set("online", dbParticipant.getInt("active_ws_sessions") > 0)
-      .set("last_message_at", dbParticipant.getSQLTimestamp("last_message_at"))
-      .set("last_message_uid", dbParticipant.getString("last_message_uid"))
-      .set("last_message", dbParticipant.getString("last_message"))
-      .set("unread_messages", dbParticipant.getInt("unread_messages_count", 0))
+      .set("uid", dbChat.getString("uid"))
+      .set("name", dbChat.getString("name"))
+      .set("username", dbChat.getString("username"))
+      .set("avatar", dbChat.getString("avatar") !== "")
+      .set("online", dbChat.getInt("active_ws_sessions") > 0)
+      .set("last_message_at", dbChat.getSQLTimestamp("last_message_at"))
+      .set("last_message_uid", dbChat.getString("last_message_uid"))
+      .set("last_message", dbChat.getString("last_message"))
+      .set("unread_messages", dbChat.getInt("unread_messages_count", 0))
   );
 }
 
-_out.json(participants);
+_out.json(chats);
